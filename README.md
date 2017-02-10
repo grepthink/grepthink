@@ -34,4 +34,11 @@ This is so we can keep the secret key hidden. It also allows us to use sqlite lo
 For local develompent, your DATABASE_URL can be something like:
 `DATABASE_URL=sqlite:////Users/sammyslug/Documents/twdev/teamwork-project/teamwork/db.sqlite3`
 
-## Step 4: I forget
+## Step 4: Install dependencies
+This part is fun because it's easy. Make sure you're in your venv then install everything in requirements.txt
+```bash
+$ pip install -r requirements.txt"
+```
+
+## Step 5: I think that's it
+You can try running with `python manage.py runserver`
