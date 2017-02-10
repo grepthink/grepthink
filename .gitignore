@@ -1,4 +1,5 @@
-
+.DS_Store
+*.sqlite3
 
 # Suggestions from heroku-django-template
 venv
