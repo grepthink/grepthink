@@ -33,7 +33,12 @@ You can always exit the venv with `deactivate`
 Optionally fork the teamwork-project repo. Clone it into the venv folder you just created. That's it, have a cookie.
 
 ## Step 3: Make a .env file based on .env.example
-This is so we can keep the secret key hidden. It also allows us to use sqlite locally and postgres in production, neat.
+The .env file should be in the twdev (or whatever you named your venv) folder. So above the teamwork-project folder.
+
+This is so we can keep the secret key hidden. 
+
+It also allows us to use sqlite locally and postgres in production, neat.
+
 For local develompent, your DATABASE_URL can be something like:
 `DATABASE_URL=sqlite:////Users/sammyslug/Documents/twdev/teamwork-project/teamwork/db.sqlite3`
 
