@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'teamwork.apps.core',
+
 ]
 
 MIDDLEWARE_CLASSES = [
