@@ -3,4 +3,9 @@
 
 {% block content %}
   <h1>Create project!</h1>
+  <form action="{% url 'create_project' %}" method="post" role="form">
+    <label for="course_name">Course name: </label>
+    <input id="course_name" type="text" name="course_name" value="{{ course_name }}" >
+    <input type="submit" value="OK">
+  </form>
 {% endblock %}
