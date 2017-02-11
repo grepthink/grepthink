@@ -44,6 +44,8 @@ For local develompent, your DATABASE_URL can be something like:
 
 The .env file should be in /twdev/teamwork-project
 
+:)
+
 ## Step 4: Install dependencies
 This part is fun because it's easy. Make sure you're in your venv then install everything in requirements.txt
 ```bash
