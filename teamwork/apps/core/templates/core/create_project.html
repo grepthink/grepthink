@@ -7,6 +7,8 @@
     {% csrf_token %}
     <label for="course_name">Course name: </label>
     <input id="course_name" type="text" name="course_name" value="{{ course_name }}" >
+    <label for="course_info">Course info: </label>
+    <input id="course_info" type="text" name="course_info" value="{{ course_info }}" >
     <input type="submit" value="OK">
   </form>
 {% endblock %}

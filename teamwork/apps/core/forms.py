@@ -6,4 +6,4 @@ class CourseForm(ModelForm):
     course_name = forms.CharField(max_length=30)
     class Meta:
         model = Course
-        fields = ['course_name']
+        fields = ['course_name', 'course_info']

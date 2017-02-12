@@ -12,9 +12,10 @@ def create_project(request):
     if request.method == 'POST':
         #Create form instance and populate it with data from request
         form = CourseForm(request.POST)
-        form.save()
+        if form.is_valid():
+            form.save()
     #if a get we'll create a blank form
     else:
         form = CourseForm()
-        form.save()
+        #form.save()
     return render(request, 'core/create_project.html', {'form': form})
