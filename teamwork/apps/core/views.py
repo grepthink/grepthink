@@ -8,8 +8,11 @@ def home(request):
     return render(request, 'core/home.html')
 
 def create_project(request):
+    #If post request we need to process form data
     if request.method == 'POST':
+        #Create form instance and populate it with data from request
         form = CourseForm(request.POST)
+    #if a get we'll create a blank form
     else:
         form = CourseForm()
     return render(request, 'core/create_project.html', {'form': form})
