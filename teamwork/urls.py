@@ -21,5 +21,6 @@ from teamwork.apps.core import views as core_views
 urlpatterns = [
     url(r'^$', core_views.home, name='home'),
     url(r'create_project', core_views.create_project, name='create_project'),
+    url(r'view_projects', core_views.view_projects, name='view_projects'),
     url(r'^admin/', admin.site.urls),
 ]

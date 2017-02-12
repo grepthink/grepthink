@@ -5,10 +5,16 @@
   <h1>Create project!</h1>
   <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
-    <label for="course_name">Course name: </label>
-    <input id="course_name" type="text" name="course_name" value="{{ course_name }}" >
-    <label for="course_info">Course info: </label>
-    <input id="course_info" type="text" name="course_info" value="{{ course_info }}" >
+    <label for="course">Course: </label>
+    <input id="course" type="text" name="course" value="{{ course }}" >
+    <label for="project_owner">Project Owner: </label>
+    <input id="project_owner" type="text" name="project_owner" value="{{ project_owner }}" >
+    <label for="current_members">Current Members: </label>
+    <input id="current_members" type="text" name="current_members" value="{{ current_members }}" >
+    <label for="project_name">Project Name: </label>
+    <input id="project_name" type="text" name="project_name" value="{{ project_name }}" >
+    <label for="project_info">Project Info: </label>
+    <input id="project_info" type="text" name="project_info" value="{{ project_info }}" >
     <input type="submit" value="OK">
   </form>
 {% endblock %}
