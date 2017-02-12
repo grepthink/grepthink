@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
-
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-
+from datetime import datetime
 from django.db import models
 
-# Import something from django for user auth
+# We need to update the User class to use django.auth
+# from django.contrib.auth.models import User
 
 #The main models of the core app.
 
@@ -33,14 +33,16 @@ class Project(models.Model):
 #Each project object is associated with authors (current_members).
 
 	# Authors
-	authors = models.ForeignKey(User, related_name='+')
+	#authors = models.ForeignKey(User, related_name='+')
 	# all many to many fields first, to easily identify relationships
-	course = models.ManyToManyField(Course, related_name="course_id")
+	#course = models.ManyToManyField(Course, related_name="course_id")
 	#project_owner = models.ManyToManyField(User, related_name="po")
-
+	project_owner = models.ForeignKey(User)
+	#current_members = models.ManyToManyField(User, related_name="members")
+	#project_owner = models.ManyToManyField(User, related_name="po")
 	project_name = models.CharField(max_length=50, default="")
 	project_info = models.CharField(max_length=100, default="")
-	create_date = models.DateTimeField(auto_now_add=True)
+	#create_date = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
 		return self.project_name
