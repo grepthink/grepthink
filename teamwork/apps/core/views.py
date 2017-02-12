@@ -36,5 +36,9 @@ def create_project(request):
         #form.save()
     return render(request, 'core/create_project.html', {'form': form})
 
+#this does not work as intended, result is listed as a QUERYSET
 def view_projects(request):
-    return render(request, 'core/view_projects.html')
+    project_name = Project.objects.all()
+    context = { 'project_name': project_name,
+    }
+    return render(request, 'core/view_projects.html', context)
