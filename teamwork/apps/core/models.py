@@ -22,7 +22,3 @@ class Project(models.Model):
 	project_info = models.CharField(max_length=100, default="")
 	def __str__(self):
 		return self.project_name
-
-
-
-
