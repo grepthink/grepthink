@@ -1,5 +1,11 @@
+
+# Stuff Michael added
 .DS_Store
 *.sqlite3
+
+# Michael's Sublime Text 3 Project Workspace
+teamwork.sublime-project
+teamwork.sublime-workspace
 
 # Suggestions from heroku-django-template
 venv
