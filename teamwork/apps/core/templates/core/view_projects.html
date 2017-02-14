@@ -1,7 +1,31 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% load static %}
+{% load i18n %}
 
-<h3 style="color: red;"> {{ project_name }} </h3>
+{% block title %} Projects {% endblock %}
 
-{% endblock %}
+{% block head %}
+  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block main %}
+  <div class="page-header">
+    <a href="{% url 'create_project' %}"> Create Project </a>
+    <h1> Projects </h1>
+  </div>
+  <div class="row">
+    <div class="col-md-10">
+      <section class="projects">
+        {% for project in projects %}
+          <p>{{ project.title }}<p>
+        {% empty %}
+          <h4 class="no-projects"> There are no projects yet. <a href="{% url 'create_project' %}"> Go ahead and create one now!</a></h4>
+        {% endfor %}
+      </section>
+    </div>
+  </div>
+
+  <!--paginator-->
+
+{% endblock main %}
