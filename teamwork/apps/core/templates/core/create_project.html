@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
 
+{% block head %}
+  <script src="{% static 'js/projects.js' %}"></script>
+{% endblock head %}
 
-{% block content %}
-  <h1>Create project!</h1>
+{% block main %}
   <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
-    <label for="course">Course: </label>
-    <input id="course" type="text" name="course" value="{{ course }}" >
-    <label for="project_owner">Project Owner: </label>
-    <input id="project_owner" type="text" name="project_owner" value="{{ project_owner }}" >
-    <label for="current_members">Current Members: </label>
-    <input id="current_members" type="text" name="current_members" value="{{ current_members }}" >
-    <label for="project_name">Project Name: </label>
-    <input id="project_name" type="text" name="project_name" value="{{ project_name }}" >
-    <label for="project_info">Project Info: </label>
-    <input id="project_info" type="text" name="project_info" value="{{ project_info }}" >
-    <input type="submit" value="OK">
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <div class="form-group">
+      <button type="button" class="submit"> Submit </button>
+    </div>
   </form>
-{% endblock %}
+
+{% endblock main %}
