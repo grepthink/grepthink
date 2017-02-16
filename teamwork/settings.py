@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'teamwork.apps.core',
+    'teamwork.apps.profiles',
+    'teamwork.apps.projects',
 
 ]
 
@@ -158,3 +160,9 @@ MEDIA_URL = '/media/'
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+ALLOWED_SIGNUP_DOMAINS = ['*']
+
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/view_projects/'
+

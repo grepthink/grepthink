@@ -13,57 +13,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 
 
-class Project(models.Model):
-    """
-    Project: A database model (object) for projects.
-
-    Fields:
-        title: the title of the project.
-
-    Methods:
-        __str__(self):                  Human readeable representation of the Project object.
-        save(self, *args, **kwargs):    Overides the default save operator...
-        get_published():                Gets a list of all stored Project objects.
-
-    """
-
-    # The title of the project. Should not be null, but default is provided.
-    title = models.CharField(max_length=255, default="No Project Title Provided")
-
-    # The Meta class provides some extra information about the Project model.
-    class Meta:
-        # Verbose name is the same as class name in this case.
-        verbose_name = "Project"
-        # Multiple Project objects are referred to as Projects.
-        verbose_name_plural = "Projects"
-
-    def __str__(self):
-        """
-        Human readeable representation of the Project object. Might need to update when we add more attributes.
-        Maybe something like, return u'%s %s' % (self.course, self.title)
-        """
-        return self.title
-
-    def save(self, *args, **kwargs):
-        """
-        Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
-        """
-        if not self.pk:
-            super(Project, self).save(*args, **kwargs)
-        super(Project, self).save(*args, **kwargs)
-
-    @staticmethod
-    def get_published():
-        """
-        Gets a list of project objects. Used in views then passed to the template.
-        """
-        projects = Project.objects.filter()
-        return projects
-
-
 
 # Legacy code for me to sort through next and slowly add back in:
 
