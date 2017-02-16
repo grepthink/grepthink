@@ -17,10 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from teamwork.apps.core import views as core_views
+from teamwork.apps.projects import views as project_views
 
 urlpatterns = [
     url(r'^$', core_views.home, name='home'),
-    url(r'create_project', core_views.create_project, name='create_project'),
-    url(r'view_projects', core_views.view_projects, name='view_projects'),
+    url(r'create_project', project_views.create_project, name='create_project'),
+    url(r'view_projects', project_views.view_projects, name='view_projects'),
     url(r'^admin/', admin.site.urls),
 ]

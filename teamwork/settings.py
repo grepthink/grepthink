@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'teamwork.apps.core',
+    'teamwork.apps.profiles',
+    'teamwork.apps.projects',
 
 ]
 
