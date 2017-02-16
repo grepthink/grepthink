@@ -163,3 +163,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ALLOWED_SIGNUP_DOMAINS = ['*']
 
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/view_projects/'
+
