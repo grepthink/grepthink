@@ -62,7 +62,7 @@ def _projects(request, projects):
     #except EmptyPage:
     #    projects = paginator.page(paginator.num_pages)
     return render(request, 'projects/view_projects.html', {
-        'projects': projects,
+        'projects': projects, 
     })
 
 def view_projects(request):

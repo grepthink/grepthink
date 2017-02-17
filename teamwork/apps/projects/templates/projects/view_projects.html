@@ -19,6 +19,13 @@
       <section class="projects">
         {% for project in projects %}
           <p>{{ project.title }}<p>
+          <ul>
+          {% for mem in project.members.all %}
+            {% if mem.username != null %}
+              <li>{{ mem.username }}</li>
+            {% endif %}
+          {% endfor %}
+          </ul>
         {% empty %}
           <h4 class="no-projects"> There are no projects yet. <a href="{% url 'create_project' %}"> Go ahead and create one now!</a></h4>
         {% endfor %}
