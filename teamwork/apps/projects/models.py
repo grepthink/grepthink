@@ -28,6 +28,7 @@ class Project(models.Model):
 
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(max_length=255, default="No Project Title Provided")
+    members = models.ManyToManyField(User, through='Membership')
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -42,7 +43,7 @@ class Project(models.Model):
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
         return self.title
-
+    
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
@@ -61,6 +62,13 @@ class Project(models.Model):
         """
         projects = Project.objects.filter()
         return projects
+
+class Membership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
+    date_joined = models.DateField()
+    invite_reason = models.CharField(max_length=64)
+
 
 
 

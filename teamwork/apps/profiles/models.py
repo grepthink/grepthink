@@ -12,10 +12,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
-
-    class Meta:
-        db_table = 'auth_profile'
-
+       
     def __str__(self):
         return self.user.username
 
