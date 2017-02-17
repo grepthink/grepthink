@@ -80,9 +80,17 @@ def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
+            # create an object for the input
             project = Project()
             project.title = form.cleaned_data.get('title')
+            project.member = form.cleaned_data.get('members')
+            # save this object
             project.save()
+            # loop through the members in the object and make m2m rows for them
+            for i in project.member:
+                Membership.objects.create(user=i, project=project, invite_reason='')
+            # we dont have to save again because we do not touch the project object
+            # we are doing behind the scenes stuff (waves hand)
             return redirect('/view_projects.html/')
     else:
         form = ProjectForm()

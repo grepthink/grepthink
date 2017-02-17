@@ -66,7 +66,6 @@ class Project(models.Model):
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
-    date_joined = models.DateField()
     invite_reason = models.CharField(max_length=64)
 
 
