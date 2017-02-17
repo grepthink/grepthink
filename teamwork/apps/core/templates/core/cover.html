@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'adminlte/base.html' %}
 {% load staticfiles %}
 {% load i18n %}
 
@@ -6,7 +6,7 @@
   <link href="{% static 'css/cover.css' %}" rel="stylesheet">
 {% endblock head %}
 
-{% block main %}
+{% block content %}
   <div class="cover">
     <h1 class="logo">Teamwork</h1>
     {% if form.non_field_errors %}
@@ -42,4 +42,4 @@
       </form>
     </div>
   </div>
-{% endblock main %}
+{% endblock content %}

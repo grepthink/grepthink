@@ -9,15 +9,10 @@
     <script src="{% static 'js/app.js' %}"></script>
     {% block head %}{% endblock %}
   </head>
-  <body>
+  <body class="skin-green">
   {% block body %}
-      <h1>Teamwork</h1>
-      <a href="{% url 'create_project' %}"> Create Project </a>
-      <a href="{% url 'view_projects' %}"> View Projects </a>
-      <a href="{% url 'login' %}"> Login </a>
-      <a href="{% url 'logout' %}"> Logout </a>
-    {% block main %}
-    {% endblock main %}
+    {% block content %}
+    {% endblock content %}
   {% endblock body %}
 </body>
 </html>
