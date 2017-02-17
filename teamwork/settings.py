@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
+    'django_adminlte',
+    'django_adminlte_theme',
+
     'teamwork.apps.core',
     'teamwork.apps.profiles',
     'teamwork.apps.projects',

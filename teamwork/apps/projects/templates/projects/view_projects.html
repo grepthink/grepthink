@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'adminlte/base.html' %}
 
 {% load static %}
 {% load i18n %}
@@ -9,7 +9,7 @@
   <link href="{% static 'css/projects.css' %}" rel="stylesheet">
 {% endblock head %}
 
-{% block main %}
+{% block content %}
   <div class="page-header">
     <a href="{% url 'create_project' %}"> Create Project </a>
     <h1> Projects </h1>
@@ -28,4 +28,4 @@
 
   <!--paginator-->
 
-{% endblock main %}
+{% endblock content %}
