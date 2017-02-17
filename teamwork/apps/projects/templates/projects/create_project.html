@@ -7,6 +7,9 @@
 {% endblock head %}
 
 {% block content %}
+  <div class="page-header">
+    <h1> Create Project </h1>
+  </div>
   <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}

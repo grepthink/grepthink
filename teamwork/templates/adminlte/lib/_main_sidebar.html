@@ -1,0 +1,18 @@
+{% extends 'adminlte/lib/_main_sidebar.html' %}
+
+{% block nav_links %}
+    <li>
+        <a href="{% url 'home' %}">
+            <i class="fa fa-dashboard"></i> <span>Home</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'create_project' %}">
+            <i class="fa fa-plus"></i> <span>Create Project</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'view_projects' %}">
+            <i class="fa fa-folder"></i> <span>View Projects</span>
+        </a>
+{% endblock nav_links %}

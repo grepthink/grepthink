@@ -31,7 +31,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -42,13 +41,14 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
 
-    'django_adminlte',
-    'django_adminlte_theme',
-
     'teamwork.apps.core',
     'teamwork.apps.profiles',
     'teamwork.apps.projects',
 
+    'django_adminlte',
+    'django_adminlte_theme',
+
+    'django.contrib.admin',
 ]
 
 MIDDLEWARE_CLASSES = [
