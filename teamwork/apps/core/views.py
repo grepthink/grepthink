@@ -10,11 +10,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 def home(request):
     return render(request, 'core/home.html')
 
-# def profile(request, username):
-#     page_user = get_object_or_404(User, username=username)
-#     return render(request, 'core/profile.html', {
-#         'page_user': page_user,
-#         })
+def profile(request, username):
+    page_user = get_object_or_404(User, username=username)
+    return render(request, 'core/profile.html', {
+        'page_user': page_user,
+        })
 
 #Shouldnt have a use as of 2/11
 """

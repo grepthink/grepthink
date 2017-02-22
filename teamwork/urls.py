@@ -41,9 +41,9 @@ urlpatterns = [
     #logout
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
     #username/    
-    #url(r'^(?P<username>[^/]+)/$', profile_views.profile, name='profile'),
+    url(r'^(?P<username>[^/]+)/$', core_views.profile, name='profile'),
     
 
     #just testing with this, will substitue for the version above
-    url(r'^view_profile', profile_views.view_profile, name='view_profile')
+    #url(r'^view_profile', profile_views.view_profile, name='view_profile')
 ]
