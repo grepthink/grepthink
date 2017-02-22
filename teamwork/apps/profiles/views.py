@@ -26,3 +26,6 @@ def signup(request):
         return render(request, 'profiles/signup.html',
                       {'form': SignUpForm()})
 
+def view_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'profiles/view_profile.html', {'user': user})
