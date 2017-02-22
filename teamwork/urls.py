@@ -20,12 +20,15 @@ from django.contrib.auth import views as auth_views
 from teamwork.apps.core import views as core_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
+from teamwork.apps.courses import views as course_views
 
 urlpatterns = [
     url(r'^$', core_views.home, name='home'),
     url(r'^signup/$', profile_views.signup, name='signup'),
     url(r'create_project', project_views.create_project, name='create_project'),
     url(r'view_projects', project_views.view_projects, name='view_projects'),
+    url(r'create_course', course_views.create_course, name='create_course'),
+    url(r'view_course', course_views.view_courses, name='view_course'),
     url(r'^admin/', admin.site.urls),
     url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
         name='login'),
