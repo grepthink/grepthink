@@ -25,22 +25,24 @@ from teamwork.apps.courses import views as course_views
 urlpatterns = [
     #/
     url(r'^$', core_views.home, name='home'),
-    #/signup/
+    # /signup/
     url(r'^signup/$', profile_views.signup, name='signup'),
-    #/create_project/
-    url(r'create_project_SHIT', project_views.create_project, name='create_project'),
-    #/view_projects/
+    # /create_project/
+    url(r'create_project', project_views.create_project, name='create_project'),
+    # /view_projects/
     url(r'view_projects', project_views.view_projects, name='view_projects'),
+    # /create_course/
     url(r'create_course', course_views.create_course, name='create_course'),
+    # /view_course/
     url(r'view_course', course_views.view_courses, name='view_course'),
-    #/admin/
+    # /admin/
     url(r'^admin/', admin.site.urls),
-    #login
+    # /login/
     url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
         name='login'),
     #logout
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
-    #username/    
+    # /username/ - A users unique profile url
     url(r'^(?P<username>[^/]+)/$', core_views.profile, name='profile'),
     
 
