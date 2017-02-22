@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from teamwork.apps.core import views as core_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
+from teamwork.apps.courses import views as course_views
 
 urlpatterns = [
     #/
@@ -30,6 +31,8 @@ urlpatterns = [
     url(r'create_project_SHIT', project_views.create_project, name='create_project'),
     #/view_projects/
     url(r'view_projects', project_views.view_projects, name='view_projects'),
+    url(r'create_course', course_views.create_course, name='create_course'),
+    url(r'view_course', course_views.view_courses, name='view_course'),
     #/admin/
     url(r'^admin/', admin.site.urls),
     #login

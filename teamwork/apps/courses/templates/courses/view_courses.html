@@ -1,0 +1,37 @@
+{% extends 'adminlte/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %} Courses {% endblock %}
+
+{% block head %}
+  <link href="{% static 'css/courses.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+  <div class="page-header">
+    <h1> Courses </h1>
+  </div>
+  <div class="row">
+    <div class="col-md-10">
+      <section class="courses">
+        {% for course in courses %}
+          <p>{{ course.name }}<p>
+          <ul>
+          {% for studs in course.students.all %}
+            {% if studs.username != null %}
+              <li>{{ studs.username }}</li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        {% empty %}
+          <h4 class="no-courses"> There are no projects yet. <a href="{% url 'create_course' %}"> Go ahead and create one now!</a></h4>
+        {% endfor %}
+      </section>
+    </div>
+  </div>
+
+  <!--paginator-->
+
+{% endblock content %}
