@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'adminlte/base.html' %}
 
 {% load staticfiles i18n %}
 
@@ -6,7 +6,7 @@
   <link href="{% static 'css/signup.css' %}" rel="stylesheet">
 {% endblock head %}
 
-{% block main %}
+{% block content %}
   <h1 class="logo"><a href="{% url 'home' %}">Teamwork</a></h1>
   <div class="signup">
     <h2>{% trans 'Sign up for Teamwork' %}</h2>
@@ -27,4 +27,4 @@
       <button type="submit" class="btn btn-primary btn-lg">{% trans 'Create an account' %}</button>
     </form>
   </div>
-{% endblock main %}
+{% endblock content %}
