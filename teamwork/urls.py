@@ -35,6 +35,8 @@ urlpatterns = [
     url(r'create_course', course_views.create_course, name='create_course'),
     # /view_course/
     url(r'view_course', course_views.view_courses, name='view_course'),
+    #/join_course/
+    url(r'join_course', course_views.join_course, name='join_course'),
     # /admin/
     url(r'^admin/', admin.site.urls),
     # /login/
@@ -44,7 +46,7 @@ urlpatterns = [
     url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
     # /username/ - A users unique profile url
     url(r'^(?P<username>[^/]+)/$', core_views.profile, name='profile'),
-    
+
 
     #just testing with this, will substitue for the version above
     #url(r'^view_profile', profile_views.view_profile, name='view_profile')

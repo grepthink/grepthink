@@ -32,6 +32,33 @@ def view_courses(request):
     return _courses(request, all_courses)
 
 @login_required
+def join_course(request):
+    """
+    Public method that takes a request,
+    """
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = JoinCourseForm(request.user.id,request.POST)
+        #if form is accepted
+        if form.is_valid():
+            #the courseID will be gotten from the form
+            course_code = form.cleaned_data.get('code')
+            all_courses = Course.objects.all()
+            #loops through the courses to find the course with corresponding course_code
+            # O(n) time
+            for i in all_courses:
+                if course_code == i.addCode:
+                    #checks to see if an enrollment already exists
+                    if not Enrollment.objects.filter(user=request.user, course=i).exists():
+                        #creates an enrollment relation with the current user and the selected course
+                        Enrollment.objects.create(user=request.user, course=i)
+            #returns to view courses
+            return redirect('/view_courses.html/')
+    else:
+        form = JoinCourseForm(request.user.id)
+    return render(request, 'courses/join_course.html', {'form': form})
+
+@login_required
 def create_course(request):
     """
     Public method that creates a form and renders the request to create_project.html
