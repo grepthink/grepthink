@@ -7,6 +7,14 @@ from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 import uuid
+import random
+import string
+
+# generates the add code
+def rand_code(size):
+    # usees a random choice from lowercase, uppercase, and digits
+    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
+
 
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
@@ -34,7 +42,14 @@ class Course(models.Model):
 
     # auto fields
     creator = models.CharField(max_length=255, default="No admin lol")
-    addCode = models.CharField(max_length=8, unique=True, default=uuid.uuid4)
+    
+    # this is option 2 using a UUID, but long and has hyphens
+    # addCode = models.CharField(max_length=8, unique=True, default=uuid.uuid4)
+    # short solution using a random alphanumeric generator
+    addCode = models.CharField(max_length=10, unique=True)    
+
+
+
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.
@@ -56,8 +71,13 @@ class Course(models.Model):
         self.pk is the primary key of the Project object in the database!
         I don't know what super does...
         """
-        if not self.pk:
-            super(Course, self).save(*args, **kwargs)
+        # try catch to ensure the unique property is met
+        try:
+            # if the addcode has not been assigned yet get one
+            if self.addCode is None or len(self.addCode) == 0:
+                self.addCode = rand_code(10)
+        except IntegrityError as e:
+            save()
         super(Course, self).save(*args, **kwargs)
 
     @staticmethod
