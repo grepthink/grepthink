@@ -81,7 +81,7 @@ def create_project(request):
     Public method that creates a form and renders the request to create_project.html
     """
     if request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # create an object for the input
             project = Project()
@@ -97,6 +97,6 @@ def create_project(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect('/view_projects.html/')
     else:
-        form = ProjectForm()
+        form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'form': form})
 
