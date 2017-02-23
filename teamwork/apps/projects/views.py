@@ -4,6 +4,7 @@ from .forms import *
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -65,6 +66,7 @@ def _projects(request, projects):
         'projects': projects, 
     })
 
+@login_required
 def view_projects(request):
     """
     Public method that takes a request, retrieves all Project objects from the model, 
@@ -73,6 +75,7 @@ def view_projects(request):
     all_projects = Project.get_published()
     return _projects(request, all_projects)
 
+@login_required
 def create_project(request):
     """
     Public method that creates a form and renders the request to create_project.html

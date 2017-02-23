@@ -4,6 +4,7 @@ from .forms import *
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 
 def _courses(request, courses):
     """
@@ -21,6 +22,7 @@ def _courses(request, courses):
         'courses': courses, 
     })
 
+@login_required
 def view_courses(request):
     """
     Public method that takes a request, retrieves all Project objects from the model, 
@@ -29,6 +31,7 @@ def view_courses(request):
     all_courses = Course.get_published()
     return _courses(request, all_courses)
 
+@login_required
 def create_course(request):
     """
     Public method that creates a form and renders the request to create_project.html

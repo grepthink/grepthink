@@ -16,4 +16,31 @@
             <i class="fa fa-folder"></i> <span>View Projects</span>
         </a>
     </li>
+    <li>
+        <a href="{% url 'create_course' %}">
+            <i class="fa fa-plus"></i> <span>Create Course</span>
+        </a>
+    </li>
+        <li>
+        <a href="{% url 'view_course' %}">
+            <i class="fa fa-folder"></i> <span>View Course</span>
+        </a>
+    </li>
+
+    <!-- Temporary sidebar links for easy testing, will move later -->
+    <li>
+        <a href="{% url 'login' %}">
+            <i class="fa fa-user"></i> <span>Login</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'signup' %}">
+            <i class="fa fa-plus"></i> <span>Signup</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'profile' user.username %}">
+            <i class="fa fa-user"></i> <span>Profile</span>
+        </a>
+    </li>
 {% endblock nav_links %}

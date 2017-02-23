@@ -4,12 +4,17 @@ from .forms import *
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 def home(request):
-    return render(request, 'core/home.html')
+    if request.user.is_authenticated():
+        return render(request, 'core/home.html')
+    else:
+        return render(request, 'core/cover.html')
 
+@login_required
 def profile(request, username):
     page_user = get_object_or_404(User, username=username)
     return render(request, 'core/profile.html', {
