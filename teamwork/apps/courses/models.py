@@ -29,6 +29,7 @@ class Course(models.Model):
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     students = models.ManyToManyField(User, through='Enrollment')
+    creator = models.CharField(max_length=255, default="No admin lol")
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -43,7 +44,7 @@ class Course(models.Model):
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
         return self.name
-    
+
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...

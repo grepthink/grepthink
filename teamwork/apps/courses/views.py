@@ -19,13 +19,13 @@ def _courses(request, courses):
     #except EmptyPage:
     #    projects = paginator.page(paginator.num_pages)
     return render(request, 'courses/view_courses.html', {
-        'courses': courses, 
+        'courses': courses,
     })
 
 @login_required
 def view_courses(request):
     """
-    Public method that takes a request, retrieves all Project objects from the model, 
+    Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
     """
     all_courses = Course.get_published()
@@ -41,12 +41,15 @@ def create_course(request):
         if form.is_valid():
             # create an object for the input
             course = Course()
-            course.name = form.cleaned_data.get('Name')
-            course.students = form.cleaned_data.get('Students')
+            course.name = form.cleaned_data.get('name')
             # save this object
             course.save()
+            students = form.cleaned_data.get('students')
+
+            course.creator = request.user.username
+
             # loop through the members in the object and make m2m rows for them
-            for i in course.students:
+            for i in students:
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
