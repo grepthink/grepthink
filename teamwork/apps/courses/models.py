@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
+import uuid
+
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
 
@@ -29,8 +31,10 @@ class Course(models.Model):
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     students = models.ManyToManyField(User, through='Enrollment')
-    creator = models.CharField(max_length=255, default="No admin lol")
 
+    # auto fields
+    creator = models.CharField(max_length=255, default="No admin lol")
+    addCode = models.CharField(max_length=8, unique=True, default=uuid.uuid4)
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.

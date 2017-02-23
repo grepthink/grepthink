@@ -42,12 +42,10 @@ def create_course(request):
             # create an object for the input
             course = Course()
             course.name = form.cleaned_data.get('name')
+            course.creator = request.user.username
+            students = form.cleaned_data.get('students')
             # save this object
             course.save()
-            students = form.cleaned_data.get('students')
-
-            course.creator = request.user.username
-
             # loop through the members in the object and make m2m rows for them
             for i in students:
                 Enrollment.objects.create(user=i, course=course)
