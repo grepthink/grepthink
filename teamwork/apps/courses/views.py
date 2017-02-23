@@ -37,7 +37,8 @@ def create_course(request):
     Public method that creates a form and renders the request to create_project.html
     """
     if request.method == 'POST':
-        form = CourseForm(request.POST)
+        # send the current user.id to filter out
+        form = CourseForm(request.user.id,request.POST)
         if form.is_valid():
             # create an object for the input
             course = Course()
@@ -53,5 +54,5 @@ def create_course(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect('/view_courses.html/')
     else:
-        form = CourseForm()
+        form = CourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form})

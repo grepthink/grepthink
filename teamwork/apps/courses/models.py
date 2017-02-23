@@ -42,10 +42,6 @@ class Course(models.Model):
 
     # auto fields
     creator = models.CharField(max_length=255, default="No admin lol")
-    
-    # this is option 2 using a UUID, but long and has hyphens
-    # addCode = models.CharField(max_length=8, unique=True, default=uuid.uuid4)
-    # short solution using a random alphanumeric generator
     addCode = models.CharField(max_length=10, unique=True)    
 
 
@@ -71,13 +67,17 @@ class Course(models.Model):
         self.pk is the primary key of the Project object in the database!
         I don't know what super does...
         """
+
         # try catch to ensure the unique property is met
         try:
             # if the addcode has not been assigned yet get one
             if self.addCode is None or len(self.addCode) == 0:
                 self.addCode = rand_code(10)
         except IntegrityError as e:
-            save()
+            # if we fail the unique property get a new addCode until one doesnt exist
+            while Course.objects.filter(addCode=self.addCode).exists():
+                self.addCode = rand_code(10)
+    
         super(Course, self).save(*args, **kwargs)
 
     @staticmethod
