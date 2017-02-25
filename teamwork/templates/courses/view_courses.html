@@ -6,32 +6,41 @@
 {% block title %} Courses {% endblock %}
 
 {% block head %}
-  <link href="{% static 'css/courses.css' %}" rel="stylesheet">
+<link href="{% static 'css/courses.css' %}" rel="stylesheet">
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
-    <h1> Courses </h1>
-  </div>
-  <div class="row">
-    <div class="col-md-10">
-      <section class="courses">
-        {% for course in courses %}
-          <p>{{ course.name }}<p>
-          <ul>
-          {% for studs in course.students.all %}
+<div class="page-header">
+  <h1> Courses </h1>
+</div>
+<div class="row">
+  <div class="col-md-10">
+    <section class="courses">
+      {% for course in courses %}
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ course.name }}</h2>
+        </div>
+        <div class="panel-body">
+          <p>Students:
+            {% for studs in course.students.all %}
             {% if studs.username != null %}
-              <li>{{ studs.username }}</li>
+            <span class="label label-primary">{{ studs.username }}</span>
             {% endif %}
-          {% endfor %}
-          </ul>
-        {% empty %}
-          <h4 class="no-courses"> There are no projects yet. <a href="{% url 'create_course' %}"> Go ahead and create one now!</a></h4>
-        {% endfor %}
-      </section>
-    </div>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+      {% empty %}
+      <div class="alert alert-warning" role="alert">
+        <i class="fa fa-warning"></i>
+        There are no courses yet. Go ahead and
+        <a href="{% url 'create_course' %}" class="alert-link">create one now!</a>
+      </div>
+      {% endfor %}
+    </section>
   </div>
-
-  <!--paginator-->
+</div>
+<!--paginator-->
 
 {% endblock content %}
