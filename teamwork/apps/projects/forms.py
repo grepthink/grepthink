@@ -10,8 +10,7 @@ class ProjectForm(forms.ModelForm):
 		self.fields['members'].queryset = User.objects.exclude(id=uid).exclude(is_superuser=True)
 
 	title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255)
-	members = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=User.objects.all())
+	members = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(), required=False)
 	class Meta:
 	    model = Project
 	    fields = ['title']
-
