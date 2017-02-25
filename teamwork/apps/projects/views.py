@@ -63,13 +63,13 @@ def _projects(request, projects):
     #except EmptyPage:
     #    projects = paginator.page(paginator.num_pages)
     return render(request, 'projects/view_projects.html', {
-        'projects': projects, 
+        'projects': projects,
     })
 
 @login_required
 def view_projects(request):
     """
-    Public method that takes a request, retrieves all Project objects from the model, 
+    Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
     """
     all_projects = Project.get_published()
@@ -88,6 +88,7 @@ def create_project(request):
             project.title = form.cleaned_data.get('title')
             # project.member = form.cleaned_data.get('members')
             members = form.cleaned_data.get('members')
+            project.creator = request.user.username
             # save this object
             project.save()
             # loop through the members in the object and make m2m rows for them
@@ -99,4 +100,3 @@ def create_project(request):
     else:
         form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'form': form})
-
