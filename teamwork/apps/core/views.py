@@ -14,12 +14,7 @@ def home(request):
     else:
         return render(request, 'core/cover.html')
 
-@login_required
-def profile(request, username):
-    page_user = get_object_or_404(User, username=username)
-    return render(request, 'core/profile.html', {
-        'page_user': page_user,
-        })
+
 
 #Shouldnt have a use as of 2/11
 """

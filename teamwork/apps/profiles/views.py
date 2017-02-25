@@ -1,6 +1,9 @@
+from .models import *
+from .forms import *
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
 from teamwork.apps.profiles.forms import SignUpForm
@@ -27,8 +30,9 @@ def signup(request):
         return render(request, 'profiles/signup.html',
                       {'form': SignUpForm()})
 
-# Not sure if this is need. Will look into - andgates
 @login_required
-def view_profile(request, username):
-    user = get_object_or_404(User, username=username)
-    return render(request, 'profiles/view_profile.html', {'user': user})
+def profile(request, username):
+    page_user = get_object_or_404(User, username=username)
+    return render(request, 'profiles/profile.html', {
+        'page_user': page_user,
+        })
