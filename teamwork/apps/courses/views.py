@@ -79,7 +79,7 @@ def create_course(request):
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect('/view_courses.html/')
+            return redirect('/course')
     else:
         form = CourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form})
@@ -106,7 +106,7 @@ def edit_course(request, name):
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect('/view_courses.html/')
+            return redirect('/course')
     else:
         form = EditCourseForm(request.user.id)
     return render(request, 'courses/edit_course.html', {'form': form,
