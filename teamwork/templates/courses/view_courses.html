@@ -32,6 +32,7 @@
                         {% endif %}
                         {% endfor %}
                     </p>
+                    <a href="{% url 'edit_course' course.name %}">Edit this</a>
                 </div>
             </div>
             {% empty %}

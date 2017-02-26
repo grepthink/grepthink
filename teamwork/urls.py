@@ -32,11 +32,16 @@ urlpatterns = [
     # /view_projects/
     url(r'view_projects', project_views.view_projects, name='view_projects'),
     # /create_course/
-    url(r'create_course', course_views.create_course, name='create_course'),
+    url(r'^course/new/?$', course_views.create_course, name='create_course'),
     # /view_course/
-    url(r'view_course', course_views.view_courses, name='view_course'),
+    url(r'course/?$', course_views.view_courses, name='view_course'),
     #/join_course/
     url(r'join_course', course_views.join_course, name='join_course'),
+    url(r'^course/(?P<name>[^/]+)/edit$', course_views.edit_course,
+        name='edit_course'),
+    #url(r'edit_course/(?P<name>[^/]+)/$', course_views.edit_course,
+    #    name='edit_course'),
+
     # /admin/
     url(r'^admin/', admin.site.urls),
     # /login/
