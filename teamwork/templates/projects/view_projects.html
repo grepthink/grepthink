@@ -6,33 +6,52 @@
 {% block title %} Projects {% endblock %}
 
 {% block head %}
-  <link href="{% static 'css/projects.css' %}" rel="stylesheet">
+<link href="{% static 'css/projects.css' %}" rel="stylesheet">
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
+<div class="page-header">
     <h1> Projects </h1>
-  </div>
-  <div class="row">
-    <div class="col-md-10">
-      <section class="projects">
+</div>
+<section class="projects">
+    <div class="row">
         {% for project in projects %}
-          <p>{{ project.title }}<p>
-          <ul>
-            <li>{{ project.creator }}
-          {% for mem in project.members.all %}
-            {% if mem.username != null %}
-              <li>{{ mem.username }}</li>
-            {% endif %}
-          {% endfor %}
-          </ul>
+        <div class="col-sm-6 col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ project.title }}</h3>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <strong>Owner</strong>
+                        <span class="label label-success">
+                            {{ project.creator }}
+                        </span>
+                    </p>
+                    <p><strong>Members</strong>
+                        {% for mem in project.members.all %}
+                        {% if mem.username != null %}
+                        <span class="label label-primary">
+                            {{ mem.username }}
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+        </div>
         {% empty %}
-          <h4 class="no-projects"> There are no projects yet. <a href="{% url 'create_project' %}"> Go ahead and create one now!</a></h4>
+        <div class="alert alert-warning" role="alert">
+            <i class="fa fa-warning"></i>
+            There are no projects yet. Go ahead and
+            <a href="{% url 'create_project' %}" class="alert-link">
+                create one now!
+            </a>
+        </div>
         {% endfor %}
-      </section>
     </div>
-  </div>
+</section>
 
-  <!--paginator-->
+<!--paginator-->
 
 {% endblock content %}
