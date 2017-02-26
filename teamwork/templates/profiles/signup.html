@@ -25,6 +25,8 @@
         </div>
       {% endfor %}
       <button type="submit" class="btn btn-primary btn-lg">{% trans 'Create an account' %}</button>
+      {{ form.errors }}
+      {{ form.non_field_errors }}
     </form>
   </div>
 {% endblock content %}

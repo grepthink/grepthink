@@ -9,9 +9,23 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+
+class Skills(models.Model):
+	skill = models.CharField(max_length=255, default="")
+
+class PastClasses(models.Model):
+    past_class = models.CharField(max_length=255, default="")
+
 class Profile(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
+
+    # TODO: Interest, Known Skills, 
+    # 		Interested in Learning Skills, Past Classes 
+    known_skills = models.ManyToManyField(Skills)
+    # learn_skills = models.ManyToManyField(Skills)
+    past_classes = models.ManyToManyField(PastClasses)
+
        
     def __str__(self):
         return self.user.username

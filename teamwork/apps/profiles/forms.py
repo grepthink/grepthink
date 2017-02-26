@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import *
 from django.core.exceptions import ValidationError
 
 from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
@@ -91,3 +92,26 @@ class SignUpForm(forms.ModelForm):
             self._errors['password'] = self.error_class(
                 ['Passwords don\'t match'])
         return self.cleaned_data
+
+class SkillsForm(forms.ModelForm):
+
+  def __init__(self, *args, **kwargs):
+    super(SkillsForm, self).__init__(*args, **kwargs)
+
+  skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+  past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+
+  class Meta:
+      model = Skills
+      fields = ['skill']
+
+
+
+
+
+
+
+
+
+
+

@@ -32,7 +32,42 @@ def signup(request):
 
 @login_required
 def profile(request, username):
+    form = SkillsForm(request.POST)
+    if request.method == 'POST':
+        
+        if form.is_valid():
+            
+            skill = form.cleaned_data.get('skill')
+
+
+            if Skills.objects.filter(skill=skill.lower()):
+                print("fuck yeahhhhh")
+            else:
+                Skills.objects.create(skill=skill.lower())
+
+          
+        else:                     
+            return render(request, 'profiles/profile.html', {
+                'page_user': page_user, 'form':form , 
+            })
+
+
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user,
+        'page_user': page_user, 'form':form , 
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
