@@ -12,6 +12,7 @@ class ProjectForm(forms.ModelForm):
 	title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255)
 	members = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(), required=False)
 	accepting = forms.BooleanField(initial= True, label = 'accepting members', required = False)
+	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
 	class Meta:
 	    model = Project
 	    fields = ['title']

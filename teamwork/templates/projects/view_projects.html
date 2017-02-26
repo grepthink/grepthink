@@ -25,7 +25,12 @@
               <li>{{ mem.username }}</li>
             {% endif %}
           {% endfor %}
-          <li> Status? {{ project.avail_mem }} </li>
+          {% if project.sponsor == True %}
+            <li> <b> SPONSORED! </b></li>
+          {% endif %}
+          {% if project.avail_mem == True %}
+            <li>Acceping Members!</li>
+          {% endif %}
           </ul>
         {% empty %}
           <h4 class="no-projects"> There are no projects yet. <a href="{% url 'create_project' %}"> Go ahead and create one now!</a></h4>

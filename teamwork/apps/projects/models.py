@@ -31,6 +31,7 @@ class Project(models.Model):
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
     members = models.ManyToManyField(User, through='Membership')
     avail_mem = models.BooleanField(default = True)
+    sponsor = models.BooleanField(default = False)
 
 
     # The Meta class provides some extra information about the Project model.
