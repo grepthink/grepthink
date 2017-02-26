@@ -11,35 +11,40 @@
 
 {% block content %}
 <div class="page-header">
-  <h1> Courses </h1>
+    <h1> Courses </h1>
 </div>
 <div class="row">
-  <div class="col-md-10">
-    <section class="courses">
-      {% for course in courses %}
-      <div class="panel">
-        <div class="panel-heading">
-          <h3 class="panel-title">{{ course.name }}</h2>
-        </div>
-        <div class="panel-body">
-          <p>Students:
-            {% for studs in course.students.all %}
-            {% if studs.username != null %}
-            <span class="label label-primary">{{ studs.username }}</span>
-            {% endif %}
+    <div class="col-md-10">
+        <section class="courses" clearfix>
+            {% for course in courses %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ course.name }}</h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Students</strong>
+                        {% for studs in course.students.all %}
+                        {% if studs.username != null %}
+                        <span class="label label-primary">
+                            {{ studs.username }}
+                        </span>
+                        <span> </span>
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fa fa-warning"></i>
+                There are no courses yet. Go ahead and
+                <a href="{% url 'create_course' %}" class="alert-link">
+                    create one now!
+                </a>
+            </div>
             {% endfor %}
-          </p>
-        </div>
-      </div>
-      {% empty %}
-      <div class="alert alert-warning" role="alert">
-        <i class="fa fa-warning"></i>
-        There are no courses yet. Go ahead and
-        <a href="{% url 'create_course' %}" class="alert-link">create one now!</a>
-      </div>
-      {% endfor %}
-    </section>
-  </div>
+        </section>
+    </div>
 </div>
 <!--paginator-->
 

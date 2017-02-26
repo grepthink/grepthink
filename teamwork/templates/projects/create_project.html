@@ -3,26 +3,26 @@
 {% load i18n %}
 
 {% block head %}
-  <script src="{% static 'js/projects.js' %}"></script>
+<script src="{% static 'js/projects.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
+<div class="page-header">
     <h1> Create Project </h1>
-  </div>
-  <form action="{% url 'create_project' %}" method="post" role="form">
+</div>
+<form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
-      <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
         {{ field }}
         {% for error in field.errors %}
-          <label class="control-label">{{ error }}</label>
+        <label class="control-label">{{ error }}</label>
         {% endfor %}
-      </div>
+    </div>
     {% endfor %}
     <input type="submit" value="Post Project">
-  </form>
+</form>
 
 {% endblock content %}
