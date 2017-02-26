@@ -19,12 +19,13 @@
         {% for project in projects %}
           <p>{{ project.title }}<p>
           <ul>
-            <li>{{ project.creator }}
+            <li>Project Owner: {{ project.creator }} </li>
           {% for mem in project.members.all %}
             {% if mem.username != null %}
               <li>{{ mem.username }}</li>
             {% endif %}
           {% endfor %}
+          <li> Status? {{ project.avail_mem }} </li>
           </ul>
         {% empty %}
           <h4 class="no-projects"> There are no projects yet. <a href="{% url 'create_project' %}"> Go ahead and create one now!</a></h4>
