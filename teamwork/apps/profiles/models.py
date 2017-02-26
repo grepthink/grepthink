@@ -8,13 +8,11 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from teamwork.apps.projects.models import *
 
 
 class Skills(models.Model):
 	skill = models.CharField(max_length=255, default="")
-
-class PastClasses(models.Model):
-    past_class = models.CharField(max_length=255, default="")
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -24,7 +22,7 @@ class Profile(models.Model):
     # 		Interested in Learning Skills, Past Classes 
     known_skills = models.ManyToManyField(Skills)
     # learn_skills = models.ManyToManyField(Skills)
-    past_classes = models.ManyToManyField(PastClasses)
+    interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
 
        
     def __str__(self):
