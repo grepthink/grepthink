@@ -12,7 +12,24 @@ from teamwork.apps.projects.models import *
 
 
 class Skills(models.Model):
-	skill = models.CharField(max_length=255, default="")
+    skill = models.CharField(max_length=255, default="")
+
+    def __str__(self):
+        return self.skill
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Skill"
+        # Multiple Skill objects are referred to as Projects.
+        verbose_name_plural = "Skills"
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Project object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Project object in the database!
+        I don't know what super does...
+        """
+        super(Skills, self).save(*args, **kwargs)
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -22,7 +39,7 @@ class Profile(models.Model):
     # 		Interested in Learning Skills, Past Classes 
     known_skills = models.ManyToManyField(Skills)
     # learn_skills = models.ManyToManyField(Skills)
-    interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
+    # interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
 
        
     def __str__(self):

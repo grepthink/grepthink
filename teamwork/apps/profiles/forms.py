@@ -99,7 +99,7 @@ class SkillsForm(forms.ModelForm):
     super(SkillsForm, self).__init__(*args, **kwargs)
 
   skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
-  past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+  # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
 
   class Meta:
       model = Skills
