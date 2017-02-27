@@ -70,6 +70,7 @@ def create_course(request):
             # create an object for the input
             course = Course()
             course.name = form.cleaned_data.get('name')
+            course.info = form.cleaned_data.get('info')
             course.creator = request.user.username
             students = form.cleaned_data.get('students')
             # save this object
