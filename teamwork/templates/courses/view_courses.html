@@ -17,6 +17,12 @@
     <div class="col-md-10">
         <section class="courses" clearfix>
             {% for course in courses %}
+
+            
+           <a href="course/{{ course.name }}/">
+           {# TODO: <a href="{% url 'view_one_course' course.name %}"> #}
+
+
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ course.name }}</h3>
@@ -33,7 +39,9 @@
                         {% endfor %}
                     </p>
                 </div>
-            </div>
+            </div>    
+
+            </a>
             {% empty %}
             <div class="alert alert-warning" role="alert">
                 <i class="fa fa-warning"></i>

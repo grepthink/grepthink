@@ -33,6 +33,12 @@ urlpatterns = [
     url(r'view_projects', project_views.view_projects, name='view_projects'),
     # /create_course/
     url(r'create_course', course_views.create_course, name='create_course'),
+
+    #TODO: better regex for coursename, projecttitle, and username
+    #/course/testCourse/        
+    url(r'course/(?P<coursename>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
+    #/project/testProject
+    url(r'project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
     # /view_course/
     url(r'view_course', course_views.view_courses, name='view_course'),
     #/join_course/

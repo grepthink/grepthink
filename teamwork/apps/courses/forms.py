@@ -28,3 +28,15 @@ class JoinCourseForm(forms.ModelForm):
 	class Meta:
 	    model = Course
 	    fields = ['code']
+
+
+# class ViewCourseForm(forms.ModelForm):	
+
+# 	def __init__(self, *args, **kwargs):
+# 		super(ViewCourseForm, self).__init__(*args, **kwargs)
+
+# 	interest = forms.IntegerField(required=False)
+
+# 	class Meta:
+# 	    model = Course
+# 	    fields = ['interest']

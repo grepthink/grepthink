@@ -16,30 +16,37 @@
 <section class="projects">
     <div class="row">
         {% for project in projects %}
-        <div class="col-sm-6 col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ project.title }}</h3>
-                </div>
-                <div class="panel-body">
-                    <p>
-                        <strong>Owner</strong>
-                        <span class="label label-success">
-                            {{ project.creator }}
-                        </span>
-                    </p>
-                    <p><strong>Members</strong>
-                        {% for mem in project.members.all %}
-                        {% if mem.username != null %}
-                        <span class="label label-primary">
-                            {{ mem.username }}
-                        </span>
-                        {% endif %}
-                        {% endfor %}
-                    </p>
+
+
+       <a href="project/{{ project.title }}/">
+       {# TODO:(kevin) <a href="{% url 'view_one_project' project.title %}"> #}
+            
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ project.title }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <strong>Owner</strong>
+                            <span class="label label-success">
+                                {{ project.creator }}
+                            </span>
+                        </p>
+                        <p><strong>Members</strong>
+                            {% for mem in project.members.all %}
+                            {% if mem.username != null %}
+                            <span class="label label-primary">
+                                {{ mem.username }}
+                            </span>
+                            {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
+
         {% empty %}
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-warning"></i>

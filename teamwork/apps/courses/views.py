@@ -23,13 +23,29 @@ def _courses(request, courses):
     })
 
 @login_required
-def view_courses(request):
+def view_courses(request):    
     """
     Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
     """
     all_courses = Course.get_published()
     return _courses(request, all_courses)
+
+@login_required
+def view_one_course(request, coursename):
+    """
+    Public method that takes a request and a coursename, retrieves the Course object from the model
+    with given coursename.  Renders courses/view_course.html
+
+    TODO: 
+
+    """
+    cur_course = get_object_or_404(Course, name=coursename)    
+
+    return render(request, 'courses/view_course.html', {
+                'cur_course': cur_course ,
+                })
+    
 
 @login_required
 def join_course(request):

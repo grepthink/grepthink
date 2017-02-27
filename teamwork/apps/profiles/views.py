@@ -32,18 +32,26 @@ def signup(request):
 
 @login_required
 def profile(request, username):
+    """
+    Public method that takes a request and a username.  Gets an entered 'skill' from the form
+    and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
+
+    # TODO: fix up return calls, form should be in if
+    """
+
     form = SkillsForm(request.POST)
     if request.method == 'POST':        
         if form.is_valid():            
             skill = form.cleaned_data.get('skill')
             if Skills.objects.filter(skill=skill.lower()):
-                print("fuck yeahhhhh")
+                # skill already exists
+                print("skill already in Skills model")    
             else:
                 Skills.objects.create(skill=skill.lower())
-        else:                     
-            return render(request, 'profiles/profile.html', {
-                'page_user': page_user, 'form':form , 
-            })
+        #else:                     
+         #   return render(request, 'profiles/profile.html', {
+          #      'page_user': page_user, 'form':form , 
+           # })
 
 
     page_user = get_object_or_404(User, username=username)
