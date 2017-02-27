@@ -39,7 +39,7 @@ class Course(models.Model):
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     info = models.CharField(max_length=300, default="There is no Course Description")
-    term = models.IntegerField(default=0)
+    term = models.CharField(max_length=20, default="No Term Selected")
     students = models.ManyToManyField(User, through='Enrollment')
     
     # auto fields
