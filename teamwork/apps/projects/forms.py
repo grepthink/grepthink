@@ -14,3 +14,15 @@ class ProjectForm(forms.ModelForm):
 	class Meta:
 	    model = Project
 	    fields = ['title']
+
+class ViewProjectForm(forms.ModelForm):
+
+	def __init__(self, *args, **kwargs):
+		super(ViewProjectForm, self).__init__(*args, **kwargs)
+
+
+	interest = forms.IntegerField(required=False)
+
+	class Meta:
+	    model = Project
+	    fields = ['interest']

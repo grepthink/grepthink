@@ -18,11 +18,10 @@ class Profile(models.Model):
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
 
-    # TODO: Interest, Known Skills, 
-    # 		Interested in Learning Skills, Past Classes 
+    # TODO: Interest - ManyToOne, Past Classes, Bio
     known_skills = models.ManyToManyField(Skills)
     # learn_skills = models.ManyToManyField(Skills)
-    interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
+    # interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
 
        
     def __str__(self):

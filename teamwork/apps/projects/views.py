@@ -75,6 +75,28 @@ def view_projects(request):
     all_projects = Project.get_published()
     return _projects(request, all_projects)
 
+
+@login_required
+def view_one_project(request, projecttitle):
+    """
+    Public method that takes a request and a projecttitle, retrieves the Project object from the model
+    with given projecttitle.  Renders projects/view_project.html
+    # TODO: fix up return calls
+    """
+    cur_project = get_object_or_404(Project, title=projecttitle)    
+
+    if request.method == 'GET':
+        form = ViewProjectForm(request.POST)
+
+        if form.is_valid():            
+            return render(request, 'projects/view_project.html', {
+                'cur_project': cur_project , 'form': form,
+                })
+                                                
+    return render(request, 'projects/view_project.html', {
+                'cur_project': cur_project ,
+                })
+
 @login_required
 def create_project(request):
     """
