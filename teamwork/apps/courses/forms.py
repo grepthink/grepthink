@@ -11,10 +11,12 @@ class CourseForm(forms.ModelForm):
 		self.fields['students'].queryset = User.objects.exclude(id=uid).exclude(is_superuser=True)
 
 	name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255)
+	info = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255)
 	students = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(), required=False)
+	
 	class Meta:
 	    model = Course
-	    fields = ['name']
+	    fields = ['name','info']
 
 
 class JoinCourseForm(forms.ModelForm):
