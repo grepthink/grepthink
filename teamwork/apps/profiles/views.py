@@ -56,12 +56,12 @@ def profile(request, username):
                     # save the new object
                     known_skill.save()
                 # This is how we can use the reverse of the relationship
-                print(known_skill.known.all())
+                # print(known_skill.known.all())
                 # add the skill to the current profile
                 profile.known_skills.add(known_skill)
                 profile.save()
                 # This is how we can get all the skills from a user
-                print(profile.known_skills.all())
+                # print(profile.known_skills.all())
 
             # same as Known implemenation
             if learn:
@@ -71,11 +71,11 @@ def profile(request, username):
                     learn_skill = Skills.objects.create(skill=learn.lower())
                     learn_skill.save()
                 # This is how we can use the reverse of the relationship
-                print(learn_skill.learn.all())
+                # print(learn_skill.learn.all())
                 profile.learn_skills.add(learn_skill)
                 profile.save()
                 # This is how we can get all the skills from a user
-                print(profile.learn_skills.all())
+                # print(profile.learn_skills.all())
 
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
