@@ -98,12 +98,13 @@ class SkillsForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     super(SkillsForm, self).__init__(*args, **kwargs)
 
-  skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+  known_skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
   # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+  learn_skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
 
   class Meta:
       model = Skills
-      fields = ['skill']
+      fields = ['known_skill', 'learn_skill']
 
 
 

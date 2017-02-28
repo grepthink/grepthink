@@ -21,6 +21,8 @@ class Skills(models.Model):
         verbose_name = "Skill"
         # Multiple Skill objects are referred to as Projects.
         verbose_name_plural = "Skills"
+        ordering = ('skill',)
+
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
@@ -36,8 +38,8 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
 
     # TODO: Interest - ManyToOne, Past Classes, Bio
-    known_skills = models.ManyToManyField(Skills)
-    # learn_skills = models.ManyToManyField(Skills)
+    known_skills = models.ManyToManyField(Skills, related_name="known", default="")
+    learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
 
        

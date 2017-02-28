@@ -6,7 +6,20 @@
 
 {% block content %}
 {{ page_user.username }}
-
+<div>
+  <ul>
+  {% for skill in profile.known_skills.all %}
+    <li>{{ skill.skill }}</li>
+  {% endfor%}
+  </ul>
+</div>
+<div>
+  <ul>
+  {% for skill in profile.learn_skills.all %}
+    <li>{{ skill.skill }}</li>
+  {% endfor%}
+  </ul>
+</div>
 <form action="{% url 'profile' user.username %}" method="post" role="form">
       {% csrf_token %}
       {% for field in form.visible_fields %}
@@ -20,6 +33,8 @@
             <label class="control-label">{{ error }}</label>
           {% endfor %}
         </div>
-      {% endfor %}      
+      {% endfor %} 
+      <input type="submit" value="Submit">     
 </form>
+
 {% endblock content %}
