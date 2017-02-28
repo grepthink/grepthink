@@ -36,7 +36,7 @@ class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ['name']
+        fields = ['name','info','term','students','slug']
 
 
 class JoinCourseForm(forms.ModelForm):

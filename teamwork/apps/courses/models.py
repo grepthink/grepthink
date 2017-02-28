@@ -87,11 +87,14 @@ class Course(models.Model):
             while Course.objects.filter(addCode=self.addCode).exists():
                 self.addCode = rand_code(10)
 
-        newslug = self.name + "-" + self.term
-        while Course.objects.filter(slug=newslug).exists():
-            newslug = self.name + "-" + self.term + "-" + rand_code(3)
-
-        self.slug = newslug
+        # Generate URL slug if not specified
+        if self.slug is None or len(self.slug) == 0:
+            newslug = self.name + "-" + self.term
+            newslug = newslug[0:20]
+            while Course.objects.filter(slug=newslug).exists():
+                newslug = self.name + "-" + self.term
+                newslug = newslug[0:16] + "-" + rand_code(3)
+            self.slug = newslug
 
         super(Course, self).save(*args, **kwargs)
 
