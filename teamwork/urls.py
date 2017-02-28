@@ -34,7 +34,7 @@ urlpatterns = [
     # /create_course/
     url(r'^course/new/?$', course_views.create_course, name='create_course'),
     # /view_course/
-    url(r'course/?$', course_views.view_courses, name='view_course'),
+    url(r'^course/?$', course_views.view_courses, name='view_course'),
     #/join_course/
     url(r'join_course', course_views.join_course, name='join_course'),
     url(r'^course/(?P<name>[^/]+)/edit$', course_views.edit_course,

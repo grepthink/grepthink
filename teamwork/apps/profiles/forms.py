@@ -68,6 +68,10 @@ class SignUpForm(forms.ModelForm):
         widget=forms.EmailInput(attrs={'class': 'form-control'}),
         required=True,
         max_length=75)
+    prof = forms.BooleanField(
+        initial = False,
+        label = 'Groupthink PLUS account',
+        required = False)
 
     class Meta:
         model = User
