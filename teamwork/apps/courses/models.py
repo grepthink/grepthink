@@ -90,11 +90,13 @@ class Course(models.Model):
         # Generate URL slug if not specified
         if self.slug is None or len(self.slug) == 0:
             newslug = self.name + "-" + self.term
-            newslug = newslug[0:20]
+            newslug = slugify(newslug)[0:20]
             while Course.objects.filter(slug=newslug).exists():
                 newslug = self.name + "-" + self.term
-                newslug = newslug[0:16] + "-" + rand_code(3)
+                newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
+
+        self.slug = slugify(self.slug)
 
         super(Course, self).save(*args, **kwargs)
 

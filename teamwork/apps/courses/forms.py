@@ -8,6 +8,8 @@ class CourseForm(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
         # exclude the current user and the superuser
+        if 'instance' in kwargs:
+            self.fields['slug'].widget = forms.HiddenInput()
         self.fields['students'].queryset = User.objects.exclude(id=uid).exclude(is_superuser=True)
 
     name = forms.CharField(
