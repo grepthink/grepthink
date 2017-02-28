@@ -12,11 +12,22 @@ class CourseForm(forms.ModelForm):
 
     name = forms.CharField(
             widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=255
+            max_length=255,
+            required=True
             )
     info = forms.CharField(
             widget=forms.TextInput(attrs={'class': 'form-control'}),
             max_length=255
+            )
+    term = forms.CharField(
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            max_length=20,
+            required=True
+            )
+    slug = forms.CharField(
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            max_length=20,
+            required=False
             )
     students = forms.ModelMultipleChoiceField(
             widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(),

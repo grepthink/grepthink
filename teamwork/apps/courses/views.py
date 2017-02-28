@@ -86,12 +86,12 @@ def create_course(request):
     return render(request, 'courses/create_course.html', {'form': form})
 
 @login_required
-def edit_course(request, name):
+def edit_course(request, slug):
     """
     Edit course method, creating generic form
     https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
     """
-    course = get_object_or_404(Course, name=name)
+    course = get_object_or_404(Course, slug=slug)
 
     if request.method == 'POST':
         # send the current user.id to filter out

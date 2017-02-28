@@ -87,9 +87,9 @@ class Course(models.Model):
             while Course.objects.filter(addCode=self.addCode).exists():
                 self.addCode = rand_code(10)
 
-        newslug = self.name + "-" + rand_code(3)
+        newslug = self.name + "-" + self.term
         while Course.objects.filter(slug=newslug).exists():
-            newslug = self.name + "-" + rand_code(3)
+            newslug = self.name + "-" + self.term + "-" + rand_code(3)
 
         self.slug = newslug
 

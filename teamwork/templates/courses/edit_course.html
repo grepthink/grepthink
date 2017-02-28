@@ -11,7 +11,7 @@
     <h1> Edit Course </h1>
 </div>
 
-<form action="{% url 'edit_course' course.name %}" method="post" role="form">
+<form action="{% url 'edit_course' course.slug %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
