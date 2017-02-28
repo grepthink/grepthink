@@ -95,21 +95,22 @@ def edit_course(request, name):
 
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = EditCourseForm(request.user.id,request.POST)
+        form = CourseForm(request.user.id,request.POST)
         if form.is_valid():
             # create an object for the input
             course.name = form.cleaned_data.get('name')
             students = form.cleaned_data.get('students')
             course.save()
             # loop through the members in the object and make m2m rows for them
-            #Enrollment.objects.delete(course=course)
+            enrollments = Enrollment.objects.filter(course=course)
+            if enrollments is not None: enrollments.delete()
             for i in students:
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect('/course')
     else:
-        form = EditCourseForm(request.user.id)
+        form = CourseForm(request.user.id)
     return render(request, 'courses/edit_course.html', {'form': form,
         'course': course})
 

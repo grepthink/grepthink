@@ -19,7 +19,10 @@
             {% for course in courses %}
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{ course.name }}</h3>
+                    <h3 class="panel-title">
+                        {{ course.name }}
+                        <small> {{ course.slug }}</small>
+                    </h3>
                 </div>
                 <div class="panel-body">
                     <p><strong>Students</strong>
