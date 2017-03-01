@@ -16,11 +16,16 @@
             <i class="fa fa-folder"></i> <span>View Projects</span>
         </a>
     </li>
-    <li>
-        <a href="{% url 'create_course' %}">
-            <i class="fa fa-plus"></i> <span>Create Course</span>
-        </a>
-    </li>
+
+    {% if user.profile.isProf %}
+      <li>
+          <a href="{% url 'create_course' %}">
+              <i class="fa fa-plus"></i> <span>Create Course</span>
+          </a>
+      </li>
+    {% endif %}
+
+
         <li>
         <a href="{% url 'view_course' %}">
             <i class="fa fa-folder"></i> <span>View Course</span>

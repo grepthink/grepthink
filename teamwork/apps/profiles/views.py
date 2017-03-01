@@ -20,10 +20,30 @@ def signup(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            User.objects.create_user(username=username, password=password,
+
+            prof = form.cleaned_data.get('prof')
+
+            user1 = User.objects.create_user(username=username, password=password,
                                      email=email)
             user = authenticate(username=username, password=password)
             login(request, user)
+
+            # saves current user, which creates a link from user to profile
+            user1.save()
+
+            # edits profile to add professor
+            user1.profile.isProf = prof
+
+            # saves profile
+            user1.save()
+
+            #User.objects.save()
+
+
+            #uinfo = user.get_profile()
+            #uinfo.isProf = prof
+            #uinfo.save()
+
             return redirect('/')
 
     else:
