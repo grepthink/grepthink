@@ -32,7 +32,7 @@ def view_courses(request):
     return _courses(request, all_courses)
 
 @login_required
-def view_one_course(request, coursename):
+def view_one_course(request, slug):
     """
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
@@ -40,7 +40,7 @@ def view_one_course(request, coursename):
     TODO: 
 
     """
-    cur_course = get_object_or_404(Course, name=coursename)    
+    cur_course = get_object_or_404(Course, slug=slug)    
 
     return render(request, 'courses/view_course.html', {
                 'cur_course': cur_course ,

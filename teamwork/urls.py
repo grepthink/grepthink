@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^project/all/', project_views.view_projects, name='view_projects'),
     
     #/course/testCourse/        
-    url(r'^course/(?P<coursename>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
+    url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
     #/project/testProject
     url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
     # /create_course/
