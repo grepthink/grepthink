@@ -71,6 +71,9 @@ def create_course(request):
             course = Course()
             course.name = form.cleaned_data.get('name')
             course.info = form.cleaned_data.get('info')
+            course.term = form.cleaned_data.get('term')
+            course.slug = form.cleaned_data.get('slug')
+
             course.creator = request.user.username
             students = form.cleaned_data.get('students')
             # save this object
@@ -86,30 +89,34 @@ def create_course(request):
     return render(request, 'courses/create_course.html', {'form': form})
 
 @login_required
-def edit_course(request, name):
+def edit_course(request, slug):
     """
     Edit course method, creating generic form
     https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
     """
-    course = get_object_or_404(Course, name=name)
+    course = get_object_or_404(Course, slug=slug)
 
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = EditCourseForm(request.user.id,request.POST)
+        form = CourseForm(request.user.id,request.POST)
         if form.is_valid():
             # create an object for the input
             course.name = form.cleaned_data.get('name')
+            course.info = form.cleaned_data.get('info')
+            course.term = form.cleaned_data.get('term')
+            course.slug = form.cleaned_data.get('slug')
             students = form.cleaned_data.get('students')
             course.save()
             # loop through the members in the object and make m2m rows for them
-            #Enrollment.objects.delete(course=course)
+            enrollments = Enrollment.objects.filter(course=course)
+            if enrollments is not None: enrollments.delete()
             for i in students:
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect('/course')
     else:
-        form = EditCourseForm(request.user.id)
+        form = CourseForm(request.user.id, instance=course)
     return render(request, 'courses/edit_course.html', {'form': form,
         'course': course})
 

@@ -15,7 +15,6 @@ def rand_code(size):
     # usees a random choice from lowercase, uppercase, and digits
     return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
 
-
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
 
@@ -24,10 +23,17 @@ def rand_code(size):
 
 class Course(models.Model):
     """
-    COurse: A database model (object) for courses.
+    Course: A database model (object) for courses.
 
     Fields:
         name: the name of the course.
+        info: the course description
+        term: the school term this course is offered
+        students: many to many field of users
+        slug: unique URL slug used to identify the project
+
+        creator: the instructor of the course
+        addCode: generated unique code used to enroll in the course
 
     Methods:
         __str__(self):                  Human readeable representation of the course object.
@@ -40,15 +46,13 @@ class Course(models.Model):
     name = models.CharField(max_length=255, default="No Course Title Provided")
     info = models.CharField(max_length=300, default="There is no Course Description")
     term = models.CharField(max_length=20, default="No Term Selected")
+    slug = models.CharField(max_length=20, unique=True)
+
     students = models.ManyToManyField(User, through='Enrollment')
-    
+
     # auto fields
     creator = models.CharField(max_length=255, default="No admin lol")
-    addCode = models.CharField(max_length=10, unique=True)    
-
-
-
-
+    addCode = models.CharField(max_length=10, unique=True)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -62,7 +66,7 @@ class Course(models.Model):
         Human readeable representation of the Project object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return self.name
+        return self.name + "(slug: " + self.slug + ")"
 
     def save(self, *args, **kwargs):
         """
@@ -77,11 +81,23 @@ class Course(models.Model):
             # if the addcode has not been assigned yet get one
             if self.addCode is None or len(self.addCode) == 0:
                 self.addCode = rand_code(10)
+
         except IntegrityError as e:
             # if we fail the unique property get a new addCode until one doesnt exist
             while Course.objects.filter(addCode=self.addCode).exists():
                 self.addCode = rand_code(10)
-    
+
+        # Generate URL slug if not specified
+        if self.slug is None or len(self.slug) == 0:
+            newslug = self.name + "-" + self.term
+            newslug = slugify(newslug)[0:20]
+            while Course.objects.filter(slug=newslug).exists():
+                newslug = self.name + "-" + self.term
+                newslug = slugify(newslug[0:16] + "-" + rand_code(3))
+            self.slug = newslug
+
+        self.slug = slugify(self.slug)
+
         super(Course, self).save(*args, **kwargs)
 
     @staticmethod
