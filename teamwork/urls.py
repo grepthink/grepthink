@@ -30,13 +30,19 @@ urlpatterns = [
     # /create_project/
     url(r'^project/create/$', project_views.create_project, name='create_project'),
     # /view_projects/
-    url(r'project/all/', project_views.view_projects, name='view_projects'),
+    url(r'^project/all/', project_views.view_projects, name='view_projects'),
+    
+    #/course/testCourse/        
+    url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
+    #/project/testProject
+    url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
     # /create_course/
     url(r'^course/new/$', course_views.create_course, name='create_course'),
+
     # /view_course/
-    url(r'course/$', course_views.view_courses, name='view_course'),
+    url(r'^course/$', course_views.view_courses, name='view_course'),
     #/join_course/
-    url(r'join_course', course_views.join_course, name='join_course'),
+    url(r'^join_course', course_views.join_course, name='join_course'),
     url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
         name='edit_course'),
     #url(r'edit_course/(?P<name>[^/]+)/$', course_views.edit_course,
