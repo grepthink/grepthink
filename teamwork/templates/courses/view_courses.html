@@ -24,10 +24,15 @@
 
 
             <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ course.name }}</h3>
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-left">
+                        {{ course.name }} ({{ course.term }})
+                    </h3>
+                    <flex></flex>
+                    <small class="pull-right">{{ course.slug }}</small>
                 </div>
                 <div class="panel-body">
+                    <p><i>{{ course.info }}</i></p>
                     <p><strong>Students</strong>
                         {% for studs in course.students.all %}
                         {% if studs.username != null %}
@@ -38,6 +43,12 @@
                         {% endif %}
                         {% endfor %}
                     </p>
+                    <button>
+                        <a href="{% url 'edit_course' course.slug %}">
+                            <i class="fa fa-edit"></i>
+                            Edit
+                        </a>
+                    </button>
                 </div>
             </div>    
 

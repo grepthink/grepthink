@@ -20,7 +20,7 @@ def _courses(request, courses):
     #    projects = paginator.page(paginator.num_pages)
     return render(request, 'courses/view_courses.html', {
         'courses': courses,
-    })
+        })
 
 @login_required
 def view_courses(request):    
@@ -86,6 +86,10 @@ def create_course(request):
             # create an object for the input
             course = Course()
             course.name = form.cleaned_data.get('name')
+            course.info = form.cleaned_data.get('info')
+            course.term = form.cleaned_data.get('term')
+            course.slug = form.cleaned_data.get('slug')
+
             course.creator = request.user.username
             students = form.cleaned_data.get('students')
             # save this object
@@ -95,7 +99,40 @@ def create_course(request):
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect('/view_courses.html/')
+            return redirect('/course')
     else:
         form = CourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form})
+
+@login_required
+def edit_course(request, slug):
+    """
+    Edit course method, creating generic form
+    https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
+    """
+    course = get_object_or_404(Course, slug=slug)
+
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = CourseForm(request.user.id,request.POST)
+        if form.is_valid():
+            # create an object for the input
+            course.name = form.cleaned_data.get('name')
+            course.info = form.cleaned_data.get('info')
+            course.term = form.cleaned_data.get('term')
+            course.slug = form.cleaned_data.get('slug')
+            students = form.cleaned_data.get('students')
+            course.save()
+            # loop through the members in the object and make m2m rows for them
+            enrollments = Enrollment.objects.filter(course=course)
+            if enrollments is not None: enrollments.delete()
+            for i in students:
+                Enrollment.objects.create(user=i, course=course)
+            # we dont have to save again because we do not touch the project object
+            # we are doing behind the scenes stuff (waves hand)
+            return redirect('/course')
+    else:
+        form = CourseForm(request.user.id, instance=course)
+    return render(request, 'courses/edit_course.html', {'form': form,
+        'course': course})
+

@@ -40,9 +40,10 @@ class Profile(models.Model):
     # TODO: Interest - ManyToOne, Past Classes, Bio
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
-    # interest = models.ForeignKey(Project, on_delete=models.CASCADE)    
-
-       
+    # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
+    
+    isProf = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.user.username
 

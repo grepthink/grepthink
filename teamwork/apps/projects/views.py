@@ -110,8 +110,12 @@ def create_project(request):
             project.title = form.cleaned_data.get('title')
             # project.member = form.cleaned_data.get('members')
             members = form.cleaned_data.get('members')
+            print(len(members))
             project.creator = request.user.username
             # save this object
+            project.avail_mem = form.cleaned_data.get('accepting')
+            project.sponsor = form.cleaned_data.get('sponsor')
+            
             project.save()
             # loop through the members in the object and make m2m rows for them
             for i in members:
