@@ -5,11 +5,13 @@ from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from teamwork.apps.projects.models import *
 
 import uuid
 import random
 import string
 import datetime
+
 
 # generates the add code
 def rand_code(size):
@@ -58,6 +60,7 @@ class Course(models.Model):
     slug = models.CharField(max_length=20, unique=True)
 
     students = models.ManyToManyField(User, through='Enrollment')
+    projects = models.ManyToManyField(Project)
 
     # auto fields
     creator = models.CharField(max_length=255, default="No admin lol")
@@ -123,3 +126,10 @@ class Course(models.Model):
 class Enrollment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, default=0)
+
+    def __str__(self):
+        """
+        Human readeable representation of the Project object. Might need to update when we add more attributes.
+        Maybe something like, return u'%s %s' % (self.course, self.title)
+        """
+        return self.course.name

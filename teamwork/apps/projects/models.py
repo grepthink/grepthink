@@ -29,7 +29,9 @@ class Project(models.Model):
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(max_length=255, default="No Project Title Provided")
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
+
     members = models.ManyToManyField(User, through='Membership')
+
     avail_mem = models.BooleanField(default = True)
     sponsor = models.BooleanField(default = False)
 
