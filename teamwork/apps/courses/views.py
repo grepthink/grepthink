@@ -120,7 +120,6 @@ def edit_course(request, slug):
             course.name = form.cleaned_data.get('name')
             course.info = form.cleaned_data.get('info')
             course.term = form.cleaned_data.get('term')
-            course.slug = form.cleaned_data.get('slug')
             students = form.cleaned_data.get('students')
             course.save()
             # loop through the members in the object and make m2m rows for them
