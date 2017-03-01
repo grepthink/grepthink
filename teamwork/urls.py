@@ -32,12 +32,13 @@ urlpatterns = [
     # /view_projects/
     url(r'^project/all/', project_views.view_projects, name='view_projects'),
     
+    url(r'^course/new/$', course_views.create_course, name='create_course'),
     #/course/testCourse/        
     url(r'^course/(?P<coursename>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
     #/project/testProject
     url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
     # /create_course/
-    url(r'^course/new/$', course_views.create_course, name='create_course'),
+    
 
     # /view_course/
     url(r'^course/$', course_views.view_courses, name='view_course'),

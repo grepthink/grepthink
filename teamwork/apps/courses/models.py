@@ -9,6 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 import uuid
 import random
 import string
+import datetime
 
 # generates the add code
 def rand_code(size):
@@ -41,11 +42,19 @@ class Course(models.Model):
         get_published():                Gets a list of all stored course objects.
 
     """
+    # define the terms for the multiple choice
+    Term_Choice = (
+        ('Winter','Winter'),
+        ('Spring', 'Spring'),
+        ('Summer','Summer'),
+        ('Fall','Fall'),
+    )
+
 
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     info = models.CharField(max_length=300, default="There is no Course Description")
-    term = models.CharField(max_length=20, default="No Term Selected")
+    term = models.CharField(max_length=6, choices=Term_Choice,default='None')
     slug = models.CharField(max_length=20, unique=True)
 
     students = models.ManyToManyField(User, through='Enrollment')
@@ -53,6 +62,9 @@ class Course(models.Model):
     # auto fields
     creator = models.CharField(max_length=255, default="No admin lol")
     addCode = models.CharField(max_length=10, unique=True)
+    # get the current date for the year
+    now = datetime.datetime.now()
+    year = models.CharField(max_length=20, default=now.year)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
