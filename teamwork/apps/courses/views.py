@@ -23,7 +23,7 @@ def _courses(request, courses):
         })
 
 @login_required
-def view_courses(request):    
+def view_courses(request):
     """
     Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
@@ -37,15 +37,15 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
 
-    TODO: 
+    TODO:
 
     """
-    cur_course = get_object_or_404(Course, slug=slug)    
+    cur_course = get_object_or_404(Course, slug=slug)
 
     return render(request, 'courses/view_course.html', {
-                'cur_course': cur_course ,
-                })
-    
+        'cur_course': cur_course ,
+        })
+
 
 @login_required
 def join_course(request):
@@ -113,23 +113,25 @@ def edit_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
 
     if request.method == 'POST':
-        # send the current user.id to filter out
-        form = CourseForm(request.user.id,request.POST)
-        if form.is_valid():
-            # create an object for the input
-            course.name = form.cleaned_data.get('name')
-            course.info = form.cleaned_data.get('info')
-            course.term = form.cleaned_data.get('term')
-            students = form.cleaned_data.get('students')
-            course.save()
-            # loop through the members in the object and make m2m rows for them
-            enrollments = Enrollment.objects.filter(course=course)
-            if enrollments is not None: enrollments.delete()
-            for i in students:
-                Enrollment.objects.create(user=i, course=course)
-            # we dont have to save again because we do not touch the project object
-            # we are doing behind the scenes stuff (waves hand)
-            return redirect('/course')
+        # TODO: figure out a better way to do this
+        if "DELETE" in request.POST:
+            course.delete()
+        else:
+            # send the current user.id to filter out
+            form = CourseForm(request.user.id,request.POST)
+            if form.is_valid():
+                # edit the course object, omitting slug
+                course.name = form.cleaned_data.get('name')
+                course.info = form.cleaned_data.get('info')
+                course.term = form.cleaned_data.get('term')
+                students = form.cleaned_data.get('students')
+                course.save()
+                # clear all enrollments
+                enrollments = Enrollment.objects.filter(course=course)
+                if enrollments is not None: enrollments.delete()
+                for i in students:
+                    Enrollment.objects.create(user=i, course=course)
+        return redirect('/course')
     else:
         form = CourseForm(request.user.id, instance=course)
     return render(request, 'courses/edit_course.html', {'form': form,

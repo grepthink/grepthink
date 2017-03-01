@@ -11,7 +11,8 @@
     <h1> Edit Course </h1>
 </div>
 
-<form action="{% url 'edit_course' course.slug %}" method="post" role="form">
+<form action="{% url 'edit_course' course.slug %}" method="post" role="form"
+    class="clearfix">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
@@ -23,7 +24,14 @@
         {% endfor %}
     </div>
     {% endfor %}
-    <input type="submit" value="Edit Course">
+    <div class="btn-group pull-right" role="group">
+        <button class="btn btn-danger" type="submit" name="DELETE">
+            Delete
+        </button>
+        <button class="btn btn-success" type="submit" name="SUBMIT">
+            Submit
+        </button>
+    </div>
 </form>
 
 {% endblock content %}
