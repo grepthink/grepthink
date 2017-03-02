@@ -114,24 +114,22 @@ def edit_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
 
     if request.method == 'POST':
-        # TODO: figure out a better way to do this
-        if "DELETE" in request.POST:
-            course.delete()
-        else:
-            # send the current user.id to filter out
-            form = CourseForm(request.user.id,request.POST)
-            if form.is_valid():
-                # edit the course object, omitting slug
-                course.name = form.cleaned_data.get('name')
-                course.info = form.cleaned_data.get('info')
-                course.term = form.cleaned_data.get('term')
-                students = form.cleaned_data.get('students')
-                course.save()
-                # clear all enrollments
-                enrollments = Enrollment.objects.filter(course=course)
-                if enrollments is not None: enrollments.delete()
-                for i in students:
-                    Enrollment.objects.create(user=i, course=course)
+
+        # send the current user.id to filter out
+        form = CourseForm(request.user.id,request.POST)
+        if form.is_valid():
+            # edit the course object, omitting slug
+            course.name = form.cleaned_data.get('name')
+            course.info = form.cleaned_data.get('info')
+            course.term = form.cleaned_data.get('term')
+            students = form.cleaned_data.get('students')
+            course.save()
+            # clear all enrollments
+            enrollments = Enrollment.objects.filter(course=course)
+            if enrollments is not None: enrollments.delete()
+            for i in students:
+                Enrollment.objects.create(user=i, course=course)
+
         return redirect('/course')
     else:
         form = CourseForm(request.user.id, instance=course)

@@ -18,40 +18,43 @@
         <section class="courses" clearfix>
             {% for course in courses %}
 
-            <!-- Open a tag, makes whole panel clickable for view course -->
-            <a href="{% url 'view_one_course' course.slug %}">
-
-
-                <div class="panel panel-primary">
-                    <div class="panel-heading clearfix">
-                        <h3 class="panel-title pull-left">
-                            {{ course.name }} ({{ course.term }})
-                        </h3>
-                        <flex></flex>
-                        <small class="pull-right">{{ course.slug }}</small>
-                    </div>
-                    <div class="panel-body">
-                        <p><i>{{ course.info }}</i></p>
-                        <p><strong>Students</strong>
-                            {% for studs in course.students.all %}
-                            {% if studs.username != null %}
-                            <span class="label label-primary">
-                                {{ studs.username }}
-                            </span>
-                            <span> </span>
-                            {% endif %}
-                            {% endfor %}
-                        </p>
-                        <button>
-                            <a href="{% url 'edit_course' course.slug %}">
-                                <i class="fa fa-edit"></i>
-                                Edit
-                            </a>
+            <div class="panel panel-primary">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-left">
+                        {{ course.name }} ({{ course.term }})
+                    </h3>
+                    <flex></flex>
+                    <small class="pull-right">{{ course.slug }}</small>
+                </div>
+                <div class="panel-body">
+                    <p><i>{{ course.info }}</i></p>
+                    <p><strong>Students</strong>
+                        {% for studs in course.students.all %}
+                        {% if studs.username != null %}
+                        <span class="label label-primary">
+                            {{ studs.username }}
+                        </span>
+                        <span> </span>
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="panel-footer clearfix">
+                    <a href="{% url 'edit_course' course.slug %}">
+                        <button class="btn btn-success">
+                            <i class="fa fa-edit"></i>
+                            Edit
                         </button>
-                    </div>
-                </div>  
-
-            </a> <!-- Close view course link -->
+                    </a>
+                    <a href="{% url 'view_one_course' course.slug %}"
+                        class="pull-right">
+                        <button class="btn btn-info">
+                            <i class="fa fa-eye"></i>
+                            View
+                        </button>
+                    </a>
+                </div>
+            </div>
 
             {% empty %}
             <div class="alert alert-warning" role="alert">
