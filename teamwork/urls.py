@@ -31,18 +31,25 @@ urlpatterns = [
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/
         url(r'^project/all/', project_views.view_projects, name='view_projects'),
-        # /create_course/
-        url(r'^course/new/$', course_views.create_course, name='create_course'),
-        #/course/testCourse/
-        url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
-        #/project/testProject
-        url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
-        # /view_course/
+
+        # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
-        #/join_course/
-        url(r'^join_course', course_views.join_course, name='join_course'),
+        # Join a course (valid for all courses)
+        url(r'^course/join/$', course_views.join_course, name='join_course'),
+        # Create new course
+        url(r'^course/new/$', course_views.create_course, name='create_course'),
+        # View individual course (based on slug)
+        url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course,
+            name='view_one_course'),
+        # Delete individual course (based on slug)
+         url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course,
+            name='delete_course'),
+        # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
+
+        #/project/testProject
+        url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/

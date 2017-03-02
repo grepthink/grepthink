@@ -18,9 +18,10 @@ def _courses(request, courses):
     #    projects = paginator.page(1)
     #except EmptyPage:
     #    projects = paginator.page(paginator.num_pages)
-    return render(request, 'courses/view_courses.html', {
-        'courses': courses,
-        })
+    return render(request,
+            'courses/view_courses.html',
+            {'courses': courses,}
+            )
 
 @login_required
 def view_courses(request):
@@ -134,6 +135,17 @@ def edit_course(request, slug):
         return redirect('/course')
     else:
         form = CourseForm(request.user.id, instance=course)
-    return render(request, 'courses/edit_course.html', {'form': form,
-        'course': course})
+    return render(
+            request, 'courses/edit_course.html',
+            {'form': form,'course': course}
+            )
 
+
+@login_required
+def delete_course(request, slug):
+    """
+    Delete course method
+    """
+    course = get_object_or_404(Course, slug=slug)
+    course.delete()
+    return redirect('/course')
