@@ -2,6 +2,14 @@ from django import forms
 
 from .models import *
 
+# again the multiple choice
+Term_Choice = (
+    ('Winter','Winter'),
+    ('Spring', 'Spring'),
+    ('Summer','Summer'),
+    ('Fall','Fall'),
+)
+
 class CourseForm(forms.ModelForm):
 
     # used for filtering the queryset
@@ -19,13 +27,9 @@ class CourseForm(forms.ModelForm):
             )
     info = forms.CharField(
             widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=255
+            max_length=255, required=True
             )
-    term = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=20,
-            required=True
-            )
+    term = forms. ChoiceField(choices=Term_Choice,required=True)
     slug = forms.CharField(
             widget=forms.TextInput(attrs={'class': 'form-control'}),
             max_length=20,

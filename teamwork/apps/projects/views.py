@@ -110,7 +110,6 @@ def create_project(request):
             project.title = form.cleaned_data.get('title')
             # project.member = form.cleaned_data.get('members')
             members = form.cleaned_data.get('members')
-            print(len(members))
             project.creator = request.user.username
             # save this object
             project.avail_mem = form.cleaned_data.get('accepting')

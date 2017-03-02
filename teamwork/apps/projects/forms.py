@@ -1,5 +1,5 @@
 from django import forms
-
+from teamwork.apps.courses.models import *
 from .models import *
 
 class ProjectForm(forms.ModelForm):
@@ -7,8 +7,10 @@ class ProjectForm(forms.ModelForm):
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
 		# exclude the current user and the superuser
+		user = User.objects.get(id=uid)
 		self.fields['members'].queryset = User.objects.exclude(is_superuser=True)
-		if not User.objects.get(id=uid).profile.isProf:
+		self.fields['course'].queryset = Enrollment.objects.filter(user=user)
+		if not user.profile.isProf:
 			self.fields['sponsor'].widget = forms.HiddenInput()
 
 	#tp = User.objects.get(id=uid)
@@ -17,7 +19,7 @@ class ProjectForm(forms.ModelForm):
 	accepting = forms.BooleanField(initial= True, label = 'accepting members', required = False)
 	#if tp.profile.isProf:
 	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
-
+	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True)
 	class Meta:
 	    model = Project
 	    fields = ['title']
