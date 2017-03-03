@@ -6,7 +6,8 @@ class ProjectForm(forms.ModelForm):
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
-		# exclude the current user and the superuser
+		# exclude the superuser
+		#TODO: exclude professors
 		user = User.objects.get(id=uid)
 		self.fields['members'].queryset = User.objects.exclude(is_superuser=True)
 		self.fields['course'].queryset = Enrollment.objects.filter(user=user)
@@ -19,7 +20,7 @@ class ProjectForm(forms.ModelForm):
 	accepting = forms.BooleanField(initial= True, label = 'accepting members', required = False)
 	#if tp.profile.isProf:
 	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
-	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True)
+	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True,initial=False)
 	class Meta:
 	    model = Project
 	    fields = ['title']

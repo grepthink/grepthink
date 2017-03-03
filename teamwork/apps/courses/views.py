@@ -2,7 +2,8 @@ from .models import *
 from .forms import *
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
@@ -83,7 +84,8 @@ def create_course(request):
     #If user is not a professor
     if not request.user.profile.isProf:
         #redirect them to the /course directory
-        return redirect('/course')
+        messages.info(request,'Only Professor can create course!')
+        return HttpResponseRedirect('/course')
     if request.method == 'POST':
         # send the current user.id to filter out
         form = CourseForm(request.user.id,request.POST)

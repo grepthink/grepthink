@@ -2,7 +2,8 @@ from .models import *
 from .forms import *
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseBadRequest,  HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
@@ -102,6 +103,13 @@ def create_project(request):
     """
     Public method that creates a form and renders the request to create_project.html
     """
+
+    #If user is in 0 courses
+    if len(Enrollment.objects.filter(user=request.user)) == 0:
+            #Redirect them to homepage and tell them to join a course
+            messages.info(request,'You need to join a course before creating projects!')
+            return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
@@ -121,7 +129,7 @@ def create_project(request):
                 Membership.objects.create(user=i, project=project, invite_reason='')
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect('/view_projects.html/')
+            return redirect(view_projects)
     else:
         form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'form': form})

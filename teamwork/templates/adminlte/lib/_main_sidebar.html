@@ -20,7 +20,7 @@
     {% if user.profile.isProf %}
       <li>
           <a href="{% url 'create_course' %}">
-              <i class="fa fa-plus"></i> <span>Create All Courses</span>
+              <i class="fa fa-plus"></i> <span>Create Course</span>
           </a>
       </li>
     {% endif %}
@@ -33,7 +33,7 @@
     </li>
 
     <!-- Temporary sidebar links for easy testing, will move later -->
-    {% if user.profile.isProf %}
+    {% if not user.profile %}
     <li>
         <a href="{% url 'login' %}">
             <i class="fa fa-user"></i> <span>Login</span>
