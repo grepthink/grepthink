@@ -17,10 +17,6 @@
     <div class="row">
       {% for project in projects %}
 
-
-       <a href="project/{{ project.title }}/">
-       {# TODO:(kevin) <a href="{% url 'view_one_project' project.title %}"> #}
-
             <div class="col-sm-6 col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -43,9 +39,23 @@
                             {% endfor %}
                         </p>
                     </div>
+                    <div class="panel-footer clearfix">
+                        <a href="{% url 'edit_project' project.slug %}">
+                            <button class="btn btn-success">
+                                <i class="fa fa-edit"></i>
+                                Edit
+                            </button>
+                        </a>
+                        <a href="{% url 'view_one_project' project.slug %}"
+                            class="pull-right">
+                            <button class="btn btn-info">
+                                <i class="fa fa-eye"></i>
+                                View
+                            </button>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </a>
 
         {% empty %}
         <div class="alert alert-warning" role="alert">

@@ -6,6 +6,9 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
+from datetime import datetime
+import markdown
+
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
 
@@ -30,10 +33,17 @@ class Project(models.Model):
     title = models.CharField(max_length=255, default="No Project Title Provided")
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
 
+    content = models.TextField(max_length=4000)
+
     members = models.ManyToManyField(User, through='Membership')
 
     avail_mem = models.BooleanField(default = True)
     sponsor = models.BooleanField(default = False)
+
+    # Unique URL slug for project
+    slug = models.CharField(max_length=20, unique=True)
+
+    resource = models.TextField(max_length=4000)
 
 
     # The Meta class provides some extra information about the Project model.
@@ -57,8 +67,22 @@ class Project(models.Model):
         self.pk is the primary key of the Project object in the database!
         I don't know what super does...
         """
-        if not self.pk:
-            super(Project, self).save(*args, **kwargs)
+        #if not self.pk:
+        #    super(Project, self).save(*args, **kwargs)
+
+        # Generate a Project URL slug if not specified
+        #     Based off Courses.save URL slug written by August
+        if self.slug is None or len(self.slug) == 0:
+            # Basing the slug off of project title + creator. Possibly change in the future.
+            newslug = self.title + "-" + self.creator
+            newslug = slugify(newslug)[0:20]
+            while Project.objects.filter(slug=newslug).exists():
+                newslug = self.title + "-" + self.creator
+                newslug = slugify(newslug[0:16] + "-" + rand_code(3))
+            self.slug = newslug
+
+        self.slug = slugify(self.slug)
+
         super(Project, self).save(*args, **kwargs)
 
     @staticmethod
@@ -69,10 +93,33 @@ class Project(models.Model):
         projects = Project.objects.filter()
         return projects
 
+    def get_content_as_markdown(self):
+        return markdown.markdown(self.content, safe_mode='escape')
+
+    def get_updates(self):
+        return ProjectUpdate.objects.filter(project=self)
+
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
+
+
+
+class ProjectUpdate(models.Model):
+    project = models.ForeignKey(Project)
+    update_title = models.CharField(max_length=255, default="Default Update Title")
+    update = models.TextField(max_length=2000, default="Default Update")
+    date = models.DateTimeField(auto_now_add=True, editable=True)
+    user = models.ForeignKey(User)
+
+    class Meta:
+        verbose_name = "Project Update"
+        verbose_name_plural = "Project Updates"
+        ordering = ("-date",)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.user.username, self.project.title)
 
 # project status: open/closed and number available
 # currently commented to avoid conflict with other files

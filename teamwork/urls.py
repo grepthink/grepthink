@@ -31,6 +31,17 @@ urlpatterns = [
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/
         url(r'^project/all/', project_views.view_projects, name='view_projects'),
+        # View individual project
+        url(r'^project/(?P<slug>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
+        # Edit individual project (based on slug)
+        url(r'^project/(?P<slug>[^/]+)/edit/$', project_views.edit_project,
+            name='edit_project'),
+        # Delete individual course (based on slug)
+         url(r'^project/(?P<slug>[^/]+)/delete/$', project_views.delete_project,
+            name='delete_project'),
+        # Post update for individual project (based on slug)
+        url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update,
+            name='post_update'),
 
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
@@ -47,9 +58,6 @@ urlpatterns = [
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
-
-        #/project/testProject
-        url(r'^project/(?P<projecttitle>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/

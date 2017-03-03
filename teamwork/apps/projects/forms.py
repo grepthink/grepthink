@@ -6,6 +6,9 @@ class ProjectForm(forms.ModelForm):
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
+		# Hide slug field if user is editing project
+		if 'instance' in kwargs:
+			self.fields['slug'].widget = forms.HiddenInput()
 		# exclude the superuser
 		#TODO: exclude professors
 		user = User.objects.get(id=uid)
@@ -21,9 +24,20 @@ class ProjectForm(forms.ModelForm):
 	#if tp.profile.isProf:
 	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
 	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True,initial=False)
+
+	content = forms.CharField(
+		widget=forms.Textarea(attrs={'class': 'form-control'}),
+		max_length=4000)
+
+	slug = forms.CharField(
+    	widget=forms.TextInput(attrs={'class': 'form-control'}),
+    	max_length=20,
+    	required=False
+    	)
+	
 	class Meta:
 	    model = Project
-	    fields = ['title']
+	    fields = ['title', 'members', 'accepting', 'sponsor', 'course', 'content', 'slug']
 
 class ViewProjectForm(forms.ModelForm):
 
@@ -36,3 +50,25 @@ class ViewProjectForm(forms.ModelForm):
 	class Meta:
 	    model = Project
 	    fields = ['interest']
+
+class UpdateForm(forms.ModelForm):
+	# used for filtering the queryset
+	def __init__(self, uid, *args, **kwargs):
+		super(UpdateForm, self).__init__(*args, **kwargs)
+
+		user = User.objects.get(id=uid)
+
+	update_title = forms.CharField(
+    	widget=forms.TextInput(attrs={'class': 'form-control'}),
+    	max_length=255,
+    	required=True
+    	)
+
+	update = forms.CharField(
+		widget=forms.Textarea(attrs={'class': 'form-control'}),
+		max_length=4000)
+
+	
+	class Meta:
+	    model = Project
+	    fields = ['update_title', 'update']
