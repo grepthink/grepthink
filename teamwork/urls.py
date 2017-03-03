@@ -39,6 +39,9 @@ urlpatterns = [
         # Delete individual course (based on slug)
          url(r'^project/(?P<slug>[^/]+)/delete/$', project_views.delete_project,
             name='delete_project'),
+        # Post update for individual project (based on slug)
+        url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update,
+            name='post_update'),
 
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),

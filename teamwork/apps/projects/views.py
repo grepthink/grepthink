@@ -84,10 +84,12 @@ def view_one_project(request, slug):
     with given projecttitle.  Renders projects/view_project.html
     # TODO: fix up return calls
     """
-    cur_project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project, slug=slug)
+
+    updates = project.get_updates()
 
     return render(request, 'projects/view_project.html', {
-        'cur_project': cur_project ,
+        'project': project , 'updates' :updates
         })
 
 @login_required
@@ -111,6 +113,9 @@ def create_project(request):
             project.creator = request.user.username
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
+
+            # Project content
+            project.content = form.cleaned_data.get('content')
 
             # Project slug
             project.slug = form.cleaned_data.get('slug')
@@ -180,3 +185,22 @@ def delete_project(request, slug):
     project.delete()
     return redirect(view_projects)
 
+@login_required
+def post_update(request, slug):
+    """
+    Post an update for a given project
+    """
+    project = get_object_or_404(Project, slug=slug)
+
+    if request.method == 'POST':
+        form = UpdateForm(request.user.id, request.POST)
+        if form.is_valid():
+            new_update = ProjectUpdate(project=project)
+            new_update.update = form.cleaned_data.get('update')
+            new_update.update_title = form.cleaned_data.get('update_title')
+            new_update.user = request.user
+            new_update.save()
+            return redirect(view_one_project, project.slug)
+    else:
+        form = UpdateForm(request.user.id)
+    return render(request, 'projects/post_update.html', {'form': form, 'project': project})
