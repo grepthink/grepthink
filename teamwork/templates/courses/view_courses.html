@@ -55,13 +55,19 @@
                     </a>
                 </div>
             </div>
- 
+
+
             {% empty %}
             <div class="alert alert-warning" role="alert">
-                <i class="fa fa-warning"></i>
+              <i class="fa fa-warning"></i>
                 There are no courses yet. Go ahead and
-                <a href="{% url 'create_course' %}" class="alert-link">
-                    create one now!
+                {% if user.profile.isProf %}
+                  <a href="{% url 'create_course' %}" class="alert-link">
+                      create one now!
+                {% else %}
+                  <a href="{% url 'join_course' %}" class="alert-link">
+                      join one now!
+                {% endif %}
                 </a>
             </div>
             {% endfor %}

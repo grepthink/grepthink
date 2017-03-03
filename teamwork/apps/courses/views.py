@@ -80,6 +80,10 @@ def create_course(request):
     """
     Public method that creates a form and renders the request to create_project.html
     """
+    #If user is not a professor
+    if not request.user.profile.isProf:
+        #redirect them to the /course directory
+        return redirect('/course')
     if request.method == 'POST':
         # send the current user.id to filter out
         form = CourseForm(request.user.id,request.POST)
