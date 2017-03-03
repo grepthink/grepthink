@@ -97,22 +97,38 @@ class SignUpForm(forms.ModelForm):
                 ['Passwords don\'t match'])
         return self.cleaned_data
 
-class SkillsForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
 
   def __init__(self, *args, **kwargs):
-    super(SkillsForm, self).__init__(*args, **kwargs)
+    super(ProfileForm, self).__init__(*args, **kwargs)
 
-  known_skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
-  # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
-  learn_skill = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+  name = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              max_length=50, required=False)
+
+  bio = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              max_length=500, required=False)
+
+  email = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              max_length=50, required=False)
+
+  known_skill = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              max_length=255, required=False)
+
+  
+  learn_skill = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              max_length=255, required=False)
+
+# past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+
 
   class Meta:
       model = Skills
-      fields = ['known_skill', 'learn_skill']
-
-
-
-
+      fields = ['name', 'email', 'bio', 'known_skill', 'learn_skill']      
 
 
 

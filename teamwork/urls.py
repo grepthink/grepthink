@@ -59,4 +59,7 @@ urlpatterns = [
         url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
         # /username/ - A users unique profile url
         url(r'^user/(?P<username>[^/]+)/$', profile_views.profile, name='profile'),
+        # /username/edit - Edit user profile
+        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
+
         ]

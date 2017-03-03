@@ -35,7 +35,9 @@ class Skills(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
+    name = models.TextField(max_length=50, blank=True) 
     bio = models.TextField(max_length=500, blank=True)
+    email = models.TextField(max_length=50, blank=True)
 
     # TODO: Interest - ManyToOne, Past Classes, Bio
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
