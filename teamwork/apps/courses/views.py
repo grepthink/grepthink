@@ -70,7 +70,7 @@ def join_course(request):
                         #creates an enrollment relation with the current user and the selected course
                         Enrollment.objects.create(user=request.user, course=i)
             #returns to view courses
-            return redirect('/view_courses.html/')
+            return redirect(view_courses)
     else:
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form})
@@ -100,7 +100,7 @@ def create_course(request):
                 Enrollment.objects.create(user=i, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect('/course')
+            return redirect(view_one_course, course.slug)
     else:
         form = CourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form})
@@ -130,7 +130,7 @@ def edit_course(request, slug):
             for i in students:
                 Enrollment.objects.create(user=i, course=course)
 
-        return redirect('/course')
+        return redirect(view_one_course, course.slug)
     else:
         form = CourseForm(request.user.id, instance=course)
     return render(
@@ -145,5 +145,8 @@ def delete_course(request, slug):
     Delete course method
     """
     course = get_object_or_404(Course, slug=slug)
-    course.delete()
-    return redirect('/course')
+    if not request.user.profile.isProf:
+        return redirect(view_one_course, course.slug)
+    else:
+        course.delete()
+        return redirect(view_courses)
