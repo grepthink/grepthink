@@ -62,9 +62,9 @@ def _projects(request, projects):
     #    projects = paginator.page(1)
     #except EmptyPage:
     #    projects = paginator.page(paginator.num_pages)
-    return render(request, 'projects/view_projects.html', {
-        'projects': projects,
-    })
+    return render(request, 'projects/view_projects.html',
+            {'projects': projects}
+        )
 
 @login_required
 def view_projects(request):
@@ -83,17 +83,17 @@ def view_one_project(request, projecttitle):
     with given projecttitle.  Renders projects/view_project.html
     # TODO: fix up return calls
     """
-    cur_project = get_object_or_404(Project, title=projecttitle)    
+    cur_project = get_object_or_404(Project, title=projecttitle)
 
     if request.method == 'GET':
         form = ViewProjectForm(request.POST)
 
-        if form.is_valid():            
+        if form.is_valid():
             return render(request, 'projects/view_project.html', {
                 'cur_project': cur_project , 'form': form,
                 })
-                                                
-    return render(request, 'projects/view_project.html', {
+
+            return render(request, 'projects/view_project.html', {
                 'cur_project': cur_project ,
                 })
 
@@ -114,7 +114,7 @@ def create_project(request):
             # save this object
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
-            
+
             project.save()
             # loop through the members in the object and make m2m rows for them
             for i in members:
