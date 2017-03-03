@@ -6,7 +6,10 @@
 
 {% block content %}
 
-{{ cur_course.name }}
+<b>{{ cur_course.name }}</b> {{ cur_course.term }} {{ cur_course.year }}
+{% if user.profile.isProf %}
+<p><b>Add Code: </b>{{ cur_course.addCode }}</p>
+{% endif %}
 
 <!-- Why does this page have a form? No clue.
 <form action="" method="post" role="form">
