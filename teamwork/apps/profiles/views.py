@@ -119,7 +119,7 @@ def edit_profile(request, username):
             learn = form.cleaned_data.get('learn_skill')
             name = form.cleaned_data.get('name')
             info = form.cleaned_data.get('bio')
-            # email = form.cleaned_data.get('email')
+            
             # if we have an input 
             if known:                
                 # check if skill is in Skills table, lower standardizes input
@@ -160,10 +160,6 @@ def edit_profile(request, username):
             if info:                
                 # there is info baby, set that info to bio
                 profile.bio = info                
-                profile.save()
-
-            if email:
-                profile.email = email
                 profile.save()
 
 
