@@ -116,7 +116,7 @@ class ProjectUpdate(models.Model):
     class Meta:
         verbose_name = "Project Update"
         verbose_name_plural = "Project Updates"
-        ordering = ("date",)
+        ordering = ("-date",)
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)

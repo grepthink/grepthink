@@ -48,6 +48,18 @@
                   <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li>
                 </ul>
               </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  Show Intrest <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">High Intrest</a></li>
+                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Moderate Intrest</a></li>
+                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Low Intrest</a></li>
+                  <li role="presentation" class="divider"></li>
+                  <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Intersted</a></li>
+                </ul>
+              </li>
               <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
             </ul>
             <div class="tab-content">
