@@ -4,6 +4,7 @@
 
 {% block head %}
 <script src="{% static 'js/projects.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
@@ -16,6 +17,9 @@
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+          {% include 'markdown_editor.html' with textarea='id_content' %}
+        {% endif %}
         {{ field }}
         {% for error in field.errors %}
         <label class="control-label">{{ error }}</label>
