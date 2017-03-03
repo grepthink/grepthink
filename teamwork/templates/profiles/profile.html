@@ -5,31 +5,36 @@
 
 
 {% block content %}
+{{ page_user.username }}
 <div>
-  <h1>{{ page_user.profile.name}} - {{ page_user.username }}</h1>
-  <h5>University of California, Santa Cruz</h5>
-  <h6>{{ page_user.email }}</h6>
-<div>
-<h3>Bio</h3>
-{{ page_user.profile.bio }}
-</div>
-
-
-<div>
-<h3>Known Skills</h3>
   <ul>
-  {% for skill in page_user.profile.known_skills.all %}
+  {% for skill in profile.known_skills.all %}
     <li>{{ skill.skill }}</li>
   {% endfor%}
   </ul>
 </div>
 <div>
-<h3>Learn Skills</h3>
   <ul>
-  {% for skill in page_user.profile.learn_skills.all %}
+  {% for skill in profile.learn_skills.all %}
     <li>{{ skill.skill }}</li>
   {% endfor%}
   </ul>
 </div>
+<form action="{% url 'profile' user.username %}" method="post" role="form">
+      {% csrf_token %}
+      {% for field in form.visible_fields %}
+        <div class="form-group{% if field.errors %} has-error{% endif %}">
+          <label for="{{ field.label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <span class="help-block">{{ field.help_text|safe }}</span>
+          {% endif %}
+          {% for error in field.errors %}
+            <label class="control-label">{{ error }}</label>
+          {% endfor %}
+        </div>
+      {% endfor %} 
+      <input type="submit" value="Submit">     
+</form>
 
 {% endblock content %}
