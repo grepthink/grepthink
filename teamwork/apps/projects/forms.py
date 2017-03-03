@@ -6,6 +6,9 @@ class ProjectForm(forms.ModelForm):
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
+		# Hide slug field if user is editing project
+		if 'instance' in kwargs:
+			self.fields['slug'].widget = forms.HiddenInput()
 		# exclude the superuser
 		#TODO: exclude professors
 		user = User.objects.get(id=uid)
@@ -21,6 +24,13 @@ class ProjectForm(forms.ModelForm):
 	#if tp.profile.isProf:
 	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
 	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True,initial=False)
+
+	slug = forms.CharField(
+    	widget=forms.TextInput(attrs={'class': 'form-control'}),
+    	max_length=20,
+    	required=False
+    	)
+	
 	class Meta:
 	    model = Project
 	    fields = ['title']

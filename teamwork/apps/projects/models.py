@@ -35,6 +35,8 @@ class Project(models.Model):
     avail_mem = models.BooleanField(default = True)
     sponsor = models.BooleanField(default = False)
 
+    slug = models.CharField(max_length=20, unique=True)
+
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -57,8 +59,22 @@ class Project(models.Model):
         self.pk is the primary key of the Project object in the database!
         I don't know what super does...
         """
-        if not self.pk:
-            super(Project, self).save(*args, **kwargs)
+        #if not self.pk:
+        #    super(Project, self).save(*args, **kwargs)
+
+        # Generate a Project URL slug if not specified
+        #     Based off Courses.save URL slug written by August
+        if self.slug is None or len(self.slug) == 0:
+            # Basing the slug off of project title + creator. Possibly change in the future.
+            newslug = self.title + "-" + self.creator
+            newslug = slugify(newslug)[0:20]
+            while Project.objects.filter(slug=newslug).exists():
+                newslug = self.title + "-" + self.creator
+                newslug = slugify(newslug[0:16] + "-" + rand_code(3))
+            self.slug = newslug
+
+        self.slug = slugify(self.slug)
+
         super(Project, self).save(*args, **kwargs)
 
     @staticmethod

@@ -78,25 +78,17 @@ def view_projects(request):
 
 
 @login_required
-def view_one_project(request, projecttitle):
+def view_one_project(request, slug):
     """
     Public method that takes a request and a projecttitle, retrieves the Project object from the model
     with given projecttitle.  Renders projects/view_project.html
     # TODO: fix up return calls
     """
-    cur_project = get_object_or_404(Project, title=projecttitle)
+    cur_project = get_object_or_404(Project, slug=slug)
 
-    if request.method == 'GET':
-        form = ViewProjectForm(request.POST)
-
-        if form.is_valid():
-            return render(request, 'projects/view_project.html', {
-                'cur_project': cur_project , 'form': form,
-                })
-
-            return render(request, 'projects/view_project.html', {
-                'cur_project': cur_project ,
-                })
+    return render(request, 'projects/view_project.html', {
+        'cur_project': cur_project ,
+        })
 
 @login_required
 def create_project(request):
@@ -116,12 +108,15 @@ def create_project(request):
             # create an object for the input
             project = Project()
             project.title = form.cleaned_data.get('title')
-            # project.member = form.cleaned_data.get('members')
-            members = form.cleaned_data.get('members')
             project.creator = request.user.username
-            # save this object
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
+
+            # Project slug
+            project.slug = form.cleaned_data.get('slug')
+
+            # Local list of memebers, used to create Membership objects
+            members = form.cleaned_data.get('members')
 
             project.save()
             # loop through the members in the object and make m2m rows for them
@@ -133,3 +128,55 @@ def create_project(request):
     else:
         form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'form': form})
+
+@login_required
+def edit_project(request, slug):
+    """
+    Public method that serves the form allowing a user to edit a project
+    Based off courses/views.py/edit_course
+    """
+
+    project = get_object_or_404(Project, slug=slug)
+
+    if request.method == 'POST':
+        form = ProjectForm(request.user.id, request.POST)
+        if form.is_valid():
+            # edit the project object, omitting slug
+            project.title = form.cleaned_data.get('title')
+            project.avail_mem = form.cleaned_data.get('accepting')
+            project.sponsor = form.cleaned_data.get('sponsor')
+            project.save()
+
+            members = form.cleaned_data.get('members')
+            # Clear all memberships to avoid duplicates.
+            memberships = Membership.objects.filter(project=project)
+            if memberships is not None: memberships.delete()
+            for i in members:
+                Membership.objects.create(user=i, project=project, invite_reason='')
+
+            # Not sure if view_one_project redirect will work...
+            return redirect(view_one_project, project.slug)
+    else:
+        form = ProjectForm(request.user.id, instance=project)
+    return render(
+            request, 'projects/edit_project.html',
+            {'form': form,'project': project}
+            )
+
+@login_required
+def delete_project(request, slug):
+    """
+    Delete project method
+    """
+    project = get_object_or_404(Project, slug=slug)
+
+    ## Do something to check that the current user is the project owner
+    # if not request.user.id == project.owner.id:
+    #     return redirect(view_one_project, project.slug)
+    # else:
+    #     project.delete()
+    #     return redirect(view_projects)
+
+    project.delete()
+    return redirect(view_projects)
+
