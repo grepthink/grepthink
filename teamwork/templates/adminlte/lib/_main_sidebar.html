@@ -33,6 +33,7 @@
     </li>
 
     <!-- Temporary sidebar links for easy testing, will move later -->
+    {% if user.profile.isProf %}
     <li>
         <a href="{% url 'login' %}">
             <i class="fa fa-user"></i> <span>Login</span>
@@ -43,6 +44,7 @@
             <i class="fa fa-plus"></i> <span>Signup</span>
         </a>
     </li>
+    {% endif %}
     <li>
         <a href="{% url 'profile' user.username %}">
             <i class="fa fa-user"></i> <span>Profile</span>
