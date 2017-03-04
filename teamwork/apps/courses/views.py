@@ -96,6 +96,7 @@ def create_course(request):
             course.info = form.cleaned_data.get('info')
             course.term = form.cleaned_data.get('term')
             course.slug = form.cleaned_data.get('slug')
+            course.prof = form.cleaned_data.get('prof')
 
             course.creator = request.user.username
             students = form.cleaned_data.get('students')

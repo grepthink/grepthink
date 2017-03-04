@@ -24,6 +24,9 @@
         {% for error in field.errors %}
         <label class="control-label">{{ error }}</label>
         {% endfor %}
+        {% if prof = True%}
+           <li> Professor create course! </li>
+        {% endif %}
     </div>
     {% endfor %}
     <input type="submit" value="Post Project">
