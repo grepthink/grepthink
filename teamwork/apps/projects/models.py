@@ -94,10 +94,10 @@ class Project(models.Model):
         #Gets membership object of current user
         myProjects = Membership.objects.filter(user=user)
         #Gets project queryset of only projects user is in OR the user created
-        proj = Project.objects.filter(Q(membership__in=myProjects) | Q(creator=user.username))
+        #BUG: if creator not in project, they cannot see project
+        proj = Project.objects.filter(membership__in=myProjects)
 
         print(proj)
-        projects = Project.objects.filter(membership__in=myProjects)
         return proj
 
     def get_all_projects():

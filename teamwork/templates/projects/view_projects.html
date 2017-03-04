@@ -40,12 +40,14 @@
                         </p>
                     </div>
                     <div class="panel-footer clearfix">
+                      {% if request.user.username == project.creator %}
                         <a href="{% url 'edit_project' project.slug %}">
                             <button class="btn btn-success">
                                 <i class="fa fa-edit"></i>
                                 Edit
                             </button>
                         </a>
+                      {% endif %}
                         <a href="{% url 'view_one_project' project.slug %}"
                             class="pull-right">
                             <button class="btn btn-info">
