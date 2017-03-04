@@ -68,6 +68,7 @@ class Course(models.Model):
     # get the current date for the year
     now = datetime.datetime.now()
     year = models.CharField(max_length=20, default=now.year)
+    professor = models.BooleanField(default = True)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
