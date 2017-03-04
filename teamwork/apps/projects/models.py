@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -92,9 +93,12 @@ class Project(models.Model):
         """
         #Gets membership object of current user
         myProjects = Membership.objects.filter(user=user)
-        #Gets project queryset of only projects user is in
+        #Gets project queryset of only projects user is in OR the user created
+        proj = Project.objects.filter(Q(membership__in=myProjects) | Q(creator=user.username))
+
+        print(proj)
         projects = Project.objects.filter(membership__in=myProjects)
-        return projects
+        return proj
 
     def get_all_projects():
         """
