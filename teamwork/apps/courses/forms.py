@@ -39,7 +39,7 @@ class CourseForm(forms.ModelForm):
             widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(),
             required=False
             )
-    prof = forms.BooleanField(initial = True, label = 'Professor?', required = True)
+    professor = forms.BooleanField(initial = True, label = 'Professor?', required = True)
 
     class Meta:
         model = Course
