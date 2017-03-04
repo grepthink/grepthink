@@ -39,13 +39,16 @@
                         {% endfor %}
                     </p>
                 </div>
+
                 <div class="panel-footer clearfix">
+                  {% if user.profile.isProf %}
                     <a href="{% url 'edit_course' course.slug %}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
                             Edit
                         </button>
                     </a>
+                  {% endif %}
                     <a href="{% url 'view_one_course' course.slug %}"
                         class="pull-right">
                         <button class="btn btn-info">
@@ -54,6 +57,7 @@
                         </button>
                     </a>
                 </div>
+
             </div>
 
 

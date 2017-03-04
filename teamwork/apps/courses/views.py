@@ -30,7 +30,13 @@ def view_courses(request):
     Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
     """
-    all_courses = Course.get_published()
+
+    #If user is a professor, they can see all courses they have created
+    if request.user.profile.isProf:
+        all_courses=Course.get_my_created_courses(request.user)
+    #else returns a list of courses the user is enrolled in
+    else:
+        all_courses = Course.get_my_courses(request.user)
     return _courses(request, all_courses)
 
 @login_required
@@ -118,6 +124,12 @@ def edit_course(request, slug):
     https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
     """
     course = get_object_or_404(Course, slug=slug)
+
+    #if user is not a professor or they did not create course
+    if not request.user.profile.isProf or not course.creator == request.user.username:
+        #redirect them to the /course directory with message
+        messages.info(request,'Only Professor can edit course')
+        return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
 

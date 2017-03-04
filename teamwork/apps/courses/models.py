@@ -121,6 +121,27 @@ class Course(models.Model):
         Gets a list of project objects. Used in views then passed to the template.
         """
         courses = Course.objects.filter()
+        print(courses)
+        return courses
+    def get_my_courses(user):
+        """
+        Gets a list of course objects that the user is in
+        """
+        #Gets current user's enrollments
+        myEnrollment = Enrollment.objects.filter(user=user)
+
+        #Filters for courses based on enrollment
+        courses = Course.objects.filter(enrollment__in=myEnrollment)
+
+        return courses
+
+    def get_my_created_courses(user):
+        """
+        Gets a list of project objects the current user has created
+        """
+        #filters through courses the user has created
+        courses = Course.objects.filter(creator=user.username)
+
         return courses
 
 class Enrollment(models.Model):
