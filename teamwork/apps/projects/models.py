@@ -86,7 +86,17 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     @staticmethod
-    def get_published():
+    def get_my_projects(user):
+        """
+        Gets a list of project objects. Used in views then passed to the template.
+        """
+        #Gets membership object of current user
+        myProjects = Membership.objects.filter(user=user)
+        #Gets project queryset of only projects user is in
+        projects = Project.objects.filter(membership__in=myProjects)
+        return projects
+
+    def get_all_projects():
         """
         Gets a list of project objects. Used in views then passed to the template.
         """

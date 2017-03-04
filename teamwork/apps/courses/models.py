@@ -121,8 +121,8 @@ class Course(models.Model):
         Gets a list of project objects. Used in views then passed to the template.
         """
         courses = Course.objects.filter()
-        print(courses)
         return courses
+        
     def get_my_courses(user):
         """
         Gets a list of course objects that the user is in

@@ -73,8 +73,8 @@ def view_projects(request):
     Public method that takes a request, retrieves all Project objects from the model,
     then calls _projects to render the request to template view_projects.html
     """
-    all_projects = Project.get_published()
-    return _projects(request, all_projects)
+    my_projects = Project.get_my_projects(request.user)
+    return _projects(request, my_projects)
 
 
 @login_required
@@ -142,6 +142,12 @@ def edit_project(request, slug):
     """
 
     project = get_object_or_404(Project, slug=slug)
+
+    #if user is not project owner
+    if not request.user.username == project.creator:
+        #redirect them with a message
+        messages.info(request,'Only Project Owner can edit project!')
+        return HttpResponseRedirect('/project/all')
 
     if request.method == 'POST':
         form = ProjectForm(request.user.id, request.POST)
