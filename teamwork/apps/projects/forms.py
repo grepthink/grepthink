@@ -1,6 +1,8 @@
 from django import forms
 from teamwork.apps.courses.models import *
+from teamwork.apps.profiles.models import *
 from .models import *
+from django.db.models import *
 
 class ProjectForm(forms.ModelForm):
 	# used for filtering the queryset
@@ -10,10 +12,15 @@ class ProjectForm(forms.ModelForm):
 		if 'instance' in kwargs:
 			self.fields['slug'].widget = forms.HiddenInput()
 		# exclude the superuser
-		#TODO: exclude professors
+
 		user = User.objects.get(id=uid)
-		self.fields['members'].queryset = User.objects.exclude(is_superuser=True)
-		self.fields['course'].queryset = Enrollment.objects.filter(user=user)
+		user_courses = Enrollment.objects.filter(user=user)
+		superuser = User.objects.filter(is_superuser=True)
+		only_students = Profile.objects.exclude(Q(user__in=superuser) | Q(isProf=True))
+
+		self.fields['members'].queryset = only_students
+		self.fields['course'].queryset = user_courses
+
 		if not user.profile.isProf:
 			self.fields['sponsor'].widget = forms.HiddenInput()
 
@@ -34,7 +41,7 @@ class ProjectForm(forms.ModelForm):
     	max_length=20,
     	required=False
     	)
-	
+
 	class Meta:
 	    model = Project
 	    fields = ['title', 'members', 'accepting', 'sponsor', 'course', 'content', 'slug']
@@ -68,7 +75,7 @@ class UpdateForm(forms.ModelForm):
 		widget=forms.Textarea(attrs={'class': 'form-control'}),
 		max_length=4000)
 
-	
+
 	class Meta:
 	    model = Project
 	    fields = ['update_title', 'update']
