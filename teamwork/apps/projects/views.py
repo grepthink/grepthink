@@ -99,14 +99,20 @@ def create_project(request):
     """
 
     enroll = Enrollment.objects.filter(user=request.user)
+    cur_courses = Course.objects.filter(enrollment__in=enroll)
+    no_postable_classes = False
     #If user is in 0 courses
     if len(enroll) == 0:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'You need to join a course before creating projects!')
             return HttpResponseRedirect('/')
-    if len(enroll) == 1 and Course.objects.get(enrollment__in=enroll).professor:
+
+    if len(cur_courses) == len(cur_courses.filter(professor=True)):
+        no_postable_classes = True
+
+    if len(enroll) >= 1 and no_postable_classes:
             #Redirect them to homepage and tell them to join a course
-            messages.info(request,'AAAAAAAAAAAAAAAAAAAAAAs!')
+            messages.info(request,'Professor has disabled Project Creation!')
             return HttpResponseRedirect('/')
 
     if request.method == 'POST':

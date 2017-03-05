@@ -15,11 +15,12 @@ class ProjectForm(forms.ModelForm):
 
 		user = User.objects.get(id=uid)
 		user_courses = Enrollment.objects.filter(user=user)
+		postable_courses = Course.objects.filter(enrollment__in=user_courses).filter(professor=False)
 		superuser = User.objects.filter(is_superuser=True)
 		only_students = Profile.objects.exclude(Q(user__in=superuser) | Q(isProf=True))
 
 		self.fields['members'].queryset = only_students
-		self.fields['course'].queryset = user_courses
+		self.fields['course'].queryset = postable_courses
 
 		if not user.profile.isProf:
 			self.fields['sponsor'].widget = forms.HiddenInput()
@@ -30,7 +31,7 @@ class ProjectForm(forms.ModelForm):
 	accepting = forms.BooleanField(initial= True, label = 'accepting members', required = False)
 	#if tp.profile.isProf:
 	sponsor = forms.BooleanField(initial = False, label = 'Sponsored?', required = False)
-	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Enrollment.objects.all(),required=True,initial=False)
+	course = forms.ModelChoiceField(widget=forms.RadioSelect, queryset=Course.objects.all(),required=True,initial=False)
 
 	content = forms.CharField(
 		widget=forms.Textarea(attrs={'class': 'form-control'}),
