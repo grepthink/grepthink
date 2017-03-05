@@ -123,7 +123,7 @@ class Course(models.Model):
         """
         courses = Course.objects.filter()
         return courses
-        
+
     def get_my_courses(user):
         """
         Gets a list of course objects that the user is in
