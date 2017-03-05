@@ -98,10 +98,15 @@ def create_project(request):
     Public method that creates a form and renders the request to create_project.html
     """
 
+    enroll = Enrollment.objects.filter(user=request.user)
     #If user is in 0 courses
-    if len(Enrollment.objects.filter(user=request.user)) == 0:
+    if len(enroll) == 0:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'You need to join a course before creating projects!')
+            return HttpResponseRedirect('/')
+    if len(enroll) == 1 and Course.objects.get(enrollment__in=enroll).professor:
+            #Redirect them to homepage and tell them to join a course
+            messages.info(request,'AAAAAAAAAAAAAAAAAAAAAAs!')
             return HttpResponseRedirect('/')
 
     if request.method == 'POST':
