@@ -1,12 +1,17 @@
+# Django Imports
 from django import forms
 from django.contrib.auth.models import User
 from .models import *
 from django.core.exceptions import ValidationError
 
+# Used in forms
 from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
 
 
 def SignupDomainValidator(value):
+    """
+    public method that takes a value
+    """
     if '*' not in ALLOWED_SIGNUP_DOMAINS:
         try:
             domain = value[value.index("@"):]
@@ -109,14 +114,3 @@ class SkillsForm(forms.ModelForm):
   class Meta:
       model = Skills
       fields = ['known_skill', 'learn_skill']
-
-
-
-
-
-
-
-
-
-
-

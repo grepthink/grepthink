@@ -49,7 +49,8 @@ class Course(models.Model):
     Methods:
         __str__(self):                  Human readeable representation of the course object.
         save(self, *args, **kwargs):    Overides the default save operator...
-        get_published():                Gets a list of all stored course objects.
+        get_my_courses():               Gets a list of stored course objects of the current user.
+        get_created_courses():          Gets a list of courses created by user
 
     """
     # define the terms for the multiple choice
