@@ -46,11 +46,23 @@ class ProjectForm(forms.ModelForm):
 
 		# exclude the superuser
 
+		# identify current user
 		user = User.objects.get(id=uid)
+
+		# get_user_enrol
 		user_courses = Enrollment.objects.filter(user=user)
-		postable_courses = Course.objects.filter(enrollment__in=user_courses).filter(limit_creation=False)
+
+		# get_sueruser_list
 		superuser = User.objects.filter(is_superuser=True)
-		only_students = Profile.objects.exclude(Q(user__in=superuser) | Q(isProf=True))
+
+		# get_user_enrollmentns
+		postable_courses = Course.objects.filter(
+			enrollment__in=user_courses).filter(limit_creation=False
+			)
+
+		only_students = Profile.objects.exclude(
+			Q(user__in=superuser) | Q(isProf=True)
+			)
 
 
 		self.fields['members'].queryset = only_students
