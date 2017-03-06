@@ -9,6 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from datetime import datetime
 import markdown
+from teamwork.apps.profiles.models import *
 
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
@@ -37,9 +38,13 @@ class Project(models.Model):
     content = models.TextField(max_length=4000)
 
     members = models.ManyToManyField(User, through='Membership')
+    desired_skills = models.ManyToManyField(Skills, related_name="desired")
 
     avail_mem = models.BooleanField(default = True)
     sponsor = models.BooleanField(default = False)
+
+
+
 
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
@@ -118,7 +123,10 @@ class Membership(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
 
-
+class Interest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    interest = models.PositiveIntegerField()
+    interest_reason = models.CharField(max_length=100)
 
 class ProjectUpdate(models.Model):
     project = models.ForeignKey(Project)
