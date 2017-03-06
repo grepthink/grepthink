@@ -1,3 +1,10 @@
+"""
+Teamwork: profiles
+
+Database Models for the objects: Skills, Profile
+"""
+
+# Django Imports
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
@@ -10,7 +17,24 @@ from django.dispatch import receiver
 
 
 class Skills(models.Model):
-    skill = models.CharField(max_length=255, default="")
+        """
+        Skills: A database model (object) for skills.
+
+        Fields:
+            skill: a field that contains the name of a skill
+
+        Methods:
+            __str__(self):                  Human readeable representation of the skill object.
+            save(self, *args, **kwargs):    Overides the default save operator...
+
+        """
+    # skill, a string
+    skill = models.CharField(
+        # with max length 255
+        max_length=255,
+        # with a default of ""
+        default=""
+        )
 
     def __str__(self):
         return self.skill
@@ -32,6 +56,20 @@ class Skills(models.Model):
 
 
 class Profile(models.Model):
+    """
+    Profile: A database model (object) for the user profile.
+
+    Fields:
+        user: user object
+        bio: bio of user
+        known_skills: stores known skills
+        interest: stores interest for projects in profile
+        isProf: boolean that dictates if the user is a professors
+
+    Methods:
+        __str__(self):                  Human readeable representation of the profile object.
+
+    """
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
 
@@ -39,9 +77,9 @@ class Profile(models.Model):
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
-    
+
     isProf = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return self.user.username
 

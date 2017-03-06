@@ -30,13 +30,13 @@ class ProjectForm(forms.ModelForm):
 		slug:    [CharField] Human readable URL slug
 
 	Methods:
-		__init__ : 
+		__init__ :
 	"""
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
-		
-		# A user cannot edit the slug field after creation, 
+
+		# A user cannot edit the slug field after creation,
 		#  because it would change the URL associated with the project.
 		# 'instance' in kwargs if there exists a project_id matching given slug.
 		if 'instance' in kwargs:
