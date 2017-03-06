@@ -17,24 +17,20 @@ from django.dispatch import receiver
 
 
 class Skills(models.Model):
-        """
-        Skills: A database model (object) for skills.
+    """
+    Skills: A database model (object) for skills.
 
-        Fields:
-            skill: a field that contains the name of a skill
+    Fields:
+        skill: a field that contains the name of a skill
 
-        Methods:
-            __str__(self):                  Human readeable representation of the skill object.
-            save(self, *args, **kwargs):    Overides the default save operator...
+    Methods:
+        __str__(self):                  Human readeable representation of the skill object.
+        save(self, *args, **kwargs):    Overides the default save operator...
 
         """
     # skill, a string
-    skill = models.CharField(
-        # with max length 255
-        max_length=255,
-        # with a default of ""
-        default=""
-        )
+    #skill = models.CharField(max_length=255,default="")
+    skill = models.CharField(max_length=255,default="")
 
     def __str__(self):
         return self.skill

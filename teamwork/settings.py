@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django_adminlte',
     'django_adminlte_theme',
 
-    'django_extensions',
+    #'django_extensions',
 
     'django.contrib.admin',
 ]
