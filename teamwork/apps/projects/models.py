@@ -1,18 +1,28 @@
-from __future__ import unicode_literals
+"""
+Teamwork: projects
 
+Database Models for the objects, Project, Membership, Intrest, ProjectUpdate
+"""
+
+# Built-in modules
+from __future__ import unicode_literals
+from datetime import datetime
+
+# Django modules
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Q
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from datetime import datetime
-import markdown
-from teamwork.apps.profiles.models import *
+# Not used currently
+from django.db.models import Q
 
-# We need to update the User class to use django.auth
-# from django.contrib.auth.models import User
+# Third-party Modules
+import markdown
+
+# Local Modules
+from teamwork.apps.profiles.models import *
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
