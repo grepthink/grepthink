@@ -107,7 +107,7 @@ def create_project(request):
             messages.info(request,'You need to join a course before creating projects!')
             return HttpResponseRedirect('/')
 
-    if len(cur_courses) == len(cur_courses.filter(professor=True)):
+    if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
     if len(enroll) >= 1 and no_postable_classes:

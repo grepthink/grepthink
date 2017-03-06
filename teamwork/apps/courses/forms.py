@@ -1,8 +1,9 @@
+#imports forms
 from django import forms
-
+#imports all tables from models
 from .models import *
 
-# again the multiple choice
+#Choices for term
 Term_Choice = (
     ('Winter','Winter'),
     ('Spring', 'Spring'),
@@ -10,56 +11,103 @@ Term_Choice = (
     ('Fall','Fall'),
 )
 
+#Creates the course form
 class CourseForm(forms.ModelForm):
 
-    # used for filtering the queryset
+    #Filters queryset based on conditions
     def __init__(self, uid, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
-        # exclude the current user and the superuser
+
+        #queryset of users other than current user
+        other_users = User.objects.exclude(id=uid)
+        #queryset containing users who are not superusers
+        exclude_superusers = other_users.exclude(is_superuser=True)
+        #Renders slug as HiddenInput
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
-        self.fields['students'].queryset = User.objects.exclude(id=uid).exclude(is_superuser=True)
 
+        #Hides superusers from 'students' field
+        self.fields['students'].queryset = exclude_superusers
+
+    #course name field
     name = forms.CharField(
+            #Text input
             widget=forms.TextInput(attrs={'class': 'form-control'}),
+            #With length 255
             max_length=255,
+            #Field required
             required=True
             )
-    info = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=255, required=True
-            )
-    term = forms. ChoiceField(choices=Term_Choice,required=True)
-    slug = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=20,
-            required=False
-            )
-    students = forms.ModelMultipleChoiceField(
-            widget=forms.CheckboxSelectMultiple,queryset=User.objects.all(),
-            required=False
-            )
-    professor = forms.BooleanField(initial = True, label = 'Only Professor can create projects?', required = False)
 
+    #course info field
+    info = forms.CharField(
+            #Text input
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            #With length 255
+            max_length=255,
+            #Field Required
+            required=True
+            )
+
+    #Term field
+    term = forms. ChoiceField(
+            #Choices from Term_Choice
+            choices=Term_Choice,
+            #Field Required
+            required=True
+            )
+
+    #Slug Field
+    slug = forms.CharField(
+            #Text Input
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            #With Length 20
+            max_length=20,
+            #Field NOT Required
+            required=False
+            )
+
+    #Students field
+    students = forms.ModelMultipleChoiceField(
+            #Multiple Choice Selection
+            widget=forms.CheckboxSelectMultiple,
+            #From all user objects
+            queryset=User.objects.all(),
+            #Field NOT Required
+            required=False
+            )
+
+    #Field for only professor creating courses
+    limit_creation = forms.BooleanField(
+            #Initially field is true
+            initial = True,
+            #Labeled as "Only professor can create projects?"
+            label = 'Only Professor can create projects?',
+            #Field NOT Required
+            required = False
+            )
+
+    #META CLASS
     class Meta:
         model = Course
         fields = ['name','info','term','students','slug']
 
-
+#Creates join course form
 class JoinCourseForm(forms.ModelForm):
 
+    #Initializes form
     def __init__(self, uid, *args, **kwargs):
         super(JoinCourseForm, self).__init__(*args, **kwargs)
 
+    #Add code field
     code = forms.CharField(
+            #Text input
             widget=forms.TextInput(attrs={'class': 'form-control'}),
+            #With max length 255
             max_length=255
             )
-    """
-    students = forms.ModelMultipleChoiceField(
-            widget=forms.CheckboxSelectMultiple,queryset=User.objects.all()
-    )
-    """
+
+    #META CLASS
     class Meta:
         model = Course
         fields = ['code']
