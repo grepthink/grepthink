@@ -59,11 +59,69 @@ def profile(request, username):
     # TODO: fix up return calls, form should be in if
     """
     profile = Profile.objects.get(user=request.user)
-    form = SkillsForm(request.POST)
+    # form = SkillsForm(request.POST)
+    # if request.method == 'POST':        
+    #     if form.is_valid():            
+    #         known = form.cleaned_data.get('known_skill')
+    #         learn = form.cleaned_data.get('learn_skill')
+    #         # if we have an input 
+    #         if known:
+    #             # check if skill is in Skills table, lower standardizes input
+    #             if Skills.objects.filter(skill=known.lower()):
+    #                 # skill already exists, then pull it up  
+    #                 known_skill = Skills.objects.get(skill=known.lower()) 
+    #             else:
+    #                 # we have to add the skill to the table
+    #                 known_skill = Skills.objects.create(skill=known.lower())
+    #                 # save the new object
+    #                 known_skill.save()
+    #             # This is how we can use the reverse of the relationship
+    #             # print(known_skill.known.all())
+    #             # add the skill to the current profile
+    #             profile.known_skills.add(known_skill)
+    #             profile.save()
+    #             # This is how we can get all the skills from a user
+    #             # print(profile.known_skills.all())
+
+    #         # same as Known implemenation
+    #         if learn:
+    #             if Skills.objects.filter(skill=learn.lower()):
+    #                 learn_skill = Skills.objects.get(skill=learn.lower())
+    #             else:
+    #                 learn_skill = Skills.objects.create(skill=learn.lower())
+    #                 learn_skill.save()
+    #             # This is how we can use the reverse of the relationship
+    #             # print(learn_skill.learn.all())
+    #             profile.learn_skills.add(learn_skill)
+    #             profile.save()
+    #             # This is how we can get all the skills from a user
+    #             # print(profile.learn_skills.all())
+
+    page_user = get_object_or_404(User, username=username)
+    return render(request, 'profiles/profile.html', {
+        'page_user': page_user, 'profile':profile 
+        })
+
+
+@login_required
+def edit_profile(request, username):
+    """
+    Public method that takes a request and a username.  Gets an entered 'skill' from the form
+    and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
+
+    # TODO: fix up return calls, form should be in if
+    """
+    if not request.user.is_authenticated:
+        return redirect('profiles/profile.html')
+
+    profile = Profile.objects.get(user=request.user)
+    form = ProfileForm(request.POST)
     if request.method == 'POST':        
         if form.is_valid():            
             known = form.cleaned_data.get('known_skill')
             learn = form.cleaned_data.get('learn_skill')
+            bio = form.cleaned_data.get('bio')
+            name = form.cleaned_data.get('name')
             # if we have an input 
             if known:
                 # check if skill is in Skills table, lower standardizes input
@@ -79,7 +137,7 @@ def profile(request, username):
                 # print(known_skill.known.all())
                 # add the skill to the current profile
                 profile.known_skills.add(known_skill)
-                profile.save()
+                profile.save() # could probably take these saves out in 'known' and 'learn'
                 # This is how we can get all the skills from a user
                 # print(profile.known_skills.all())
 
@@ -97,10 +155,30 @@ def profile(request, username):
                 # This is how we can get all the skills from a user
                 # print(profile.learn_skills.all())
 
+            if name:
+                profile.name = name
+            if bio:
+                profile.bio = bio
+            
+            profile.save()
+
     page_user = get_object_or_404(User, username=username)
-    return render(request, 'profiles/profile.html', {
+    return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile 
         })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
