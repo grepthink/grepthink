@@ -1,28 +1,33 @@
+"""
+Teamwork: courses
+
+Database Models for the objects: Course, Enrollment
+"""
+#Build-in modules
 from __future__ import unicode_literals
 
+# Django modules
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
+# import of project models
 from teamwork.apps.projects.models import *
 
+#Other imports
 import uuid
 import random
 import string
 import datetime
 
 
-# generates the add code
+# Generates add code
 def rand_code(size):
-    # usees a random choice from lowercase, uppercase, and digits
+    # Usees a random choice from lowercase, uppercase, and digits
     return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
 
-# We need to update the User class to use django.auth
-# from django.contrib.auth.models import User
-
-# Model definitions for the core app.
-# As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 
 class Course(models.Model):
     """
@@ -37,6 +42,9 @@ class Course(models.Model):
 
         creator: the instructor of the course
         addCode: generated unique code used to enroll in the course
+        now: gets current datetime
+        year: gets current year from datetime
+        limit_creation: boolean that dictates wether only professors can create projects
 
     Methods:
         __str__(self):                  Human readeable representation of the course object.
@@ -54,15 +62,47 @@ class Course(models.Model):
 
 
     # The title of the course. Should not be null, but default is provided.
-    name = models.CharField(max_length=255, default="No Course Title Provided")
-    info = models.CharField(max_length=300, default="There is no Course Description")
-    term = models.CharField(max_length=6, choices=Term_Choice,default='None')
-    slug = models.CharField(max_length=20, unique=True)
+    name = models.CharField(
+        max_length=255,
+        default="No Course Title Provided"
+        )
+    # Course info, string
+    info = models.CharField(
+        # with max length 300
+        max_length=300,
+        # default as "There is no Course Description"
+        default="There is no Course Description"
+        )
+    # Term, string
+    term = models.CharField(
+        # with max length 6
+        max_length=6,
+        # choices defined by term choice
+        choices=Term_Choice,
+        # defaulted to none
+        default='None'
+        )
+    # Slug for course, string
+    slug = models.CharField(
+        # with max length 20
+        max_length=20,
+        # must be unique
+        unique=True
+        )
 
-    students = models.ManyToManyField(User, through='Enrollment')
-    projects = models.ManyToManyField(Project)
+    # Students in course, manytomany
+    students = models.ManyToManyField(
+        # to User model
+        User,
+        # through the enrollment table
+        through='Enrollment')
 
-    # auto fields
+    #projects in course, manytomany
+    projects = models.ManyToManyField(
+        # to project model
+        Project
+        )
+
 
     # RYAN
     # creator needs to be a foreign key for a simpler linking
@@ -71,13 +111,34 @@ class Course(models.Model):
     # uses of either of these. Cant dedicate time to it now but needs to get done.
     # creator = models.ForeignKey(User)
 
-
-    creator = models.CharField(max_length=255, default="No admin lol")
-    addCode = models.CharField(max_length=10, unique=True)
+    # Creator of course, string
+    creator = models.CharField(
+        # with max length 255
+        max_length=255,
+        # defaulted to "Default"
+        default="Fefault"
+        )
+    # addCode for course, string
+    addCode = models.CharField(
+        # with length 10
+        max_length=10,
+        # that is unique
+        unique=True
+        )
     # get the current date for the year
     now = datetime.datetime.now()
-    year = models.CharField(max_length=20, default=now.year)
-    limit_creation = models.BooleanField(default = True)
+    # year course was created, string
+    year = models.CharField(
+        # with max length 4
+        max_length=20,
+        # defaulted to current year
+        default=now.year
+        )
+    # limit creation, boolean
+    limit_creation = models.BooleanField(
+        #defaulted to true
+        default = True
+        )
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -88,7 +149,7 @@ class Course(models.Model):
 
     def __str__(self):
         """
-        Human readeable representation of the Project object. Might need to update when we add more attributes.
+        Human readeable representation of the Course object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
         return self.name + "(slug: " + self.slug + ")"
@@ -96,9 +157,8 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
+        Bassically a way to check if the Course object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Course object in the database!
         """
 
         # try catch to ensure the unique property is met
@@ -126,13 +186,6 @@ class Course(models.Model):
         super(Course, self).save(*args, **kwargs)
 
     @staticmethod
-    def get_published():
-        """
-        Gets a list of project objects. Used in views then passed to the template.
-        """
-        courses = Course.objects.filter()
-        return courses
-
     def get_my_courses(user):
         """
         Gets a list of course objects that the user is in
@@ -141,26 +194,42 @@ class Course(models.Model):
         myEnrollment = Enrollment.objects.filter(user=user)
 
         #Filters for courses based on enrollment
-        courses = Course.objects.filter(enrollment__in=myEnrollment)
+        my_courses = Course.objects.filter(enrollment__in=myEnrollment)
 
-        return courses
+        return my_courses
 
     def get_my_created_courses(user):
         """
-        Gets a list of project objects the current user has created
+        Gets a list ofcourse objects the current user has created
         """
         #filters through courses the user has created
-        courses = Course.objects.filter(creator=user.username)
+        created_courses = Course.objects.filter(creator=user.username)
 
-        return courses
+        return created_courses
 
+# Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=0)
+    #User, which is a foriegn key to
+    user = models.ForeignKey(
+        # the User model
+        User,
+        # on deletion, delete child objects
+        on_delete=models.CASCADE,
+        # with a default of 0
+        default=0)
+
+    # Course, which is a foregin key to
+    course = models.ForeignKey(
+        # the course model
+        Course,
+        # on deletion, delete child objects
+        on_delete=models.CASCADE,
+        # with a default of 0
+        default=0)
 
     def __str__(self):
         """
-        Human readeable representation of the Project object. Might need to update when we add more attributes.
+        Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
         return self.course.name
