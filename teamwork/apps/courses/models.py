@@ -63,6 +63,15 @@ class Course(models.Model):
     projects = models.ManyToManyField(Project)
 
     # auto fields
+
+    # RYAN
+    # creator needs to be a foreign key for a simpler linking
+    # but student and creator  both have backwards relations to user, so
+    # I need to go through our current code and setup a related name for all
+    # uses of either of these. Cant dedicate time to it now but needs to get done.
+    # creator = models.ForeignKey(User)
+
+
     creator = models.CharField(max_length=255, default="No admin lol")
     addCode = models.CharField(max_length=10, unique=True)
     # get the current date for the year

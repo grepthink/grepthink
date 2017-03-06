@@ -8,8 +8,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from teamwork.apps.projects.models import *
-
 
 class Skills(models.Model):
     skill = models.CharField(max_length=255, default="")
