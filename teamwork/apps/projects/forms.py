@@ -35,9 +35,15 @@ class ProjectForm(forms.ModelForm):
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(ProjectForm, self).__init__(*args, **kwargs)
-		# Hide slug field if user is editing project
+		
+		# A user cannot edit the slug field after creation, 
+		#  because it would change the URL associated with the project.
+		# 'instance' in kwargs if there exists a project_id matching given slug.
 		if 'instance' in kwargs:
+			# Hide slug field if user is editing project
 			self.fields['slug'].widget = forms.HiddenInput()
+
+
 		# exclude the superuser
 
 		user = User.objects.get(id=uid)
@@ -46,9 +52,12 @@ class ProjectForm(forms.ModelForm):
 		superuser = User.objects.filter(is_superuser=True)
 		only_students = Profile.objects.exclude(Q(user__in=superuser) | Q(isProf=True))
 
+
 		self.fields['members'].queryset = only_students
 		self.fields['course'].queryset = postable_courses
 
+		# Do not display Sponsor field if user is not a professor
+		# Model Profile, isProf set on user creation
 		if not user.profile.isProf:
 			self.fields['sponsor'].widget = forms.HiddenInput()
 
