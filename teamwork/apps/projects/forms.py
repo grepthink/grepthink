@@ -15,7 +15,7 @@ class ProjectForm(forms.ModelForm):
 
 		user = User.objects.get(id=uid)
 		user_courses = Enrollment.objects.filter(user=user)
-		postable_courses = Course.objects.filter(enrollment__in=user_courses).filter(professor=False)
+		postable_courses = Course.objects.filter(enrollment__in=user_courses).filter(limit_creation=False)
 		superuser = User.objects.filter(is_superuser=True)
 		only_students = Profile.objects.exclude(Q(user__in=superuser) | Q(isProf=True))
 

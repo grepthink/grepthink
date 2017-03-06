@@ -1,10 +1,10 @@
+#import admin
 from django.contrib import admin
-
-# Register your models here.
-
+#import course models
 from .models import Course
+#imports enrollment model
 from .models import Enrollment
 
+#registers the following models on the admin site
 admin.site.register(Course)
 admin.site.register(Enrollment)
-
