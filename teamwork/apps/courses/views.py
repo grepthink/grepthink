@@ -43,10 +43,22 @@ def view_one_course(request, slug):
     """
     cur_course = get_object_or_404(Course, slug=slug)
 
+
+    projects = projects_in_course(slug)
+
     return render(request, 'courses/view_course.html', {
-        'cur_course': cur_course ,
+        'cur_course': cur_course , 'projects': projects
         })
 
+def projects_in_course(slug):
+    """
+    Public method that takes a coursename, retreives the course object, returns
+    a list of project objects
+    """
+    # Gets current course
+    cur_course = Course.objects.get(slug=slug)
+    projects = Project.objects.filter(course=cur_course)
+    return projects
 
 @login_required
 def join_course(request):
@@ -101,6 +113,7 @@ def create_course(request):
             course.term = data.get('term')
             course.slug = data.get('slug')
             course.professor = data.get('professor')
+            course.limit_creation = data.get('limit_creation')
 
             # creator is current user
             course.creator = request.user.username

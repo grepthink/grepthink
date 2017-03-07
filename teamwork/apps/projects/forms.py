@@ -57,7 +57,7 @@ class ProjectForm(forms.ModelForm):
 
 		# get_user_enrollmentns
 		postable_courses = Course.objects.filter(
-			enrollment__in=user_courses).filter(limit_creation=False
+			enrollment__in=user_courses).filter(limit_creation=True
 			)
 
 		only_students = Profile.objects.exclude(
