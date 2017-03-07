@@ -114,14 +114,15 @@ def edit_profile(request, username):
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
-    profile = Profile.objects.get(user=request.user)
-    form = ProfileForm(request.POST)
+    profile = Profile.objects.get(user=request.user)    
+    form = ProfileForm(request.POST, request.FILES)
     if request.method == 'POST':        
         if form.is_valid():            
             known = form.cleaned_data.get('known_skill')
             learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
             name = form.cleaned_data.get('name')
+            avatar = form.cleaned_data.get('avatar')
             # if we have an input 
             if known:
                 # check if skill is in Skills table, lower standardizes input
@@ -137,7 +138,7 @@ def edit_profile(request, username):
                 # print(known_skill.known.all())
                 # add the skill to the current profile
                 profile.known_skills.add(known_skill)
-                profile.save() # could probably take these saves out in 'known' and 'learn'
+                profile.save() #taking profile.save() out of these if's and outside lets all the changes be saved at once
                 # This is how we can get all the skills from a user
                 # print(profile.known_skills.all())
 
@@ -158,7 +159,11 @@ def edit_profile(request, username):
             if name:
                 profile.name = name
             if bio:
-                profile.bio = bio
+                profile.bio = bio                
+            if avatar:
+                profile.avatar = avatar
+                print("image path: " + profile.avatar.url)
+                profile.save()                
             
             profile.save()
 

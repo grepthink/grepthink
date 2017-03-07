@@ -124,9 +124,11 @@ class ProfileForm(forms.ModelForm):
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=255, required=False)
 
+  avatar = forms.ImageField(required=False)
+
 # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
 
 
   class Meta:
       model = Skills
-      fields = ['name', 'bio', 'known_skill', 'learn_skill']
+      fields = ['name', 'bio', 'known_skill', 'learn_skill', 'avatar']
