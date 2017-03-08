@@ -90,6 +90,28 @@ def join_course(request):
     return render(request, 'courses/join_course.html', {'form': form})
 
 @login_required
+def show_interest(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    projects = projects_in_course(slug)
+    if request.method == 'POST':
+        form = ShowInterestForm(request.user.id,request.POST, slug)
+        if form.is_valid():
+            course = Course()
+            data = form.cleaned_data
+            course.name = data.name
+            course.save()
+            print("\n\n")
+            print("I'm valid")
+            print("\n\n")
+            return redirect(view_one_course, slug)
+
+    else:
+        form = ShowInterestForm(request.user.id,request.POST)
+
+    messages.info(request,'Something something error message')
+    return HttpResponseRedirect('/course')
+
+@login_required
 def create_course(request):
     """
     Public method that creates a form and renders the request to create_course.html
