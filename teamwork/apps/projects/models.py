@@ -60,7 +60,8 @@ class Project(models.Model):
     # Resource list that the project members can update
     resource = models.TextField(max_length=4000)
     # Date the project was originally submitted on
-    create_date = models.DateTimeField(auto_now_add=True)
+    # Commented until we get to a point where we want to have everyone flush
+    #create_date = models.DateTimeField(auto_now_add=True)
 
 
     # The Meta class provides some extra information about the Project model.
