@@ -51,7 +51,7 @@ def signup(request):
                       {'form': SignUpForm()})
 
 @login_required
-def profile(request, username):
+def view_profile(request, username):
     """
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
@@ -180,7 +180,9 @@ def edit_profile(request, username):
             # if avatar:
             #     profile.avatar = avatar
             #     print("image path: " + profile.avatar.url)
-            #     profile.save()                
+            #     profile.save()   
+
+        return redirect(view_profile, username)             
             
             
     else:            
