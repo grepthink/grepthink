@@ -12,14 +12,8 @@ def _projects(request, projects):
     """
     Private method that will be used for paginator once I figure out how to get it working.
     """
-    #paginator = Paginator(projects, 10)
     page = request.GET.get('page')
-    #try:
-    #    projects = paginator.page(page)
-    #except PageNotAnInteger:
-    #    projects = paginator.page(1)
-    #except EmptyPage:
-    #    projects = paginator.page(paginator.num_pages)
+
     return render(request, 'projects/view_projects.html',
             {'projects': projects}
         )
