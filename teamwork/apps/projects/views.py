@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseBadRequest,  HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from teamwork.apps.courses.models import *
 
 def _projects(request, projects):
     """
@@ -53,20 +54,26 @@ def create_project(request):
     """
     Public method that creates a form and renders the request to create_project.html
     """
-
+    user_id = request.user.id
+    user = Profile.objects.get(user=user_id)
+    #enrollment objects containing current user
     enroll = Enrollment.objects.filter(user=request.user)
+    #current courses user is in
     cur_courses = Course.objects.filter(enrollment__in=enroll)
     no_postable_classes = False
+
+    my_created_courses = Course.objects.filter(creator=request.user.username)
     #If user is in 0 courses
-    if len(enroll) == 0:
+    if len(enroll) == 0 and len(my_created_courses) == 0:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'You need to join a course before creating projects!')
             return HttpResponseRedirect('/')
 
+
     if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
-    if len(enroll) >= 1 and no_postable_classes:
+    if len(enroll) >= 1 and no_postable_classes and not user.isProf:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'Professor has disabled Project Creation!')
             return HttpResponseRedirect('/')
@@ -91,9 +98,13 @@ def create_project(request):
             members = form.cleaned_data.get('members')
 
             project.save()
+
+            in_course = form.cleaned_data.get('course')
+            in_course.projects.add(project)
+
             # loop through the members in the object and make m2m rows for them
             for i in members:
-                Membership.objects.create(user=i, project=project, invite_reason='')
+                Membership.objects.create(user=i.user, project=project, invite_reason='')
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
@@ -108,6 +119,7 @@ def edit_project(request, slug):
     Based off courses/views.py/edit_course
     """
 
+    #WARNING 3/7 PROJECTS MAY NOT BE UPDATING
     project = get_object_or_404(Project, slug=slug)
 
     #if user is not project owner
@@ -126,11 +138,13 @@ def edit_project(request, slug):
             project.save()
 
             members = form.cleaned_data.get('members')
+
+
             # Clear all memberships to avoid duplicates.
             memberships = Membership.objects.filter(project=project)
             if memberships is not None: memberships.delete()
             for i in members:
-                Membership.objects.create(user=i, project=project, invite_reason='')
+                Membership.objects.create(user=i.user, project=project, invite_reason='')
 
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)

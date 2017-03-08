@@ -45,7 +45,7 @@ class Project(models.Model):
     title = models.CharField(max_length=255, default="No Project Title Provided")
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
 
-    content = models.TextField(max_length=4000)
+    content = models.TextField(max_length=4000, default="Content")
 
     members = models.ManyToManyField(User, through='Membership')
     desired_skills = models.ManyToManyField(Skills, related_name="desired")

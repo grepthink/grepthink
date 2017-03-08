@@ -7,8 +7,8 @@
 {# TODO: implement way to edit skills #}
 
 <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
-      {% csrf_token %}      
-
+      {% csrf_token %}  
+      {{ form.status }}    
       {% for field in form.visible_fields %}
         <div class="form-group{% if field.errors %} has-error{% endif %}">
           <label for="{{ field.label }}">{{ field.label }}</label>

@@ -98,6 +98,7 @@ class Course(models.Model):
         # through the enrollment table
         through='Enrollment')
 
+
     #projects in course, manytomany
     projects = models.ManyToManyField(
         # to project model
@@ -137,8 +138,8 @@ class Course(models.Model):
         )
     # limit creation, boolean
     limit_creation = models.BooleanField(
-        #defaulted to true
-        default = True
+        #defaulted to False
+        default = False
         )
 
     # The Meta class provides some extra information about the Project model.
