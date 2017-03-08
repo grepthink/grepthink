@@ -2,13 +2,14 @@
 {% load staticfiles %}
 {% load i18n %}
 
-
+{% load static %}
 
 {% block content %}
 <!-- Profile Image -->
 <div class="box box-primary">
   <div class="box-body box-profile">
-    <img class="profile-user-img img-responsive img-circle" src="/avatar_folder/goonies.jpg" alt="Profile Pic">
+    {# couldn't get working -- scrapping for now #}
+    {# <img class="profile-user-img img-responsive img-circle" src="{{ profile.avatar.url }}" alt="Profile Pic"> #}
 
     <h3 class="profile-username text-center">{{page_user.profile.name}}</h3>
 
@@ -58,7 +59,6 @@
     <hr>
     <strong><i class="fa fa-pencil margin-r-5"></i> Skills I Want to Learn</strong>
 
-{# p tag has different default padding -- using for now #}
     <p>
        {% for skill in page_user.profile.learn_skills.all %}
         <span class="label label-warning">{{ skill.skill }}</span>    

@@ -117,13 +117,13 @@ def edit_profile(request, username):
     profile = Profile.objects.get(user=request.user)    
     
     if request.method == 'POST':                   
-        form = ProfileForm(request.POST, request.FILES)    
+        form = ProfileForm(request.POST)    
         if form.is_valid():            
             known = form.cleaned_data.get('known_skill')
             learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
             name = form.cleaned_data.get('name')
-            avatar = form.cleaned_data.get('avatar')
+            # avatar = form.cleaned_data.get('avatar')
             # if we have an input 
             if known:
                 # parse known on ','
@@ -177,10 +177,10 @@ def edit_profile(request, username):
             if bio:
                 profile.bio = bio                
                 profile.save()
-            if avatar:
-                profile.avatar = avatar
-                print("image path: " + profile.avatar.url)
-                profile.save()                
+            # if avatar:
+            #     profile.avatar = avatar
+            #     print("image path: " + profile.avatar.url)
+            #     profile.save()                
             
             
     else:            
