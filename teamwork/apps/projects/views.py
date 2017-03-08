@@ -54,14 +54,17 @@ def create_project(request):
     """
     Public method that creates a form and renders the request to create_project.html
     """
-
+    user_id = request.user.id
+    user = Profile.objects.get(user=user_id)
     #enrollment objects containing current user
     enroll = Enrollment.objects.filter(user=request.user)
     #current courses user is in
     cur_courses = Course.objects.filter(enrollment__in=enroll)
     no_postable_classes = False
+
+    my_created_courses = Course.objects.filter(creator=request.user.username)
     #If user is in 0 courses
-    if len(enroll) == 0:
+    if len(enroll) == 0 and len(my_created_courses) == 0:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'You need to join a course before creating projects!')
             return HttpResponseRedirect('/')
@@ -70,7 +73,7 @@ def create_project(request):
     if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
-    if len(enroll) >= 1 and no_postable_classes:
+    if len(enroll) >= 1 and no_postable_classes and not user.isProf:
             #Redirect them to homepage and tell them to join a course
             messages.info(request,'Professor has disabled Project Creation!')
             return HttpResponseRedirect('/')
@@ -97,6 +100,7 @@ def create_project(request):
             project.save()
 
             in_course = form.cleaned_data.get('course')
+            in_course.projects.add(project)
 
             # loop through the members in the object and make m2m rows for them
             for i in members:

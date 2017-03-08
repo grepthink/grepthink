@@ -60,13 +60,25 @@ class ProjectForm(forms.ModelForm):
 			enrollment__in=user_courses).filter(limit_creation=True
 			)
 
+		# get created courses
+		created_courses = Course.objects.filter(
+			creator=user
+		)
+
 		only_students = Profile.objects.exclude(
 			Q(user__in=superuser) | Q(isProf=True)
 			)
 
 
 		self.fields['members'].queryset = only_students
-		self.fields['course'].queryset = postable_courses
+
+		# If user is professor
+		if user.profile.isProf:
+			# can post projects to any course they created
+			self.fields['course'].queryset = created_courses
+		else:
+			# else can only post to any course enrolled in where limit_creation = false
+			self.fields['course'].queryset = postable_courses
 
 		# Do not display Sponsor field if user is not a professor
 		# Model Profile, isProf set on user creation
