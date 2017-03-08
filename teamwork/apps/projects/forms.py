@@ -55,16 +55,21 @@ class ProjectForm(forms.ModelForm):
 		# get_sueruser_list
 		superuser = User.objects.filter(is_superuser=True)
 
-		# get_user_enrollmentns
+		# get_postable_courses
+		# Query for a list of courses that the user can post a project in.
+		#   limit_creation will be false if the professor allows students to post.
 		postable_courses = Course.objects.filter(
 			enrollment__in=user_courses).filter(limit_creation=False
 			)
 
-		# get created courses
+		# get courses created by current user
 		created_courses = Course.objects.filter(
 			creator=user
 		)
 
+		# Query for only students, without superuser or professors
+		# We use Profile because isProf is stored in the Profile model.
+		# TODO: only students in this course
 		only_students = Profile.objects.exclude(
 			Q(user__in=superuser) | Q(isProf=True)
 			)
@@ -126,6 +131,10 @@ class ProjectForm(forms.ModelForm):
 	    fields = ['title', 'members', 'accepting', 'sponsor', 'course', 'content', 'slug']
 
 class ViewProjectForm(forms.ModelForm):
+	"""
+	Is this still used? - andgates
+
+	"""
 
 	def __init__(self, *args, **kwargs):
 		super(ViewProjectForm, self).__init__(*args, **kwargs)
@@ -138,6 +147,19 @@ class ViewProjectForm(forms.ModelForm):
 	    fields = ['interest']
 
 class UpdateForm(forms.ModelForm):
+	"""
+	Form used for submitting project updates
+
+
+	Attributes (Fields):
+		update_title: [CharField] Name of project update
+		update:       [CharField] Project update content
+		user:		  [User] 	  User object associated with form submitter
+
+	Methods:
+		__init__ :	gets the current user when initiating the form
+
+	"""
 	# used for filtering the queryset
 	def __init__(self, uid, *args, **kwargs):
 		super(UpdateForm, self).__init__(*args, **kwargs)
