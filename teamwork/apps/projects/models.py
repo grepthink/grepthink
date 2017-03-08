@@ -43,23 +43,24 @@ class Project(models.Model):
 
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(max_length=255, default="No Project Title Provided")
+    # TODO: This should not be a CharField
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
-
+    # Verbose project description.
     content = models.TextField(max_length=4000)
-
+    # Members associated with a project (Membership objects)
     members = models.ManyToManyField(User, through='Membership')
+    # Skills needed for the project.
     desired_skills = models.ManyToManyField(Skills, related_name="desired")
-
+    # True when the proejct is accepting new members. False when project is full.
     avail_mem = models.BooleanField(default = True)
+    # True when project is sponsered. False when project is not sponsered. Field hidden to students.
     sponsor = models.BooleanField(default = False)
-
-
-
-
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
-
+    # Resource list that the project members can update
     resource = models.TextField(max_length=4000)
+    # Date the project was originally submitted on
+    create_date = models.DateTimeField(auto_now_add=True)
 
 
     # The Meta class provides some extra information about the Project model.
@@ -81,7 +82,6 @@ class Project(models.Model):
         Overides the default save operator...
         Bassically a way to check if the Project object exists in the database. Will be helpful later.
         self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
         """
         #if not self.pk:
         #    super(Project, self).save(*args, **kwargs)
@@ -129,16 +129,33 @@ class Project(models.Model):
         return ProjectUpdate.objects.filter(project=self)
 
 class Membership(models.Model):
+    """
+    Membership objects relate a user and a project.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
 
 class Interest(models.Model):
+    """
+    Intrest object relates a user to a intrest (may be changed in the future)
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
     interest_reason = models.CharField(max_length=100)
 
 class ProjectUpdate(models.Model):
+    """
+    ProjectUpdate objects are updates associated with a project
+
+    Attributes:
+        project: ForeignKey to the project, found by project slug
+        update_title: The title of a project update
+        update: The content of the project update
+        date: Date that the project update was posted
+        user: The currently logged in user (associated with the project update)
+
+    """
     project = models.ForeignKey(Project)
     update_title = models.CharField(max_length=255, default="Default Update Title")
     update = models.TextField(max_length=2000, default="Default Update")
@@ -192,31 +209,4 @@ class Project_Status (Project):
         self.need_mem = {{self.max_cap|sub: self.current_mem}}
         self.avail_mem = case(when(self.need_mem = 0, then = False))
 
-"""
-
-
-
-
-
-# Legacy code for me to sort through next and slowly add back in:
-
-"""
-class Project(models.Model):
-#Authors is a is a forign key from class User.
-#Each project object is associated with authors (current_members).
-
-    # Authors
-    #authors = models.ForeignKey(User, related_name='+')
-    # all many to many fields first, to easily identify relationships
-    #course = models.ManyToManyField(Course, related_name="course_id")
-    #project_owner = models.ManyToManyField(User, related_name="po")
-    project_owner = models.ForeignKey(User)
-    #current_members = models.ManyToManyField(User, related_name="members")
-    #project_owner = models.ManyToManyField(User, related_name="po")
-    project_name = models.CharField(max_length=50, default="")
-    project_info = models.CharField(max_length=100, default="")
-    #create_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.project_name
 """
