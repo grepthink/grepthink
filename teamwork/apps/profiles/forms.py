@@ -111,8 +111,11 @@ class ProfileForm(forms.ModelForm):
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=50, required=False)
 
+  # bio = forms.CharField(
+  #             widget=forms.TextInput(attrs={'class': 'form-control'}),
+  #             max_length=500, required=False)
   bio = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              widget=forms.Textarea(attrs={'rows': 6, 'cols': 75}),
               max_length=500, required=False)
 
   known_skill = forms.CharField(

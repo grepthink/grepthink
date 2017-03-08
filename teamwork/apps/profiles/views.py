@@ -109,15 +109,14 @@ def edit_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
 
-    # TODO: fix up return calls, form should be in if
+    # TODO: 
     """
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
     profile = Profile.objects.get(user=request.user)    
     
-    if request.method == 'POST':   
-        print("POST")          
+    if request.method == 'POST':                   
         form = ProfileForm(request.POST, request.FILES)    
         if form.is_valid():            
             known = form.cleaned_data.get('known_skill')
@@ -184,11 +183,8 @@ def edit_profile(request, username):
                 profile.save()                
             
             
-    else:
-        print("OTHERWISE")        
-        # TODO: figure out correct syntax to pre-load previous data in edit form
-        # form = ProfileForm(request.POST, instance=profile)
-        form = ProfileForm(request.POST)
+    else:            
+        form = ProfileForm(instance=profile)
         
 
     page_user = get_object_or_404(User, username=username)
