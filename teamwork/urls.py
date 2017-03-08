@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
 from teamwork.apps.core import views as core_views
@@ -67,4 +69,8 @@ urlpatterns = [
         url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
         # /username/ - A users unique profile url
         url(r'^user/(?P<username>[^/]+)/$', profile_views.profile, name='profile'),
-        ]
+        # /username/edit - Edit user profile
+        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
+        ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+        

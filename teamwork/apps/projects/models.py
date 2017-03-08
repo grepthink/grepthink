@@ -46,7 +46,7 @@ class Project(models.Model):
     # TODO: This should not be a CharField
     creator = models.CharField(max_length=255, default="No Creator (Weird)")
     # Verbose project description.
-    content = models.TextField(max_length=4000)
+    content = models.TextField(max_length=4000, default="Content")
     # Members associated with a project (Membership objects)
     members = models.ManyToManyField(User, through='Membership')
     # Skills needed for the project.

@@ -1,0 +1,43 @@
+{% extends 'adminlte/base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% block content %}
+
+{# TODO: implement way to edit skills #}
+
+<div class="row">
+  <div class="col-md-10">
+    <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
+          {% csrf_token %}  
+          {{ form.status }}    
+
+          <div class="col-sm-4">
+            <h5>Full Name</h4>
+            {{ form.name }}            
+          </div>          
+
+          <div class="col-sm-9">
+            <h5>Bio</h4>
+            {{ form.bio }}
+          </div>
+
+          <div class="col-sm-4">
+            <h5>Known Skills</h4>
+            {{ form.known_skill }}            
+          </div>
+
+          <div class="col-sm-4">
+            <h5>Skills I Want to Learn</h4>
+            {{ form.learn_skill }}            
+          </div>
+
+          <div class="pull-right">      
+            <input type="submit" value="Submit">     
+          </div>
+          
+    </form>
+  </div>
+</div>
+
+{% endblock content %}
