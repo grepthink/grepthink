@@ -2,6 +2,7 @@
 from django import forms
 #imports all tables from models
 from .models import *
+from django.core.exceptions import ValidationError
 
 #Choices for term
 Term_Choice = (
@@ -112,6 +113,10 @@ class JoinCourseForm(forms.ModelForm):
         model = Course
         fields = ['code']
 
+def UniqueProjectValidator(value):
+    if True:
+        raise ValidationError('Each choice must be a Unique Project.')
+
 class ShowInterestForm(forms.ModelForm):
     #Initializes form
     def __init__(self, uid, *args, **kwargs):
@@ -130,14 +135,40 @@ class ShowInterestForm(forms.ModelForm):
     #projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
 
     #Project Choice Field
-    projects = forms.ModelChoiceField(queryset=None, empty_label=None, label='First Choice')
-    projects2 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Second Choice')
-    projects3 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Third Choice')
-    projects4 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fourth Choice')
-    projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice')
+    projects = forms.ModelChoiceField(queryset=None, empty_label=None, label='First Choice', required = False)
+    projects2 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Second Choice', required = False)
+    projects3 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Third Choice', required = False)
+    projects4 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fourth Choice', required = False)
+    projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice', required = False)
 
     class Meta:
 
         model = Course
 
         fields = ['projects']
+
+    # Overrides clean_data for Show_Interest
+    def clean(self):
+        data = self.cleaned_data
+
+        # Initializes a list of projects
+        project_list = []
+        # Gets data and adds to list
+        p1 = data.get('projects')
+        p2 = data.get('projects2')
+        p3 = data.get('projects3')
+        p4 = data.get('projects4')
+        p5 = data.get('projects5')
+        project_list.append(p1)
+        project_list.append(p2)
+        project_list.append(p3)
+        project_list.append(p4)
+        project_list.append(p5)
+
+        # Checks for uniqueness
+        if len(project_list) != len(set(project_list)):
+            self._errors['projects'] = self.error_class(
+                ['Choices must be unique!'])
+            #raise forms.ValidationError("Choices must be unique.")
+
+        return data
