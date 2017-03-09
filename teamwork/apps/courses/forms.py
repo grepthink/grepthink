@@ -151,9 +151,6 @@ class ShowInterestForm(forms.ModelForm):
     def clean(self):
         data = self.cleaned_data
 
-        for i in range (5,0, -1):
-            print("\n" + str(i) + str(i - (i - 1)))
-
         # Initializes a list of projects
         project_list = []
         # Gets data and adds to list
