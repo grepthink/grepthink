@@ -115,17 +115,14 @@ class JoinCourseForm(forms.ModelForm):
 class ShowInterestForm(forms.ModelForm):
     #Initializes form
     def __init__(self, uid, *args, **kwargs):
+        slug = kwargs.pop('slug')
         super(ShowInterestForm, self).__init__(*args, **kwargs)
 
-    cur_course = Course.objects.get(slug=slug)
-    projects = Project.objects.filter(course=cur_course)
-    self.field['projects'].queryset = projects
+        cur_course = Course.objects.get(slug=slug)
+        projects = Project.objects.filter(course=cur_course)
+        self.fields['projects'].queryset = projects
 
-	projects = forms.ModelChoiceField(
-		widget=forms.RadioSelect,
-		queryset=Project.objects.all(),
-		required=True,initial=False
-		)
+    projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
 
     class Meta:
         model = Course

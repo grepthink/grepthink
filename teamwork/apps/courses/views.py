@@ -94,22 +94,27 @@ def show_interest(request, slug):
     cur_course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     if request.method == 'POST':
-        form = ShowInterestForm(request.user.id,request.POST, slug)
+        form = ShowInterestForm(request.POST, request.user.id, instance=cur_course, slug = slug)
         if form.is_valid():
             course = Course()
-            data = form.cleaned_data
-            course.name = data.name
             course.save()
+            #students = data.get('students')
             print("\n\n")
             print("I'm valid")
             print("\n\n")
             return redirect(view_one_course, slug)
 
     else:
-        form = ShowInterestForm(request.user.id,request.POST)
+        print("\n\n")
+        print(request.POST)
+        print("\n\n")
+        form = ShowInterestForm(request.user.id,instance=cur_course, slug = slug)
 
-    messages.info(request,'Something something error message')
-    return HttpResponseRedirect('/course')
+
+    return render(
+            request, 'courses/show_interest.html',
+            {'form': form,'cur_course': cur_course}
+            )
 
 @login_required
 def create_course(request):
