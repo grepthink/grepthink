@@ -119,11 +119,25 @@ class ShowInterestForm(forms.ModelForm):
         super(ShowInterestForm, self).__init__(*args, **kwargs)
 
         cur_course = Course.objects.get(slug=slug)
-        projects = Project.objects.filter(course=cur_course)
+        #USE THIS SEAN U DUMMY
+        projects = cur_course.projects.all()
         self.fields['projects'].queryset = projects
+        self.fields['projects2'].queryset = projects
+        self.fields['projects3'].queryset = projects
+        self.fields['projects4'].queryset = projects
+        self.fields['projects5'].queryset = projects
 
-    projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
+    #projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
+
+    #Project Choice Field
+    projects = forms.ModelChoiceField(queryset=None, empty_label=None, label='First Choice')
+    projects2 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Second Choice')
+    projects3 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Third Choice')
+    projects4 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fourth Choice')
+    projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice')
 
     class Meta:
+
         model = Course
+
         fields = ['projects']

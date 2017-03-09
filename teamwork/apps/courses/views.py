@@ -91,24 +91,42 @@ def join_course(request):
 
 @login_required
 def show_interest(request, slug):
+    user = request.user
     cur_course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     if request.method == 'POST':
-        form = ShowInterestForm(request.POST, request.user.id, instance=cur_course, slug = slug)
+        form = ShowInterestForm(request.user.id, request.POST, slug = slug)
         if form.is_valid():
-            course = Course()
-            course.save()
-            #students = data.get('students')
-            print("\n\n")
-            print("I'm valid")
-            print("\n\n")
+            data=form.cleaned_data
+            #Gets first choice, creates interest object for it
+            choice_1 = data.get('projects')
+            choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=''))
+            choice_1.save()
+
+            #Gets second choice, creates interest object for it
+            choice_2 = data.get('projects2')
+            choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=''))
+            choice_2.save()
+
+            #Gets third choice, creates interest object for it
+            choice_3 = data.get('projects3')
+            choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=''))
+            choice_3.save()
+
+            #Gets fourth choice, creates interest object for it
+            choice_4 = data.get('projects4')
+            choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=''))
+            choice_4.save()
+
+            #Gets fifth choice, creates interest object for it
+            choice_5 = data.get('projects5')
+            choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=''))
+            choice_5.save()
+
             return redirect(view_one_course, slug)
 
     else:
-        print("\n\n")
-        print(request.POST)
-        print("\n\n")
-        form = ShowInterestForm(request.user.id,instance=cur_course, slug = slug)
+        form = ShowInterestForm(request.user.id, slug = slug)
 
 
     return render(
