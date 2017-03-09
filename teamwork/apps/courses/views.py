@@ -92,13 +92,34 @@ def join_course(request):
 @login_required
 def show_interest(request, slug):
     user = request.user
+    # current course
     cur_course = get_object_or_404(Course, slug=slug)
+    # projects in current course
     projects = projects_in_course(slug)
+    # enrollment objects containing current user
+    enroll = Enrollment.objects.filter(user=request.user)
+    # current courses user is in
+    user_courses = Course.objects.filter(enrollment__in=enroll)
+
+    # if current course not in users enrolled courses
+    if not cur_course in user_courses:
+            messages.info(request,'You are not enrolled in this course')
+            return HttpResponseRedirect('/course')
+    #if not enough projects or user is not professor
+    if len(projects) < 5 or user.profile.isProf:
+        #redirect them with a message
+        messages.info(request,'Cannot show interest')
+        return HttpResponseRedirect('/course')
+
+    # SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
+
     if request.method == 'POST':
         form = ShowInterestForm(request.user.id, request.POST, slug = slug)
         if form.is_valid():
             data=form.cleaned_data
             #Gets first choice, creates interest object for it
+
+
             choice_1 = data.get('projects')
             choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=''))
             choice_1.save()
@@ -122,6 +143,7 @@ def show_interest(request, slug):
             choice_5 = data.get('projects5')
             choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=''))
             choice_5.save()
+
 
             return redirect(view_one_course, slug)
 
