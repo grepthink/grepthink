@@ -50,7 +50,7 @@ class Project(models.Model):
     # Members associated with a project (Membership objects)
     members = models.ManyToManyField(User, through='Membership')
     # Skills needed for the project.
-    desired_skills = models.ManyToManyField(Skills, related_name="desired")
+    desired_skills = models.ManyToManyField(Skills, related_name="desired", default="")
     # True when the proejct is accepting new members. False when project is full.
     avail_mem = models.BooleanField(default = True)
     # True when project is sponsered. False when project is not sponsered. Field hidden to students.

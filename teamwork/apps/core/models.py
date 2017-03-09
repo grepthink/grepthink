@@ -6,6 +6,41 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
+from teamwork.apps.projects.models import *
+# profiles is already imported from projects, not necessary here
+
+def POMatch(project):
+	match = {}
+	print("\n\nMatching Begun\n\n")
+	desired_skills = project.desired_skills.all()
+	for i in desired_skills:
+		print(i)
+		know = i.known.all()
+		print("\n\nKnow the Skill")
+		print(know)
+		for j in know:
+			if j.user in match:
+				temp = match[j.user]
+				temp += 2
+				match[j.user] = temp
+				print("Updated user score")
+			else:
+				match[j.user] = 2
+				print("Created user score")
+			print(j.user)
+
+
+		# learn = i.learn.all()
+		# print("\n\nWant to learn")
+		# print(learn)
+		
+	print("\n\nMatching End\n\n")
+	print(match)
+	print(len(match.keys()))
+	print("\n\n")
+
+
+
 # We need to update the User class to use django.auth
 # from django.contrib.auth.models import User
 

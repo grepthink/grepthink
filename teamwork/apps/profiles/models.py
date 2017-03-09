@@ -80,6 +80,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    def __hash__(self):
+        return hash(self.user)
+    def __eq__(self, other):
+        return (self.user == other.user)
+    def __ne__(self, other):
+        # Not strictly necessary, but to avoid having both x==y and x!=y
+        # True at the same time
+        return not(self == other)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

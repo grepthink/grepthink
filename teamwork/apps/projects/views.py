@@ -8,6 +8,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from teamwork.apps.courses.models import *
 
+
+from teamwork.apps.core.models import *
+
 def _projects(request, projects):
     """
     Private method that will be used for paginator once I figure out how to get it working.
@@ -38,6 +41,8 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     updates = project.get_updates()
+
+    matches = POMatch(project)
 
     return render(request, 'projects/view_project.html', {
         'project': project , 'updates' :updates
@@ -82,6 +87,36 @@ def create_project(request):
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
 
+            project.save()
+
+            # Handle desired skills
+            desired = form.cleaned_data.get('desired_skills')
+            if desired:
+                # parse known on ','
+                skill_array = desired.split(',')
+                for skill in skill_array:                    
+                    stripped_skill = skill.strip()
+                    if not (stripped_skill == ""):
+                        # check if skill is in Skills table, lower standardizes input
+                        if Skills.objects.filter(skill=stripped_skill.lower()):
+                            # skill already exists, then pull it up  
+                            desired_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                        else:
+                            # we have to add the skill to the table
+                            desired_skill = Skills.objects.create(skill=stripped_skill.lower())
+                            # save the new object
+                            desired_skill.save()
+                        # This is how we can use the reverse of the relationship
+                        print("\n\n")
+                        print(desired_skill.desired.all())
+                        print("\n\n")
+                        # add the skill to the current profile
+                        project.desired_skills.add(desired_skill)
+                        project.save() #taking profile.save() out of these if's and outside lets all the changes be saved at once
+                        # This is how we can get all the skills from a user
+                        print("\n\n")
+                        print(project.desired_skills.all())
+                        print("\n\n")
             # Project content
             project.content = form.cleaned_data.get('content')
 

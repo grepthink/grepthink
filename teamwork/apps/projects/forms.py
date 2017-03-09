@@ -109,6 +109,10 @@ class ProjectForm(forms.ModelForm):
 		label = 'Sponsored?',
 		required = False)
 
+	desired_skills = forms.CharField(
+	      widget=forms.TextInput(attrs={'class': 'form-control'}),
+	      max_length=255, required=False)
+
 	course = forms.ModelChoiceField(
 		widget=forms.RadioSelect,
 		queryset=Course.objects.all(),
@@ -128,7 +132,7 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 	    model = Project
-	    fields = ['title', 'members', 'accepting', 'sponsor', 'course', 'content', 'slug']
+	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills', 'course', 'content', 'slug']
 
 class ViewProjectForm(forms.ModelForm):
 	"""
