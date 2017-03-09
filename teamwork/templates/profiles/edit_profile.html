@@ -12,32 +12,70 @@
           {% csrf_token %}  
           {{ form.status }}    
 
-          <div class="col-sm-4">
+          <div class="col-sm-8">
             <h5>Full Name</h4>
             {{ form.name }}            
-          </div>          
+          </div>
+
+          <div class="col-sm-8">
+            <h5>Institution</h4>
+            {{ form.institution }}            
+          </div>
+
+          <div class="col-sm-8">
+            <h5>Location</h4>
+            {{ form.location }}            
+          </div>   
 
           <div class="col-sm-9">
             <h5>Bio</h4>
             {{ form.bio }}
           </div>
 
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             <h5>Known Skills</h4>
             {{ form.known_skill }}            
           </div>
 
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             <h5>Skills I Want to Learn</h4>
             {{ form.learn_skill }}            
-          </div>
+          </div>               
+            
+          
 
           <div class="pull-right">      
             <input type="submit" value="Submit">     
           </div>
           
+          <div class="col-sm-5">
+            <ul>
+              {% for skill in known_skills_list %}
+              
+               <li>
+               <a href="{% url 'edit_profile' skill.skill %}"><i class="fa fa-trash"></i> </a>{{ skill.skill }}  
+               </li>
+             
+              {% endfor %} 
+            </ul>
+          </div>
+
+          <div class="col-sm-5">
+            <ul>
+              {% for skill in learn_skills_list %}
+             
+               <li>
+                <a href="{% url 'edit_profile' skill.skill %}"><i class="fa fa-trash"></i> </a>{{ skill.skill }}  
+               </li>
+              
+              {% endfor %} 
+            </ul>
+          </div>
+          
     </form>
   </div>
 </div>
+
+
 
 {% endblock content %}

@@ -68,10 +68,13 @@ class Profile(models.Model):
     """
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
-    name = models.TextField(max_length=500, blank=True)
+    name = models.TextField(max_length=75, blank=True)
+    institution = models.TextField(max_length=100, blank=True)
+    location = models.TextField(max_length=100, blank=True)
+
     # avatar = models.ImageField(upload_to= 'avatars/')
 
-    # TODO: Interest - ManyToOne, Past Classes, Bio
+    # TODO: Interest - ManyToOne, Past Classes,
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
