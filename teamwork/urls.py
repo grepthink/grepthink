@@ -69,8 +69,8 @@ urlpatterns = [
         #logout
         url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
         # /username/ - A users unique profile url
-        url(r'^user/(?P<username>[^/]+)/$', profile_views.profile, name='profile'),
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
+        url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
         url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

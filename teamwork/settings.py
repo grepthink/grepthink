@@ -154,14 +154,14 @@ STATICFILES_DIRS = [
 ]
 """
 # Define the static and media stuff, so Django won’t have problems finding your css/js files:
-STATIC_ROOT = PROJECT_DIR.parent.parent.child('static')
+STATIC_ROOT = PROJECT_DIR.parent.child('static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     PROJECT_DIR.child('static'),
 )
 
-MEDIA_ROOT = PROJECT_DIR.parent.parent.child('media')
+MEDIA_ROOT = PROJECT_DIR.child('media')
 MEDIA_URL = '/media/'
 
 # Simplified static file serving.
