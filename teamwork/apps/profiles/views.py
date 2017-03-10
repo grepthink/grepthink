@@ -73,15 +73,25 @@ def edit_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
 
     """
-    if isinstance(username, Skills):
-        print("is skill")
 
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
-    profile = Profile.objects.get(user=request.user)    
-    
-    if request.method == 'POST':                   
+    profile = Profile.objects.get(user=request.user)        
+
+    if request.POST.get('delete_known'):        
+        skillname = request.POST.get('delete_known')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.known_skills.remove(to_delete)
+        form = ProfileForm(instance=profile)
+
+    elif request.POST.get('delete_learn'):        
+        skillname = request.POST.get('delete_learn')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.learn_skills.remove(to_delete)
+        form = ProfileForm(instance=profile)
+        
+    elif request.method == 'POST':                   
         form = ProfileForm(request.POST)    
         if form.is_valid():            
             known = form.cleaned_data.get('known_skill')
@@ -156,8 +166,7 @@ def edit_profile(request, username):
             #     profile.save()   
 
         return redirect(view_profile, username)             
-            
-            
+
     else:            
         form = ProfileForm(instance=profile)
         

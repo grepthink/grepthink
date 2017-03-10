@@ -52,9 +52,9 @@
             <ul>
               {% for skill in known_skills_list %}
               
-               <li>
-               <a href="{% url 'edit_profile' skill.skill %}"><i class="fa fa-trash"></i> </a>{{ skill.skill }}  
-               </li>
+                <li>
+                <input type="submit" name="delete_known" value="{{skill.skill}}">
+                </li>
              
               {% endfor %} 
             </ul>
@@ -64,9 +64,9 @@
             <ul>
               {% for skill in learn_skills_list %}
              
-               <li>
-                <a href="{% url 'edit_profile' skill.skill %}"><i class="fa fa-trash"></i> </a>{{ skill.skill }}  
-               </li>
+                <li>
+                <input type="submit" name="delete_learn" value="{{skill.skill}}">
+                </li>
               
               {% endfor %} 
             </ul>

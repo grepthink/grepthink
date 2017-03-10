@@ -28,8 +28,7 @@ class Skills(models.Model):
         save(self, *args, **kwargs):    Overides the default save operator...
 
         """
-    # skill, a string
-    #skill = models.CharField(max_length=255,default="")
+    # skill, a string    
     skill = models.CharField(max_length=255,default="")
 
     def __str__(self):
