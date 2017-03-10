@@ -13,42 +13,44 @@
           {{ form.status }}    
 
           <div class="col-sm-8">
-            <h5>Full Name</h4>
+            <h5>Full Name</h5>
             {{ form.name }}            
           </div>
 
           <div class="col-sm-4">
-            <h5>Avatar</h4>
+            <h5>Avatar</h5>
             {{ form.avatar }}            
           </div> 
 
           <div class="col-sm-8">
-            <h5>Institution</h4>
+            <h5>Institution</h5>
             {{ form.institution }}            
           </div>
 
           <div class="col-sm-8">
-            <h5>Location</h4>
+            <h5>Location</h5>
             {{ form.location }}            
           </div>   
 
           <div class="col-sm-9">
-            <h5>Bio</h4>
+            <h5>Bio</h5>
             {{ form.bio }}
+          </div>                    
+
+          <div class="col-sm-5">     
+            <h5>Known Skills 
+              <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Separate skills by comma">
+                <i class='glyphicon glyphicon-info-sign'></i></a></h5>
+                {{ form.known_skill }}            
           </div>
 
           <div class="col-sm-5">
-            <h5>Known Skills</h4>
-            {{ form.known_skill }}            
-          </div>
-
-          <div class="col-sm-5">
-            <h5>Skills I Want to Learn</h4>
-            {{ form.learn_skill }}            
+            <h5>Skills I Want to Learn
+              <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Separate skills by comma">
+                  <i class='glyphicon glyphicon-info-sign'></i></a></h5>
+                  {{ form.learn_skill }}            
           </div>               
             
-          
-
           <div class="pull-right">      
             <input type="submit" value="Submit">     
           </div>
