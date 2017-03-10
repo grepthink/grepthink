@@ -47,29 +47,19 @@
           <div class="pull-right">      
             <input type="submit" value="Submit">     
           </div>
-          
+          <hr>
           <div class="col-sm-5">
-            <ul>
               {% for skill in known_skills_list %}
-              
-                <li>
-                <input type="submit" name="delete_known" value="{{skill.skill}}">
-                </li>
-             
+                  <button class="btn btn-danger" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                  </button>
               {% endfor %} 
-            </ul>
           </div>
 
           <div class="col-sm-5">
-            <ul>
               {% for skill in learn_skills_list %}
-             
-                <li>
-                <input type="submit" name="delete_learn" value="{{skill.skill}}">
-                </li>
-              
-              {% endfor %} 
-            </ul>
+                  <button class="btn btn-danger" name="delete_learn" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                  </button>
+              {% endfor %}             
           </div>
           
     </form>
