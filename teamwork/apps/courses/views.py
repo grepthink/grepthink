@@ -90,6 +90,73 @@ def join_course(request):
     return render(request, 'courses/join_course.html', {'form': form})
 
 @login_required
+def show_interest(request, slug):
+    user = request.user
+    # current course
+    cur_course = get_object_or_404(Course, slug=slug)
+    # projects in current course
+    projects = projects_in_course(slug)
+    # enrollment objects containing current user
+    enroll = Enrollment.objects.filter(user=request.user)
+    # current courses user is in
+    user_courses = Course.objects.filter(enrollment__in=enroll)
+
+    # if current course not in users enrolled courses
+    if not cur_course in user_courses:
+            messages.info(request,'You are not enrolled in this course')
+            return HttpResponseRedirect('/course')
+    #if not enough projects or user is not professor
+    if len(projects) < 5 or user.profile.isProf:
+        #redirect them with a message
+        messages.info(request,'Cannot show interest')
+        return HttpResponseRedirect('/course')
+
+    # SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
+
+    if request.method == 'POST':
+        form = ShowInterestForm(request.user.id, request.POST, slug = slug)
+        if form.is_valid():
+            data=form.cleaned_data
+            #Gets first choice, creates interest object for it
+
+
+            choice_1 = data.get('projects')
+            choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=''))
+            choice_1.save()
+
+            #Gets second choice, creates interest object for it
+            choice_2 = data.get('projects2')
+            choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=''))
+            choice_2.save()
+
+            #Gets third choice, creates interest object for it
+            choice_3 = data.get('projects3')
+            choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=''))
+            choice_3.save()
+
+            #Gets fourth choice, creates interest object for it
+            choice_4 = data.get('projects4')
+            choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=''))
+            choice_4.save()
+
+            #Gets fifth choice, creates interest object for it
+            choice_5 = data.get('projects5')
+            choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=''))
+            choice_5.save()
+
+
+            return redirect(view_one_course, slug)
+
+    else:
+        form = ShowInterestForm(request.user.id, slug = slug)
+
+
+    return render(
+            request, 'courses/show_interest.html',
+            {'form': form,'cur_course': cur_course}
+            )
+
+@login_required
 def create_course(request):
     """
     Public method that creates a form and renders the request to create_course.html

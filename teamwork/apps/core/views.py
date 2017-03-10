@@ -12,9 +12,10 @@ def home(request):
     if request.user.is_authenticated():
         return render(request, 'core/home.html')
     else:
-        return render(request, 'core/cover.html')
+        return render(request, 'core/about.html')
 
-
+def about(request):
+    return render(request, 'core/about.html')
 
 #Shouldnt have a use as of 2/11
 """

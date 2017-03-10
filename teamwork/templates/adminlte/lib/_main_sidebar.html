@@ -1,60 +1,75 @@
 {% extends 'adminlte/lib/_main_sidebar.html' %}
 
-{% block nav_links %}
-    <li>
-        <a href="{% url 'home' %}">
-            <i class="fa fa-dashboard"></i> <span>Home</span>
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'create_project' %}">
-            <i class="fa fa-plus"></i> <span>Create Project</span>
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'view_projects' %}">
-            <i class="fa fa-folder"></i> <span>View Projects</span>
-        </a>
-    </li>
 
-    {% if user.profile.isProf %}
-      <li>
-          <a href="{% url 'create_course' %}">
-              <i class="fa fa-plus"></i> <span>Create Course</span>
-          </a>
-      </li>
-    {% endif %}
+{% block nav_links %}
+
+    {% if user.is_authenticated %}
+
+        <li>
+            <a href="{% url 'home' %}">
+                <i class="fa fa-dashboard"></i> <span>Home</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'create_project' %}">
+                <i class="fa fa-plus"></i> <span>Create Project</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'view_projects' %}">
+                <i class="fa fa-briefcase"></i> <span>My Projects</span>
+            </a>
+        </li>
+
+        {% if user.profile.isProf %}
+              <li>
+                  <a href="{% url 'create_course' %}">
+                      <i class="fa fa-plus"></i> <span>Create Course</span>
+                  </a>
+              </li>
+        {% endif %}
 
 
         <li>
-        <a href="{% url 'view_course' %}">
-            <i class="fa fa-folder"></i> <span>View Course</span>
+            <a href="{% url 'view_course' %}">
+                <i class="fa fa-graduation-cap"></i> <span>My Courses</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'profile' user.username %}">
+                <i class="fa fa-user"></i> <span>Profile</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'edit_profile' user.username %}">
+                <i class="fa fa-wrench"></i> <span>Edit Profile</span>
+            </a>
+        </li>
+    {% endif %}
+
+
+    <!-- Temporary sidebar links for easy testing, will move later -->
+    {% if not user.is_authenticated %}
+    <li>
+        <a href="{% url 'about' %}">
+            <i class="fa fa-lightbulb-o"></i> <span>About</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'login' %}">
+            <i class="fa fa-sign-in"></i> <span>Login</span>
         </a>
     </li>
 
-    <!-- Temporary sidebar links for easy testing, will move later -->
-    {% if not user.profile %}
-    <li>
-        <a href="{% url 'login' %}">
-            <i class="fa fa-user"></i> <span>Login</span>
-        </a>
-    </li>
     <li>
         <a href="{% url 'signup' %}">
-            <i class="fa fa-plus"></i> <span>Signup</span>
+            <i class="fa fa-user"></i> <span>Signup</span>
         </a>
     </li>
     {% endif %}
-    <li>
-        <a href="{% url 'profile' user.username %}">
-            <i class="fa fa-user"></i> <span>Profile</span>
-        </a>
-    </li>
-
-    <li>
-        <a href="{% url 'edit_profile' user.username  %}">
-            <i class="fa fa-wrench"></i> <span>Edit Profile</span>
-        </a>
-    </li>
     
 {% endblock nav_links %}

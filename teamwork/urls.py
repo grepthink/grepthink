@@ -27,6 +27,7 @@ from teamwork.apps.courses import views as course_views
 urlpatterns = [
         #/
         url(r'^$', core_views.home, name='home'),
+        url(r'^about/$', core_views.about, name='about'),
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
         # /create_project/
@@ -55,9 +56,10 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course,
             name='view_one_course'),
         # Delete individual course (based on slug)
-         url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course,
+        url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course,
             name='delete_course'),
         # Edit individual course (based on slug)
+
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
         # /admin/
@@ -68,6 +70,7 @@ urlpatterns = [
         #logout
         url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
         # /username/ - A users unique profile url
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
         url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
@@ -75,5 +78,3 @@ urlpatterns = [
         # url(r'^user/(?P<username>[^/]+)/edit/delete$', profile_views.delete_skill, name='edit_profile'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-        
