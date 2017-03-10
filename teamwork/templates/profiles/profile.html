@@ -9,7 +9,9 @@
 <div class="box box-primary">
   <div class="box-body box-profile">
     {# couldn't get working -- scrapping for now #}
-     <img class="profile-user-img img-responsive img-circle" src="{{ profile.avatar.url }}" alt="Profile Pic">
+    {% if page_user.profile.avatar %}
+     <img class="profile-user-img img-responsive img-circle" src="{{ page_user.profile.avatar.url }}" alt="Profile Pic">
+    {% endif %}
 
     <h3 class="profile-username text-center">{{page_user.profile.name}}</h3>
 
