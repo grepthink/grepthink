@@ -26,6 +26,13 @@ from teamwork.apps.profiles.models import *
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
+class Interest(models.Model):
+    """
+    Intrest object relates a user to a intrest (may be changed in the future)
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    interest = models.PositiveIntegerField()
+    interest_reason = models.CharField(max_length=100)
 
 class Project(models.Model):
     """
@@ -59,6 +66,8 @@ class Project(models.Model):
     slug = models.CharField(max_length=20, unique=True)
     # Resource list that the project members can update
     resource = models.TextField(max_length=4000)
+
+    interest = models.ManyToManyField(Interest, default = '')
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
@@ -137,13 +146,6 @@ class Membership(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
 
-class Interest(models.Model):
-    """
-    Intrest object relates a user to a intrest (may be changed in the future)
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    interest = models.PositiveIntegerField()
-    interest_reason = models.CharField(max_length=100)
 
 class ProjectUpdate(models.Model):
     """
