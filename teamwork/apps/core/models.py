@@ -9,35 +9,46 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from teamwork.apps.projects.models import *
 # profiles is already imported from projects, not necessary here
 
+# send in the current list of 
+def trim(match):
+	uniques = sorted(set(match.values()))
+	revision= {}
+	p = 0
+	# if len(uniques) > 1:
+	# 	match = trim(match, uniques)
+	while len(uniques) > 5:
+		for k,v in match.items():
+			if v != uniques[p]:
+				revision[k] = v
+		p = p + 1
+		uniques = sorted(set(revision.values()))
+	return revision
+
 def POMatch(project):
 	match = {}
 	print("\n\nMatching Begun\n\n")
 	desired_skills = project.desired_skills.all()
 	for i in desired_skills:
-		print(i)
 		know = i.known.all()
-		print("\n\nKnow the Skill")
-		print(know)
 		for j in know:
 			if j.user in match:
 				temp = match[j.user]
 				temp += 2
 				match[j.user] = temp
-				print("Updated user score")
 			else:
-				match[j.user] = 2
-				print("Created user score")
-			print(j.user)
-
-
-		# learn = i.learn.all()
-		# print("\n\nWant to learn")
-		# print(learn)
-		
-	print("\n\nMatching End\n\n")
+				match[j.user] = 2	
+		learn = i.learn.all()
+		for k in learn:
+			if k.user in match:
+				temp = match[k.user]
+				temp += 1
+				match[k.user] = temp
+			else:
+				match[k.user] = 2
 	print(match)
-	print(len(match.keys()))
-	print("\n\n")
+	skillMatches = trim(match)
+	print(skillMatches)
+	print("\n\nMatching End\n\n")
 
 
 
