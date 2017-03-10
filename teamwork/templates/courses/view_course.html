@@ -8,10 +8,11 @@
 
 <h2 class="page-header">
     {{ cur_course.name }}
-    <span class="pull-right">
-        {{ cur_course.term }}
-        <small>{{ cur_course.year}}</small>
-    </span>
+    <i class="fa fa-graduation-cap"></i>
+    <i class="pull-right">
+        <b>{{ cur_course.term }}</b>
+        {{ cur_course.year }}
+    </i>
 </h2>
 
 {% if user.profile.isProf %}
@@ -22,17 +23,20 @@
             <li class="active">
                 <a href="#description" data-toggle="tab" aria-expanded="true">
                     Description
+                    <i class="fa fa-info-circle"></i>
                 </a>
             </li>
             <li class="">
                 <a href="#projects" data-toggle="tab"aria-expanded="false">
                     Projects
+                    <i class="fa fa-code-fork"></i>
                 </a>
             </li>
             {% if user.profile.isProf %}
             <li class="">
                 <a href="#members" data-toggle="tab" aria-expanded="false">
                     Members
+                    <i class="fa fa-group"></i>
                 </a>
             </li>
             {% endif %}
