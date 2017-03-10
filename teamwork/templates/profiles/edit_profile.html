@@ -50,14 +50,14 @@
           <hr>
           <div class="col-sm-5">
               {% for skill in known_skills_list %}
-                  <button class="btn btn-danger" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                  <button class="btn btn-danger btn-sm" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                   </button>
               {% endfor %} 
           </div>
 
           <div class="col-sm-5">
               {% for skill in learn_skills_list %}
-                  <button class="btn btn-danger" name="delete_learn" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                  <button class="btn btn-danger btn-sm" name="delete_learn" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                   </button>
               {% endfor %}             
           </div>
