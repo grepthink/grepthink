@@ -14,16 +14,62 @@
     <h1> Statistics </h1>
 </div>
 <section class="statistics">
-    <section class="projects">
+    <div class="My Courses">
+        {% for course in created_courses %}
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">{{ course.name}}
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <strong>Students</strong>
+                        </p>
+                        <p>
+                            <strong>Projects</strong>
+                        </p>
+                        <p>
+                            <strong>Students Not in Projects
+                            </strong>
+                        </p>
+                        <p>
+                            <strong>Emails</strong>
+                        </p>
+                    </div>
 
 
 
+                </div>
+            </div>
 
-
-
-    </section>
+            {% empty %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fa fa-warning"></i>
+                There are no projects yet. Go ahead and
+                <a href="{% url 'create_project' %}" class="alert-link">create one now!
+                </a>
+            </div>
+        {% endfor %}
+    </div>
 </section>
 
 <!--paginator-->
 
 {% endblock content %}
+
+
+
+<!--
+1. Calculate number of students in course.
+    -add variable students_num to Courses class
+2. Calculate number of projects in course.
+    -add variable project_num to Courses class
+3. Calculate number of students in course not in projects.
+    -find number of students in projects
+        -add variable current_mems to Project class
+        -traverse through projects in for loop. increment value
+    -subtract result from students_num
+4. Extract students emails.
+    -add variable email to membership class
+-->
