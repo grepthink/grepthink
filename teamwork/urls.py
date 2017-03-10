@@ -27,6 +27,7 @@ from teamwork.apps.courses import views as course_views
 urlpatterns = [
         #/
         url(r'^$', core_views.home, name='home'),
+        url(r'^about/$', core_views.about, name='about'),
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
         # /create_project/

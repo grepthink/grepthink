@@ -55,6 +55,11 @@
     <!-- Temporary sidebar links for easy testing, will move later -->
     {% if not user.is_authenticated %}
     <li>
+        <a href="{% url 'about' %}">
+            <i class="fa fa-lightbulb-o"></i> <span>About</span>
+        </a>
+    </li>
+    <li>
         <a href="{% url 'login' %}">
             <i class="fa fa-sign-in"></i> <span>Login</span>
         </a>
