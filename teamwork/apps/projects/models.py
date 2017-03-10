@@ -7,6 +7,8 @@ Database Models for the objects, Project, Membership, Intrest, ProjectUpdate
 # Built-in modules
 from __future__ import unicode_literals
 from datetime import datetime
+import random
+import string
 
 # Django modules
 from django.contrib.auth.models import User
@@ -23,6 +25,11 @@ import markdown
 
 # Local Modules
 from teamwork.apps.profiles.models import *
+
+# Generates add code
+def rand_code(size):
+    # Usees a random choice from lowercase, uppercase, and digits
+    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -99,11 +106,11 @@ class Project(models.Model):
         # Generate a Project URL slug if not specified
         #     Based off Courses.save URL slug written by August
         if self.slug is None or len(self.slug) == 0:
-            # Basing the slug off of project title + creator. Possibly change in the future.
-            newslug = self.title + "-" + self.creator
+            # Basing the slug off of project title. Possibly change in the future.
+            newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
-                newslug = self.title + "-" + self.creator
+                newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
 
