@@ -7,11 +7,11 @@
 {% block content %}
 
 <h2 class="page-header">
-    {{ cur_course.name }}
+    {{ course.name }}
     <i class="fa fa-graduation-cap"></i>
     <i class="pull-right">
-        <b>{{ cur_course.term }}</b>
-        {{ cur_course.year }}
+        <b>{{ course.term }}</b>
+        {{ course.year }}
     </i>
 </h2>
 
@@ -48,7 +48,14 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="description">
-                {{ cur_course.info }}
+                <h3>Description</h3>
+                {{ course.info }}
+                <h3>Updates</h3>
+                {% for update in updates %}
+                <p>{{ update.title }}</p>
+                {% empty %}
+                There are no updates
+                {% endfor %}
             </div>
             <div class="tab-pane" id="projects">
                 <div class="row">
@@ -106,7 +113,7 @@
             <div class="tab-pane" id="admin">
                 <h3>Edit Course Info</h3>
                 <p>
-                    <a href="{% url 'edit_course' cur_course.slug %}">
+                    <a href="{% url 'edit_course' course.slug %}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
                             Edit
@@ -120,7 +127,7 @@
                     provided below.
                 </p>
                 <p>
-                    <b>Add Code:</b> <i>{{ cur_course.addCode }}</i>
+                    <b>Add Code:</b> <i>{{ course.addCode }}</i>
                 </p>
             </div>
             {% endif %}

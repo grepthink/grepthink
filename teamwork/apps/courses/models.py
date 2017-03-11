@@ -209,6 +209,10 @@ class Course(models.Model):
 
         return created_courses
 
+    def get_updates(self):
+        return CourseUpdate.objects.filter(course=self)
+
+
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
     #User, which is a foriegn key to
@@ -260,7 +264,7 @@ class CourseUpdate(models.Model):
     class Meta:
         verbose_name = "Course Update"
         verbose_name_plural = verbose_name + "s"
-        ordering = ("-date","title")
+        ordering = ("-date_post","-date_edit", "title")
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)

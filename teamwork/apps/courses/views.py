@@ -31,8 +31,8 @@ def view_courses(request):
     if request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
     #else returns a list of courses the user is enrolled in
-    else:
-        all_courses = Course.get_my_courses(request.user)
+else:
+    all_courses = Course.get_my_courses(request.user)
     return _courses(request, all_courses)
 
 @login_required
@@ -41,17 +41,16 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
     """
-    cur_course = get_object_or_404(Course, slug=slug)
-
-
+    course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
+    updates = course.get_updates()
 
     return render(request, 'courses/view_course.html', {
-        'cur_course': cur_course , 'projects': projects
+        'course': course , 'projects': projects, 'updates': updates
         })
 
-def projects_in_course(slug):
-    """
+    def projects_in_course(slug):
+        """
     Public method that takes a coursename, retreives the course object, returns
     a list of project objects
     """
@@ -103,7 +102,7 @@ def show_interest(request, slug):
 
     # if current course not in users enrolled courses
     if not cur_course in user_courses:
-            messages.info(request,'You are not enrolled in this course')
+        messages.info(request,'You are not enrolled in this course')
             return HttpResponseRedirect('/course')
     #if not enough projects or user is not professor
     if len(projects) < 5 or user.profile.isProf:
@@ -237,7 +236,6 @@ def edit_course(request, slug):
             {'form': form,'course': course}
             )
 
-
 @login_required
 def delete_course(request, slug):
     """
@@ -249,3 +247,28 @@ def delete_course(request, slug):
     else:
         course.delete()
         return redirect(view_courses)
+
+@login_required
+def post_course_update(request, slug):
+    """
+    Post an update for a given course
+    """
+    course = get_object_or_404(Course, slug=slug)
+
+    if request.method == 'POST':
+        form = CourseUpdateForm(request.user.id, request.POST)
+        if form.is_valid():
+            new_update = CourseUpdate(course=course)
+            new_update.course = course;
+            new_update.title = form.cleaned_data.get('title')
+            new_update.content = form.cleaned_data.get('content')
+            new_update.creator = request.user
+            new_update.save()
+            return redirect(view_one_course, course.slug)
+    else:
+        form = CourseUpdateForm(request.user.id)
+
+    return render(
+            request, 'course/post_course_update.html',
+            {'form': form, 'project': project}
+            )
