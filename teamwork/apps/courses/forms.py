@@ -132,6 +132,17 @@ class ShowInterestForm(forms.ModelForm):
         self.fields['projects4'].queryset = projects
         self.fields['projects5'].queryset = projects
 
+
+        if len(projects) < 5:
+            self.fields['projects5'].widget = forms.HiddenInput()
+            if len(projects) < 4:
+                self.fields['projects4'].widget = forms.HiddenInput()
+                if len(projects) < 3:
+                    self.fields['projects3'].widget = forms.HiddenInput()
+                    if len(projects) < 2:
+                        self.fields['projects2'].widget = forms.HiddenInput()
+                        if len(projects) < 1:
+                            self.fields['projects'].widget = forms.HiddenInput()
     #projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
 
     #Project Choice Field
@@ -164,6 +175,9 @@ class ShowInterestForm(forms.ModelForm):
         project_list.append(p3)
         project_list.append(p4)
         project_list.append(p5)
+
+        # Filters None from project list for error checking
+        project_list = list(filter(None, project_list))
 
         # Checks for uniqueness
         if len(project_list) != len(set(project_list)):
