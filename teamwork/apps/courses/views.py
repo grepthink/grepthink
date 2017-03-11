@@ -31,9 +31,9 @@ def view_courses(request):
     if request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
     #else returns a list of courses the user is enrolled in
-else:
-    all_courses = Course.get_my_courses(request.user)
-    return _courses(request, all_courses)
+    else:
+        all_courses = Course.get_my_courses(request.user)
+        return _courses(request, all_courses)
 
 @login_required
 def view_one_course(request, slug):
@@ -49,8 +49,8 @@ def view_one_course(request, slug):
         'course': course , 'projects': projects, 'updates': updates
         })
 
-    def projects_in_course(slug):
-        """
+def projects_in_course(slug):
+    """
     Public method that takes a coursename, retreives the course object, returns
     a list of project objects
     """
@@ -103,7 +103,7 @@ def show_interest(request, slug):
     # if current course not in users enrolled courses
     if not cur_course in user_courses:
         messages.info(request,'You are not enrolled in this course')
-            return HttpResponseRedirect('/course')
+        return HttpResponseRedirect('/course')
     #if not enough projects or user is not professor
     if len(projects) < 5 or user.profile.isProf:
         #redirect them with a message
@@ -249,7 +249,7 @@ def delete_course(request, slug):
         return redirect(view_courses)
 
 @login_required
-def post_course_update(request, slug):
+def update_course(request, slug):
     """
     Post an update for a given course
     """
@@ -269,6 +269,6 @@ def post_course_update(request, slug):
         form = CourseUpdateForm(request.user.id)
 
     return render(
-            request, 'course/post_course_update.html',
-            {'form': form, 'project': project}
+            request, 'courses/update_course.html',
+            {'form': form, 'course': course}
             )

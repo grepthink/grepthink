@@ -6,11 +6,11 @@ from django.core.exceptions import ValidationError
 
 #Choices for term
 Term_Choice = (
-    ('Winter','Winter'),
-    ('Spring', 'Spring'),
-    ('Summer','Summer'),
-    ('Fall','Fall'),
-)
+        ('Winter','Winter'),
+        ('Spring', 'Spring'),
+        ('Summer','Summer'),
+        ('Fall','Fall'),
+        )
 
 #Creates the course form
 class CourseForm(forms.ModelForm):
@@ -168,7 +168,40 @@ class ShowInterestForm(forms.ModelForm):
         # Checks for uniqueness
         if len(project_list) != len(set(project_list)):
             self._errors['projects'] = self.error_class(
-                ['Choices must be unique!'])
+                    ['Choices must be unique!'])
             #raise forms.ValidationError("Choices must be unique.")
 
         return data
+
+class CourseUpdateForm(forms.ModelForm):
+    """
+    Form used for submitting project updates
+
+    Attributes (Fields):
+        update_title: [CharField] Name of project update
+        update:       [CharField] Project update content
+        user:         [User]      User object associated with form submitter
+
+    Methods:
+        __init__ :  gets the current user when initiating the form
+    """
+
+    # used for filtering the queryset
+    def __init__(self, uid, *args, **kwargs):
+        super(CourseUpdateForm, self).__init__(*args, **kwargs)
+        creator = User.objects.get(id=uid)
+
+    title = forms.CharField(
+            widget=forms.TextInput(attrs={'class': 'form-control'}),
+            max_length=255,
+            required=True
+            )
+
+    content = forms.CharField(
+            widget=forms.Textarea(attrs={'class': 'form-control'}),
+            max_length=2000
+            )
+
+    class Meta:
+        model = CourseUpdate
+        fields = ['title', 'content']
