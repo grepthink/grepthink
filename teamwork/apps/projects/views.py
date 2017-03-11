@@ -82,6 +82,8 @@ def create_project(request):
         if form.is_valid():
             # create an object for the input
             project = Project()
+            # Project slug
+            project.slug = form.cleaned_data.get('slug')
             project.title = form.cleaned_data.get('title')
             project.creator = request.user.username
             project.avail_mem = form.cleaned_data.get('accepting')
@@ -119,9 +121,6 @@ def create_project(request):
                         print("\n\n")
             # Project content
             project.content = form.cleaned_data.get('content')
-
-            # Project slug
-            project.slug = form.cleaned_data.get('slug')
 
             # Local list of memebers, used to create Membership objects
             members = form.cleaned_data.get('members')

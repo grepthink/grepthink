@@ -110,6 +110,7 @@ class Project(models.Model):
             newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
+                print(Project.objects.filter(slug=newslug).exists())
                 newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
