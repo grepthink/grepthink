@@ -55,55 +55,55 @@ class Course(models.Model):
     """
     # define the terms for the multiple choice
     Term_Choice = (
-        ('Winter','Winter'),
-        ('Spring', 'Spring'),
-        ('Summer','Summer'),
-        ('Fall','Fall'),
-    )
+            ('Winter','Winter'),
+            ('Spring', 'Spring'),
+            ('Summer','Summer'),
+            ('Fall','Fall'),
+            )
 
 
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(
-        max_length=255,
-        default="No Course Title Provided"
-        )
+            max_length=255,
+            default="No Course Title Provided"
+            )
     # Course info, string
     info = models.CharField(
-        # with max length 300
-        max_length=300,
-        # default as "There is no Course Description"
-        default="There is no Course Description"
-        )
+            # with max length 300
+            max_length=300,
+            # default as "There is no Course Description"
+            default="There is no Course Description"
+            )
     # Term, string
     term = models.CharField(
-        # with max length 6
-        max_length=6,
-        # choices defined by term choice
-        choices=Term_Choice,
-        # defaulted to none
-        default='None'
-        )
+            # with max length 6
+            max_length=6,
+            # choices defined by term choice
+            choices=Term_Choice,
+            # defaulted to none
+            default='None'
+            )
     # Slug for course, string
     slug = models.CharField(
-        # with max length 20
-        max_length=20,
-        # must be unique
-        unique=True
-        )
+            # with max length 20
+            max_length=20,
+            # must be unique
+            unique=True
+            )
 
     # Students in course, manytomany
     students = models.ManyToManyField(
-        # to User model
-        User,
-        # through the enrollment table
-        through='Enrollment')
+            # to User model
+            User,
+            # through the enrollment table
+            through='Enrollment')
 
 
     #projects in course, manytomany
     projects = models.ManyToManyField(
-        # to project model
-        Project
-        )
+            # to project model
+            Project
+            )
 
 
     # RYAN
@@ -115,32 +115,32 @@ class Course(models.Model):
 
     # Creator of course, string
     creator = models.CharField(
-        # with max length 255
-        max_length=255,
-        # defaulted to "Default"
-        default="Fefault"
-        )
+            # with max length 255
+            max_length=255,
+            # defaulted to "Default"
+            default="Fefault"
+            )
     # addCode for course, string
     addCode = models.CharField(
-        # with length 10
-        max_length=10,
-        # that is unique
-        unique=True
-        )
+            # with length 10
+            max_length=10,
+            # that is unique
+            unique=True
+            )
     # get the current date for the year
     now = datetime.datetime.now()
     # year course was created, string
     year = models.CharField(
-        # with max length 4
-        max_length=20,
-        # defaulted to current year
-        default=now.year
-        )
+            # with max length 4
+            max_length=20,
+            # defaulted to current year
+            default=now.year
+            )
     # limit creation, boolean
     limit_creation = models.BooleanField(
-        #defaulted to False
-        default = False
-        )
+            #defaulted to False
+            default = False
+            )
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -213,21 +213,21 @@ class Course(models.Model):
 class Enrollment(models.Model):
     #User, which is a foriegn key to
     user = models.ForeignKey(
-        # the User model
-        User,
-        # on deletion, delete child objects
-        on_delete=models.CASCADE,
-        # with a default of 0
-        default=0)
+            # the User model
+            User,
+            # on deletion, delete child objects
+            on_delete=models.CASCADE,
+            # with a default of 0
+            default=0)
 
     # Course, which is a foregin key to
     course = models.ForeignKey(
-        # the course model
-        Course,
-        # on deletion, delete child objects
-        on_delete=models.CASCADE,
-        # with a default of 0
-        default=0)
+            # the course model
+            Course,
+            # on deletion, delete child objects
+            on_delete=models.CASCADE,
+            # with a default of 0
+            default=0)
 
     def __str__(self):
         """
@@ -235,3 +235,32 @@ class Enrollment(models.Model):
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
         return self.course.name
+
+
+class CourseUpdate(models.Model):
+    """
+    CourseUpdate objects are announcement postings for a course
+
+    Attributes:
+        course:     ForeignKey to course
+        title:      Title of post
+        content:    Content of post
+        date_post:  Date published, can be future date (only shows past dates)
+        date_edit:  Date last edited
+        creator:    ForeignKey to user who wrote post
+
+    """
+    course = models.ForeignKey(Course)
+    title = models.CharField(max_length=255, default="No Title Provided")
+    content = models.TextField(max_length=2000, default="*No Content Provided*")
+    date_post = models.DateTimeField(auto_now_add=True, editable=True)
+    date_edit = models.DateTimeField(auto_now_add=True, editable=True)
+    creator = models.ForeignKey(User)
+
+    class Meta:
+        verbose_name = "Course Update"
+        verbose_name_plural = verbose_name + "s"
+        ordering = ("-date","title")
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.user.username, self.project.title)
