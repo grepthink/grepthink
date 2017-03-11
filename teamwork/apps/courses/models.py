@@ -210,8 +210,26 @@ class Course(models.Model):
         return created_courses
 
     def get_updates(self):
+        """
+        Gets list of updates for course
+        """
         return CourseUpdate.objects.filter(course=self)
 
+    def get_updates_by_date(self):
+        """
+        Gets list of dicts, where each dict has keys 'date' and 'updates'
+        Updates is a list of updates for the specific day
+        Useful for timeline HTML view
+        """
+        updates = self.get_updates()
+        unique_dates = sorted(set(update.date_post.date() for update in updates))
+        updates_by_date = []    # Feel like this could be done better
+        for d in unique_dates:
+            updates_by_date.append({
+                'date': d,
+                'updates': [u for u in updates if u.date_post.date() == d]
+                })
+        return updates_by_date
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
@@ -267,4 +285,4 @@ class CourseUpdate(models.Model):
         ordering = ("-date_post","-date_edit", "title")
 
     def __str__(self):
-        return '{0} - {1}'.format(self.user.username, self.project.title)
+        return '{0} - {1}'.format(self.creator.username, self.title)

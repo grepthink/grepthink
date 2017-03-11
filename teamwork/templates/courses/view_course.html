@@ -51,11 +51,27 @@
                 <h3>Description</h3>
                 {{ course.info }}
                 <h3>Updates</h3>
-                {% for update in updates %}
-                <p>{{ update.title }}</p>
-                {% empty %}
-                There are no updates
-                {% endfor %}
+                <ul class="timeline">
+                    {% for date_update in date_updates %}
+                    <li class="time-label" style="list-style: none">
+                        <span class="bg-blue">
+                            {{ date_update.date }}
+                        </span>
+                    </li>
+                    {% for update in date_update.updates %}
+                    <li style="list-style: none">
+                        <i class="fa fa-envelope bg-blue"></i>
+                        <div class="timeline-item">
+                            <div class="timeline-body">
+                                {{ update }}
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% empty %}
+                    There are no updates
+                    {% endfor %}
+                </ul>
             </div>
             <div class="tab-pane" id="projects">
                 <div class="row">

@@ -43,10 +43,10 @@ def view_one_course(request, slug):
     """
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
-    updates = course.get_updates()
+    date_updates = course.get_updates_by_date()
 
     return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'updates': updates
+        'course': course , 'projects': projects, 'date_updates': date_updates
         })
 
 def projects_in_course(slug):
