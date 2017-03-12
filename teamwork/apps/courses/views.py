@@ -50,6 +50,46 @@ def view_one_course(request, slug):
         'cur_course': cur_course , 'projects': projects
         })
 
+@login_required
+def view_stats(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    students_num = Enrollment.objects.filter(course = cur_course)
+    projects_num = projects_in_course(slug)
+    students_projects = []
+    students_projects_not = []
+    emails = []
+    cleanup_students = []
+
+    for i in projects_num:
+        print(i.title)
+        for j in i.members.all():
+            if not j in students_projects:
+                students_projects.append(j)
+
+    for i in students_num:
+        if not i.user in students_projects:
+            students_projects_not.append(i.user)
+
+    for i in students_num:
+        if not i.user in cleanup_students:
+            cleanup_students.append(i.user) 
+
+    print(students_num)
+    print(projects_num)
+    print(students_projects)
+    print(students_projects_not)
+    print(emails)
+
+    return render(request, 'courses/view_statistics.html', {
+        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students
+        })
+    '''
+    projects_num 
+    students_projects
+    students_projects_not
+    emails'''
+
+
 def projects_in_course(slug):
     """
     Public method that takes a coursename, retreives the course object, returns

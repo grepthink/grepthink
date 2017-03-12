@@ -60,6 +60,7 @@ urlpatterns = [
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
+        url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/
@@ -72,5 +73,7 @@ urlpatterns = [
         # /username/edit - Edit user profile
         url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+        
+        
+        # Delete individual course (ba
         
