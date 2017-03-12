@@ -156,7 +156,7 @@ def edit_project(request, slug):
     #WARNING 3/7 PROJECTS MAY NOT BE UPDATING
     project = get_object_or_404(Project, slug=slug)
 
-    #if user is not project owner or they arent in the member list
+    # if user is not project owner or they arent in the member list
     if not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
         messages.info(request,'Only Project Owner can edit project!')
