@@ -102,15 +102,22 @@ def show_interest(request, slug):
     # current courses user is in
     user_courses = Course.objects.filter(enrollment__in=enroll)
 
+
     # if current course not in users enrolled courses
-    if not cur_course in user_courses:
+    if not cur_course in user_courses and course.creator != user.username:
         messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
     #if not enough projects or user is not professor
-    if len(projects) < 5 or user.profile.isProf:
+    if user.profile.isProf:
         #redirect them with a message
-        messages.info(request,'Cannot show interest')
+        messages.info(request,'Professor cannot show interest')
         return HttpResponseRedirect('/course')
+    #if not enough projects or user is not professor
+    if len(projects) == 0:
+        #redirect them with a message
+        messages.info(request,'No projects to show interest in!')
+        return HttpResponseRedirect('/course')
+
 
     # SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
 
@@ -120,30 +127,44 @@ def show_interest(request, slug):
             data=form.cleaned_data
             #Gets first choice, creates interest object for it
 
+            # Clear all interest objects where user is current user and for this course, avoid duplicates
+            all_interests = Interest.objects.filter(project__in=projects)
+            interests = all_interests.filter(user=user)
+            if interests is not None: interests.delete()
 
-            choice_1 = data.get('projects')
-            choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=''))
-            choice_1.save()
+            if len(projects) >= 1:
+                choice_1 = data.get('projects')
+                r1 = data.get('p1r')
+                choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=r1))
+                choice_1.save()
 
             #Gets second choice, creates interest object for it
-            choice_2 = data.get('projects2')
-            choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=''))
-            choice_2.save()
+            if len(projects) >= 2:
+                choice_2 = data.get('projects2')
+                r2 = data.get('p2r')
+                choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=r2))
+                choice_2.save()
 
             #Gets third choice, creates interest object for it
-            choice_3 = data.get('projects3')
-            choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=''))
-            choice_3.save()
+            if len(projects) >= 3:
+                choice_3 = data.get('projects3')
+                r3 = data.get('p3r')
+                choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=r3))
+                choice_3.save()
 
             #Gets fourth choice, creates interest object for it
-            choice_4 = data.get('projects4')
-            choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=''))
-            choice_4.save()
+            if len(projects) >= 4:
+                choice_4 = data.get('projects4')
+                r4 = data.get('p4r')
+                choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=r4))
+                choice_4.save()
 
             #Gets fifth choice, creates interest object for it
-            choice_5 = data.get('projects5')
-            choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=''))
-            choice_5.save()
+            if len(projects) >= 5:
+                choice_5 = data.get('projects5')
+                r5 = data.get('p5r')
+                choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=r5))
+                choice_5.save()
 
 
             return redirect(view_one_course, slug)

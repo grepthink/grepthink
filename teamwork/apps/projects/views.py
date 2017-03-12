@@ -28,7 +28,9 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-    return _projects(request, my_projects)
+    my_created = Project.get_created_projects(request.user)
+    projects = my_projects | my_created
+    return _projects(request, projects)
 
 
 @login_required
@@ -39,7 +41,6 @@ def view_one_project(request, slug):
     # TODO: fix up return calls
     """
     project = get_object_or_404(Project, slug=slug)
-
     updates = project.get_updates()
 
     matches = POMatch(project)
@@ -96,13 +97,13 @@ def create_project(request):
             if desired:
                 # parse known on ','
                 skill_array = desired.split(',')
-                for skill in skill_array:                    
+                for skill in skill_array:
                     stripped_skill = skill.strip()
                     if not (stripped_skill == ""):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up  
-                            desired_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                            # skill already exists, then pull it up
+                            desired_skill = Skills.objects.get(skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
                             desired_skill = Skills.objects.create(skill=stripped_skill.lower())
@@ -133,6 +134,11 @@ def create_project(request):
             # loop through the members in the object and make m2m rows for them
             for i in members:
                 Membership.objects.create(user=i.user, project=project, invite_reason='')
+
+            # if user is not a prof
+            if not user.isProf:
+                Membership.objects.create(user=user.user, project=project, invite_reason='')
+
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
@@ -146,12 +152,10 @@ def edit_project(request, slug):
     Public method that serves the form allowing a user to edit a project
     Based off courses/views.py/edit_course
     """
-
-    #WARNING 3/7 PROJECTS MAY NOT BE UPDATING
     project = get_object_or_404(Project, slug=slug)
 
-    #if user is not project owner
-    if not request.user.username == project.creator:
+    # if user is not project owner or they arent in the member list
+    if not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
         messages.info(request,'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')

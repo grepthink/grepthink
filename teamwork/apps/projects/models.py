@@ -127,10 +127,8 @@ class Project(models.Model):
         #Gets membership object of current user
         myProjects = Membership.objects.filter(user=user)
         #Gets project queryset of only projects user is in OR the user created
-        #BUG: if creator not in project, they cannot see project
         proj = Project.objects.filter(membership__in=myProjects)
 
-        print(proj)
         return proj
 
     def get_all_projects():
@@ -139,6 +137,13 @@ class Project(models.Model):
         """
         projects = Project.objects.filter()
         return projects
+        
+    def get_created_projects(user):
+        """
+        Gets a list of porject objects that the user created. Used in views then passed to the template
+        """
+        proj = Project.objects.filter(creator=user.username)
+        return proj
 
     def get_content_as_markdown(self):
         return markdown.markdown(self.content, safe_mode='escape')
