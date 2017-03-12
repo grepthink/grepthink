@@ -91,7 +91,7 @@ class CourseForm(forms.ModelForm):
     #META CLASS
     class Meta:
         model = Course
-        fields = ['name','info','term','students','slug']
+        fields = ['name','info','term','students','slug', 'limit_creation']
 
 #Creates join course form
 class JoinCourseForm(forms.ModelForm):
