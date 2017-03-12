@@ -74,6 +74,7 @@ def view_profile(request, username):
         print(p.title)
         for i in interest_in_project:
             print(i.interest)
+            print(i.interest_reason)
     print("\n\n")
     """
 

@@ -134,22 +134,31 @@ class ShowInterestForm(forms.ModelForm):
 
         if len(projects) < 5:
             self.fields['projects5'].widget = forms.HiddenInput()
+            self.fields['p5r'].widget = forms.HiddenInput()
             if len(projects) < 4:
                 self.fields['projects4'].widget = forms.HiddenInput()
+                self.fields['p4r'].widget = forms.HiddenInput()
                 if len(projects) < 3:
                     self.fields['projects3'].widget = forms.HiddenInput()
+                    self.fields['p3r'].widget = forms.HiddenInput()
                     if len(projects) < 2:
                         self.fields['projects2'].widget = forms.HiddenInput()
+                        self.fields['p2r'].widget = forms.HiddenInput()
                         if len(projects) < 1:
                             self.fields['projects'].widget = forms.HiddenInput()
-    #projects = forms.ModelChoiceField(widget=forms.RadioSelect,queryset=Project.objects.all(),required=True,initial=False)
+                            self.fields['p1r'].widget = forms.HiddenInput()
 
     #Project Choice Field
     projects = forms.ModelChoiceField(queryset=None, empty_label=None, label='First Choice', required = False)
+    p1r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
     projects2 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Second Choice', required = False)
+    p2r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
     projects3 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Third Choice', required = False)
+    p3r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
     projects4 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fourth Choice', required = False)
+    p4r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
     projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice', required = False)
+    p5r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
 
     class Meta:
 
