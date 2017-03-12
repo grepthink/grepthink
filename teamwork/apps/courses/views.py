@@ -79,6 +79,9 @@ def view_stats(request, slug):
         if not i in cleanup_projects:
             cleanup_projects.append(i)
 
+    for i in students_num:
+        emails.append(i.user.email)
+
     print(students_num)
     print(projects_num)
     print(students_projects)
@@ -86,7 +89,7 @@ def view_stats(request, slug):
     print(emails)
 
     return render(request, 'courses/view_statistics.html', {
-        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students, 'projects_num': projects_num, 'cleanup_projects': cleanup_projects
+        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students, 'projects_num': projects_num, 'cleanup_projects': cleanup_projects, 'students_projects': students_projects, 'students_projects_not': students_projects_not, 'emails': emails
         })
     '''
     projects_num 
