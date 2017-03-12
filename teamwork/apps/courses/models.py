@@ -222,7 +222,10 @@ class Course(models.Model):
         Useful for timeline HTML view
         """
         updates = self.get_updates()
-        unique_dates = sorted(set(update.date_post.date() for update in updates))
+        unique_dates = sorted(
+                set(update.date_post.date() for update in updates),
+                reverse=True
+                )
         updates_by_date = []    # Feel like this could be done better
         for d in unique_dates:
             updates_by_date.append({
