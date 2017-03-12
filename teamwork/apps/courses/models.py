@@ -118,7 +118,7 @@ class Course(models.Model):
             # with max length 255
             max_length=255,
             # defaulted to "Default"
-            default="Fefault"
+            default="Default"
             )
     # addCode for course, string
     addCode = models.CharField(
