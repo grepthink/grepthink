@@ -105,7 +105,6 @@ class Course(models.Model):
         Project
         )
 
-
     # RYAN
     # creator needs to be a foreign key for a simpler linking
     # but student and creator  both have backwards relations to user, so
