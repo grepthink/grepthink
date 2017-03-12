@@ -3,8 +3,16 @@
 {% load static %}
 {% load i18n %}
 
-
 {% block content %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+</ol>
 
 <h2 class="page-header">
     {{ course.name }}
@@ -149,14 +157,18 @@
                             <div class="panel-body">
                                 <p>
                                     <strong>Owner</strong>
-                                    <span class="label label-success">
+                                    <span class="label label-success"
+                                        onclick="window.location =
+                                        '{% url 'profile' project.creator %}'">
                                         {{ project.creator }}
                                     </span>
                                 </p>
                                 <p><strong>Members</strong>
                                     {% for mem in project.members.all %}
                                     {% if mem.username != null %}
-                                    <span class="label label-primary">
+                                    <span class="label label-primary"
+                                        onclick="window.location =
+                                        '{% url 'profile' mem.username %}'">
                                         {{ mem.username }}
                                     </span>
                                     {% endif %}
@@ -178,15 +190,23 @@
             </div>
             <div class="tab-pane" id="members">
                 <h3>Instructor</h3>
-                {{ course.creator }}
+                <span class="label label-success"
+                    onclick="window.location =
+                    '{% url 'profile' course.creator %}'">
+                    {{ course.creator }}
+                </span>
                 <h3>Students</h3>
                 {% for studs in course.students.all %}
                 {% if studs.username != null %}
-                <span class="label label-primary">
+                <span class="label label-primary"
+                    onclick="window.location =
+                    '{% url 'profile' studs.username %}'">
                     {{ studs.username }}
                 </span>
                 <span> </span>
                 {% endif %}
+                {% empty %}
+                <p>There are no students enrolled in this course</p>
                 {% endfor %}
             </div>
             {% if user.username == course.creator %}
@@ -196,7 +216,7 @@
                     <a href="{% url 'edit_course' course.slug %}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
-                            edit
+                            Edit
                         </button>
                     </a>
                 </p>

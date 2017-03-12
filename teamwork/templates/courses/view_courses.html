@@ -10,6 +10,11 @@
 {% endblock head %}
 
 {% block content %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+</ol>
+
 <div class="page-header">
     <h1> Courses
         <i class="fa fa-graduation-cap"></i>
