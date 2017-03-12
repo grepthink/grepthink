@@ -24,38 +24,45 @@
                     <div class="panel-body">
                         <p>
                             <strong>Students: </strong>
+                            <h3>{{cleanup_students|length}} </h3>
                             {% for student in cleanup_students %}
-                                <h3>
+                                <h4>
                                 {{student}}
-                                </h3>
+                                </h4>
                             {% endfor %}
+
                         </p>
                         <p>
                             <strong>Projects: </strong>
+                            <h5> {{cleanup_projects|length}} </h5>
                             {% for project in cleanup_projects %}
-                                <h4>
+                                <h6>
                                 {{project}}
-                                </h4>
+                                </h6>
                             {% endfor %}
                         </p>
                         <p>
                             <strong>Students in Projects: </strong>
-                                <h5>
+                            <h7> {{students_projects|length}} </h7>
+                                <h8>
                                 {{students_projects}}
-                                </h5>
+                                </h8>
                         </p>
                         <p>
                             <strong>Students Not in Projects: 
                             </strong>
-                                <h6>
+                            <h9> {{students_projects_not|length}} 
+                            </h9>
+                                <h10>
                                 {{students_projects_not}}
-                                </h6>
+                                </h10>
                         </p>
                         <p>
                             <strong>Emails</strong>
-                                <h7>
+                            <h11> {{emails|length}} </h11>
+                                <h12>
                                 {{emails}}
-                                </h7>
+                                </h12>
                         </p>
                     </div>
 
