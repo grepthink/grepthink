@@ -28,7 +28,14 @@
                         <p>
                         <ol>
                             {% for match in p_match_tup.1 %}
-                                <li>{{match.username}}</li>
+                            <li>
+                                <a href="{% url 'profile' match.username %}">
+                                <span class="label label-primary">
+                                    <i class="fa fa-user"></i> 
+                                    {{ match.username }}
+                                </span>
+                                </a>
+                            </li>
 
                             {% endfor %}
                         </ol>
@@ -39,12 +46,15 @@
                                 {{ p_match_tup.0.creator }}
                             </span>
                         </p>
-                        <p><strong>Members</strong>
+                        <p><strong>Current Members</strong>
                             {% for mem in p_match_tup.0.members.all %}
                             {% if mem.username != null %}
+                            <a href="{% url 'profile' mem.username %}">
                             <span class="label label-primary">
-                                {{ mem.username }}
+                                    <i class="fa fa-user"></i> 
+                                    {{ mem.username }}
                             </span>
+                            </a>
                             {% endif %}
                             {% endfor %}
                         </p>
