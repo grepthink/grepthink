@@ -71,7 +71,7 @@ class ProjectForm(forms.ModelForm):
 		# We use Profile because isProf is stored in the Profile model.
 		# TODO: only students in this course
 		only_students = Profile.objects.exclude(
-			Q(user__in=superuser) | Q(isProf=True)
+			Q(user__in=superuser) | Q(isProf=True) | Q(id=uid)
 			)
 
 
