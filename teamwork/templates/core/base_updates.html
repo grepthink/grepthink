@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
 
-{% block crumb %}
-<li><a href="{% url 'index' %}">Updates</a></li>
-{% endblock crumb %}
-    
+{# Abondoning this partial template for now 3/12/17 andgates #}
 
 {% block content %}
-
-{% block timeline %}
-    <ul class="timeline">
-        {% for date_update in date_updates %}
-        <li class="time-label" style="list-style: none">
-            <span class="bg-blue">
-                {{ date_update.date }}
-            </span>
-        </li>
+    {% block timeline %}
+        <ul class="timeline">
+            {% if user.username == instance.creator %}
+            <li style="list-style: none"
+                onclick="window.location =
+                '{% url 'update_course' course.slug %}'">
+                <i class="fa fa-plus bg-green"></i>
+                <div class="timeline-item"
+                    style="background-color: #ecf0f5">
+                    <div class="timeline-header">
+                        Add an update
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+            {% for date_update in date_updates %}
+            <li class="time-label" style="list-style: none">
+                <span class="bg-blue">
+                    {{ date_update.date }}
+                </span>
+            </li>
             {% for update in date_update.updates %}
             <li style="list-style: none">
                 <i class="fa fa-comments bg-blue"></i>
@@ -47,11 +56,6 @@
                             '{% url 'profile' update.creator.username %}'">
                             {{ update.creator.username }}
                         </span>
-                        <span class="label label-primary"
-                            onclick="window.location =
-                            '{% url 'view_one_course' update.course.slug %}'">
-                            {{ update.course.name }}
-                        </span>
                         <i class="pull-right">
                             Posted {{ update.date_post }}
                             {% if update.date_post != update.date_edit %}
@@ -62,24 +66,20 @@
                 </div>
             </li>
             {% endfor %}
-        {% empty %}
-        <li style="list-style: none">
-            <i class="fa fa-times bg-red"></i>
-            <div class="timeline-item"
-                style="background-color: #ecf0f5">
-                <div class="timeline-header">
-                    There are no updates
+            {% empty %}
+            <li style="list-style: none">
+                <i class="fa fa-times bg-red"></i>
+                <div class="timeline-item"
+                    style="background-color: #ecf0f5">
+                    <div class="timeline-header">
+                        There are no updates
+                    </div>
                 </div>
-            </div>
-        </li>
-        {% endfor %}
-        <li style="list-style: none">
-            <i class="fa fa-clock-o"></i>
-        </li>
-    </ul>
-
-
-{% endblock timeline %}
-
-
+            </li>
+            {% endfor %}
+            <li style="list-style: none">
+                <i class="fa fa-clock-o"></i>
+            </li>
+        </ul>
+    {% endblock timeline %}
 {% endblock content %}
