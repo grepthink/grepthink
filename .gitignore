@@ -1,10 +1,7 @@
 # teamwork-project .gitignore
 
 # Ignoring migrations during development
-teamwork/apps/core/migrations/*
-teamwork/apps/profiles/migrations/*
-teamwork/apps/projects/migrations/*
-teamwork/apps/courses/migrations/*
+**/migrations/*
 
 # Ignore media folder
 teamwork/media/*
