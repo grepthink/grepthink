@@ -124,6 +124,11 @@ class ProjectForm(forms.ModelForm):
 		max_length=4000
 		)
 
+	resource = forms.CharField(
+		widget=forms.Textarea(attrs={'class': 'form-control'}),
+		max_length=4000
+		)
+
 	slug = forms.CharField(
     	widget=forms.TextInput(attrs={'class': 'form-control'}),
     	max_length=20,
