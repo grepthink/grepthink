@@ -275,8 +275,8 @@ class CourseUpdate(models.Model):
     course = models.ForeignKey(Course)
     title = models.CharField(max_length=255, default="No Title Provided")
     content = models.TextField(max_length=2000, default="*No Content Provided*")
-    date_post = models.DateTimeField(auto_now_add=True, editable=True)
-    date_edit = models.DateTimeField(auto_now_add=True, editable=True)
+    date_post = models.DateTimeField(editable=True)
+    date_edit = models.DateTimeField(editable=True)
     creator = models.ForeignKey(User)
 
     class Meta:
@@ -286,3 +286,17 @@ class CourseUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.creator.username, self.title)
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save
+        """
+
+        if self.date_post is None:
+            self.date_post = datetime.datetime.now()
+            self.date_edit = self.date_post
+        else:
+            self.date_edit = datetime.datetime.now()
+
+        super(CourseUpdate, self).save(*args, **kwargs)
+

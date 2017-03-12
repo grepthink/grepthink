@@ -33,7 +33,7 @@ def view_courses(request):
     #else returns a list of courses the user is enrolled in
     else:
         all_courses = Course.get_my_courses(request.user)
-        return _courses(request, all_courses)
+    return _courses(request, all_courses)
 
 @login_required
 def view_one_course(request, slug):
@@ -82,6 +82,8 @@ def join_course(request):
                     if not Enrollment.objects.filter(user=request.user, course=i).exists():
                         #creates an enrollment relation with the current user and the selected course
                         Enrollment.objects.create(user=request.user, course=i)
+                    return redirect(view_one_course, i.slug)
+
             #returns to view courses
             return redirect(view_courses)
     else:
