@@ -27,14 +27,30 @@ def view_matches(request):
     Generic view for serving a list of projects and potential teammate matches for 
         each project.
     """
-    project_match_dict = {}
+    project_match_list = []
 
     projects = Project.get_my_projects(request.user)
+
+    print("PROJECTS:")
+    print(projects)
     
     for project in projects:
+        print("Project:")
+        print(project)
         p_match = po_match(project)
-        project_match_dict[project.slug] = (project, p_match)
+        print("p_match:")
+        print(p_match)
+        project_match_list.extend([(project, p_match)])
+
+    print("Project Match List:")
+    print(project_match_list)
+
+    for project in project_match_list:
+        print("project in project_match_list")
+        print(project)
+        print(project[0].title)
+        print(project[1][0].username)
 
     return render(request, 'core/view_matches.html', {
-        'project_match_dict' : project_match_dict
+        'project_match_list' : project_match_list
         })
