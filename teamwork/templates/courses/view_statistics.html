@@ -32,9 +32,11 @@
                         </p>
                         <p>
                             <strong>Projects: </strong>
-                            <!--<h4 class = "label label-success">
-                                {{course.projects_num}}
-                            </h4>-->
+                            {% for project in cleanup_projects %}
+                                <h4>
+                                {{project}}
+                                </h4>
+                            {% endfor %}
                         </p>
                         <p>
                             <strong>Students Not in Projects: 
