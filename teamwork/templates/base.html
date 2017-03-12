@@ -19,11 +19,7 @@
 
 
 {% block nav_sidebar %}
-    {% include 'adminlte/lib/_main_sidebar.html' %}
-    {% block nav_links %}
-    {{ block.super }}
-
-    {% endblock nav_links %}
+    {% include 'core/custom_sidebar.html' %}
 {% endblock nav_sidebar%}
 
 
