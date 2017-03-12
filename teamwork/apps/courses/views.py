@@ -41,13 +41,12 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
     """
-    cur_course = get_object_or_404(Course, slug=slug)
-
-
+    course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
+    date_updates = course.get_updates_by_date()
 
     return render(request, 'courses/view_course.html', {
-        'cur_course': cur_course , 'projects': projects
+        'course': course , 'projects': projects, 'date_updates': date_updates
         })
 
 def projects_in_course(slug):
@@ -83,6 +82,8 @@ def join_course(request):
                     if not Enrollment.objects.filter(user=request.user, course=i).exists():
                         #creates an enrollment relation with the current user and the selected course
                         Enrollment.objects.create(user=request.user, course=i)
+                    return redirect(view_one_course, i.slug)
+
             #returns to view courses
             return redirect(view_courses)
     else:
@@ -104,8 +105,8 @@ def show_interest(request, slug):
 
     # if current course not in users enrolled courses
     if not cur_course in user_courses and course.creator != user.username:
-            messages.info(request,'You are not enrolled in this course')
-            return HttpResponseRedirect('/course')
+        messages.info(request,'You are not enrolled in this course')
+        return HttpResponseRedirect('/course')
     #if not enough projects or user is not professor
     if user.profile.isProf:
         #redirect them with a message
@@ -258,7 +259,6 @@ def edit_course(request, slug):
             {'form': form,'course': course}
             )
 
-
 @login_required
 def delete_course(request, slug):
     """
@@ -270,3 +270,71 @@ def delete_course(request, slug):
     else:
         course.delete()
         return redirect(view_courses)
+
+@login_required
+def update_course(request, slug):
+    """
+    Post an update for a given course
+    """
+    course = get_object_or_404(Course, slug=slug)
+
+    if request.method == 'POST':
+        form = CourseUpdateForm(request.user.id, request.POST)
+        if form.is_valid():
+            new_update = CourseUpdate(course=course)
+            new_update.course = course;
+            new_update.title = form.cleaned_data.get('title')
+            new_update.content = form.cleaned_data.get('content')
+            new_update.creator = request.user
+            new_update.save()
+            return redirect(view_one_course, course.slug)
+    else:
+        form = CourseUpdateForm(request.user.id)
+
+    return render(
+            request, 'courses/update_course.html',
+            {'form': form, 'course': course}
+            )
+
+@login_required
+def update_course_update(request, slug, id):
+    """
+    Edit an update for a given course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    update = get_object_or_404(CourseUpdate, id=id)
+
+    if update.creator != request.user:
+        return redirect(view_one_course, course.slug)
+    elif request.method == 'POST':
+        form = CourseUpdateForm(request.user.id, request.POST)
+        if form.is_valid():
+            update.course = course;
+            update.title = form.cleaned_data.get('title')
+            update.content = form.cleaned_data.get('content')
+            update.creator = request.user
+            update.save()
+            return redirect(view_one_course, course.slug)
+    else:
+        form = CourseUpdateForm(request.user.id, instance=update)
+
+    return render(
+            request, 'courses/update_course_update.html',
+            {'form': form, 'course': course, 'update': update}
+            )
+
+@login_required
+def delete_course_update(request, slug, id):
+    """
+    Delete an update for a given course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    update = get_object_or_404(CourseUpdate, id=id)
+
+    if update.creator == request.user:
+        update.delete()
+
+    return redirect(view_one_course, course.slug)
+
+
+

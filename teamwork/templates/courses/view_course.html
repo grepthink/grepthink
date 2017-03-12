@@ -7,17 +7,25 @@
 {% block content %}
 
 <h2 class="page-header">
-    {{ cur_course.name }}
+    {{ course.name }}
     <i class="fa fa-graduation-cap"></i>
     <i class="pull-right">
-        <b>{{ cur_course.term }}</b>
-        {{ cur_course.year }}
+        <b>{{ course.term }}</b>
+        {{ course.year }}
     </i>
 </h2>
 
-{% if user.profile.isProf %}
-{% endif %}
 <div>
+    {% if user.username == course.creator %}
+    <div class="alert alert-success" role="alert">
+        You are an instructor of this course.
+    </div>
+    {% elif user not in course.students.all %}
+    <div class="alert alert-warning" role="alert">
+        <i class="fa fa-warning"></i>
+        You are not a member of this course.
+    </div>
+    {% endif %}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
             <li class="active">
@@ -32,23 +40,102 @@
                     <i class="fa fa-code-fork"></i>
                 </a>
             </li>
-            {% if user.profile.isProf %}
             <li class="">
                 <a href="#members" data-toggle="tab" aria-expanded="false">
                     Members
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-            {% endif %}
+            {% if user.username == course.creator %}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
                     <i class="fa fa-gear"></i>
                 </a>
             </li>
+            {% endif %}
         </ul>
-        <div class="tab-content">
+        <div class="tab-content" style="background-color: #ecf0f5">
             <div class="tab-pane active" id="description">
-                {{ cur_course.info }}
+                <h3>Description</h3>
+                {{ course.info }}
+                <h3>Updates</h3>
+                <ul class="timeline">
+                    {% if user.username == course.creator %}
+                    <li style="list-style: none"
+                        onclick="window.location =
+                        '{% url 'update_course' course.slug %}'">
+                        <i class="fa fa-plus bg-green"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ecf0f5">
+                            <div class="timeline-header">
+                                Add an update
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                    {% for date_update in date_updates %}
+                    <li class="time-label" style="list-style: none">
+                        <span class="bg-blue">
+                            {{ date_update.date }}
+                        </span>
+                    </li>
+                    {% for update in date_update.updates %}
+                    <li style="list-style: none">
+                        <i class="fa fa-comments bg-blue"></i>
+                        <div class="timeline-item">
+                            <div class="timeline-header clearfix">
+                                {{ update.title }}
+                                {% if user == update.creator %}
+                                <span class="pull-right">
+                                    <a href='{% url 'delete_course_update' course.slug update.id %}'>
+                                        <button class="btn btn-danger btn-xs">
+                                            <i class="fa fa-trash"></i>
+                                            Delete
+                                        </button>
+                                    </a>
+                                    <a href='{% url 'update_course_update' course.slug update.id %}'>
+                                        <button class="btn btn-success btn-xs">
+                                            <i class="fa fa-edit"></i>
+                                            Edit
+                                        </button>
+                                    </a>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="timeline-body">
+                                {{ update.content }}
+                            </div>
+                            <div class="timeline-footer clearfix">
+                                <span class="label label-primary"
+                                    onclick="window.location =
+                                    '{% url 'profile' update.creator.username %}'">
+                                    {{ update.creator.username }}
+                                </span>
+                                <i class="pull-right">
+                                    Posted {{ update.date_post }}
+                                    {% if update.date_post != update.date_edit %}
+                                    , edited {{ update.date_edit }}
+                                    {% endif %}
+                                </i>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% empty %}
+                    <li style="list-style: none">
+                        <i class="fa fa-times bg-red"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ecf0f5">
+                            <div class="timeline-header">
+                                There are no updates
+                            </div>
+                        </div>
+                    </li>
+                    <li style="list-style: none">
+                        <i class="fa fa-clock-o"></i>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="tab-pane" id="projects">
                 <div class="row">
@@ -91,7 +178,7 @@
             </div>
             <div class="tab-pane" id="members">
                 <h3>Instructor</h3>
-                TODO: add instructor
+                {{ course.creator }}
                 <h3>Students</h3>
                 {% for studs in course.students.all %}
                 {% if studs.username != null %}
@@ -102,14 +189,14 @@
                 {% endif %}
                 {% endfor %}
             </div>
-            {% if user.profile.isProf %}
+            {% if user.username == course.creator %}
             <div class="tab-pane" id="admin">
                 <h3>Edit Course Info</h3>
                 <p>
-                    <a href="{% url 'edit_course' cur_course.slug %}">
+                    <a href="{% url 'edit_course' course.slug %}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
-                            Edit
+                            edit
                         </button>
                     </a>
                 </p>
@@ -120,7 +207,7 @@
                     provided below.
                 </p>
                 <p>
-                    <b>Add Code:</b> <i>{{ cur_course.addCode }}</i>
+                    <b>Add Code:</b> <i>{{ course.addCode }}</i>
                 </p>
             </div>
             {% endif %}
