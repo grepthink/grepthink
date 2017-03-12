@@ -1,4 +1,11 @@
 {% extends 'adminlte/base.html' %}
 
+{# Generic page title. Pass title in the return dictionary of your view. #}
+{% block title %} 
+{{ title|default:_('Teamwork') }} | {{ site_title|default:_('Teamwork') }} 
+{% endblock title %}
+
+
+
 <!-- Inject "skin-green" into the class of body -->
 {% block body_class %} skin-green {% endblock %}
