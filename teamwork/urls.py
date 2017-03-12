@@ -61,9 +61,12 @@ urlpatterns = [
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
-        # Edit individual course (based on slug)
+        # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course,
             name='update_course'),
+        # Edit existing update to course (based on slug and update id)
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$',
+            course_views.update_course_update, name='update_course_update'),
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/
