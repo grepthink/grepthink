@@ -43,10 +43,8 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
-    matches = POMatch(project)
-
     return render(request, 'projects/view_project.html', {
-        'project': project , 'updates' :updates
+        'project': project , 'updates' : updates
         })
 
 @login_required

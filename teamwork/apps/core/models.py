@@ -17,11 +17,11 @@ def sort(match):
 		for u, i in match.items():
 			if j == i:
 				matches.append(u)
-	return 
+	return matches
 
 
 """
-	Summary: this function is called to find match for a project
+	Summary: this function is called to find matches for a project
 	Params:
 		project: the project looking for matches
 		interestWeight: the weight the user can assign to interest, or default to 1
@@ -30,7 +30,7 @@ def sort(match):
 	returns: a list of the top users that match with a project, based on there cumulative score
 		collected after each pass
 """
-def POMatch(project, interestWeight = 1, knowWeight = 1, learnWeight = 1):
+def po_match(project, interestWeight = 1, knowWeight = 1, learnWeight = 1):
 	initial = {}
 	backup = {}
 	# interest matching
@@ -69,7 +69,7 @@ def POMatch(project, interestWeight = 1, knowWeight = 1, learnWeight = 1):
 	if len(set(initial.keys())) < 10:
 		initial.update(backup)
 
-	sort(initial)		
+	return sort(initial)
 	# past classes match
 	# scheduling match
 	
