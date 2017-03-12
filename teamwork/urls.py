@@ -77,4 +77,6 @@ urlpatterns = [
         #
         # url(r'^user/(?P<username>[^/]+)/edit/delete$', profile_views.delete_skill, name='edit_profile'),
 
+        url(r'^matches/$', core_views.view_matches, name='view_matches'),
+
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

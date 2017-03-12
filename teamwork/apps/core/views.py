@@ -1,3 +1,7 @@
+"""
+Core views provide main site functionality.
+
+"""
 from .models import *
 from .forms import *
 
@@ -6,7 +10,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+from teamwork.apps.projects.models import *
 
 def home(request):
     if request.user.is_authenticated():
@@ -17,42 +21,20 @@ def home(request):
 def about(request):
     return render(request, 'core/about.html')
 
-#Shouldnt have a use as of 2/11
-"""
-def create_course(request):
-    #If post request we need to process form data
-    if request.method == 'POST':
-        #Create form instance and populate it with data from request
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            form.save()
-    #if a get we'll create a blank form
-    else:
-        form = CourseForm()
-        #form.save()
-    return render(request, 'core/create_project.html', {'form': form})
-"""
-"""
-#Does not create a project because we dont know how to use many-to-many
-def create_project(request):
-    #If post request we need to process form data
-    if request.method == 'POST':
-        #Create form instance and populate it with data from request
-        form = ProjectForm(request.POST)
-        if form.is_valid():
-            form.save()
-    #if a get we'll create a blank form
-    else:
-        form = ProjectForm()
-        #form.save()
-    return render(request, 'core/create_project.html', {'form': form})
+@login_required
+def view_matches(request):
+    """
+    Generic view for serving a list of projects and potential teammate matches for 
+        each project.
+    """
+    project_match_dict = {}
 
-#this does not work as intended, result is listed as a QUERYSET
-def view_projects(request):
-    project_name = Project.objects.all()
-    context = { 'project_name': project_name,
-    }
-    return render(request, 'core/view_projects.html', context)
+    projects = Project.get_my_projects(request.user)
+    
+    for project in projects:
+        p_match = po_match(project)
+        project_match_dict[project.slug] = (project, p_match)
 
-"""
-
+    return render(request, 'core/view_matches.html', {
+        'project_match_dict' : project_match_dict
+        })

@@ -1,0 +1,82 @@
+{% extends 'adminlte/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %} Potential Teammates {% endblock %}
+
+{% block head %}
+<link href="{% static 'css/projects.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+<div class="page-header">
+    <h1> Potential Teammates </h1>
+</div>
+<div>
+
+{{project_match_dict}}
+
+</div>
+
+<section class="projects">
+    <div class="row">
+      {% for project in projects %}
+
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ project.title }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <strong>Owner</strong>
+                            <span class="label label-success">
+                                {{ project.creator }}
+                            </span>
+                        </p>
+                        <p><strong>Members</strong>
+                            {% for mem in project.members.all %}
+                            {% if mem.username != null %}
+                            <span class="label label-primary">
+                                {{ mem.username }}
+                            </span>
+                            {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="panel-footer clearfix">
+                      {% if request.user.username == project.creator %}
+                        <a href="{% url 'edit_project' project.slug %}">
+                            <button class="btn btn-success">
+                                <i class="fa fa-edit"></i>
+                                Edit
+                            </button>
+                        </a>
+                      {% endif %}
+                        <a href="{% url 'view_one_project' project.slug %}"
+                            class="pull-right">
+                            <button class="btn btn-info">
+                                <i class="fa fa-eye"></i>
+                                View
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+        <div class="alert alert-warning" role="alert">
+            <i class="fa fa-warning"></i>
+            There are no projects yet. Go ahead and
+            <a href="{% url 'create_project' %}" class="alert-link">
+                create one now!
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!--paginator-->
+
+{% endblock content %}
