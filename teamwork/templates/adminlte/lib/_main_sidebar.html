@@ -1,13 +1,23 @@
 {% extends 'adminlte/lib/_main_sidebar.html' %}
 
+{% block user_panel %}
+{{block.super}}
+{% endblock user_panel %}
+
 
 {% block nav_links %}
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+        &times;
+        </button>
+        Fall Back Navigation
+    </div>
 
     {% if user.is_authenticated %}
 
         <li>
             <a href="{% url 'home' %}">
-                <i class="fa fa-dashboard"></i> <span>Home FALL BACK</span>
+                <i class="fa fa-dashboard"></i> <span>Home</span>
             </a>
         </li>
 
