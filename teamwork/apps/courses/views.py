@@ -101,6 +101,7 @@ def show_interest(request, slug):
     # current courses user is in
     user_courses = Course.objects.filter(enrollment__in=enroll)
 
+
     # if current course not in users enrolled courses
     if not cur_course in user_courses and course.creator != user.username:
             messages.info(request,'You are not enrolled in this course')
@@ -124,6 +125,11 @@ def show_interest(request, slug):
         if form.is_valid():
             data=form.cleaned_data
             #Gets first choice, creates interest object for it
+
+            # Clear all interest objects where user is current user and for this course
+            all_interests = Interest.objects.filter(project__in=projects)
+            interests = all_interests.filter(user=user)
+            if interests is not None: interests.delete()
 
             if len(projects) >= 1:
                 choice_1 = data.get('projects')

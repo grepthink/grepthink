@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from teamwork.apps.projects.models import *
 
 from teamwork.apps.profiles.forms import SignUpForm
 
@@ -58,11 +59,27 @@ def view_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
     """
-    profile = Profile.objects.get(user=request.user)
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    # gets all interest objects of the current user
+    my_interests = Interest.objects.filter(user=user)
+    # gets all projects where user has interest
+    my_projects = Project.objects.filter(interest__in=my_interests)
+
+    """
+    print("\n\n")
+    for p in my_projects:
+        interest_in_project = p.interest.all()
+        print(p.title)
+        for i in interest_in_project:
+            print(i.interest)
+    print("\n\n")
+    """
 
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile 
+        'page_user': page_user, 'profile':profile
         })
 
 
@@ -81,28 +98,28 @@ def edit_profile(request, username):
         return redirect('profiles/profile.html')
 
     #grab profile for the current user
-    profile = Profile.objects.get(user=request.user)        
+    profile = Profile.objects.get(user=request.user)
 
     #handle deleting known_skills
-    if request.POST.get('delete_known'):        
+    if request.POST.get('delete_known'):
         skillname = request.POST.get('delete_known')
         to_delete = Skills.objects.get(skill=skillname)
         profile.known_skills.remove(to_delete)
         form = ProfileForm(instance=profile)
 
     #handle deleting learn_skills
-    elif request.POST.get('delete_learn'):        
+    elif request.POST.get('delete_learn'):
         skillname = request.POST.get('delete_learn')
         to_delete = Skills.objects.get(skill=skillname)
         profile.learn_skills.remove(to_delete)
         form = ProfileForm(instance=profile)
-        
+
     #original form
-    elif request.method == 'POST':     
-        #request.FILES is passed for File storing              
-        form = ProfileForm(request.POST, request.FILES)    
-        if form.is_valid():   
-            # grab each form element from the clean form         
+    elif request.method == 'POST':
+        #request.FILES is passed for File storing
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # grab each form element from the clean form
             known = form.cleaned_data.get('known_skill')
             learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
@@ -110,70 +127,70 @@ def edit_profile(request, username):
             institution = form.cleaned_data.get('institution')
             location = form.cleaned_data.get('location')
             ava = form.cleaned_data.get('avatar')
-            
-            # if we have an input in known_skills 
+
+            # if we have an input in known_skills
             if known:
                 # parse known on ','
                 skill_array = known.split(',')
-                for skill in skill_array:                    
+                for skill in skill_array:
                     stripped_skill = skill.strip()
                     if not (stripped_skill == ""):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up  
-                            known_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                            # skill already exists, then pull it up
+                            known_skill = Skills.objects.get(skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
                             known_skill = Skills.objects.create(skill=stripped_skill.lower())
                             # save the new object
                             known_skill.save()
-        
+
                         # add the skill to the current profile
                         profile.known_skills.add(known_skill)
-                        profile.save()                         
-     
+                        profile.save()
+
 
             # same as Known implemenation for learn_skills
             if learn:
                 skill_array = learn.split(',')
-                for skill in skill_array:                    
+                for skill in skill_array:
                     stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):                        
+                    if not (stripped_skill == ""):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up  
-                            learn_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                            # skill already exists, then pull it up
+                            learn_skill = Skills.objects.get(skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
                             learn_skill = Skills.objects.create(skill=stripped_skill.lower())
                             # save the new object
-                            learn_skill.save()                                    
+                            learn_skill.save()
                         profile.learn_skills.add(learn_skill)
                         profile.save()
-            #if data is entered, save it to the profile for the following     
+            #if data is entered, save it to the profile for the following
             if name:
                 profile.name = name
                 profile.save()
             if bio:
-                profile.bio = bio                
+                profile.bio = bio
                 profile.save()
             if institution:
                 profile.institution = institution
                 profile.save()
             if location:
                 profile.location = location
-                profile.save()            
-            if ava:                
-                profile.avatar = ava                
-                profile.save()   
+                profile.save()
+            if ava:
+                profile.avatar = ava
+                profile.save()
 
         #redirects to view_profile when submit button is clicked
-        return redirect(view_profile, username)             
+        return redirect(view_profile, username)
 
     else:
-        #load form with prepopulated data            
+        #load form with prepopulated data
         form = ProfileForm(instance=profile)
-        
+
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
     page_user = get_object_or_404(User, username=username)
@@ -182,27 +199,3 @@ def edit_profile(request, username):
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
         'learn_skills_list':learn_skills_list })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

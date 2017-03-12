@@ -124,14 +124,13 @@ class ShowInterestForm(forms.ModelForm):
         super(ShowInterestForm, self).__init__(*args, **kwargs)
 
         cur_course = Course.objects.get(slug=slug)
-        #USE THIS SEAN U DUMMY
+
         projects = cur_course.projects.all()
         self.fields['projects'].queryset = projects
         self.fields['projects2'].queryset = projects
         self.fields['projects3'].queryset = projects
         self.fields['projects4'].queryset = projects
         self.fields['projects5'].queryset = projects
-
 
         if len(projects) < 5:
             self.fields['projects5'].widget = forms.HiddenInput()
