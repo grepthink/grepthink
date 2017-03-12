@@ -278,7 +278,7 @@ def update_course(request, slug):
 @login_required
 def update_course_update(request, slug, id):
     """
-    Post an update for a given course
+    Edit an update for a given course
     """
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
@@ -301,3 +301,19 @@ def update_course_update(request, slug, id):
             request, 'courses/update_course_update.html',
             {'form': form, 'course': course, 'update': update}
             )
+
+@login_required
+def delete_course_update(request, slug, id):
+    """
+    Delete an update for a given course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    update = get_object_or_404(CourseUpdate, id=id)
+
+    if update.creator == request.user:
+        update.delete()
+
+    return redirect(view_one_course, course.slug)
+
+
+
