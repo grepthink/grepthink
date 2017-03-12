@@ -243,7 +243,9 @@ def edit_course(request, slug):
             course.name = data.get('name')
             course.info = data.get('info')
             course.term = data.get('term')
+            course.limit_creation = data.get('limit_creation')
             students = data.get('students')
+
             course.save()
             # clear all enrollments
             enrollments = Enrollment.objects.filter(course=course)
