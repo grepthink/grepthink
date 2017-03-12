@@ -44,7 +44,7 @@
                 {% if user.is_authenticated %}
 
                     <li>
-                        <a href="{% url 'home' %}">
+                        <a href="{% url 'index' %}">
                             <i class="fa fa-dashboard"></i>
                             <span>Home</span>
                         </a>
@@ -100,9 +100,15 @@
                 <!-- Logged out sidebar links -->
                 {% if not user.is_authenticated %}
                     <li>
+                        <a href="{% url 'index' %}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url 'about' %}">
-                            <i class="fa fa-lightbulb-o"><
-                            /i> <span>About</span>
+                            <i class="fa fa-lightbulb-o"></i>
+                            <span>About</span>
                         </a>
                     </li>
 

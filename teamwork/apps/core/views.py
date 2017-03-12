@@ -12,11 +12,18 @@ from django.contrib.auth.decorators import login_required
 
 from teamwork.apps.projects.models import *
 
-def home(request):
+def login_view(request):
     if request.user.is_authenticated():
-        return render(request, 'core/home.html')
+        # TODO: get feed of project updates (or public projects) to display on login
+        return render(request, 'courses/view_course.html')
     else:
-        return render(request, 'core/about.html')
+        # Redirect user to login instead of public index (for ease of use)
+        return render(request, 'core/login.html')
+
+def index(request):
+    # TODO: get feed of project updates (or public projects) to display on login
+    # if request.user.is_authenticated():
+    return render(request, 'core/index.html')
 
 def about(request):
     return render(request, 'core/about.html')
