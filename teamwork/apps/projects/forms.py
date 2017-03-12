@@ -137,7 +137,8 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 	    model = Project
-	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills', 'course', 'content', 'slug']
+	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills',
+                'course', 'content', 'slug', 'resource']
 
 class ViewProjectForm(forms.ModelForm):
 	"""
