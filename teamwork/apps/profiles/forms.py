@@ -138,6 +138,7 @@ class ProfileForm(forms.ModelForm):
 
 
   class Meta:
-      model = Skills
+      # was model=Skills not sure why or why it was working. This works also
+      model = Profile
       fields = ['name', 'bio', 'institution', 'location',
                 'known_skill', 'learn_skill']

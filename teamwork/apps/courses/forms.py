@@ -80,8 +80,8 @@ class CourseForm(forms.ModelForm):
 
     #Field for only professor creating courses
     limit_creation = forms.BooleanField(
-            #Initially field is true
-            initial = True,
+            #Initially field is false
+            initial = False,
             #Labeled as "Only professor can create projects?"
             label = 'Only Professor can create projects?',
             #Field NOT Required
