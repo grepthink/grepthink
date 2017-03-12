@@ -152,8 +152,6 @@ def edit_project(request, slug):
     Public method that serves the form allowing a user to edit a project
     Based off courses/views.py/edit_course
     """
-
-    #WARNING 3/7 PROJECTS MAY NOT BE UPDATING
     project = get_object_or_404(Project, slug=slug)
 
     # if user is not project owner or they arent in the member list
