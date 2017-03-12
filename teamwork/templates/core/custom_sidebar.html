@@ -12,98 +12,114 @@
         <div class="user-panel">
             <div class="pull-left image">
                 {# TODO: load user profile image or default #}
-                <img src="{% static 'https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm' %}" class="img-circle" alt="User Image">
+                {% if page_user.profile.avatar %}
+                    <img class="profile-user-img img-responsive img-circle" 
+                    src="{{ page_user.profile.avatar.url }}" alt="User Image">
+                {% else %}
+                    <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                    class="img-circle" alt="User Image">
+                {% endif %}
             </div>
             <div class="pull-left info">
                 <p>{% firstof user.get_short_name user.get_username %}</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
         {% endif %}
-            <!-- search form -->
-            <div class="sidebar-form">
-                <div class="input-group">
-                    <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
-                           autocomplete="off">
-                    <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-                </div>
+        <!-- search form -->
+        <div class="sidebar-form">
+            <div class="input-group">
+                <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
+                       autocomplete="off">
+                <span class="input-group-btn">
+            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+            </button>
+          </span>
             </div>
-            <!-- /.search form -->
-            <!-- sidebar menu: : style can be found in sidebar.less -->
-            <ul class="sidebar-menu">
-                <li class="header">MAIN NAVIGATION</li>
-                
+        </div>
+        <!-- /.search form -->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+                {% if user.is_authenticated %}
 
-                    {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'home' %}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
 
-        <li>
-            <a href="{% url 'home' %}">
-                <i class="fa fa-dashboard"></i> <span>Home</span>
-            </a>
-        </li>
+                    <li>
+                        <a href="{% url 'create_project' %}">
+                            <i class="fa fa-plus"></i> 
+                            <span>Create Project</span>
+                        </a>
+                    </li>
 
-        <li>
-            <a href="{% url 'create_project' %}">
-                <i class="fa fa-plus"></i> <span>Create Project</span>
-            </a>
-        </li>
+                    <li>
+                        <a href="{% url 'view_projects' %}">
+                            <i class="fa fa-briefcase"></i> 
+                            <span>My Projects</span>
+                        </a>
+                    </li>
 
-        <li>
-            <a href="{% url 'view_projects' %}">
-                <i class="fa fa-briefcase"></i> <span>My Projects</span>
-            </a>
-        </li>
-
-        {% if user.profile.isProf %}
-              <li>
-                  <a href="{% url 'create_course' %}">
-                      <i class="fa fa-plus"></i> <span>Create Course</span>
-                  </a>
-              </li>
-        {% endif %}
-
-
-        <li>
-            <a href="{% url 'view_course' %}">
-                <i class="fa fa-graduation-cap"></i> <span>My Courses</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'profile' user.username %}">
-                <i class="fa fa-user"></i> <span>Profile</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'edit_profile' user.username %}">
-                <i class="fa fa-wrench"></i> <span>Edit Profile</span>
-            </a>
-        </li>
-    {% endif %}
+                    {% if user.profile.isProf %}
+                      <li>
+                          <a href="{% url 'create_course' %}">
+                              <i class="fa fa-plus"></i>
+                              <span>Create Course</span>
+                          </a>
+                      </li>
+                    {% endif %}
 
 
-    <!-- Temporary sidebar links for easy testing, will move later -->
-    {% if not user.is_authenticated %}
-    <li>
-        <a href="{% url 'about' %}">
-            <i class="fa fa-lightbulb-o"></i> <span>About</span>
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'login' %}">
-            <i class="fa fa-sign-in"></i> <span>Login</span>
-        </a>
-    </li>
+                    <li>
+                        <a href="{% url 'view_course' %}">
+                            <i class="fa fa-graduation-cap"></i> 
+                            <span>My Courses</span>
+                        </a>
+                    </li>
 
-    <li>
-        <a href="{% url 'signup' %}">
-            <i class="fa fa-user"></i> <span>Signup</span>
-        </a>
-    </li>
-    {% endif %}
+                    <li>
+                        <a href="{% url 'profile' user.username %}">
+                            <i class="fa fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'edit_profile' user.username %}">
+                            <i class="fa fa-wrench"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+
+                <!-- Logged out sidebar links -->
+                {% if not user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'about' %}">
+                            <i class="fa fa-lightbulb-o"><
+                            /i> <span>About</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'login' %}">
+                            <i class="fa fa-sign-in"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'signup' %}">
+                            <i class="fa fa-user"></i>
+                            <span>Signup</span>
+                        </a>
+                    </li>
+                {% endif %}
 
 
 
@@ -131,7 +147,7 @@
                     {% endfor %}
                 {% endif %}{% endcomment %}
 
-            </ul>
-        </section>
-        <!-- /.sidebar -->
-    </aside>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
