@@ -1,18 +1,4 @@
-{% load static %}<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Teamwork{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    <link href="{% static 'css/app.css' %}" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="{% static 'js/app.js' %}"></script>
-    {% block head %}{% endblock %}
-  </head>
-  <body class="skin-green">
-  {% block body %}
-    {% block content %}
-    {% endblock content %}
-  {% endblock body %}
-</body>
-</html>
+{% extends 'adminlte/base.html' %}
+
+<!-- Inject "skin-green" into the class of body -->
+{% block body_class %} skin-green {% endblock %}
