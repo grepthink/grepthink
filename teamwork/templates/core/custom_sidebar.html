@@ -73,12 +73,25 @@
                       </li>
                     {% endif %}
 
-
-                    <li>
+                    <li class="treeview active">
                         <a href="{% url 'view_course' %}">
-                            <i class="fa fa-graduation-cap"></i> 
-                            <span>My Courses</span>
+                            <i class="fa fa-graduation-cap"></i>
+                                <span>My Courses</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
                         </a>
+                            <ul class="treeview-menu menu-open" style="display: block;">
+                                <li><a href="{% url 'view_course' %}"><i class="fa fa-circle-o"></i> View All </a></li>
+                                {% if user.get_user_courses %}
+                                {% for course in user.get_user_courses %}
+                                    <li class="">
+                                        <a href="{% url 'view_one_course' course.slug %}"><i class="fa fa-circle-o">
+                                        </i>  {{ course.name }} </a>
+                                    </li>
+                                 {% endfor %}
+                                 {% endif %}
+                            </ul>
                     </li>
 
                     <li>
