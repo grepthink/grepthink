@@ -1,11 +1,18 @@
+# teamwork-project .gitignore
 
-# Stuff Michael added
+# Ignoring migrations during development
+**/migrations/*
+
+# Ignore media folder
+teamwork/media/*
+
+# Database files
 .DS_Store
 *.sqlite3
 
-# Michael's Sublime Text 3 Project Workspace
-teamwork.sublime-project
-teamwork.sublime-workspace
+# Sublime Text Project Workspace
+*.sublime-project
+*.sublime-workspace
 
 # Suggestions from heroku-django-template
 venv

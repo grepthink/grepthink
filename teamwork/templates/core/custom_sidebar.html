@@ -1,0 +1,137 @@
+
+{% load static %}
+
+<!-- Teamwork custom sidebar -->
+<!-- Left side column. contains the sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+    
+        {% if user.is_authenticated %}
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                {# TODO: load user profile image or default #}
+                <img src="{% static 'https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm' %}" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>{% firstof user.get_short_name user.get_username %}</p>
+            </div>
+        </div>
+        {% endif %}
+            <!-- search form -->
+            <div class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
+                           autocomplete="off">
+                    <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+                </div>
+            </div>
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="header">MAIN NAVIGATION</li>
+                
+
+                    {% if user.is_authenticated %}
+
+        <li>
+            <a href="{% url 'home' %}">
+                <i class="fa fa-dashboard"></i> <span>Home</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'create_project' %}">
+                <i class="fa fa-plus"></i> <span>Create Project</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'view_projects' %}">
+                <i class="fa fa-briefcase"></i> <span>My Projects</span>
+            </a>
+        </li>
+
+        {% if user.profile.isProf %}
+              <li>
+                  <a href="{% url 'create_course' %}">
+                      <i class="fa fa-plus"></i> <span>Create Course</span>
+                  </a>
+              </li>
+        {% endif %}
+
+
+        <li>
+            <a href="{% url 'view_course' %}">
+                <i class="fa fa-graduation-cap"></i> <span>My Courses</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'profile' user.username %}">
+                <i class="fa fa-user"></i> <span>Profile</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'edit_profile' user.username %}">
+                <i class="fa fa-wrench"></i> <span>Edit Profile</span>
+            </a>
+        </li>
+    {% endif %}
+
+
+    <!-- Temporary sidebar links for easy testing, will move later -->
+    {% if not user.is_authenticated %}
+    <li>
+        <a href="{% url 'about' %}">
+            <i class="fa fa-lightbulb-o"></i> <span>About</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'login' %}">
+            <i class="fa fa-sign-in"></i> <span>Login</span>
+        </a>
+    </li>
+
+    <li>
+        <a href="{% url 'signup' %}">
+            <i class="fa fa-user"></i> <span>Signup</span>
+        </a>
+    </li>
+    {% endif %}
+
+
+
+                {# {% autoescape off %}{% menu %}{% endautoescape %} #}
+                {% comment %}{% if available_apps %}
+                    {% for app in available_apps %}
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-dashboard"></i> <span>{{ app.name }}</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                {% for model in app.models %}
+                                    {% if model.admin_url %}
+                                        <li><a href="{{ model.admin_url }}"><i
+                                                class="fa fa-circle-o"></i>{{ model.name }}</a></li>
+                                    {% else %}
+                                        <li><a href="{{ model.admin_url }}"><i class="fa fa-circle-o"></i>{{ model.name }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                {% endif %}{% endcomment %}
+
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
