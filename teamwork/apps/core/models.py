@@ -15,7 +15,7 @@ def sort(match, project):
 	matches = []
 	for j in reversed(topScores):
 		for u, i in match.items():
-			if (j == i) and not(u in project.members.all()):
+			if (j == i) and not(u in project.members.all()) and not(u.profile.isProf):
 				matches.append(u)
 	return matches
 
