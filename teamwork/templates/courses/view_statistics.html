@@ -30,7 +30,6 @@
                                 {{student}}
                                 </h4>
                             {% endfor %}
-
                         </p>
                         <p>
                             <strong>Projects: </strong>
@@ -42,37 +41,26 @@
                             {% endfor %}
                         </p>
                         <p>
-                            <strong>Students in Projects: </strong>
-                            <h7> {{students_projects|length}} </h7>
-                            {% for student in students_projects %}
+                            <strong>Students Not in Projects: 
+                            </strong>
+                            <h7> {{students_projects_not|length}} 
+                            </h7>
+                            {% for student in students_projects_not %}
                                 <h8>
                                 {{student}}
                                 </h8>
                             {% endfor %}
-                        <p>
-                            <strong>Students Not in Projects: 
-                            </strong>
-                            <h9> {{students_projects_not|length}} 
-                            </h9>
-                            {% for student in students_projects_not %}
-                                <h10>
-                                {{student}}
-                                </h10>
-                            {% endfor %}
                         </p>
                         <p>
                             <strong>Emails</strong>
-                            <h11> {{emails|length}} </h11>
+                            <h9> {{emails|length}} </h9>
                             {% for student_email in emails %}
-                                <h12>
+                                <h10>
                                 {{student_email}}
-                                </h12>
+                                </h10>
                             {% endfor %}
                         </p>
                     </div>
-
-
-
                 </div>
             </div>
 
