@@ -53,6 +53,10 @@ def view_one_course(request, slug):
 @login_required
 def view_stats(request, slug):
     cur_course = get_object_or_404(Course, slug=slug)
+
+    if not request.user.profile.isProf:
+        return redirect(view_one_course, cur_course.slug)
+
     students_num = Enrollment.objects.filter(course = cur_course)
     projects_num = projects_in_course(slug)
     students_projects = []

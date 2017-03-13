@@ -23,40 +23,35 @@
                     </div>
                     <div class="panel-body">
                         <p>
-                            <strong>Students: </strong>
-                            <h3>{{cleanup_students|length}} </h3>
+                            <h3>Students: {{cleanup_students|length}} </h3>
                             {% for student in cleanup_students %}
                                 <h4>
-                                {{student}}
+                                <li>{{student}}</li>
                                 </h4>
                             {% endfor %}
                         </p>
                         <p>
-                            <strong>Projects: </strong>
-                            <h5> {{cleanup_projects|length}} </h5>
+                            <h5>Projects: {{cleanup_projects|length}} </h5>
                             {% for project in cleanup_projects %}
                                 <h6>
-                                {{project}}
+                                <li>{{project}}</li>
                                 </h6>
                             {% endfor %}
                         </p>
                         <p>
-                            <strong>Students Not in Projects: 
-                            </strong>
-                            <h7> {{students_projects_not|length}} 
+                            <h7>Students Not in Projects: {{students_projects_not|length}} 
                             </h7>
                             {% for student in students_projects_not %}
                                 <h8>
-                                {{student}}
+                                <li>{{student}}</li>
                                 </h8>
                             {% endfor %}
                         </p>
                         <p>
-                            <strong>Emails</strong>
-                            <h9> {{emails|length}} </h9>
+                            <h9>Emails: {{emails|length}} </h9>
                             {% for student_email in emails %}
                                 <h10>
-                                {{student_email}}
+                                <li>{{student_email}}</li>
                                 </h10>
                             {% endfor %}
                         </p>
