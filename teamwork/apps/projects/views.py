@@ -87,6 +87,7 @@ def create_project(request):
             project.creator = request.user.username
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
+            project.resource = form.cleaned_data.get('resource')
 
             project.save()
 
@@ -165,6 +166,7 @@ def edit_project(request, slug):
             project.title = form.cleaned_data.get('title')
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
+            project.resource = form.cleaned_data.get('resource')
             project.save()
 
             members = form.cleaned_data.get('members')

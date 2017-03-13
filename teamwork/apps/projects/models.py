@@ -72,7 +72,7 @@ class Project(models.Model):
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
     # Resource list that the project members can update
-    resource = models.TextField(max_length=4000)
+    resource = models.TextField(max_length=4000, default="*No resources provided*")
 
     interest = models.ManyToManyField(Interest, default = '')
     # Date the project was originally submitted on
@@ -147,6 +147,9 @@ class Project(models.Model):
 
     def get_content_as_markdown(self):
         return markdown.markdown(self.content, safe_mode='escape')
+
+    def get_resource_as_markdown(self):
+        return markdown.markdown(self.resource, safe_mode='escape')
 
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)
