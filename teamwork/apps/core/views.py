@@ -49,7 +49,8 @@ def view_matches(request):
         print("project in project_match_list")
         print(project)
         print(project[0].title)
-        print(project[1][0].username)
+        if project[1]:
+            print(project[1][0].username)
 
     return render(request, 'core/view_matches.html', {
         'project_match_list' : project_match_list

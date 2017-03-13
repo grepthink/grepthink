@@ -10,12 +10,12 @@ from teamwork.apps.projects.models import *
 # profiles is already imported from projects, not necessary here
 
 # send in the current list of 
-def sort(match):
+def sort(match, project):
 	topScores = sorted(set(match.values()))
 	matches = []
 	for j in reversed(topScores):
 		for u, i in match.items():
-			if j == i:
+			if (j == i) and not(u in project.members.all()):
 				matches.append(u)
 	return matches
 
@@ -69,7 +69,7 @@ def po_match(project, interestWeight = 1, knowWeight = 1, learnWeight = 1):
 	if len(set(initial.keys())) < 10:
 		initial.update(backup)
 
-	return sort(initial)
+	return sort(initial, project)
 	# past classes match
 	# scheduling match
 	
