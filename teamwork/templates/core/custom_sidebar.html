@@ -12,9 +12,9 @@
         <div class="user-panel">
             <div class="pull-left image">
                 {# TODO: load user profile image or default #}
-                {% if page_user.profile.avatar %}
+                {% if user.profile.avatar %}
                     <img class="profile-user-img img-responsive img-circle" 
-                    src="{{ page_user.profile.avatar.url }}" alt="User Image">
+                    src="{{ user.profile.avatar.url }}" alt="User Image">
                 {% else %}
                     <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
                     class="img-circle" alt="User Image">
