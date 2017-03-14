@@ -42,6 +42,8 @@ class ProjectForm(forms.ModelForm):
 		if 'instance' in kwargs:
 			# Hide slug field if user is editing project
 			self.fields['slug'].widget = forms.HiddenInput()
+		else:
+			self.fields['resource'].widget = forms.HiddenInput()
 
 
 		# exclude the superuser
@@ -126,7 +128,7 @@ class ProjectForm(forms.ModelForm):
 
 	resource = forms.CharField(
 		widget=forms.Textarea(attrs={'class': 'form-control'}),
-		max_length=4000
+		max_length=4000, required=False
 		)
 
 	slug = forms.CharField(
