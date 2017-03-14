@@ -38,6 +38,14 @@
                             {% endif %}
                             {% endfor %}
                         </p>
+                        <p>
+                            <strong>Accepting Members</strong>
+                            {% if project.avail_mem %}
+                                Yes
+                            {% else %}
+                                No
+                            {% endif %}
+                        </p>
                     </div>
                     <div class="panel-footer clearfix">
                       {% if request.user.username == project.creator or request.user in project.members.all %}
