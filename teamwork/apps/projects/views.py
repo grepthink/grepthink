@@ -29,8 +29,8 @@ def view_projects(request):
     """
     my_projects = Project.get_my_projects(request.user)
     my_created = Project.get_created_projects(request.user)
-
-    projects = my_projects and my_created
+    projects = my_projects | my_created
+    
     return _projects(request, projects)
 
 

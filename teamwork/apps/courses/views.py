@@ -211,7 +211,7 @@ def create_course(request):
             course.save()
             # loop through the members in the object and make m2m rows for them
             for i in students:
-                Enrollment.objects.create(user=i, course=course)
+                Enrollment.objects.create(user=i.user, course=course)
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_one_course, course.slug)
