@@ -251,7 +251,7 @@ def edit_course(request, slug):
             enrollments = Enrollment.objects.filter(course=course)
             if enrollments is not None: enrollments.delete()
             for i in students:
-                Enrollment.objects.create(user=i, course=course)
+                Enrollment.objects.create(user=i.user, course=course)
 
         return redirect(view_one_course, course.slug)
     else:

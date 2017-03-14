@@ -64,6 +64,13 @@
                         </a>
                     </li>
 
+                    <li>
+                        <a href="{% url 'view_matches' %}">
+                            <i class="fa fa-handshake-o"></i> 
+                            <span>My Matches</span>
+                        </a>
+                    </li>
+
                     {% if user.profile.isProf %}
                       <li>
                           <a href="{% url 'create_course' %}">

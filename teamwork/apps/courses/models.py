@@ -28,9 +28,9 @@ def get_user_courses(self):
     Added to auth so that a user object can easily retrieve enrolled courses
     Gets a list of course objects that the user is in
     """
-    #Gets current user's enrollments
-    myEnrollment = Enrollment.objects.filter(id=self.id)
-
+    #Gets current user's enrollments, by looking for user in  Enrollment table
+    myEnrollment = Enrollment.objects.filter(user=self)
+    
     print("myEnrollment:")
     print(myEnrollment)
 
