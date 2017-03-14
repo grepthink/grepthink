@@ -24,5 +24,45 @@
 
 
 
-<!-- Inject "skin-green" into the class of body -->
+{# Inject "skin-green" into the class of body #}
 {% block body_class %} skin-green {% endblock %}
+
+{# Contains the page_name, page_description, and breadcrumbs #}
+{% block content_header %}
+  <section class="content-header">
+    <h1>
+        {% block page_name %} 
+          {{ page_name|default:_('Teamwork') }} 
+        {% endblock page_name%}
+        {% comment %}
+          If you don't want a description, copy this into your template:
+          {% block no_description %}{% endblock %}
+
+          http://django-adminlte2.readthedocs.io/en/latest/templates_and_blocks.html#no-description
+        {% endcomment %}
+        {% block no_description %}
+
+          <small>
+            {% block page_description %}
+            {{ page_description|default:_('Default Description') }}
+            {% endblock page_description %}
+          </small>
+
+        {% endblock no_description %}
+    </h1>
+    {% block breadcrumbs %}
+        {# Breadcrumb implementation left to developers #}
+        <ol class="breadcrumb">
+          <li><a href="{% url 'index' %}">Home</a></li>
+          {# Add your breadcrumbs in the crumb block #}
+          {% block crumb %}
+          {% endblock crumb %}
+        </ol>
+    {% endblock breadcrumbs %}
+  </section>
+{% endblock content_header %}
+
+
+{% block content %}
+
+{% endblock content %}

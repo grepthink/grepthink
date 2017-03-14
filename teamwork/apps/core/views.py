@@ -10,13 +10,35 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
+from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
 
-def home(request):
+def login_view(request):
     if request.user.is_authenticated():
-        return render(request, 'core/home.html')
+        # TODO: get feed of project updates (or public projects) to display on login
+        return render(request, 'courses/view_course.html')
     else:
-        return render(request, 'core/about.html')
+        # Redirect user to login instead of public index (for ease of use)
+        return render(request, 'core/login.html')
+
+def index(request):
+    # TODO: get feed of project updates (or public projects) to display on login
+
+    # Populate with defaults for not logged in user
+    page_name = "Explore"
+    page_description = "Public Projects and Courses"
+    date_updates = None
+
+    if request.user.is_authenticated():
+        page_name = "Timeline"
+        page_description = "Recent Updates from Courses and Projects"
+        all_courses = Course.get_my_courses(request.user)
+        date_updates = []
+        for course in all_courses:
+            date_updates.extend(course.get_updates_by_date())
+
+    return render(request, 'core/index.html', {'page_name' : page_name,
+         'page_description' : page_description, 'date_updates' : date_updates})
 
 def about(request):
     return render(request, 'core/about.html')

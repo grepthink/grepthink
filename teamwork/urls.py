@@ -26,7 +26,7 @@ from teamwork.apps.courses import views as course_views
 
 urlpatterns = [
         #/
-        url(r'^$', core_views.home, name='home'),
+        url(r'^$', core_views.index, name='index'),
         url(r'^about/$', core_views.about, name='about'),
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
@@ -73,10 +73,10 @@ urlpatterns = [
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/
-        url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
+        url(r'^login', auth_views.login, {'template_name': 'core/login.html'},
             name='login'),
         #logout
-        url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
+        url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
         # /username/ - A users unique profile url
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
