@@ -17,77 +17,160 @@
 
 <section class="matches">
     <div class="row">
-      {% for p_match_tup in project_match_list %}
+        {% if not user.profile.isProf%}
+            {% for p_match_tup in project_match_list %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                            <ol>
+                                {% for match in p_match_tup.1 %}
+                                <li>
+                                    <a href="{% url 'profile' match.username %}">
+                                    <span class="label label-primary">
+                                        <i class="fa fa-user"></i> 
+                                        {{ match.username }}
+                                    </span>
+                                    </a>
+                                </li>
 
-            <div class="col-sm-6 col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
-                    </div>
-                    <div class="panel-body">
-                        <p>
-                        <ol>
-                            {% for match in p_match_tup.1 %}
-                            <li>
-                                <a href="{% url 'profile' match.username %}">
+                                {% endfor %}
+                            </ol>
+                            </p>
+                            <p>
+                                <strong>Owner</strong>
+                                <span class="label label-success">
+                                    {{ p_match_tup.0.creator }}
+                                </span>
+                            </p>
+                            <p><strong>Current Members</strong>
+                                {% for mem in p_match_tup.0.members.all %}
+                                {% if mem.username != null %}
+                                <a href="{% url 'profile' mem.username %}">
                                 <span class="label label-primary">
-                                    <i class="fa fa-user"></i> 
-                                    {{ match.username }}
+                                        <i class="fa fa-user"></i> 
+                                        {{ mem.username }}
                                 </span>
                                 </a>
-                            </li>
-
-                            {% endfor %}
-                        </ol>
-                        </p>
-                        <p>
-                            <strong>Owner</strong>
-                            <span class="label label-success">
-                                {{ p_match_tup.0.creator }}
-                            </span>
-                        </p>
-                        <p><strong>Current Members</strong>
-                            {% for mem in p_match_tup.0.members.all %}
-                            {% if mem.username != null %}
-                            <a href="{% url 'profile' mem.username %}">
-                            <span class="label label-primary">
-                                    <i class="fa fa-user"></i> 
-                                    {{ mem.username }}
-                            </span>
+                                {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="panel-footer clearfix">
+                          {% if request.user.username == p_match_tup.0.creator %}
+                            <a href="{% url 'edit_project' p_match_tup.0.slug %}">
+                                <button class="btn btn-success">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
                             </a>
-                            {% endif %}
-                            {% endfor %}
-                        </p>
-                    </div>
-                    <div class="panel-footer clearfix">
-                      {% if request.user.username == p_match_tup.0.creator %}
-                        <a href="{% url 'edit_project' p_match_tup.0.slug %}">
-                            <button class="btn btn-success">
-                                <i class="fa fa-edit"></i>
-                                Edit
-                            </button>
-                        </a>
-                      {% endif %}
-                        <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
-                            class="pull-right">
-                            <button class="btn btn-info">
-                                <i class="fa fa-eye"></i>
-                                View
-                            </button>
-                        </a>
+                          {% endif %}
+                            <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
+                                class="pull-right">
+                                <button class="btn btn-info">
+                                    <i class="fa fa-eye"></i>
+                                    View
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% empty %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="fa fa-warning"></i>
+                    There are no projects yet. Go ahead and
+                    <a href="{% url 'create_project' %}" class="alert-link">
+                        create one now!
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            {% for course in course_set %}
+                <h3>{{course.name}}</h3>
+                {% for p_match_tup in project_match_list %}
+                    {% if course.name == p_match_tup.0.name %}
+                        <div class="col-sm-6 col-md-4">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">{{ p_match_tup.1.title }}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p>
+                                    <ol>
+                                        {% for match in p_match_tup.2 %}
+                                        <li>
+                                            <a href="{% url 'profile' match.username %}">
+                                            <span class="label label-primary">
+                                                <i class="fa fa-user"></i> 
+                                                {{ match.username }}
+                                            </span>
+                                            </a>
+                                        </li>
 
-        {% empty %}
-        <div class="alert alert-warning" role="alert">
-            <i class="fa fa-warning"></i>
-            There are no projects yet. Go ahead and
-            <a href="{% url 'create_project' %}" class="alert-link">
-                create one now!
-            </a>
-        </div>
-        {% endfor %}
+                                        {% endfor %}
+                                    </ol>
+                                    </p>
+                                    <p>
+                                        <strong>Owner</strong>
+                                        <span class="label label-success">
+                                            {{ p_match_tup.1.creator }}
+                                        </span>
+                                    </p>
+                                    <p><strong>Current Members</strong>
+                                        {% for mem in p_match_tup.1.members.all %}
+                                        {% if mem.username != null %}
+                                        <a href="{% url 'profile' mem.username %}">
+                                        <span class="label label-primary">
+                                                <i class="fa fa-user"></i> 
+                                                {{ mem.username }}
+                                        </span>
+                                        </a>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                                <div class="panel-footer clearfix">
+                                  {% if request.user.username == p_match_tup.1.creator %}
+                                    <a href="{% url 'edit_project' p_match_tup.0.slug %}">
+                                        <button class="btn btn-success">
+                                            <i class="fa fa-edit"></i>
+                                            Edit
+                                        </button>
+                                    </a>
+                                  {% endif %}
+                                    <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
+                                        class="pull-right">
+                                        <button class="btn btn-info">
+                                            <i class="fa fa-eye"></i>
+                                            View
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fa fa-warning"></i>
+                        There are no projects yet in your course. Go ahead and
+                        <a href="{% url 'create_project' %}" class="alert-link">
+                            create one now!
+                        </a>
+                    </div>
+                {% endfor %}
+            {% empty %}
+                <div class="alert alert-warning" role="alert">
+                    <i class="fa fa-warning"></i>
+                    You have no courses. Go ahead and
+                    <a href="{% url 'create_course' %}" class="alert-link">
+                        create one now!
+                    </a>
+                </div>
+            {% endfor %}
+        {% endif %}    
     </div>
 </section>
 

@@ -50,30 +50,43 @@ def view_matches(request):
         each project.
     """
     project_match_list = []
+    course_set = []
 
-    projects = Project.get_my_projects(request.user)
+    if request.user.profile.isProf:
+        print("Begin Best Matches")
+        courses = Course.get_my_created_courses(request.user)
+        print(courses)
+        for course in courses:
+            for project in course.projects.all():
+                p_match = po_match(project)
+                project_match_list.extend([(course, project, p_match)])
+            course_set.append(course)
+        print(course_set)
+        print(project_match_list)
+    else:
+        projects = Project.get_my_projects(request.user)
 
-    print("PROJECTS:")
-    print(projects)
-    
-    for project in projects:
-        print("Project:")
-        print(project)
-        p_match = po_match(project)
-        print("p_match:")
-        print(p_match)
-        project_match_list.extend([(project, p_match)])
+        print("PROJECTS:")
+        print(projects)
+        
+        for project in projects:
+            print("Project:")
+            print(project)
+            p_match = po_match(project)
+            print("p_match:")
+            print(p_match)
+            project_match_list.extend([(project, p_match)])
 
-    print("Project Match List:")
-    print(project_match_list)
+        print("Project Match List:")
+        print(project_match_list)
 
-    for project in project_match_list:
-        print("project in project_match_list")
-        print(project)
-        print(project[0].title)
-        if project[1]:
-            print(project[1][0].username)
+        for project in project_match_list:
+            print("project in project_match_list")
+            print(project)
+            print(project[0].title)
+            if project[1]:
+                print(project[1][0].username)
 
     return render(request, 'core/view_matches.html', {
-        'project_match_list' : project_match_list
+        'project_match_list' : project_match_list, 'course_set': course_set
         })
