@@ -63,13 +63,21 @@
                             <span>My Projects</span>
                         </a>
                     </li>
-
-                    <li>
+                    {% if user.profile.isProf %}
+                        <li>
+                            <a href="{% url 'view_matches' %}">
+                                <i class="fa fa-spinner"></i> 
+                                <span>Auto Generate Groups</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
                         <a href="{% url 'view_matches' %}">
                             <i class="fa fa-handshake-o"></i> 
                             <span>My Matches</span>
                         </a>
                     </li>
+                    {% endif%}
 
                     {% if user.profile.isProf %}
                       <li>
