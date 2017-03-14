@@ -19,16 +19,19 @@ class CourseForm(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
 
-        #queryset of users other than current user
-        other_users = User.objects.exclude(id=uid)
-        #queryset containing users who are not superusers
-        exclude_superusers = other_users.exclude(is_superuser=True)
         #Renders slug as HiddenInput
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
 
-        #Hides superusers from 'students' field
-        self.fields['students'].queryset = exclude_superusers
+        # get_sueruser_list
+        superuser = User.objects.filter(is_superuser=True)
+
+        #Hides superusers, professors, and current user(just to be safe)
+        # from 'students' field
+        only_students = Profile.objects.exclude(
+            Q(user__in=superuser) | Q(isProf=True) | Q(id=uid)
+            )
+        self.fields['students'].queryset = only_students
 
     #course name field
     name = forms.CharField(
