@@ -140,6 +140,15 @@
             </div>
             <div class="tab-pane" id="projects">
                 <div class="row">
+
+                  <div class="row">
+                    <div class="alert alert-info" role="alert">
+                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                            Show interest in these projects!
+                        </a>
+                    </div>
+                  </div>
+
                     {% for project in projects %}
                     <div class="col-sm-6 col-md-4">
                         <div class="panel panel-default"
