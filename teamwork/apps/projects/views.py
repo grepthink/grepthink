@@ -30,7 +30,8 @@ def view_projects(request):
     my_projects = Project.get_my_projects(request.user)
     my_created = Project.get_created_projects(request.user)
     projects = my_projects | my_created
-    
+    projects = list(set(projects))
+
     return _projects(request, projects)
 
 
@@ -110,16 +111,10 @@ def create_project(request):
                             # save the new object
                             desired_skill.save()
                         # This is how we can use the reverse of the relationship
-                        print("\n\n")
-                        print(desired_skill.desired.all())
-                        print("\n\n")
                         # add the skill to the current profile
                         project.desired_skills.add(desired_skill)
                         project.save() #taking profile.save() out of these if's and outside lets all the changes be saved at once
                         # This is how we can get all the skills from a user
-                        print("\n\n")
-                        print(project.desired_skills.all())
-                        print("\n\n")
             # Project content
             project.content = form.cleaned_data.get('content')
 
