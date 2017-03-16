@@ -15,7 +15,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.
@@ -28,8 +27,7 @@ class Skills(models.Model):
         save(self, *args, **kwargs):    Overides the default save operator...
 
         """
-    # skill, a string
-    #skill = models.CharField(max_length=255,default="")
+    # skill, a string    
     skill = models.CharField(max_length=255,default="")
 
     def __str__(self):
@@ -68,10 +66,13 @@ class Profile(models.Model):
     """
     user = models.OneToOneField(User)
     bio = models.TextField(max_length=500, blank=True)
-    name = models.TextField(max_length=500, blank=True)
-    # avatar = models.ImageField(upload_to= 'avatars/')
+    name = models.TextField(max_length=75, blank=True)
+    institution = models.TextField(max_length=100, blank=True)
+    location = models.TextField(max_length=100, blank=True)
 
-    # TODO: Interest - ManyToOne, Past Classes, Bio
+    avatar = models.ImageField(upload_to= 'avatars/', default="")
+
+    # TODO: Interest - ManyToOne, Past Classes,
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -80,6 +81,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    def __hash__(self):
+        return hash(self.user)
+    def __eq__(self, other):
+        return (self.user == other.user)
+    def __ne__(self, other):
+        # Not strictly necessary, but to avoid having both x==y and x!=y
+        # True at the same time
+        return not(self == other)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

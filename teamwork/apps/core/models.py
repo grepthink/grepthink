@@ -6,51 +6,70 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-# We need to update the User class to use django.auth
-# from django.contrib.auth.models import User
+from teamwork.apps.projects.models import *
+# profiles is already imported from projects, not necessary here
 
-# Model definitions for the core app.
-# As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
+# send in the current list of 
+def sort(match, project):
+	topScores = sorted(set(match.values()))
+	matches = []
+	for j in reversed(topScores):
+		for u, i in match.items():
+			if (j == i) and not(u in project.members.all()) and not(u.profile.isProf):
+				matches.append(u)
+	return matches
 
-
-
-# Legacy code for me to sort through next and slowly add back in:
 
 """
-#Course: A database model (object) for courses
-class Course(models.Model):
-	course_name = models.CharField(max_length=30, default="general")
-	course_info = models.CharField(max_length=100, default="")
-	# Not tested
-	institution = models.CharField(max_length=100, default="collab")
-	term = models.CharField(max_length=100, default="It's alsways Spring")
-	#year = models.DateTime()
-
-
-	def __str__(self):
-		return self.course_name
-
-class User(models.Model):
-	user_first = models.CharField(max_length=20, default="")
-	def __str__(self):
-		return self.user_first
-
-class Project(models.Model):
-#Authors is a is a forign key from class User.
-#Each project object is associated with authors (current_members).
-
-	# Authors
-	#authors = models.ForeignKey(User, related_name='+')
-	# all many to many fields first, to easily identify relationships
-	#course = models.ManyToManyField(Course, related_name="course_id")
-	#project_owner = models.ManyToManyField(User, related_name="po")
-	project_owner = models.ForeignKey(User)
-	#current_members = models.ManyToManyField(User, related_name="members")
-	#project_owner = models.ManyToManyField(User, related_name="po")
-	project_name = models.CharField(max_length=50, default="")
-	project_info = models.CharField(max_length=100, default="")
-	#create_date = models.DateTimeField(auto_now_add=True)
-
-	def __str__(self):
-		return self.project_name
+	Summary: this function is called to find matches for a project
+	Params:
+		project: the project looking for matches
+		interestWeight: the weight the user can assign to interest, or default to 1
+		knowWeight: the weighr the user can assign to knowing a skill, or defaults to 1
+		leanrWeight: the weight the user can assign to wanting to learn a skill, or default to 1
+	returns: a list of the top users that match with a project, based on there cumulative score
+		collected after each pass
 """
+def po_match(project, interestWeight = 1, knowWeight = 1, learnWeight = 1):
+	initial = {}
+	backup = {}
+	# interest matching
+	interested =  project.interest.all()
+	for i in interested:
+		# generate the dictionary from the interest field, with the user's
+		# rating as their initial score, mulitple by weight if given
+		initial[i.user] = (i.interest * interestWeight)
+
+	# Skill Matching
+	# loop through the desired skills can check the skills table to see who
+	# knows or wants to learn this skill. multiply by weight if necessary
+	desired_skills = project.desired_skills.all()
+	for i in desired_skills:
+		know = i.known.all()
+		for j in know:
+			# if is to allow for updating the score of users already counted
+			if j.user in initial:
+				temp = initial[j.user]
+				temp += (2 * knowWeight)
+				initial[j.user] = temp
+			# otherwise we add them to a backup list
+			else:
+				backup[j.user] = 2	
+		learn = i.learn.all()
+		for k in learn:
+			if k.user in initial:
+				temp = initial[k.user]
+				temp += (1 * learnWeight)
+				initial[k.user] = temp
+			else:
+				backup[k.user] = 2
+	# we compare the size of the intial list to check if there are at least 
+	# 10 users that match already. If not we will add second list to the 
+	# intial to and for more users
+	if len(set(initial.keys())) < 10:
+		initial.update(backup)
+
+	return sort(initial, project)
+	# past classes match
+	# scheduling match
+	

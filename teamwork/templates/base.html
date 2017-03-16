@@ -1,18 +1,68 @@
-{% load static %}<!DOCTYPE html>
-<html lang="en">
-  <head>
+{% extends 'adminlte/base.html' %}
+
+{# Generic page title. Pass title in the return dictionary of your view. #}
+{% block title %} 
+{{ title|default:_('Teamwork') }} | {{ site_title|default:_('Teamwork') }} 
+{% endblock title %}
+
+{% block meta %}
     <meta charset="utf-8">
-    <title>{% block title %}Teamwork{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    <link href="{% static 'css/app.css' %}" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="{% static 'js/app.js' %}"></script>
-    {% block head %}{% endblock %}
-  </head>
-  <body class="skin-green">
-  {% block body %}
-    {% block content %}
-    {% endblock content %}
-  {% endblock body %}
-</body>
-</html>
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+{% endblock %}
+
+{# In case we want to add custom stylesheets to base #}
+{% block stylesheets %}
+  {# Gets the stylesheets in the template above this file: adminlte/base.html #}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+
+{% block nav_sidebar %}
+    {% include 'core/custom_sidebar.html' %}
+{% endblock nav_sidebar%}
+
+
+
+{# Inject "skin-green" into the class of body #}
+{% block body_class %} skin-green {% endblock %}
+
+{# Contains the page_name, page_description, and breadcrumbs #}
+{% block content_header %}
+  <section class="content-header">
+    <h1>
+        {% block page_name %} 
+          {{ page_name|default:_('Teamwork') }} 
+        {% endblock page_name%}
+        {% comment %}
+          If you don't want a description, copy this into your template:
+          {% block no_description %}{% endblock %}
+
+          http://django-adminlte2.readthedocs.io/en/latest/templates_and_blocks.html#no-description
+        {% endcomment %}
+        {% block no_description %}
+
+          <small>
+            {% block page_description %}
+            {{ page_description|default:_('Default Description') }}
+            {% endblock page_description %}
+          </small>
+
+        {% endblock no_description %}
+    </h1>
+    {% block breadcrumbs %}
+        {# Breadcrumb implementation left to developers #}
+        <ol class="breadcrumb">
+          {# <li><a href="{% url 'index' %}">Home</a></li> #}
+          {# Add your breadcrumbs in the crumb block #}
+          {% block crumb %}
+          {% endblock crumb %}
+        </ol>
+    {% endblock breadcrumbs %}
+  </section>
+{% endblock content_header %}
+
+
+{% block content %}
+
+{% endblock content %}

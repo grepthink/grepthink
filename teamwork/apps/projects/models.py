@@ -7,6 +7,8 @@ Database Models for the objects, Project, Membership, Intrest, ProjectUpdate
 # Built-in modules
 from __future__ import unicode_literals
 from datetime import datetime
+import random
+import string
 
 # Django modules
 from django.contrib.auth.models import User
@@ -24,8 +26,20 @@ import markdown
 # Local Modules
 from teamwork.apps.profiles.models import *
 
+# Generates add code
+def rand_code(size):
+    # Usees a random choice from lowercase, uppercase, and digits
+    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
+
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
+class Interest(models.Model):
+    """
+    Intrest object relates a user to a intrest (may be changed in the future)
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    interest = models.PositiveIntegerField()
+    interest_reason = models.CharField(max_length=100)
 
 class Project(models.Model):
     """
@@ -50,7 +64,7 @@ class Project(models.Model):
     # Members associated with a project (Membership objects)
     members = models.ManyToManyField(User, through='Membership')
     # Skills needed for the project.
-    desired_skills = models.ManyToManyField(Skills, related_name="desired")
+    desired_skills = models.ManyToManyField(Skills, related_name="desired", default="")
     # True when the proejct is accepting new members. False when project is full.
     avail_mem = models.BooleanField(default = True)
     # True when project is sponsered. False when project is not sponsered. Field hidden to students.
@@ -58,7 +72,9 @@ class Project(models.Model):
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
     # Resource list that the project members can update
-    resource = models.TextField(max_length=4000)
+    resource = models.TextField(max_length=4000, default="*No resources provided*")
+
+    interest = models.ManyToManyField(Interest, default = '')
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
@@ -90,11 +106,12 @@ class Project(models.Model):
         # Generate a Project URL slug if not specified
         #     Based off Courses.save URL slug written by August
         if self.slug is None or len(self.slug) == 0:
-            # Basing the slug off of project title + creator. Possibly change in the future.
-            newslug = self.title + "-" + self.creator
+            # Basing the slug off of project title. Possibly change in the future.
+            newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
-                newslug = self.title + "-" + self.creator
+                print(Project.objects.filter(slug=newslug).exists())
+                newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
 
@@ -110,10 +127,8 @@ class Project(models.Model):
         #Gets membership object of current user
         myProjects = Membership.objects.filter(user=user)
         #Gets project queryset of only projects user is in OR the user created
-        #BUG: if creator not in project, they cannot see project
         proj = Project.objects.filter(membership__in=myProjects)
 
-        print(proj)
         return proj
 
     def get_all_projects():
@@ -122,9 +137,19 @@ class Project(models.Model):
         """
         projects = Project.objects.filter()
         return projects
+        
+    def get_created_projects(user):
+        """
+        Gets a list of porject objects that the user created. Used in views then passed to the template
+        """
+        proj = Project.objects.filter(creator=user.username)
+        return proj
 
     def get_content_as_markdown(self):
         return markdown.markdown(self.content, safe_mode='escape')
+
+    def get_resource_as_markdown(self):
+        return markdown.markdown(self.resource, safe_mode='escape')
 
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)
@@ -137,13 +162,6 @@ class Membership(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
 
-class Interest(models.Model):
-    """
-    Intrest object relates a user to a intrest (may be changed in the future)
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    interest = models.PositiveIntegerField()
-    interest_reason = models.CharField(max_length=100)
 
 class ProjectUpdate(models.Model):
     """

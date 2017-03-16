@@ -1,3 +1,7 @@
+"""
+Core views provide main site functionality.
+
+"""
 from .models import *
 from .forms import *
 
@@ -6,52 +10,83 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+from teamwork.apps.courses.models import *
+from teamwork.apps.projects.models import *
 
-def home(request):
+def login_view(request):
     if request.user.is_authenticated():
-        return render(request, 'core/home.html')
+        # TODO: get feed of project updates (or public projects) to display on login
+        return render(request, 'courses/view_course.html')
     else:
-        return render(request, 'core/cover.html')
+        # Redirect user to login instead of public index (for ease of use)
+        return render(request, 'core/login.html')
 
+def index(request):
+    # TODO: get feed of project updates (or public projects) to display on login
 
+    # Populate with defaults for not logged in user
+    page_name = "Explore"
+    page_description = "Public Projects and Courses"
+    date_updates = None
 
-#Shouldnt have a use as of 2/11
-"""
-def create_course(request):
-    #If post request we need to process form data
-    if request.method == 'POST':
-        #Create form instance and populate it with data from request
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            form.save()
-    #if a get we'll create a blank form
+    if request.user.is_authenticated():
+        page_name = "Timeline"
+        page_description = "Recent Updates from Courses and Projects"
+        all_courses = Course.get_my_courses(request.user)
+        date_updates = []
+        for course in all_courses:
+            date_updates.extend(course.get_updates_by_date())
+
+    return render(request, 'core/index.html', {'page_name' : page_name,
+         'page_description' : page_description, 'date_updates' : date_updates})
+
+def about(request):
+    return render(request, 'core/about.html')
+
+@login_required
+def view_matches(request):
+    """
+    Generic view for serving a list of projects and potential teammate matches for 
+        each project.
+    """
+    project_match_list = []
+    course_set = []
+
+    if request.user.profile.isProf:
+        print("Begin Best Matches")
+        courses = Course.get_my_created_courses(request.user)
+        print(courses)
+        for course in courses:
+            for project in course.projects.all():
+                p_match = po_match(project)
+                project_match_list.extend([(course, project, p_match)])
+            course_set.append(course)
+        print(course_set)
+        print(project_match_list)
     else:
-        form = CourseForm()
-        #form.save()
-    return render(request, 'core/create_project.html', {'form': form})
-"""
-"""
-#Does not create a project because we dont know how to use many-to-many
-def create_project(request):
-    #If post request we need to process form data
-    if request.method == 'POST':
-        #Create form instance and populate it with data from request
-        form = ProjectForm(request.POST)
-        if form.is_valid():
-            form.save()
-    #if a get we'll create a blank form
-    else:
-        form = ProjectForm()
-        #form.save()
-    return render(request, 'core/create_project.html', {'form': form})
+        projects = Project.get_my_projects(request.user)
 
-#this does not work as intended, result is listed as a QUERYSET
-def view_projects(request):
-    project_name = Project.objects.all()
-    context = { 'project_name': project_name,
-    }
-    return render(request, 'core/view_projects.html', context)
+        print("PROJECTS:")
+        print(projects)
+        
+        for project in projects:
+            print("Project:")
+            print(project)
+            p_match = po_match(project)
+            print("p_match:")
+            print(p_match)
+            project_match_list.extend([(project, p_match)])
 
-"""
+        print("Project Match List:")
+        print(project_match_list)
 
+        for project in project_match_list:
+            print("project in project_match_list")
+            print(project)
+            print(project[0].title)
+            if project[1]:
+                print(project[1][0].username)
+
+    return render(request, 'core/view_matches.html', {
+        'project_match_list' : project_match_list, 'course_set': course_set
+        })

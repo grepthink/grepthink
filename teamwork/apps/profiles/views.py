@@ -5,8 +5,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from teamwork.apps.projects.models import *
 
 from teamwork.apps.profiles.forms import SignUpForm
+
 
 
 def signup(request):
@@ -56,50 +58,29 @@ def view_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
-    # TODO: fix up return calls, form should be in if
     """
-    profile = Profile.objects.get(user=request.user)
-    # form = SkillsForm(request.POST)
-    # if request.method == 'POST':        
-    #     if form.is_valid():            
-    #         known = form.cleaned_data.get('known_skill')
-    #         learn = form.cleaned_data.get('learn_skill')
-    #         # if we have an input 
-    #         if known:
-    #             # check if skill is in Skills table, lower standardizes input
-    #             if Skills.objects.filter(skill=known.lower()):
-    #                 # skill already exists, then pull it up  
-    #                 known_skill = Skills.objects.get(skill=known.lower()) 
-    #             else:
-    #                 # we have to add the skill to the table
-    #                 known_skill = Skills.objects.create(skill=known.lower())
-    #                 # save the new object
-    #                 known_skill.save()
-    #             # This is how we can use the reverse of the relationship
-    #             # print(known_skill.known.all())
-    #             # add the skill to the current profile
-    #             profile.known_skills.add(known_skill)
-    #             profile.save()
-    #             # This is how we can get all the skills from a user
-    #             # print(profile.known_skills.all())
+    user = request.user
+    profile = Profile.objects.get(user=user)
 
-    #         # same as Known implemenation
-    #         if learn:
-    #             if Skills.objects.filter(skill=learn.lower()):
-    #                 learn_skill = Skills.objects.get(skill=learn.lower())
-    #             else:
-    #                 learn_skill = Skills.objects.create(skill=learn.lower())
-    #                 learn_skill.save()
-    #             # This is how we can use the reverse of the relationship
-    #             # print(learn_skill.learn.all())
-    #             profile.learn_skills.add(learn_skill)
-    #             profile.save()
-    #             # This is how we can get all the skills from a user
-    #             # print(profile.learn_skills.all())
+    # gets all interest objects of the current user
+    my_interests = Interest.objects.filter(user=user)
+    # gets all projects where user has interest
+    my_projects = Project.objects.filter(interest__in=my_interests)
+
+    """
+    print("\n\n")
+    for p in my_projects:
+        interest_in_project = p.interest.all()
+        print(p.title)
+        for i in interest_in_project:
+            print(i.interest)
+            print(i.interest_reason)
+    print("\n\n")
+    """
 
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile 
+        'page_user': page_user, 'profile':profile
         })
 
 
@@ -109,115 +90,124 @@ def edit_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
 
-    # TODO: 
+    TODO: screen flashes when deleting skills? Maybe pc just blows
+    TODO: test different uses of profile.save(), i.e not so many god damn times
+    TODO: Avatar doesn't show current file.url
+
     """
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
-    profile = Profile.objects.get(user=request.user)    
-    
-    if request.method == 'POST':                   
-        form = ProfileForm(request.POST)    
-        if form.is_valid():            
+    #grab profile for the current user
+    profile = Profile.objects.get(user=request.user)
+
+    #handle deleting known_skills
+    if request.POST.get('delete_known'):
+        skillname = request.POST.get('delete_known')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.known_skills.remove(to_delete)
+        form = ProfileForm(instance=profile)
+
+    #handle deleting learn_skills
+    elif request.POST.get('delete_learn'):
+        skillname = request.POST.get('delete_learn')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.learn_skills.remove(to_delete)
+        form = ProfileForm(instance=profile)
+    #handle deleting avatar
+    elif request.POST.get('delete_avatar'):        
+        avatar = request.POST.get('delete_avatar')
+        profile.avatar.delete()
+        form = ProfileForm(instance=profile)
+    #handle deleting profile
+    elif request.POST.get('delete_profile'):
+        page_user = get_object_or_404(User, username=username)
+        page_user.is_active = False
+        page_user.save()
+        return redirect('about')
+
+    #original form
+    elif request.method == 'POST':
+        #request.FILES is passed for File storing
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # grab each form element from the clean form
             known = form.cleaned_data.get('known_skill')
             learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
             name = form.cleaned_data.get('name')
-            # avatar = form.cleaned_data.get('avatar')
-            # if we have an input 
+            institution = form.cleaned_data.get('institution')
+            location = form.cleaned_data.get('location')
+            ava = form.cleaned_data.get('avatar')
+
+            # if we have an input in known_skills
             if known:
                 # parse known on ','
                 skill_array = known.split(',')
-                for skill in skill_array:                    
+                for skill in skill_array:
                     stripped_skill = skill.strip()
                     if not (stripped_skill == ""):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up  
-                            known_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                            # skill already exists, then pull it up
+                            known_skill = Skills.objects.get(skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
                             known_skill = Skills.objects.create(skill=stripped_skill.lower())
                             # save the new object
                             known_skill.save()
-                        # This is how we can use the reverse of the relationship
-                        # print(known_skill.known.all())
+
                         # add the skill to the current profile
                         profile.known_skills.add(known_skill)
-                        profile.save() #taking profile.save() out of these if's and outside lets all the changes be saved at once
-                        # This is how we can get all the skills from a user
-                        # print(profile.known_skills.all())
+                        profile.save()
 
-            # same as Known implemenation
+
+            # same as Known implemenation for learn_skills
             if learn:
                 skill_array = learn.split(',')
                 for skill in skill_array:
-                    
                     stripped_skill = skill.strip()
                     if not (stripped_skill == ""):
-                        # if not (skill == ""):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up  
-                            learn_skill = Skills.objects.get(skill=stripped_skill.lower()) 
+                            # skill already exists, then pull it up
+                            learn_skill = Skills.objects.get(skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
                             learn_skill = Skills.objects.create(skill=stripped_skill.lower())
                             # save the new object
-                            learn_skill.save()                
-                        # This is how we can use the reverse of the relationship
-                        # print(learn_skill.learn.all())
+                            learn_skill.save()
                         profile.learn_skills.add(learn_skill)
                         profile.save()
-                        # This is how we can get all the skills from a user
-                        # print(profile.learn_skills.all())
+            #if data is entered, save it to the profile for the following
             if name:
                 profile.name = name
                 profile.save()
             if bio:
-                profile.bio = bio                
+                profile.bio = bio
                 profile.save()
-            # if avatar:
-            #     profile.avatar = avatar
-            #     print("image path: " + profile.avatar.url)
-            #     profile.save()   
+            if institution:
+                profile.institution = institution
+                profile.save()
+            if location:
+                profile.location = location
+                profile.save()
+            if ava:
+                profile.avatar = ava
+                profile.save()
 
-        return redirect(view_profile, username)             
-            
-            
-    else:            
+        #redirects to view_profile when submit button is clicked
+        return redirect(view_profile, username)
+
+    else:
+        #load form with prepopulated data
         form = ProfileForm(instance=profile)
-        
 
+    known_skills_list = profile.known_skills.all()
+    learn_skills_list = profile.learn_skills.all()
     page_user = get_object_or_404(User, username=username)
+
     return render(request, 'profiles/edit_profile.html', {
-        'page_user': page_user, 'form':form, 'profile':profile 
-        })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        'page_user': page_user, 'form':form, 'profile':profile,
+        'known_skills_list':known_skills_list,
+        'learn_skills_list':learn_skills_list })

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{# Abondoning this partial template for now 3/12/17 andgates #}
+
+{% block content %}
+    {% block timeline %}
+        <ul class="timeline">
+            {% if user.username == instance.creator %}
+            <li style="list-style: none"
+                onclick="window.location =
+                '{% url 'update_course' course.slug %}'">
+                <i class="fa fa-plus bg-green"></i>
+                <div class="timeline-item"
+                    style="background-color: #ecf0f5">
+                    <div class="timeline-header">
+                        Add an update
+                    </div>
+                </div>
+            </li>
+            {% endif %}
+            {% for date_update in date_updates %}
+            <li class="time-label" style="list-style: none">
+                <span class="bg-blue">
+                    {{ date_update.date }}
+                </span>
+            </li>
+            {% for update in date_update.updates %}
+            <li style="list-style: none">
+                <i class="fa fa-comments bg-blue"></i>
+                <div class="timeline-item">
+                    <div class="timeline-header clearfix">
+                        {{ update.title }}
+                        {% if user == update.creator %}
+                        <span class="pull-right">
+                            <a href='{% url 'delete_course_update' course.slug update.id %}'>
+                                <button class="btn btn-danger btn-xs">
+                                    <i class="fa fa-trash"></i>
+                                    Delete
+                                </button>
+                            </a>
+                            <a href='{% url 'update_course_update' course.slug update.id %}'>
+                                <button class="btn btn-success btn-xs">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                            </a>
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="timeline-body">
+                        {{ update.content }}
+                    </div>
+                    <div class="timeline-footer clearfix">
+                        <span class="label label-primary"
+                            onclick="window.location =
+                            '{% url 'profile' update.creator.username %}'">
+                            {{ update.creator.username }}
+                        </span>
+                        <i class="pull-right">
+                            Posted {{ update.date_post }}
+                            {% if update.date_post != update.date_edit %}
+                            , edited {{ update.date_edit }}
+                            {% endif %}
+                        </i>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+            {% empty %}
+            <li style="list-style: none">
+                <i class="fa fa-times bg-red"></i>
+                <div class="timeline-item"
+                    style="background-color: #ecf0f5">
+                    <div class="timeline-header">
+                        There are no updates
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+            <li style="list-style: none">
+                <i class="fa fa-clock-o"></i>
+            </li>
+        </ul>
+    {% endblock timeline %}
+{% endblock content %}

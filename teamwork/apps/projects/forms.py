@@ -42,6 +42,8 @@ class ProjectForm(forms.ModelForm):
 		if 'instance' in kwargs:
 			# Hide slug field if user is editing project
 			self.fields['slug'].widget = forms.HiddenInput()
+		else:
+			self.fields['resource'].widget = forms.HiddenInput()
 
 
 		# exclude the superuser
@@ -71,7 +73,7 @@ class ProjectForm(forms.ModelForm):
 		# We use Profile because isProf is stored in the Profile model.
 		# TODO: only students in this course
 		only_students = Profile.objects.exclude(
-			Q(user__in=superuser) | Q(isProf=True)
+			Q(user__in=superuser) | Q(isProf=True) | Q(id=uid)
 			)
 
 
@@ -109,6 +111,10 @@ class ProjectForm(forms.ModelForm):
 		label = 'Sponsored?',
 		required = False)
 
+	desired_skills = forms.CharField(
+	      widget=forms.TextInput(attrs={'class': 'form-control'}),
+	      max_length=255, required=False)
+
 	course = forms.ModelChoiceField(
 		widget=forms.RadioSelect,
 		queryset=Course.objects.all(),
@@ -120,6 +126,11 @@ class ProjectForm(forms.ModelForm):
 		max_length=4000
 		)
 
+	resource = forms.CharField(
+		widget=forms.Textarea(attrs={'class': 'form-control'}),
+		max_length=4000, required=False
+		)
+
 	slug = forms.CharField(
     	widget=forms.TextInput(attrs={'class': 'form-control'}),
     	max_length=20,
@@ -128,7 +139,8 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 	    model = Project
-	    fields = ['title', 'members', 'accepting', 'sponsor', 'course', 'content', 'slug']
+	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills',
+                'course', 'content', 'slug', 'resource']
 
 class ViewProjectForm(forms.ModelForm):
 	"""

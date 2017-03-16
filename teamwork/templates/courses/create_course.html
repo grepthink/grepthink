@@ -1,28 +1,35 @@
-{% extends 'adminlte/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 
 {% block head %}
-  <script src="{% static 'js/course.js' %}"></script>
+<script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
+<ol class="breadcrumb">
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li><a href="{% url 'create_course' %}">Create a new course</a></li>
+</ol>
+
+<div class="page-header">
     <h1> Create Course </h1>
-  </div>
-  <form action="{% url 'create_course' %}" method="post" role="form">
+</div>
+
+<form action="{% url 'create_course' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
-      <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
         {{ field }}
         {% for error in field.errors %}
-          <label class="control-label">{{ error }}</label>
+        <label class="control-label">{{ error }}</label>
         {% endfor %}
-      </div>
-      {% endfor %}
+    </div>
+    {% endfor %}
     <input type="submit" value="Create Course">
-  </form>
+</form>
 
 {% endblock content %}

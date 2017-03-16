@@ -26,7 +26,8 @@ from teamwork.apps.courses import views as course_views
 
 urlpatterns = [
         #/
-        url(r'^$', core_views.home, name='home'),
+        url(r'^$', core_views.index, name='index'),
+        url(r'^about/$', core_views.about, name='about'),
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
         # /create_project/
@@ -55,25 +56,34 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course,
             name='view_one_course'),
         # Delete individual course (based on slug)
-         url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course,
+        url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course,
             name='delete_course'),
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
+        # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
+        # Post update to course (based on slug)
+        url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course,
+            name='update_course'),
+        # Edit existing update to course (based on slug and update id)
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$',
+            course_views.update_course_update, name='update_course_update'),
+        # Edit existing update to course (based on slug and update id)
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',
+            course_views.delete_course_update, name='delete_course_update'),
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/
-        url(r'^login', auth_views.login, {'template_name': 'core/cover.html'},
+        url(r'^login', auth_views.login, {'template_name': 'core/login.html'},
             name='login'),
         #logout
-        url(r'^logout', auth_views.logout, {'next_page': '/'}, name='logout'),
+        url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
         # /username/ - A users unique profile url
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
-        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
+        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),        
+        url(r'^matches/$', core_views.view_matches, name='view_matches'),
+
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-        
-        
-        # Delete individual course (ba
-        
