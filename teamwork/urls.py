@@ -61,6 +61,8 @@ urlpatterns = [
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
+        # Stats page link
+        url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course,
             name='update_course'),

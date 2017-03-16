@@ -234,6 +234,13 @@
             </div>
             {% endif %}
         </div>
+        <a href="{% url 'view_statistics' cur_course.slug %}"
+        class="pull-right">
+            <button class="btn btn-info">
+            <i class="fa fa-stats"></i>
+            Stats
+            </button>
+        </a>
     </div>
 </div>
 
