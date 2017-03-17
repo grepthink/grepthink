@@ -12,6 +12,9 @@ from teamwork.apps.profiles.forms import SignUpForm
 
 
 def signup(request):
+    """
+    public method that generates a form a user uses to sign up for an account
+    """
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if not form.is_valid():

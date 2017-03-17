@@ -92,6 +92,10 @@ def join_course(request):
 
 @login_required
 def show_interest(request, slug):
+    """
+    public method that takes in a slug and generates a form for the user
+    to show interest in all projects in a given course
+    """
     user = request.user
     # current course
     cur_course = get_object_or_404(Course, slug=slug)
@@ -337,6 +341,3 @@ def delete_course_update(request, slug, id):
         update.delete()
 
     return redirect(view_one_course, course.slug)
-
-
-

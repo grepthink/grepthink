@@ -14,6 +14,19 @@ Term_Choice = (
 
 #Creates the course form
 class CourseForm(forms.ModelForm):
+    """
+    Form used for a user to create a course
+
+    Attributes (Fields):
+        name: [CharField] Course name field
+        info: [CharField] Course information field
+        term: [ChoiceField] List of possible terms
+        slug: [CharField] Course slug
+        students: [ModelMultipleChoiceField] List of students
+
+    Methods:
+        __init__ :  Initializes form, filtering querysets for fields
+    """
 
     #Filters queryset based on conditions
     def __init__(self, uid, *args, **kwargs):
@@ -98,6 +111,15 @@ class CourseForm(forms.ModelForm):
 
 #Creates join course form
 class JoinCourseForm(forms.ModelForm):
+    """
+    Form used for a user to join a course
+
+    Attributes (Fields):
+        code: [CharField] field for user to enter addcode
+
+    Methods:
+        __init__ :  Initializes form
+    """
 
     #Initializes form
     def __init__(self, uid, *args, **kwargs):
@@ -120,21 +142,38 @@ def UniqueProjectValidator(value):
     if True:
         raise ValidationError('Each choice must be a Unique Project.')
 
+
+# Show Interest Form
 class ShowInterestForm(forms.ModelForm):
+    """
+    Form used for showing interest in sepcific projects
+
+    Attributes (Fields):
+        projects-5: [ModelChoiceField] Project model
+        pxr, x 1:5: [CharField]  Reason for interest in project
+
+    Methods:
+        __init__ :  gets the current course when initiating form, sets querysets
+        clean:      custom clean method for form validation
+    """
     #Initializes form
     def __init__(self, uid, *args, **kwargs):
         slug = kwargs.pop('slug')
         super(ShowInterestForm, self).__init__(*args, **kwargs)
 
+        # Gets course with certain slug
         cur_course = Course.objects.get(slug=slug)
 
+        # Gets all projects in that course
         projects = cur_course.projects.all()
+
         self.fields['projects'].queryset = projects
         self.fields['projects2'].queryset = projects
         self.fields['projects3'].queryset = projects
         self.fields['projects4'].queryset = projects
         self.fields['projects5'].queryset = projects
 
+        # Hides fields based on # projects in course
         if len(projects) < 5:
             self.fields['projects5'].widget = forms.HiddenInput()
             self.fields['p5r'].widget = forms.HiddenInput()
@@ -163,6 +202,7 @@ class ShowInterestForm(forms.ModelForm):
     projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice', required = False)
     p5r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
 
+    # Meta class
     class Meta:
 
         model = Course
