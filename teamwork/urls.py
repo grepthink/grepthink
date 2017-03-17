@@ -61,6 +61,9 @@ urlpatterns = [
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course,
             name='edit_course'),
+        # Stats page link
+        url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, 
+            name='view_statistics'),
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course,
             name='update_course'),
@@ -81,10 +84,7 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
-        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
-        #
-        # url(r'^user/(?P<username>[^/]+)/edit/delete$', profile_views.delete_skill, name='edit_profile'),
-
+        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),        
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

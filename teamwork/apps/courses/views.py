@@ -49,6 +49,45 @@ def view_one_course(request, slug):
         'course': course , 'projects': projects, 'date_updates': date_updates
         })
 
+@login_required
+def view_stats(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+
+    if not request.user.profile.isProf:
+        return redirect(view_one_course, cur_course.slug)
+
+    students_num = Enrollment.objects.filter(course = cur_course)
+    projects_num = projects_in_course(slug)
+    students_projects = []
+    students_projects_not = []
+    emails = []
+    cleanup_students = []
+    cleanup_projects = []
+
+    for i in projects_num:
+        for j in i.members.all():
+            if not j in students_projects:
+                students_projects.append(j)
+
+    for i in students_num:
+        if not i.user in students_projects:
+            students_projects_not.append(i.user)
+
+    for i in students_num:
+        if not i.user in cleanup_students:
+            cleanup_students.append(i.user) 
+
+    for i in projects_num:
+        if not i in cleanup_projects:
+            cleanup_projects.append(i)
+
+    for i in students_num:
+        emails.append(i.user.email)
+
+    return render(request, 'courses/view_statistics.html', {
+        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students, 'projects_num': projects_num, 'cleanup_projects': cleanup_projects, 'students_projects': students_projects, 'students_projects_not': students_projects_not, 'emails': emails
+        })
+
 def projects_in_course(slug):
     """
     Public method that takes a coursename, retreives the course object, returns

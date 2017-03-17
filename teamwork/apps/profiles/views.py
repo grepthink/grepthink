@@ -117,6 +117,17 @@ def edit_profile(request, username):
         to_delete = Skills.objects.get(skill=skillname)
         profile.learn_skills.remove(to_delete)
         form = ProfileForm(instance=profile)
+    #handle deleting avatar
+    elif request.POST.get('delete_avatar'):        
+        avatar = request.POST.get('delete_avatar')
+        profile.avatar.delete()
+        form = ProfileForm(instance=profile)
+    #handle deleting profile
+    elif request.POST.get('delete_profile'):
+        page_user = get_object_or_404(User, username=username)
+        page_user.is_active = False
+        page_user.save()
+        return redirect('about')
 
     #original form
     elif request.method == 'POST':

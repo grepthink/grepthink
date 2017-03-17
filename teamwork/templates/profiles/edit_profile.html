@@ -20,6 +20,7 @@
           <div class="col-sm-4">
             <h5>Avatar</h5>
             {{ form.avatar }}            
+            <button class="btn btn-danger btn-sm" name="delete_avatar" value="delete_avatar">Remove Avatar</button>
           </div> 
 
           <div class="col-sm-8">
@@ -35,7 +36,8 @@
           <div class="col-sm-9">
             <h5>Bio</h5>
             {{ form.bio }}
-          </div>                    
+          </div>       
+
           {% if not user.profile.isProf%}
             <div class="col-sm-5">     
               <h5>Known Skills 
@@ -50,12 +52,7 @@
                     <i class='glyphicon glyphicon-info-sign'></i></a></h5>
                     {{ form.learn_skill }}            
             </div>
-            {% endif %}              
-              
-            <div class="pull-right">      
-              <input type="submit" value="Submit">     
-            </div>
-            
+            {% endif %}                                                    
 
             {% if not user.profile.isProf%}
             <hr>
@@ -73,6 +70,16 @@
                 {% endfor %}             
             </div>
           {% endif %}
+
+          <div class="pull-right">      
+              <input type="submit" value="Save Changes">     
+            </div>
+
+            <hr>
+            <div class="pull-left">
+              <button class="btn btn-danger btn-sm" name="delete_profile" value="delete_profile"><i class="fa fa-trash"> </i> Delete Account?
+                    </button>
+            </div>
     </form>
   </div>
 </div>

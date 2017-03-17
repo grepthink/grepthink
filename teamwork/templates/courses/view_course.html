@@ -222,6 +222,15 @@
                         </button>
                     </a>
                 </p>
+                <h3>View Class Statistics</h3>
+                <p>
+                    <a href="{% url 'view_statistics' course.slug %}">
+                        <button class="btn btn-info">
+                        <i class="fa fa-stats"></i>
+                        Stats
+                        </button>
+                    </a>
+                </p>
                 <h3>Invite Students</h3>
                 <p>
                     You can add students yourself in the <b>Edit Course</b> form
@@ -234,6 +243,7 @@
             </div>
             {% endif %}
         </div>
+        
     </div>
 </div>
 
