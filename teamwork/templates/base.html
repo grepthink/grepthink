@@ -30,16 +30,17 @@
 {# Contains the page_name, page_description, and breadcrumbs #}
 {% block content_header %}
   <section class="content-header">
+    {% comment %}
     <h1>
         {% block page_name %} 
           {{ page_name|default:_('Teamwork') }} 
         {% endblock page_name%}
-        {% comment %}
+         comment
           If you don't want a description, copy this into your template:
           {% block no_description %}{% endblock %}
 
           http://django-adminlte2.readthedocs.io/en/latest/templates_and_blocks.html#no-description
-        {% endcomment %}
+        endcomment
         {% block no_description %}
 
           <small>
@@ -50,6 +51,7 @@
 
         {% endblock no_description %}
     </h1>
+    {% endcomment %}
     {% block breadcrumbs %}
         {# Breadcrumb implementation left to developers #}
         <ol class="breadcrumb">
