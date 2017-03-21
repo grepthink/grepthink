@@ -76,7 +76,7 @@ class SignUpForm(forms.ModelForm):
         max_length=75)
     prof = forms.BooleanField(
         initial = False,
-        label = 'Groupthink PLUS account',
+        label = 'Sign up as a professor?',
         required = False)
 
     class Meta:

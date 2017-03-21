@@ -58,7 +58,9 @@ class Project(models.Model):
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(max_length=255, default="No Project Title Provided")
     # TODO: This should not be a CharField
-    creator = models.CharField(max_length=255, default="No Creator (Weird)")
+    creator = models.CharField(max_length=255, default="No Creator Specified")
+    # Short project description
+    tagline = models.TextField(max_length=38, default="Default Project Tagline")
     # Verbose project description.
     content = models.TextField(max_length=4000, default="Content")
     # Members associated with a project (Membership objects)

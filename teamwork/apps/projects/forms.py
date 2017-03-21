@@ -97,6 +97,11 @@ class ProjectForm(forms.ModelForm):
 		max_length=255
 		)
 
+	tagline = forms.CharField(
+		widget=forms.TextInput(attrs={'class': 'form-control'}),
+		max_length=38
+		)
+
 	members = forms.ModelMultipleChoiceField(
 		widget=forms.CheckboxSelectMultiple,
 		queryset=User.objects.all(),
@@ -139,8 +144,8 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 	    model = Project
-	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills',
-                'course', 'content', 'slug', 'resource']
+	    fields = ['title', 'tagline', 'members', 'accepting', 'sponsor',
+                'desired_skills', 'course', 'content', 'slug', 'resource']
 
 class ViewProjectForm(forms.ModelForm):
 	"""

@@ -88,7 +88,7 @@
                       </li>
                     {% endif %}
 
-                    <li class="treeview active">
+                    <li class="treeview">
                         <a href="{% url 'view_course' %}">
                             <i class="fa fa-graduation-cap"></i>
                                 <span>My Courses</span>
@@ -96,7 +96,7 @@
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
-                            <ul class="treeview-menu menu-open" style="display: block;">
+                            <ul class="treeview-menu">
                                 <li><a href="{% url 'view_course' %}"><i class="fa fa-circle-o"></i> View All </a></li>
                                 {% if user.get_user_courses %}
                                 {% for course in user.get_user_courses %}

@@ -9,6 +9,7 @@
 <link href="{% static 'css/projects.css' %}" rel="stylesheet">
 {% endblock head %}
 
+
 {% block content %}
 <div class="page-header">
     <h1> Projects </h1>
@@ -23,6 +24,9 @@
                         <h3 class="panel-title">{{ project.title }}</h3>
                     </div>
                     <div class="panel-body">
+                        <p class="lead">
+                            {{ project.tagline }}
+                        </p>
                         <p>
                             <strong>Owner</strong>
                             <span class="label label-success">
@@ -77,8 +81,7 @@
         </div>
         {% endfor %}
     </div>
-</section>
 
-<!--paginator-->
+</section>
 
 {% endblock content %}

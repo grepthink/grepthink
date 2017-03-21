@@ -24,20 +24,8 @@
                     <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
                 </div>
                 <div class="panel-body">
-                    <p>
-                    <ol>
-                        {% for match in p_match_tup.1 %}
-                        <li>
-                            <a href="{% url 'profile' match.username %}">
-                            <span class="label label-primary">
-                                <i class="fa fa-user"></i> 
-                                {{ match.username }}
-                            </span>
-                            </a>
-                        </li>
-
-                        {% endfor %}
-                    </ol>
+                    <p class="lead">
+                        {{ p_match_tup.0.tagline }}
                     </p>
                     <p>
                         <strong>Owner</strong>
@@ -56,6 +44,22 @@
                         </a>
                         {% endif %}
                         {% endfor %}
+                    </p>
+                    <p>The following students may work well with this project: </p>
+                    <p>
+                    <ol>
+                        {% for match in p_match_tup.1 %}
+                        <li>
+                            <a href="{% url 'profile' match.username %}">
+                            <span class="label label-primary">
+                                <i class="fa fa-user"></i> 
+                                {{ match.username }}
+                            </span>
+                            </a>
+                        </li>
+
+                        {% endfor %}
+                    </ol>
                     </p>
                 </div>
                 <div class="panel-footer clearfix">
@@ -104,20 +108,6 @@
                         </div>
                         <div class="panel-body">
                             <p>
-                            <ol>
-                                {% for match in p_match_tup.2 %}
-                                <li>
-                                    <a href="{% url 'profile' match.username %}">
-                                    <span class="label label-primary">
-                                        <i class="fa fa-user"></i> 
-                                        {{ match.username }}
-                                    </span>
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            </ol>
-                            </p>
-                            <p>
                                 <strong>Owner</strong>
                                 <span class="label label-success">
                                     {{ p_match_tup.1.creator }}
@@ -135,6 +125,21 @@
                                     </a>
                                     {% endif %}
                                 {% endfor %}
+                            </p>
+                            <p>The following students may work well with this project: </p>
+                            <p>
+                            <ol>
+                                {% for match in p_match_tup.2 %}
+                                <li>
+                                    <a href="{% url 'profile' match.username %}">
+                                    <span class="label label-primary">
+                                        <i class="fa fa-user"></i> 
+                                        {{ match.username }}
+                                    </span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ol>
                             </p>
                         </div>
                         <div class="panel-footer clearfix">
