@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 
 # Django modules
 from django.contrib.auth.models import User
+from django.contrib import auth
 from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
@@ -22,6 +23,28 @@ import random
 import string
 import datetime
 
+def get_user_courses(self):
+    """
+    Added to auth so that a user object can easily retrieve enrolled courses
+    Gets a list of course objects that the user is in
+    """
+
+    if self.profile.isProf:
+        my_courses = Course.objects.filter(creator=self.username)
+    else:
+        #Gets current user's enrollments, by looking for user in  Enrollment table
+        myEnrollment = Enrollment.objects.filter(user=self)
+        
+        print("myEnrollment:")
+        print(myEnrollment)
+
+        #Filters for courses based on enrollment
+        my_courses = Course.objects.filter(enrollment__in=myEnrollment)
+
+    return my_courses
+
+# Add method to function that returns a list of users enrolled courses
+auth.models.User.add_to_class('get_user_courses', get_user_courses)
 
 # Generates add code
 def rand_code(size):
@@ -104,7 +127,6 @@ class Course(models.Model):
             # to project model
             Project
             )
-
 
     # RYAN
     # creator needs to be a foreign key for a simpler linking

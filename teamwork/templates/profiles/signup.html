@@ -1,4 +1,4 @@
-{% extends 'adminlte/base.html' %}
+{% extends 'base.html' %}
 
 {% load staticfiles i18n %}
 
@@ -7,7 +7,7 @@
 {% endblock head %}
 
 {% block content %}
-  <h1 class="logo"><a href="{% url 'home' %}">Teamwork</a></h1>
+  <h1 class="logo"><a href="{% url 'index' %}">Teamwork</a></h1>
   <div class="signup">
     <h2>{% trans 'Sign up for Teamwork' %}</h2>
     <form action="{% url 'signup' %}" method="post" role="form">

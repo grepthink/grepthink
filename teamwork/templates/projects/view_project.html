@@ -1,4 +1,4 @@
-{% extends 'adminlte/base.html' %}
+{% extends 'base.html' %}
 
 {% load static %}
 {% load i18n %}
@@ -138,7 +138,7 @@
 
             <!-- /.tab-pane Resources -->
             <div class="tab-pane" id="tab_3">
-                Resources will go here
+                {{ project.get_resource_as_markdown | safe }}
             </div>
             <!-- /.tab-pane End Updates -->
         </div>

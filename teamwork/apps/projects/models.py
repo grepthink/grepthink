@@ -58,7 +58,9 @@ class Project(models.Model):
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(max_length=255, default="No Project Title Provided")
     # TODO: This should not be a CharField
-    creator = models.CharField(max_length=255, default="No Creator (Weird)")
+    creator = models.CharField(max_length=255, default="No Creator Specified")
+    # Short project description
+    tagline = models.TextField(max_length=38, default="Default Project Tagline")
     # Verbose project description.
     content = models.TextField(max_length=4000, default="Content")
     # Members associated with a project (Membership objects)
@@ -72,7 +74,7 @@ class Project(models.Model):
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
     # Resource list that the project members can update
-    resource = models.TextField(max_length=4000)
+    resource = models.TextField(max_length=4000, default="*No resources provided*")
 
     interest = models.ManyToManyField(Interest, default = '')
     # Date the project was originally submitted on
@@ -147,6 +149,9 @@ class Project(models.Model):
 
     def get_content_as_markdown(self):
         return markdown.markdown(self.content, safe_mode='escape')
+
+    def get_resource_as_markdown(self):
+        return markdown.markdown(self.resource, safe_mode='escape')
 
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)

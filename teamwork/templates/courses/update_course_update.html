@@ -1,10 +1,10 @@
-{% extends 'adminlte/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
 
 {% block content %}
 <ol class="breadcrumb">
-    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
         <a href="{% url 'view_one_course' course.slug %}">
@@ -52,6 +52,22 @@
                 </button>
             </div>
         </form>
+    </div>
+    <div class="col-md-10 clearfix">
+        <h2>Delete update</h2>
+
+        <p>
+            Note that deleting a course update is <strong>IRREVERSIBLE</strong>,
+            please make sure you know what you are doing before pressing this
+            button.
+        </p>
+
+        <a href="{% url 'delete_course_update' course.slug update.id %}">
+            <button class="btn btn-danger" name="DELETE">
+                <i class="fa fa-trash"></i>
+                Delete post
+            </button>
+        </a>
     </div>
 </div>
 

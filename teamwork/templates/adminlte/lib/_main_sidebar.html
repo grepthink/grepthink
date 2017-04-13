@@ -1,12 +1,24 @@
 {% extends 'adminlte/lib/_main_sidebar.html' %}
 
+{# This sidebar template is no longer used. See core/custom_sidebar.html #}
+
+{% block user_panel %}
+{{block.super}}
+{% endblock user_panel %}
+
 
 {% block nav_links %}
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+        &times;
+        </button>
+        Warning: Current template must extend base.html. Default sidebar template /adminlte/lib/_main_sidebar.html has been loaded as a fallback.
+    </div>
 
     {% if user.is_authenticated %}
 
         <li>
-            <a href="{% url 'home' %}">
+            <a href="{% url 'index' %}">
                 <i class="fa fa-dashboard"></i> <span>Home</span>
             </a>
         </li>

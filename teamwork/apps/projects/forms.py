@@ -42,6 +42,8 @@ class ProjectForm(forms.ModelForm):
 		if 'instance' in kwargs:
 			# Hide slug field if user is editing project
 			self.fields['slug'].widget = forms.HiddenInput()
+		else:
+			self.fields['resource'].widget = forms.HiddenInput()
 
 
 		# exclude the superuser
@@ -95,6 +97,11 @@ class ProjectForm(forms.ModelForm):
 		max_length=255
 		)
 
+	tagline = forms.CharField(
+		widget=forms.TextInput(attrs={'class': 'form-control'}),
+		max_length=38
+		)
+
 	members = forms.ModelMultipleChoiceField(
 		widget=forms.CheckboxSelectMultiple,
 		queryset=User.objects.all(),
@@ -124,6 +131,11 @@ class ProjectForm(forms.ModelForm):
 		max_length=4000
 		)
 
+	resource = forms.CharField(
+		widget=forms.Textarea(attrs={'class': 'form-control'}),
+		max_length=4000, required=False
+		)
+
 	slug = forms.CharField(
     	widget=forms.TextInput(attrs={'class': 'form-control'}),
     	max_length=20,
@@ -132,7 +144,8 @@ class ProjectForm(forms.ModelForm):
 
 	class Meta:
 	    model = Project
-	    fields = ['title', 'members', 'accepting', 'sponsor', 'desired_skills', 'course', 'content', 'slug']
+	    fields = ['title', 'tagline', 'members', 'accepting', 'sponsor',
+                'desired_skills', 'course', 'content', 'slug', 'resource']
 
 class ViewProjectForm(forms.ModelForm):
 	"""

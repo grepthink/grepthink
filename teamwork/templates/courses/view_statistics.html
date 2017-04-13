@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %} Statistics {% endblock %}
+
+{% block head %}
+<link href="{% static 'css/courses.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+<div class="page-header">
+    <h1> Statistics </h1>
+</div>
+<section class="statistics">
+    <div class="My Courses">
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">{{ cur_course.name}}
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <p>
+                            <h3>Students: {{cleanup_students|length}} </h3>
+                            {% for student in cleanup_students %}
+                                <h4>
+                                <li>{{student}}</li>
+                                </h4>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            <h5>Projects: {{cleanup_projects|length}} </h5>
+                            {% for project in cleanup_projects %}
+                                <h6>
+                                <li>{{project}}</li>
+                                </h6>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            <h7>Students Not in Projects: {{students_projects_not|length}} 
+                            </h7>
+                            {% for student in students_projects_not %}
+                                <h8>
+                                <li>{{student}}</li>
+                                </h8>
+                            {% endfor %}
+                        </p>
+                        <p>
+                            <h9>Emails: {{emails|length}} </h9>
+                            {% for student_email in emails %}
+                                <h10>
+                                <li>{{student_email}}</li>
+                                </h10>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</section>
+
+{% endblock content %}
+
+
+
+<!--
+1. Calculate number of students in course.
+    -add variable students_num to Courses class
+    -length?
+2. Calculate number of projects in course.
+    -add variable projects_num to Courses class
+3. Calculate number of students in course not in projects.
+    -find number of students in projects
+        -add variable current_mems to Project class
+        -traverse through projects in for loop. increment value
+    -subtract result from students_num
+4. Extract students emails.
+    -add variable email to membership class
+-->

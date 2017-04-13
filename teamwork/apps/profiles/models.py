@@ -15,7 +15,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.

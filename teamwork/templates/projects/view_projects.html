@@ -1,4 +1,4 @@
-{% extends 'adminlte/base.html' %}
+{% extends 'base.html' %}
 
 {% load static %}
 {% load i18n %}
@@ -8,6 +8,7 @@
 {% block head %}
 <link href="{% static 'css/projects.css' %}" rel="stylesheet">
 {% endblock head %}
+
 
 {% block content %}
 <div class="page-header">
@@ -23,6 +24,9 @@
                         <h3 class="panel-title">{{ project.title }}</h3>
                     </div>
                     <div class="panel-body">
+                        <p class="lead">
+                            {{ project.tagline }}
+                        </p>
                         <p>
                             <strong>Owner</strong>
                             <span class="label label-success">
@@ -37,6 +41,14 @@
                             </span>
                             {% endif %}
                             {% endfor %}
+                        </p>
+                        <p>
+                            <strong>Accepting Members</strong>
+                            {% if project.avail_mem %}
+                                Yes
+                            {% else %}
+                                No
+                            {% endif %}
                         </p>
                     </div>
                     <div class="panel-footer clearfix">
@@ -69,8 +81,7 @@
         </div>
         {% endfor %}
     </div>
-</section>
 
-<!--paginator-->
+</section>
 
 {% endblock content %}
