@@ -11,7 +11,7 @@ All templates extend `base.html` which provides some commonly used "blocks".
 ## Page title and description:
 The page tilte and description can be set dynamically in *views.py* like so:
 
-'''python
+```python
 def index(request):
     """
     The main index of Teamwork, reffered to as "Home" in the sidebar. 
@@ -29,5 +29,5 @@ def index(request):
 
     return render(request, 'core/index.html', {'page_name' : page_name,
          'page_description' : page_description})
-'''
--- Taken from `core/views.py : index`
+```
+*Taken from* `core/views.py : index`
