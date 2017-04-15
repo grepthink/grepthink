@@ -1,0 +1,5 @@
+cleint id
+695326339265-4cnssulp9dvdikkcqn1u689r4gdnsn7k.apps.googleusercontent.com
+
+client secret
+3uZLLmgTFO3QtkEH6PCoPgyN
