@@ -72,7 +72,8 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
-        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),        
+        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        url(r'^google/$', core_views.google_api, name='google_api'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

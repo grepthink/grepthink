@@ -8,3 +8,4 @@ Unipath==1.1
 django-adminlte2
 Markdown
 Pillow
+google-api-python-client
