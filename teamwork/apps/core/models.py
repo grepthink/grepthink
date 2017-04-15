@@ -21,7 +21,7 @@ def sort(match):
                 matches.append(u)
     return matches
 
-  
+
 """
 	Summary: this function is called to find matches for a project
 	Params:
@@ -32,9 +32,13 @@ def sort(match):
 	returns: a list of the top users that match with a project, based on there cumulative score
 		collected after each pass
 """
-def po_match(project, interestWeight=1, knowWeight=1, learnWeight=1):
+def po_match(project):
     initial = {}
     backup = {}
+    # dependency injection
+    interestWeight = project.weigh_interest
+    knowWeight = project.weigh_know
+    learnWeight = project.weigh_learn
     # interest matching
     interested = project.interest.all()
     for i in interested:

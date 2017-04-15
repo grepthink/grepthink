@@ -81,6 +81,9 @@ class Project(models.Model):
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
+    weigh_interest = models.IntegerField(default = 1)
+    weigh_know = models.IntegerField(default = 1)
+    weigh_learn = models.IntegerField(default = 1)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
