@@ -151,12 +151,12 @@
 
                     {% for project in projects %}
                     <div class="col-sm-6 col-md-4">
-                        <div class="panel panel-default"
+                        <div class="box box-solid box-default"
                             onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">{{ project.title }}</h3>
+                            <div class="box-header">
+                                <h3 class="box-title">{{ project.title }}</h3>
                             </div>
-                            <div class="panel-body">
+                            <div class="box-body">
                                 <p class="lead">
                                     {{ project.tagline }}
                                 </p>
@@ -180,6 +180,23 @@
                                     {% endfor %}
                                 </p>
                             </div>
+                        <div class="box-footer clearfix">
+                            {% if request.user.username == project.creator or request.user in project.members.all %}
+                            <a href="{% url 'edit_project' project.slug %}">
+                                <button class="btn btn-success">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                            </a>
+                          {% endif %}
+                            <a href="{% url 'view_one_project' project.slug %}"
+                                class="pull-right">
+                                <button class="btn btn-info">
+                                    <i class="fa fa-eye"></i>
+                                    View
+                                </button>
+                            </a>
+                        </div>
                         </div>
                     </div>
                     {% empty %}
