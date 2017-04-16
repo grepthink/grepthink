@@ -83,6 +83,12 @@ class ProjectForm(forms.ModelForm):
             # else can only post to any course enrolled in where limit_creation = false
             self.fields['course'].queryset = postable_courses
 
+        # Prepopulate course
+        if 'instance' in kwargs:
+            self.fields['course'].initial = next(course for course in
+                    self.fields['course'].queryset if kwargs['instance'] in
+                    course.projects.all())
+
         # Do not display Sponsor field if user is not a professor
         # Model Profile, isProf set on user creation
         if not user.profile.isProf:
@@ -129,17 +135,21 @@ class ProjectForm(forms.ModelForm):
         max_length=20,
         required=False)
 
-    weigh_interest = forms.IntegerField(min_value=0, max_value=1)
+    weigh_interest = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of user interest in project")
 
-    weigh_know = forms.IntegerField(min_value=0,max_value=1)
+    weigh_know = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users already know")
 
-    weigh_learn = forms.IntegerField(min_value=0, max_value=1)
+    weigh_learn = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users want to learn")
 
     class Meta:
         model = Project
         fields = [
             'title', 'tagline', 'members', 'accepting', 'sponsor',
-            'desired_skills', 'course', 'content', 'slug', 'resource'
+            'desired_skills', 'course', 'content', 'slug', 'resource',
+            'weigh_interest', 'weigh_know', 'weigh_learn'
         ]
 
 
