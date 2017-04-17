@@ -7,6 +7,7 @@ from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from teamwork.apps.projects.models import *
+from teamwork.apps.courses.models import *
 
 # profiles is already imported from projects, not necessary here
 
@@ -37,11 +38,24 @@ def sort(match):
 def po_match(project):
     initial = {}
     backup = {}
-    # dependency injection
-    interestWeight = project.weigh_interest
-    knowWeight = project.weigh_know
-    learnWeight = project.weigh_learn
+
+    # set weights based on criteria
+    # locate project course
+    course = next(course for course in Course.objects.all() if project in
+            course.projects.all())
+    if course.limit_weights:
+        print("po_match values overridden by course instructor")
+        interestWeight = course.weigh_interest or 0
+        knowWeight = course.weigh_know or 0
+        learnWeight = course.weigh_learn or 0
+    else:
+        # dependency injection
+        interestWeight = project.weigh_interest or course.weigh_interest or 0
+        knowWeight = project.weigh_know or course.weigh_know or 0
+        learnWeight = project.weigh_learn or course.weigh_learn or 0
     # interest matching
+    print("po_match called with", dict(interest=interestWeight, know=knowWeight,
+        learn=learnWeight))
     interested = project.interest.all()
     for i in interested:
         # generate the dictionary from the interest field, with the user's

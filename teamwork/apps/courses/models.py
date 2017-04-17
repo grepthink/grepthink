@@ -15,13 +15,14 @@ from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 # import of project models
-from teamwork.apps.projects.models import *
+from teamwork.apps.projects.models import Project
 
 #Other imports
 import uuid
 import random
 import string
 import datetime
+
 
 def get_user_courses(self):
     """
@@ -34,7 +35,7 @@ def get_user_courses(self):
     else:
         #Gets current user's enrollments, by looking for user in  Enrollment table
         myEnrollment = Enrollment.objects.filter(user=self)
-        
+
         print("myEnrollment:")
         print(myEnrollment)
 
@@ -43,13 +44,17 @@ def get_user_courses(self):
 
     return my_courses
 
+
 # Add method to function that returns a list of users enrolled courses
 auth.models.User.add_to_class('get_user_courses', get_user_courses)
+
 
 # Generates add code
 def rand_code(size):
     # Usees a random choice from lowercase, uppercase, and digits
-    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
+    return ''.join([
+        random.choice(string.ascii_letters + string.digits) for i in range(size)
+    ])
 
 
 class Course(models.Model):
@@ -69,6 +74,12 @@ class Course(models.Model):
         year: gets current year from datetime
         limit_creation: boolean that dictates wether only professors can create projects
 
+        limit_weights: boolean that dictates if all member projects must follow
+        given weights for selection
+        weight_interest: weight [0-5] given to user interest in project
+        weight_know: weight [0-5] given for skills user has
+        weight_learn: weight [0-5] given for skills user wants to learn
+
     Methods:
         __str__(self):                  Human readeable representation of the course object.
         save(self, *args, **kwargs):    Overides the default save operator...
@@ -77,56 +88,43 @@ class Course(models.Model):
 
     """
     # define the terms for the multiple choice
-    Term_Choice = (
-            ('Winter','Winter'),
-            ('Spring', 'Spring'),
-            ('Summer','Summer'),
-            ('Fall','Fall'),
-            )
-
+    Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'),
+                   ('Summer', 'Summer'), ('Fall', 'Fall'), )
 
     # The title of the course. Should not be null, but default is provided.
-    name = models.CharField(
-            max_length=255,
-            default="No Course Title Provided"
-            )
+    name = models.CharField(max_length=255, default="No Course Title Provided")
     # Course info, string
     info = models.CharField(
-            # with max length 300
-            max_length=300,
-            # default as "There is no Course Description"
-            default="There is no Course Description"
-            )
+        # with max length 300
+        max_length=300,
+        # default as "There is no Course Description"
+        default="There is no Course Description")
     # Term, string
     term = models.CharField(
-            # with max length 6
-            max_length=6,
-            # choices defined by term choice
-            choices=Term_Choice,
-            # defaulted to none
-            default='None'
-            )
+        # with max length 6
+        max_length=6,
+        # choices defined by term choice
+        choices=Term_Choice,
+        # defaulted to none
+        default='None')
     # Slug for course, string
     slug = models.CharField(
-            # with max length 20
-            max_length=20,
-            # must be unique
-            unique=True
-            )
+        # with max length 20
+        max_length=20,
+        # must be unique
+        unique=True)
 
     # Students in course, manytomany
     students = models.ManyToManyField(
-            # to User model
-            User,
-            # through the enrollment table
-            through='Enrollment')
-
+        # to User model
+        User,
+        # through the enrollment table
+        through='Enrollment')
 
     #projects in course, manytomany
     projects = models.ManyToManyField(
-            # to project model
-            Project
-            )
+        # to project model
+        Project)
 
     # RYAN
     # creator needs to be a foreign key for a simpler linking
@@ -137,32 +135,33 @@ class Course(models.Model):
 
     # Creator of course, string
     creator = models.CharField(
-            # with max length 255
-            max_length=255,
-            # defaulted to "Default"
-            default="Default"
-            )
+        # with max length 255
+        max_length=255,
+        # defaulted to "Default"
+        default="Default")
     # addCode for course, string
     addCode = models.CharField(
-            # with length 10
-            max_length=10,
-            # that is unique
-            unique=True
-            )
+        # with length 10
+        max_length=10,
+        # that is unique
+        unique=True)
     # get the current date for the year
     now = datetime.datetime.now()
     # year course was created, string
     year = models.CharField(
-            # with max length 4
-            max_length=20,
-            # defaulted to current year
-            default=now.year
-            )
+        # with max length 4
+        max_length=20,
+        # defaulted to current year
+        default=now.year)
     # limit creation, boolean
     limit_creation = models.BooleanField(
-            #defaulted to False
-            default = False
-            )
+        #defaulted to False
+        default=False)
+
+    limit_weights = models.BooleanField(default=False)
+    weigh_interest = models.IntegerField(default=1)
+    weigh_know = models.IntegerField(default=1)
+    weigh_learn = models.IntegerField(default=1)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -245,36 +244,36 @@ class Course(models.Model):
         """
         updates = self.get_updates()
         unique_dates = sorted(
-                set(update.date_post.date() for update in updates),
-                reverse=True
-                )
-        updates_by_date = []    # Feel like this could be done better
+            set(update.date_post.date() for update in updates), reverse=True)
+        updates_by_date = []  # Feel like this could be done better
         for d in unique_dates:
             updates_by_date.append({
-                'date': d,
+                'date':
+                d,
                 'updates': [u for u in updates if u.date_post.date() == d]
-                })
+            })
         return updates_by_date
+
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
     #User, which is a foriegn key to
     user = models.ForeignKey(
-            # the User model
-            User,
-            # on deletion, delete child objects
-            on_delete=models.CASCADE,
-            # with a default of 0
-            default=0)
+        # the User model
+        User,
+        # on deletion, delete child objects
+        on_delete=models.CASCADE,
+        # with a default of 0
+        default=0)
 
     # Course, which is a foregin key to
     course = models.ForeignKey(
-            # the course model
-            Course,
-            # on deletion, delete child objects
-            on_delete=models.CASCADE,
-            # with a default of 0
-            default=0)
+        # the course model
+        Course,
+        # on deletion, delete child objects
+        on_delete=models.CASCADE,
+        # with a default of 0
+        default=0)
 
     def __str__(self):
         """
@@ -307,7 +306,7 @@ class CourseUpdate(models.Model):
     class Meta:
         verbose_name = "Course Update"
         verbose_name_plural = verbose_name + "s"
-        ordering = ("-date_post","-date_edit", "title")
+        ordering = ("-date_post", "-date_edit", "title")
 
     def __str__(self):
         return '{0} - {1}'.format(self.creator.username, self.title)
@@ -324,4 +323,3 @@ class CourseUpdate(models.Model):
             self.date_edit = datetime.datetime.now()
 
         super(CourseUpdate, self).save(*args, **kwargs)
-

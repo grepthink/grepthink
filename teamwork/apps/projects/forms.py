@@ -84,7 +84,7 @@ class ProjectForm(forms.ModelForm):
             self.fields['course'].queryset = postable_courses
 
         # Prepopulate course
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and kwargs['instance']:
             self.fields['course'].initial = next(course for course in
                     self.fields['course'].queryset if kwargs['instance'] in
                     course.projects.all())
@@ -136,13 +136,16 @@ class ProjectForm(forms.ModelForm):
         required=False)
 
     weigh_interest = forms.IntegerField(
-        min_value=0, max_value=5, label="Weight of user interest in project")
+        min_value=0, max_value=5, label="Weight of user interest in project",
+        required=False)
 
     weigh_know = forms.IntegerField(
-        min_value=0, max_value=5, label="Weight of skills users already know")
+        min_value=0, max_value=5, label="Weight of skills users already know",
+        required=False)
 
     weigh_learn = forms.IntegerField(
-        min_value=0, max_value=5, label="Weight of skills users want to learn")
+        min_value=0, max_value=5, label="Weight of skills users want to learn",
+        required=False)
 
     class Meta:
         model = Project

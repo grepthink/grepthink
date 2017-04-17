@@ -25,6 +25,8 @@ import markdown
 
 # Local Modules
 from teamwork.apps.profiles.models import *
+# from teamwork.apps.courses.models import Course
+# can't do this, would cause dependency loop :(
 
 
 # Generates add code
@@ -167,6 +169,11 @@ class Project(models.Model):
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)
 
+    """ Unfortunately not possible due to dependency loop
+    def course(self):
+        return next(course for course in Course.objects.all() if this in
+                course.projects.all())
+    """
 
 class Membership(models.Model):
     """

@@ -4,13 +4,13 @@ from django import forms
 from .models import *
 from django.core.exceptions import ValidationError
 
+from teamwork.apps.profiles.models import *
+from django.db.models import Q
+
 #Choices for term
-Term_Choice = (
-        ('Winter','Winter'),
-        ('Spring', 'Spring'),
-        ('Summer','Summer'),
-        ('Fall','Fall'),
-        )
+Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),
+               ('Fall', 'Fall'), )
+
 
 #Creates the course form
 class CourseForm(forms.ModelForm):
@@ -42,72 +42,83 @@ class CourseForm(forms.ModelForm):
         #Hides superusers, professors, and current user(just to be safe)
         # from 'students' field
         only_students = Profile.objects.exclude(
-            Q(user__in=superuser) | Q(isProf=True) | Q(id=uid)
-            )
+            Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
         self.fields['students'].queryset = only_students
 
     #course name field
     name = forms.CharField(
-            #Text input
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            #With length 255
-            max_length=255,
-            #Field required
-            required=True
-            )
+        #Text input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With length 255
+        max_length=255,
+        #Field required
+        required=True)
 
     #course info field
     info = forms.CharField(
-            #Text input
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            #With length 255
-            max_length=255,
-            #Field Required
-            required=True
-            )
+        #Text input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With length 255
+        max_length=255,
+        #Field Required
+        required=True)
 
     #Term field
-    term = forms. ChoiceField(
-            #Choices from Term_Choice
-            choices=Term_Choice,
-            #Field Required
-            required=True
-            )
+    term = forms.ChoiceField(
+        #Choices from Term_Choice
+        choices=Term_Choice,
+        #Field Required
+        required=True)
 
     #Slug Field
     slug = forms.CharField(
-            #Text Input
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            #With Length 20
-            max_length=20,
-            #Field NOT Required
-            required=False
-            )
+        #Text Input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With Length 20
+        max_length=20,
+        #Field NOT Required
+        required=False)
 
     #Students field
     students = forms.ModelMultipleChoiceField(
-            #Multiple Choice Selection
-            widget=forms.CheckboxSelectMultiple,
-            #From all user objects
-            queryset=User.objects.all(),
-            #Field NOT Required
-            required=False
-            )
+        #Multiple Choice Selection
+        widget=forms.CheckboxSelectMultiple,
+        #From all user objects
+        queryset=User.objects.all(),
+        #Field NOT Required
+        required=False)
 
     #Field for only professor creating courses
     limit_creation = forms.BooleanField(
-            #Initially field is false
-            initial = False,
-            #Labeled as "Only professor can create projects?"
-            label = 'Only Professor can create projects?',
-            #Field NOT Required
-            required = False
-            )
+        #Initially field is false
+        initial=False,
+        #Labeled as "Only professor can create projects?"
+        label='Only Professor can create projects?',
+        #Field NOT Required
+        required=False)
+
+    limit_weights = forms.BooleanField(
+        label="Limit projects to only use specified weights for matches",
+        required=False)
+
+    weigh_interest = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of user interest in project",
+        required=False)
+
+    weigh_know = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users already know",
+        required=False)
+
+    weigh_learn = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users want to learn",
+        required=False)
 
     #META CLASS
     class Meta:
         model = Course
-        fields = ['name','info','term','students','slug', 'limit_creation']
+        fields = ['name', 'info', 'term', 'students', 'slug', 'limit_creation',
+                'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
+
 
 #Creates join course form
 class JoinCourseForm(forms.ModelForm):
@@ -127,16 +138,16 @@ class JoinCourseForm(forms.ModelForm):
 
     #Add code field
     code = forms.CharField(
-            #Text input
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            #With max length 255
-            max_length=255
-            )
+        #Text input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With max length 255
+        max_length=255)
 
     #META CLASS
     class Meta:
         model = Course
         fields = ['code']
+
 
 def UniqueProjectValidator(value):
     if True:
@@ -156,6 +167,7 @@ class ShowInterestForm(forms.ModelForm):
         __init__ :  gets the current course when initiating form, sets querysets
         clean:      custom clean method for form validation
     """
+
     #Initializes form
     def __init__(self, uid, *args, **kwargs):
         slug = kwargs.pop('slug')
@@ -191,16 +203,41 @@ class ShowInterestForm(forms.ModelForm):
                             self.fields['p1r'].widget = forms.HiddenInput()
 
     #Project Choice Field
-    projects = forms.ModelChoiceField(queryset=None, empty_label=None, label='First Choice', required = False)
-    p1r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
-    projects2 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Second Choice', required = False)
-    p2r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
-    projects3 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Third Choice', required = False)
-    p3r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
-    projects4 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fourth Choice', required = False)
-    p4r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
-    projects5 = forms.ModelChoiceField(queryset=None, empty_label=None, label='Fifth Choice', required = False)
-    p5r = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=100,label='Reason',required=False)
+    projects = forms.ModelChoiceField(
+        queryset=None, empty_label=None, label='First Choice', required=False)
+    p1r = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100,
+        label='Reason',
+        required=False)
+    projects2 = forms.ModelChoiceField(
+        queryset=None, empty_label=None, label='Second Choice', required=False)
+    p2r = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100,
+        label='Reason',
+        required=False)
+    projects3 = forms.ModelChoiceField(
+        queryset=None, empty_label=None, label='Third Choice', required=False)
+    p3r = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100,
+        label='Reason',
+        required=False)
+    projects4 = forms.ModelChoiceField(
+        queryset=None, empty_label=None, label='Fourth Choice', required=False)
+    p4r = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100,
+        label='Reason',
+        required=False)
+    projects5 = forms.ModelChoiceField(
+        queryset=None, empty_label=None, label='Fifth Choice', required=False)
+    p5r = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100,
+        label='Reason',
+        required=False)
 
     # Meta class
     class Meta:
@@ -233,10 +270,11 @@ class ShowInterestForm(forms.ModelForm):
         # Checks for uniqueness
         if len(project_list) != len(set(project_list)):
             self._errors['projects'] = self.error_class(
-                    ['Choices must be unique!'])
+                ['Choices must be unique!'])
             #raise forms.ValidationError("Choices must be unique.")
 
         return data
+
 
 class CourseUpdateForm(forms.ModelForm):
     """
@@ -257,15 +295,12 @@ class CourseUpdateForm(forms.ModelForm):
         creator = User.objects.get(id=uid)
 
     title = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}),
-            max_length=255,
-            required=True
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
 
     content = forms.CharField(
-            widget=forms.Textarea(attrs={'class': 'form-control'}),
-            max_length=2000
-            )
+        widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
 
     class Meta:
         model = CourseUpdate
