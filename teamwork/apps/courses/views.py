@@ -33,7 +33,8 @@ def view_courses(request):
     #else returns a list of courses the user is enrolled in
     else:
         all_courses = Course.get_my_courses(request.user)
-    return _courses(request, all_courses)
+        return _courses(request, all_courses)
+
 
 @login_required
 def view_one_course(request, slug):
@@ -48,6 +49,7 @@ def view_one_course(request, slug):
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates
         })
+
 
 @login_required
 def view_stats(request, slug):
@@ -75,7 +77,7 @@ def view_stats(request, slug):
 
     for i in students_num:
         if not i.user in cleanup_students:
-            cleanup_students.append(i.user) 
+            cleanup_students.append(i.user)
 
     for i in projects_num:
         if not i in cleanup_projects:
@@ -221,6 +223,7 @@ def show_interest(request, slug):
             {'form': form,'cur_course': cur_course}
             )
 
+
 @login_required
 def create_course(request):
     """
@@ -246,6 +249,11 @@ def create_course(request):
             course.slug = data.get('slug')
             course.professor = data.get('professor')
             course.limit_creation = data.get('limit_creation')
+            course.limit_weights = data.get('limit_weights')
+            course.weigh_interest = data.get('weigh_interest') or 0
+            course.weigh_know = data.get('weigh_know') or 0
+            course.weigh_learn = data.get('weigh_learn') or 0
+
 
             # creator is current user
             course.creator = request.user.username
@@ -288,6 +296,11 @@ def edit_course(request, slug):
             course.term = data.get('term')
             course.limit_creation = data.get('limit_creation')
             students = data.get('students')
+            course.limit_weights = data.get('limit_weights')
+            course.weigh_interest = data.get('weigh_interest') or 0
+            course.weigh_know = data.get('weigh_know') or 0
+            course.weigh_learn = data.get('weigh_learn') or 0
+
 
             course.save()
             # clear all enrollments
@@ -303,6 +316,7 @@ def edit_course(request, slug):
             request, 'courses/edit_course.html',
             {'form': form,'course': course}
             )
+
 
 @login_required
 def delete_course(request, slug):
@@ -341,6 +355,7 @@ def update_course(request, slug):
             {'form': form, 'course': course}
             )
 
+
 @login_required
 def update_course_update(request, slug, id):
     """
@@ -367,6 +382,7 @@ def update_course_update(request, slug, id):
             request, 'courses/update_course_update.html',
             {'form': form, 'course': course, 'update': update}
             )
+
 
 @login_required
 def delete_course_update(request, slug, id):

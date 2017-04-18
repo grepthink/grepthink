@@ -3,13 +3,13 @@ from .forms import *
 
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import messages
-from django.http import HttpResponse, HttpResponseBadRequest,  HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from teamwork.apps.courses.models import *
 
-
 from teamwork.apps.core.models import *
+
 
 def _projects(request, projects):
     """
@@ -18,8 +18,8 @@ def _projects(request, projects):
     page = request.GET.get('page')
 
     return render(request, 'projects/view_projects.html',
-            {'projects': projects}
-        )
+                  {'projects': projects})
+
 
 @login_required
 def view_projects(request):
@@ -45,9 +45,10 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
-    return render(request, 'projects/view_project.html', {
-        'project': project , 'updates' : updates
-        })
+    return render(request, 'projects/view_project.html',
+                  {'project': project,
+                   'updates': updates})
+
 
 @login_required
 def create_project(request):
@@ -65,18 +66,18 @@ def create_project(request):
     my_created_courses = Course.objects.filter(creator=request.user.username)
     #If user is in 0 courses
     if len(enroll) == 0 and len(my_created_courses) == 0:
-            #Redirect them to homepage and tell them to join a course
-            messages.info(request,'You need to join a course before creating projects!')
-            return HttpResponseRedirect('/')
-
+        #Redirect them to homepage and tell them to join a course
+        messages.info(request,
+                      'You need to join a course before creating projects!')
+        return HttpResponseRedirect('/')
 
     if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
     if len(enroll) >= 1 and no_postable_classes and not user.isProf:
-            #Redirect them to homepage and tell them to join a course
-            messages.info(request,'Professor has disabled Project Creation!')
-            return HttpResponseRedirect('/')
+        #Redirect them to homepage and tell them to join a course
+        messages.info(request, 'Professor has disabled Project Creation!')
+        return HttpResponseRedirect('/')
 
     if request.method == 'POST':
         form = ProjectForm(request.user.id, request.POST)
@@ -91,6 +92,9 @@ def create_project(request):
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
             project.resource = form.cleaned_data.get('resource')
+            project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
+            project.weigh_know = form.cleaned_data.get('weigh_know') or 0
+            project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
 
             project.save()
 
@@ -105,18 +109,21 @@ def create_project(request):
                         # check if skill is in Skills table, lower standardizes input
                         if Skills.objects.filter(skill=stripped_skill.lower()):
                             # skill already exists, then pull it up
-                            desired_skill = Skills.objects.get(skill=stripped_skill.lower())
+                            desired_skill = Skills.objects.get(
+                                skill=stripped_skill.lower())
                         else:
                             # we have to add the skill to the table
-                            desired_skill = Skills.objects.create(skill=stripped_skill.lower())
+                            desired_skill = Skills.objects.create(
+                                skill=stripped_skill.lower())
                             # save the new object
                             desired_skill.save()
                         # This is how we can use the reverse of the relationship
                         # add the skill to the current profile
                         project.desired_skills.add(desired_skill)
-                        project.save() #taking profile.save() out of these if's and outside lets all the changes be saved at once
+                        project.save(
+                        )  #taking profile.save() out of these if's and outside lets all the changes be saved at once
                         # This is how we can get all the skills from a user
-            # Project content
+                    # Project content
             project.content = form.cleaned_data.get('content')
 
             # Local list of memebers, used to create Membership objects
@@ -129,11 +136,13 @@ def create_project(request):
 
             # loop through the members in the object and make m2m rows for them
             for i in members:
-                Membership.objects.create(user=i.user, project=project, invite_reason='')
+                Membership.objects.create(
+                    user=i.user, project=project, invite_reason='')
 
             # if user is not a prof
             if not user.isProf:
-                Membership.objects.create(user=user.user, project=project, invite_reason='')
+                Membership.objects.create(
+                    user=user.user, project=project, invite_reason='')
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
@@ -141,6 +150,7 @@ def create_project(request):
     else:
         form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'form': form})
+
 
 @login_required
 def edit_project(request, slug):
@@ -151,9 +161,10 @@ def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     # if user is not project owner or they arent in the member list
-    if not request.user.username == project.creator and request.user not in project.members.all():
+    if not request.user.username == project.creator and request.user not in project.members.all(
+    ):
         #redirect them with a message
-        messages.info(request,'Only Project Owner can edit project!')
+        messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
 
     if request.method == 'POST':
@@ -165,25 +176,29 @@ def edit_project(request, slug):
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
             project.resource = form.cleaned_data.get('resource')
+            project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
+            project.weigh_know = form.cleaned_data.get('weigh_know') or 0
+            project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
+
             project.save()
 
             members = form.cleaned_data.get('members')
-
 
             # Clear all memberships to avoid duplicates.
             memberships = Membership.objects.filter(project=project)
             if memberships is not None: memberships.delete()
             for i in members:
-                Membership.objects.create(user=i.user, project=project, invite_reason='')
+                Membership.objects.create(
+                    user=i.user, project=project, invite_reason='')
 
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
         form = ProjectForm(request.user.id, instance=project)
-    return render(
-            request, 'projects/edit_project.html',
-            {'form': form,'project': project}
-            )
+    return render(request, 'projects/edit_project.html',
+                  {'form': form,
+                   'project': project})
+
 
 @login_required
 def delete_project(request, slug):
@@ -201,6 +216,7 @@ def delete_project(request, slug):
 
     project.delete()
     return redirect(view_projects)
+
 
 @login_required
 def post_update(request, slug):
@@ -220,4 +236,6 @@ def post_update(request, slug):
             return redirect(view_one_project, project.slug)
     else:
         form = UpdateForm(request.user.id)
-    return render(request, 'projects/post_update.html', {'form': form, 'project': project})
+    return render(request, 'projects/post_update.html',
+                  {'form': form,
+                   'project': project})

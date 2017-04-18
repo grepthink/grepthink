@@ -25,11 +25,17 @@ import markdown
 
 # Local Modules
 from teamwork.apps.profiles.models import *
+# from teamwork.apps.courses.models import Course
+# can't do this, would cause dependency loop :(
+
 
 # Generates add code
 def rand_code(size):
     # Usees a random choice from lowercase, uppercase, and digits
-    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
+    return ''.join([
+        random.choice(string.ascii_letters + string.digits) for i in range(size)
+    ])
+
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -40,6 +46,7 @@ class Interest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
     interest_reason = models.CharField(max_length=100)
+
 
 class Project(models.Model):
     """
@@ -56,7 +63,8 @@ class Project(models.Model):
     """
 
     # The title of the project. Should not be null, but default is provided.
-    title = models.CharField(max_length=255, default="No Project Title Provided")
+    title = models.CharField(
+        max_length=255, default="No Project Title Provided")
     # TODO: This should not be a CharField
     creator = models.CharField(max_length=255, default="No Creator Specified")
     # Short project description
@@ -66,21 +74,26 @@ class Project(models.Model):
     # Members associated with a project (Membership objects)
     members = models.ManyToManyField(User, through='Membership')
     # Skills needed for the project.
-    desired_skills = models.ManyToManyField(Skills, related_name="desired", default="")
+    desired_skills = models.ManyToManyField(
+        Skills, related_name="desired", default="")
     # True when the proejct is accepting new members. False when project is full.
-    avail_mem = models.BooleanField(default = True)
+    avail_mem = models.BooleanField(default=True)
     # True when project is sponsered. False when project is not sponsered. Field hidden to students.
-    sponsor = models.BooleanField(default = False)
+    sponsor = models.BooleanField(default=False)
     # Unique URL slug for project
     slug = models.CharField(max_length=20, unique=True)
     # Resource list that the project members can update
-    resource = models.TextField(max_length=4000, default="*No resources provided*")
+    resource = models.TextField(
+        max_length=4000, default="*No resources provided*")
 
-    interest = models.ManyToManyField(Interest, default = '')
+    interest = models.ManyToManyField(Interest, default='')
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
+    weigh_interest = models.IntegerField(default=1)
+    weigh_know = models.IntegerField(default=1)
+    weigh_learn = models.IntegerField(default=1)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -139,7 +152,7 @@ class Project(models.Model):
         """
         projects = Project.objects.filter()
         return projects
-        
+
     def get_created_projects(user):
         """
         Gets a list of porject objects that the user created. Used in views then passed to the template
@@ -155,6 +168,12 @@ class Project(models.Model):
 
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)
+
+    """ Unfortunately not possible due to dependency loop
+    def course(self):
+        return next(course for course in Course.objects.all() if this in
+                course.projects.all())
+    """
 
 class Membership(models.Model):
     """
@@ -178,7 +197,8 @@ class ProjectUpdate(models.Model):
 
     """
     project = models.ForeignKey(Project)
-    update_title = models.CharField(max_length=255, default="Default Update Title")
+    update_title = models.CharField(
+        max_length=255, default="Default Update Title")
     update = models.TextField(max_length=2000, default="Default Update")
     date = models.DateTimeField(auto_now_add=True, editable=True)
     user = models.ForeignKey(User)
@@ -186,10 +206,11 @@ class ProjectUpdate(models.Model):
     class Meta:
         verbose_name = "Project Update"
         verbose_name_plural = "Project Updates"
-        ordering = ("-date",)
+        ordering = ("-date", )
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
+
 
 # project status: open/closed and number available
 # currently commented to avoid conflict with other files
