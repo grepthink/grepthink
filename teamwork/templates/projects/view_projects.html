@@ -19,7 +19,12 @@
       {% for project in projects %}
 
             <div class="col-sm-6 col-md-4">
-                <div class="box box-solid box-default">
+
+                    {% if project.avail_mem %}
+                        <div class="box box-solid box-success">
+                    {% else %}
+                        <div class="box box-solid box-danger">
+                    {% endif %}
                     <div class="box-header">
                         <h3 class="box-title">{{ project.title }}</h3>
                     </div>
