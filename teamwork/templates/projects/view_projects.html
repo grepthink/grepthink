@@ -55,6 +55,13 @@
                                 No
                             {% endif %}
                         </p>
+                        <p>
+                            <strong> 
+                            {% if project.sponsor %}
+                                THIS PROJECT IS SPONSORED!
+                            {% endif %}
+                            </strong>
+                        </p>
                     </div>
                     <div class="box-footer clearfix">
                       {% if request.user.username == project.creator or request.user in project.members.all %}
