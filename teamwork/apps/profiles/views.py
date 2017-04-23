@@ -227,3 +227,7 @@ def edit_schedule(request, username):
     """
 
     return render(request, 'profiles/edit_schedule.html')
+
+def save_event(request):
+    eventData = request.GET.get('calendar')
+    print("DEBUG save_event: " + calendar)
