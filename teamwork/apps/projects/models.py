@@ -37,6 +37,7 @@ def rand_code(size):
     ])
 
 
+
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
@@ -134,6 +135,57 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
+    # given a list, will generate a list of possible meeting times
+    def generate_day(day):
+        possible_times = []
+        for i in day:
+            print("This is where an algorithm will go")
+        return possible_times
+
+    # Generates a list of possible avalibilities and stores in current project's avalibiltiy
+    def generate_avail(self):
+        event_list = []     # list of all events for each user
+        pos_event = []      # list of possible meeting times
+        sunday_list = []
+        monday_list = []
+        teusday_list = []
+        wednesday_list = []
+        thursday_list = []
+        friday_list = []
+        saturday_list = []
+
+        # Loops through each member
+        for user in self.members:
+            # Loops through each event
+            for event in user.avail:
+                # adds to list
+                event_list.append(user.avail)
+
+        for i in event_list:
+            if i.day = "sunday":
+                sunday_list.append(i)
+            if i.day = "monday":
+                monday_list.append(i)
+            if i.day = "teusday":
+                teusday_list.append(i)
+            if i.day = "wednesday":
+                wednesday_list.append(i)
+            if i.day = "thursday":
+                thursday_list.append(i)
+            if i.day = "friday":
+                friday_list.append(i)
+            if i.day = "saturday":
+                saturday_list.append(i)
+
+            pos_event.extend(generate_day(sunday_list))
+            pos_event.extend(generate_day(monday_list))
+            pos_event.extend(generate_day(teusday_list))
+            pos_event.extend(generate_day(wednesday_list))
+            pos_event.extend(generate_day(thursday_list))
+            pos_event.extend(generate_day(friday_list))
+            pos_event.extend(generate_day(saturday_list))
+
+        return pos_event
     @staticmethod
     def get_my_projects(user):
         """
