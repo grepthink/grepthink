@@ -162,19 +162,19 @@ class Project(models.Model):
                 event_list.append(user.avail)
 
         for i in event_list:
-            if i.day = "sunday":
+            if i.day == "sunday":
                 sunday_list.append(i)
-            if i.day = "monday":
+            if i.day == "monday":
                 monday_list.append(i)
-            if i.day = "teusday":
+            if i.day == "teusday":
                 teusday_list.append(i)
-            if i.day = "wednesday":
+            if i.day == "wednesday":
                 wednesday_list.append(i)
-            if i.day = "thursday":
+            if i.day == "thursday":
                 thursday_list.append(i)
-            if i.day = "friday":
+            if i.day == "friday":
                 friday_list.append(i)
-            if i.day = "saturday":
+            if i.day == "saturday":
                 saturday_list.append(i)
 
             pos_event.extend(generate_day(sunday_list))
