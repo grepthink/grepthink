@@ -21,9 +21,17 @@
             <div class="col-sm-6 col-md-4">
 
                     {% if project.avail_mem %}
-                        <div class="box box-solid box-success">
+                        {% if project.sponsor %}
+                            <div class="box box-solid box-warning">
+                        {% else %}
+                            <div class="box box-solid box-danger">
+                        {% endif %}
                     {% else %}
-                        <div class="box box-solid box-danger">
+                        {% if project.sponsor %}
+                            <div class="box box-solid box-success">
+                        {% else %}
+                            <div class="box box-solid box-primary">
+                        {% endif %}
                     {% endif %}
                     <div class="box-header">
                         <h3 class="box-title">{{ project.title }}</h3>
@@ -59,6 +67,8 @@
                             <strong> 
                             {% if project.sponsor %}
                                 THIS PROJECT IS SPONSORED!
+                            {% else %}
+                                THIS PROJECT IS NOT SPONSORED!
                             {% endif %}
                             </strong>
                         </p>
