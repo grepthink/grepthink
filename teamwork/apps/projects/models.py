@@ -194,7 +194,7 @@ class Project(models.Model):
                         # End hour is i/2
                         end_hour = floor(i/2)
                     # Increase temp
-                    temp++
+                    temp += 1
                 event_array.append([start_hour, start_min, end_hour, end_min])
 
         return event_array
