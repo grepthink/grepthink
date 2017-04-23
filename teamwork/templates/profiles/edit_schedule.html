@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Clear out javascript block at bottom of page so we can import specific js #}
+{% block javascript %}
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+
+<section class="content">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="box box-primary">
+            <div class="box-body no-padding">
+              <!-- THE CALENDAR -->
+              <div id="calendar">
+
+              </div>
+              <!-- /.calendar -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /. box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+</section>
+
+
+
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+
+{% comment %}
+<!-- jQuery 2.2.3 -->
+<script async="" src="https://www.google-analytics.com/analytics.js"></script><script src="./staic/js/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="./static/js/bootstrap.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="./static/js/jquery-ui.min.js"></script>
+<!-- Slimscroll -->
+<script src="./static/js/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="./static/js/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="./static/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="js/demo.js"></script>
+<!-- fullCalendar 2.2.5 -->
+<script src="/static/js/moment.min.js"></script>
+<script src="/static/js/fullcalendar.js"></script>
+
+{% endcomment %}
+
+
+<!-- Page specific script -->
+<script>
+  $(function () {
+
+  $('#calendar').fullCalendar({
+      header: {
+        left: 'none',
+        center: 'title',
+        right: 'agendaWeek'
+      },
+      defaultDate: '2017-04-12',
+      defaultView: 'agendaWeek',
+      navLinks: true, // can click day/week names to navigate views
+      selectable: true,
+      selectHelper: true,
+      select: function(start, end) {
+        var title = 'Busy';
+        var eventData;
+        if (title) {
+          eventData = {
+            title: title,
+            start: start,
+            end: end
+          };
+          //console.log("HI THERE" + eventData.start);
+          $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+        }
+        $('#calendar').fullCalendar('unselect');
+
+        save_one(calendar)
+      },
+      editable: true,
+      eventLimit: true, // allow "more" link when too many events
+      events: []
+    });
+  });
+
+</script>
+
+<script>
+
+
+
+function save_one(event) {
+    console.log("it's trying")
+    $.ajax({
+        type: "POST",
+        url: "ajax/save_event/",
+        headers: {
+            "Content-Type": "application/json",
+            "HTTP_GROUP_NAME": "groups_name",
+            "csrf_token": "{{csrf_token}}",
+        },
+        data: {
+            'title': event.title, 
+            'start': event.start,
+            'end': event.end,
+        },
+        success: function(data){
+            console.log("success");
+            console.log(data);
+        },
+        failure: function(data){
+            console.log("failure");
+            console.log(data);
+        },
+    });
+    alert('save_one function ran.')
+}
+</script>
+
+
+
+{% endblock content %}
