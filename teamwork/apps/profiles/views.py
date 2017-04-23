@@ -118,7 +118,7 @@ def edit_profile(request, username):
         profile.learn_skills.remove(to_delete)
         form = ProfileForm(instance=profile)
     #handle deleting avatar
-    elif request.POST.get('delete_avatar'):        
+    elif request.POST.get('delete_avatar'):
         avatar = request.POST.get('delete_avatar')
         profile.avatar.delete()
         form = ProfileForm(instance=profile)
@@ -214,3 +214,16 @@ def edit_profile(request, username):
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
         'learn_skills_list':learn_skills_list })
+
+@login_required
+def edit_schedule(request, username):
+    """
+    Public method that takes a request and a username.
+    Gets a list of 'events' from a calendar and stores the event as an array of tuples
+    Redners profiles/edit_calendar.html
+
+    TODO: The whole shebang
+
+    """
+
+    return render(request, 'profiles/edit_schedule.html')
