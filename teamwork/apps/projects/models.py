@@ -16,6 +16,7 @@ from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+import numpy as np
 
 # Not used currently
 from django.db.models import Q
@@ -35,6 +36,7 @@ def rand_code(size):
     return ''.join([
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
+
 
 
 # Model definitions for the core app.
@@ -133,6 +135,159 @@ class Project(models.Model):
         self.slug = slugify(self.slug)
 
         super(Project, self).save(*args, **kwargs)
+
+    # Given an array, creates a bitstring based on meeting times
+    def to_bits(day):
+        # Creates array of all 0's of length 48
+        bitstring = [False]*48
+
+        # Loops through each Event in array
+        for event in day:
+            # Start time - End time to get # of slots to block off
+            diff = event.end_time_hour - event.start_time_hour
+            # Doubles because we are using 30 minute intervals
+            diff *= 2
+            # Blocks off times
+            for i in diff:
+                bitstring[(event.start_time_hour - 1) + i] = True
+            # If we ended in XX:30, block off next bit
+            if event.end_time_min == 30:
+                bitstring[event.end_time_hour] = True
+
+        # Manually block off 12a - 8a and 10p - 12a
+        for x in range(0, 16):
+            bitstring[x] = True
+        for x in range(44, 47):
+            bitstring[x] = True
+
+        return bitstring
+
+    #given a bitstring, converts to array containing start and end time
+    def from_bits(bitstring):
+        event_array = []
+        temp = 0
+        start_hour = 0
+        start_min = 0
+        end_hour = 0
+        end_minute = 0
+
+        # For each index in bitstring
+        for i in bitstring:
+            # If current index is False (Free)
+            if bitstring[i] is False:
+                # If odd, start at xx:30
+                if i % 2 != 0:
+                    start_min = 30
+                # Start hour is i/2
+                start_hour = floor(i/2)
+
+                # Loops until True (Busy)
+                temp = i
+                while bitstring[temp] == False:
+                    # If next element is True (Busy), we are at end of time slot
+                    if bitstring[temp + 1] == True:
+                        # Update i
+                        i = temp
+                        # If odd, end at xx:30
+                        if i % 2 != 0:
+                            end_min = 30
+                        # End hour is i/2
+                        end_hour = floor(i/2)
+                    # Increase temp
+                    temp++
+                event_array.append([start_hour, start_min, end_hour, end_min])
+
+        return event_array
+    # Generates a list of possible avalibilities and stores in current project's avalibiltiy
+    def generate_avail(self):
+        event_list = []     # list of all events for each user
+        pos_event = []      # list of possible meeting times
+        temp = []
+
+        sunday_list = []
+        sunday_post = []
+
+        monday_list = []
+        monday_post = []
+
+        teusday_list = []
+        teusday_post = []
+
+        wednesday_list = []
+        wednesday_post=[]
+
+        thursday_list = []
+        thursday_post = []
+
+        friday_list = []
+        friday_post = []
+
+        saturday_list = []
+        saturday_post = []
+
+        # Loops through each member
+        for user in self.members:
+            # Loops through each event
+            for event in user.avail:
+                # adds to list
+                event_list.append(user.avail)
+
+        # Sorts each event into respective days
+        for i in event_list:
+            if i.day == "Sunday":
+                sunday_list.append(i)
+            if i.day == "Monday":
+                monday_list.append(i)
+            if i.day == "Teusday":
+                teusday_list.append(i)
+            if i.day == "Wednesday":
+                wednesday_list.append(i)
+            if i.day == "Thursday":
+                thursday_list.append(i)
+            if i.day == "Friday":
+                friday_list.append(i)
+            if i.day == "Saturday":
+                saturday_list.append(i)
+
+            # Converts to and from bitstring to find FREE time
+            sunday_list = to_bits(sunday_list)
+            sunday_list = from_bits(sunday_list)
+            # Appends to list
+            for i in sunday_list:
+                pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
+
+            monday_list = to_bits(monday_list)
+            monday_list = from_bits(monday_list)
+            for i in monday_list:
+                pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
+
+            teusday_list = to_bits(teusday_list)
+            teusday_list = from_bits(teusday_list)
+            for i in teusday_list:
+                pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
+
+            wednesday_list = to_bits(wednesday_list)
+            wednesday_list = from_bits(wednesday_list)
+            for i in wednesday_list:
+                pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
+
+            thursday_list = to_bits(thursday_list)
+            thursday_list = from_bits(thursday_list)
+            for i in thursday_list:
+                pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
+
+            friday_list = to_bits(friday_list)
+            friday_list = from_bits(friday_list)
+            for i in friday_list:
+                pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
+
+            saturday_list = to_bits(saturday_list)
+            saturday_list = from_bits(saturday_list)
+            for i in saturday_list:
+                pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
+
+        # Returns list of possible events
+        return pos_event
 
     @staticmethod
     def get_my_projects(user):
