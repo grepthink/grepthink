@@ -80,6 +80,53 @@
 
 
 <!-- Page specific script -->
+
+<script>
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+
+function save_one(eventData) {
+    console.log("it's trying")
+    $.ajax({
+        type: "POST",
+        url: "ajax/save_event/",
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/json",
+        },
+        data: {
+            'eventData' : JSON.stringify(eventData,null,2)
+        },
+        dataType: "json",
+        success: function(data){
+            console.log("success");
+            console.log(data);
+        },
+        failure: function(data){
+            console.log("failure");
+            console.log(data);
+        },
+    });
+    alert('save_one function ran.')
+}
+</script>
 <script>
   $(function () {
 
@@ -106,9 +153,9 @@
           //console.log("HI THERE" + eventData.start);
           $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
         }
+        console.log($('#calendar').fullCalendar('clientEvents'));
+        save_one(($('#calendar').fullCalendar('clientEvents')));
         $('#calendar').fullCalendar('unselect');
-
-        save_one(calendar)
       },
       editable: true,
       eventLimit: true, // allow "more" link when too many events
@@ -116,38 +163,6 @@
     });
   });
 
-</script>
-
-<script>
-
-
-
-function save_one(event) {
-    console.log("it's trying")
-    $.ajax({
-        type: "POST",
-        url: "ajax/save_event/",
-        headers: {
-            "Content-Type": "application/json",
-            "HTTP_GROUP_NAME": "groups_name",
-            "csrf_token": "{{csrf_token}}",
-        },
-        data: {
-            'title': event.title, 
-            'start': event.start,
-            'end': event.end,
-        },
-        success: function(data){
-            console.log("success");
-            console.log(data);
-        },
-        failure: function(data){
-            console.log("failure");
-            console.log(data);
-        },
-    });
-    alert('save_one function ran.')
-}
 </script>
 
 
