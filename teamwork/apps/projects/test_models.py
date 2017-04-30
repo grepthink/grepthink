@@ -1,9 +1,9 @@
 """
 Teamwork: test_models.py
 
-Unit tests for the models: Project, Membership, Intrest, ProjectUpdate
+Unit tests for models.py: tests all created functions
 
-Usuage: Run all test with `python manage.py test`
+Usuage: Run a part of all test with `python manage.py test`
 """
 
 # Django Modules
