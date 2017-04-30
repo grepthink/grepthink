@@ -25,7 +25,7 @@ class CourseTestCase(TestCase):
         Initialize course, user, and enrollment objects for use in test methods.
         """
         # create a dummy course (with no M2M relationships) that will be associated with user1
-        course1 = Course.objects.create(name="Test Course", info="Testing course", slug="test1-slug"
+        course1 = Course.objects.create(name="Test Course", info="Testing course", slug="test1-slug",
             creator="user_test1")
 
         # A course associated with no one to ensure only eligible courses are returned
