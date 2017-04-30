@@ -6,9 +6,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from teamwork.apps.projects.models import *
-
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.contrib import messages
 from teamwork.apps.profiles.forms import SignUpForm
+from django.views.decorators.csrf import csrf_exempt
 
+import json
 
 
 def signup(request):
@@ -225,9 +228,23 @@ def edit_schedule(request, username):
     TODO: The whole shebang
 
     """
-
+    print("\n\nLook at me\n\n")
+    print(request)
+    print("\n\n\n\n\n")
     return render(request, 'profiles/edit_schedule.html')
 
+@csrf_exempt
 def save_event(request, username):
-    eventData = request.GET.get('calendar')
-    print("DEBUG save_event: " + calendar)
+
+    if request.method == 'POST' and request.is_ajax():
+        eventData = request.POST.get('eventData')
+        print(eventData)
+        return redirect(edit_profile, username)
+        #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
+
+    else:
+        print("Request Method was not post ;)")
+
+    messages.info(request,
+                  'You need to join a course before creating projects!')
+    return HttpResponseRedirect('index')
