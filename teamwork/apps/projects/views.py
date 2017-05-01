@@ -239,3 +239,10 @@ def post_update(request, slug):
     return render(request, 'projects/post_update.html',
                   {'form': form,
                    'project': project})
+@login_required
+def find_meeting(request, slug):
+    """
+    Find and store possible meeting time for a given project
+    """
+    return render(request, 'projects/view_projects.html',
+                  {'projects': projects})
