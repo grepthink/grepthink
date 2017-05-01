@@ -6,9 +6,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from teamwork.apps.projects.models import *
-
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.contrib import messages
 from teamwork.apps.profiles.forms import SignUpForm
+from django.views.decorators.csrf import csrf_exempt
 
+import json
 
 
 def signup(request):
@@ -118,7 +121,7 @@ def edit_profile(request, username):
         profile.learn_skills.remove(to_delete)
         form = ProfileForm(instance=profile)
     #handle deleting avatar
-    elif request.POST.get('delete_avatar'):        
+    elif request.POST.get('delete_avatar'):
         avatar = request.POST.get('delete_avatar')
         profile.avatar.delete()
         form = ProfileForm(instance=profile)
@@ -214,3 +217,49 @@ def edit_profile(request, username):
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
         'learn_skills_list':learn_skills_list })
+
+@login_required
+def edit_schedule(request, username):
+    """
+    Public method that takes a request and a username.
+    Gets a list of 'events' from a calendar and stores the event as an array of tuples
+    Redners profiles/edit_calendar.html
+
+    TODO: The whole shebang
+
+    """
+
+    return render(request, 'profiles/edit_schedule.html')
+
+@csrf_exempt
+def save_event(request, username):
+
+    # print("\n\nDebug: request.method = " + request.method + "\n\n")
+
+    if request.method == 'POST' and request.is_ajax():
+
+        # List of events as a string (json)
+        jsonEvents = request.POST.get('jsonEvents')
+
+        # print("\n\nDebug: jsonEvents = " + jsonEvents + "\n\n")
+
+        # Load json event list into a python list of dicts
+        event_list = json.loads(jsonEvents)
+
+        # print("\n\nDebug: event_list = \n")
+        # print(event_list)
+        # print("\n")
+
+        for event in event_list:
+            # @TODO: Save events to user profile
+            print("Event Start " + event['start'])
+            print("Event End " + event['end'])
+
+        return HttpResponse("Schedule Saved")
+        #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
+
+    else:
+        print("\n\nDebug: Request method was not post \n\n")
+
+
+    return HttpResponse("Failure")
