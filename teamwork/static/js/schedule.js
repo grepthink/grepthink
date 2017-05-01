@@ -1,93 +1,115 @@
-var event_list = [];
-// Submit post on submit
-$('#post-form').on('submit', function(event){
-    event.preventDefault();
-    console.log("form submitted!")  // sanity check
-    save_one(event_list);
-});
+// schedule.js
+// Allows user to edit their schedule using Full Calendar.
 
-// using jQuery
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+// Don't begin execution until page is ready, this is a fullCalendar requirement.
+$(document).ready(function() {
+
+    // Function triggered by submit button
+    // verfies events and then calls helper function
+    // postEvents to send all client side events to server.
+    $('#submit-events').on('submit', function(event){
+        // Prevent default behavior of submit form.
+        event.preventDefault();
+        // Get map of all events added on client side so far.
+        var eventsOnSubmit = $('#calendar').fullCalendar('clientEvents');
+
+        if (!Array.isArray(eventsOnSubmit) || !eventsOnSubmit.length) {
+          // Array does not exist, is not an array, or is empty.
+          $('#emptyAlert').css('display', 'block');
+          //alert("Did you forget to fill out your availability?")
         }
+        else {
+          // Prepare to send event list to server.
+          postEvents(eventsOnSubmit);
+        }
+    });
+
+    // Ajax post call to server, converts circular data structure
+    // to list then to JSON.
+    function postEvents(cEvents) {
+        $.ajax({
+            url: 'ajax/save_event/',
+            type: 'POST',
+            data: {
+              // Need to stringfy cEvents (circular structure), but must first 
+              // iterate through and create a simplier representation.
+              jsonEvents: JSON.stringify(cEvents.map(function (e)
+              {
+                  return {
+                      start: e.start,
+                      end: e.end,
+                      title: e.title,
+                  }
+              }))
+            },
+            success: function (response) {
+              // Get the response from server and process it
+              // In this case simply alert the user.
+              alert(response);
+            },
+            error: function (xhr) {
+              // Open JS debugger if ya goofed. Alert with last object.
+              // This should really trigger a 500 server error.
+              debugger;
+              alert(xhr);
+          }
+        });
     }
-    return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
 
+    // Intilize the calendar. Options and callbacks set below.
+    $('#calendar').fullCalendar({
 
-function save_one(eventData) {
-    console.log(eventData);
-    $.ajax({
-        type: "POST",
-        url: "ajax/save_event/",
-        //url: "",
-        headers: {
-            "X-CSRFToken": csrftoken,
-            "Content-Type": "application/json",
+        // Only show agendaWeek view for edit_schedule
+        header: {
+          left: 'none',
+          center: 'title',
+          right: 'agendaWeek'
         },
-        data: eventData,
-        //dataType: "text",
-        // error: {
-        //    console.log("I had an error! :(");
-        // },
-        success: function(data){
-            console.log("success");
-            console.log(data);
+        defaultView: 'agendaWeek',
+
+        defaultDate: '2017-04-12',
+
+        // Can click day/week names to navigate views
+        navLinks: true,
+
+        // Allow users to resize events.
+        editable: true,
+
+        // Allow "more" link when too many events.
+        eventLimit: true,
+
+        // Allow selection for select function.
+        selectable: true,
+        selectHelper: true,
+
+        // Function called on select event.
+        // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
+        select: function(start, end) {
+          // Title is always Busy in edit_schedule
+          var title = 'Busy';
+          // Event Object to be passed to renderEvent
+          var eventData;
+
+          // Always true (likely change this to a check for "all day")
+          if (title) {
+            // Populate the Event Object. TODO: Add attributes.
+            eventData = {
+              title: title,
+              start: start,
+              end: end
+            };
+            // Render the event object with 'stick' set to true
+            // so events persist unless page refresh.
+            $('#calendar').fullCalendar('renderEvent', eventData, true);
+
+          }
+          // Unselct event area before exiting select method.
+          $('#calendar').fullCalendar('unselect');
         },
-        failure: function(data){
-            console.log("failure");
-            console.log(data);
-        },
-    });
+        // Prepopulate events to make temporary test data.
+        events: []
 
-}
+    }) // End fullCalendar initialization.
 
-  $(function () {
 
-  $('#calendar').fullCalendar({
-      header: {
-        left: 'none',
-        center: 'title',
-        right: 'agendaWeek'
-      },
-      defaultDate: '2017-04-12',
-      defaultView: 'agendaWeek',
-      navLinks: true, // can click day/week names to navigate views
-      selectable: true,
-      selectHelper: true,
-      select: function(start, end) {
-        var title = 'Busy';
-        var eventData;
-        if (title) {
-          eventData = {
-            title: title,
-            start: start,
-            end: end
-          };
-          //console.log("HI THERE" + eventData.start);
-          $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-          event_list.push(eventData);
-          //save_one(event_list);
-        }
-        //console.log($('#calendar').fullCalendar('clientEvents'));
-        console.log("Event list:");
-        console.log(event_list);
-        //save_one(($('#calendar').fullCalendar('clientEvents')));
-        //save_one(event_list);
-        $('#calendar').fullCalendar('unselect');
-      },
-      editable: true,
-      eventLimit: true, // allow "more" link when too many events
-      events: []
-    });
-  });
+}); // End main function.

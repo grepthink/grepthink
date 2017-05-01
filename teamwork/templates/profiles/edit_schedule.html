@@ -21,6 +21,13 @@
 {% block content %}
 
 <section class="content">
+
+<div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+      Did you forget to fill out your schedule?
+</div>
+
       <div class="row">
         <div class="col-md-9">
           <div class="box box-primary">
@@ -34,17 +41,21 @@
             <!-- /.box-body -->
           </div>
           <!-- /. box -->
+
+        <div class="pull-right">
+          <form method="POST" id="submit-events">
+            {% csrf_token %}  
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+
         </div>
         <!-- /.col -->
       </div>
       <!-- /.row -->
+
 </section>
 
-<div class="pull-right">
-  <form method="POST" id="post-form">
-    <input type="submit" value="Submit">
-  </form>
-</div>
 
 <script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>

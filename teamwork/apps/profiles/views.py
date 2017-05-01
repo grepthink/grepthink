@@ -228,23 +228,38 @@ def edit_schedule(request, username):
     TODO: The whole shebang
 
     """
-    print("\n\nLook at me\n\n")
-    print(request)
-    print("\n\n\n\n\n")
+
     return render(request, 'profiles/edit_schedule.html')
 
 @csrf_exempt
 def save_event(request, username):
 
+    # print("\n\nDebug: request.method = " + request.method + "\n\n")
+
     if request.method == 'POST' and request.is_ajax():
-        eventData = request.POST.get('eventData')
-        print(eventData)
-        return redirect(edit_profile, username)
+
+        # List of events as a string (json)
+        jsonEvents = request.POST.get('jsonEvents')
+
+        # print("\n\nDebug: jsonEvents = " + jsonEvents + "\n\n")
+
+        # Load json event list into a python list of dicts
+        event_list = json.loads(jsonEvents)
+
+        # print("\n\nDebug: event_list = \n")
+        # print(event_list)
+        # print("\n")
+
+        for event in event_list:
+            # @TODO: Save events to user profile
+            print("Event Start " + event['start'])
+            print("Event End " + event['end'])
+
+        return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     else:
-        print("Request Method was not post ;)")
+        print("\n\nDebug: Request method was not post \n\n")
 
-    messages.info(request,
-                  'You need to join a course before creating projects!')
-    return HttpResponseRedirect('index')
+
+    return HttpResponse("Failure")
