@@ -1,7 +1,13 @@
-# Travis build configuration
-
-# Originally adapted from:
-#   https://docs.travis-ci.com/user/languages/python/#Examples
+# Travis build configuration for teamwork-project
+#
+# Originally adapted from Travis CI Examples [1].
+#
+# References:
+# [1] https://docs.travis-ci.com/user/languages/python/#Examples
+# [2] https://gist.github.com/ndarville/3625246
+# [3] https://github.com/ndarville/pony-forum/blob/master/.travis.yml
+# [4] https://docs.travis-ci.com/user/environment-variables/#Global-Variables
+# [5] https://docs.travis-ci.com/user/languages/python/#Testing-Against-Multiple-Versions-of-Dependencies-(e.g.-Django-or-Flask)
 
 language: python
 python:
@@ -17,36 +23,35 @@ python:
   # - "3.7-dev" # 3.7 development branch
   # - "nightly" # currently points to 3.7-dev
 
-
 services: postgresql
 
-# Set global env variables for settings.py
-# Set matrix env variables to run multiple builds with
+# Set global [4] env variables used in settings.py and
+# set matrix env variables to run multiple builds with
 # different configurations.
 env:
   global:
     # Note that DATABASE_URL is not set here, see settings.py
     - DEBUG=True
     - SECRET_KEY=s3cr3tk3y
-  # Test against multiple Django versions
-  # https://docs.travis-ci.com/user/languages/ ...
-  #   python/#Testing-Against-Multiple-Versions-of-Dependencies-(e.g.-Django-or-Flask)
   matrix:
+    # Test against multiple Django versions [5].
     - DJANGO_VERSION="1.10.5"
     - DJANGO_VERSION="1.11"
 
 
 # Install dependencies
 install:
+  # Install different Django version on each build [5].
   - pip install -q Django==$DJANGO_VERSION
   - pip install -r requirements.txt
 
-# Create a test database
 before_script:
+  # Create a test database, adapted from [2] and [3].
   - psql -c "CREATE DATABASE travisdb;" -U postgres
+  # Perform initial migrations
   - python manage.py makemigrations auth core profiles projects courses
   - python manage.py migrate
 
-# Run tests
+# Run unit tests
 script: 
   - python manage.py test

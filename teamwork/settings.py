@@ -25,9 +25,11 @@ COURSE_DIR = Path(__file__).parent
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY is set in .env file. See etc/example.env
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG is set in .env file. See etc/example.env
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Application definition
@@ -93,6 +95,7 @@ WSGI_APPLICATION = 'teamwork.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+# Setup the database manually if environment is Travis.
 if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {
@@ -105,6 +108,7 @@ if 'TRAVIS' in os.environ:
         }
     }
 
+# Setup the database using dj based on the DATABASE_URL set in .env
 else:
     DATABASES = {
         'default': dj_database_url.config(
