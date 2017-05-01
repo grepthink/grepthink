@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Clear out javascript block at bottom of page so we can import specific js #}
+{% block javascript %}
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+
+<section class="content">
+
+<div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+      Did you forget to fill out your schedule?
+</div>
+
+      <div class="row">
+        <div class="col-md-9">
+          <div class="box box-primary">
+            <div class="box-body no-padding">
+              <!-- THE CALENDAR -->
+              <div id="calendar">
+
+              </div>
+              <!-- /.calendar -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /. box -->
+
+        <div class="pull-right">
+          <form method="POST" id="submit-events">
+            {% csrf_token %}  
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+
+</section>
+
+
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+
+<script src="{% static 'js/schedule.js' %}"></script>
+
+
+
+
+{% endblock content %}

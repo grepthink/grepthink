@@ -22,6 +22,10 @@ def login_view(request):
         return render(request, 'core/login.html')
 
 def index(request):
+    """
+    The main index of Teamwork, reffered to as "Home" in the sidebar. 
+    Accessible to public and logged in users.
+    """
     # TODO: get feed of project updates (or public projects) to display on login
 
     # Populate with defaults for not logged in user
