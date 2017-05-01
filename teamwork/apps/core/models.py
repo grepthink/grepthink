@@ -60,7 +60,8 @@ def po_match(project):
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        initial[i.user] = (i.interest * interestWeight)
+        if i.user not in project.members.all():
+            initial[i.user] = (i.interest * interestWeight)
 
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
@@ -69,22 +70,28 @@ def po_match(project):
     for i in desired_skills:
         know = i.known.all()
         for j in know:
+            # print("\n\n")
+            # print(j)
+            # print (project.members.all())
+            # print("\n\n")
             # if is to allow for updating the score of users already counted
-            if j.user in initial:
-                temp = initial[j.user]
-                temp += (2 * knowWeight)
-                initial[j.user] = temp
-            # otherwise we add them to a backup list
-            else:
-                backup[j.user] = 2
+            if j.user not in project.members.all():
+                if j.user in initial:
+                    temp = initial[j.user]
+                    temp += (2 * knowWeight)
+                    initial[j.user] = temp
+                # otherwise we add them to a backup list
+                else:
+                    backup[j.user] = 2
         learn = i.learn.all()
         for k in learn:
-            if k.user in initial:
-                temp = initial[k.user]
-                temp += (1 * learnWeight)
-                initial[k.user] = temp
-            else:
-                backup[k.user] = 2
+            if k.user not in project.members.all():
+                if k.user in initial:
+                    temp = initial[k.user]
+                    temp += (1 * learnWeight)
+                    initial[k.user] = temp
+                else:
+                    backup[k.user] = 2
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
     # intial to and for more users
