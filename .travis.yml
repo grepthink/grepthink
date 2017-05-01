@@ -22,9 +22,10 @@ services: postgresql
 
 env:
 # - DJANGO="x.y.z"
-  - WEB_CONCURRENCY=2
-  - DEBUG=True
-  - SECRET_KEY=s3cr3tk3y
+  global:
+    - WEB_CONCURRENCY=2
+    - DEBUG=True
+    - SECRET_KEY=s3cr3tk3y
 
 
 # Install dependencies
