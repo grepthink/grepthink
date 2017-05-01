@@ -20,15 +20,26 @@ python:
 
 services: postgresql
 
+# Set global env variables for settings.py
+# Set matrix env variables to run multiple builds with
+# different configurations.
 env:
-# - DJANGO="x.y.z"
   global:
+    # Note that DATABASE_URL is not set here, see settings.py
     - DEBUG=True
     - SECRET_KEY=s3cr3tk3y
+  # Test against multiple Django versions
+  # https://docs.travis-ci.com/user/languages/ ...
+  #   python/#Testing-Against-Multiple-Versions-of-Dependencies-(e.g.-Django-or-Flask)
+  matrix:
+    - DJANGO_VERSION="1.10.5"
+    - DJANGO_VERSION="1.11"
 
 
 # Install dependencies
-install: "pip install -r requirements.txt"
+install:
+  - pip install -q Django==$DJANGO_VERSION
+  - pip install -r requirements.txt
 
 # Create a test database
 before_script:
