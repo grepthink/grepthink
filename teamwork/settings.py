@@ -7,9 +7,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-# Using python decouple (instead of os) for easier path management
-# import os
+
+import os
 import dj_database_url
+# Using python decouple (instead of os) for easier path management
 from decouple import config
 from unipath import Path
 
@@ -92,12 +93,24 @@ WSGI_APPLICATION = 'teamwork.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+if 'TRAVIS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql_psycopg2',
+            'NAME':     'travisdb',  # Must match travis.yml setting
+            'USER':     'postgres',
+            'PASSWORD': '',
+            'HOST':     'localhost',
+            'PORT':     '',
+        }
+    }
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
 
 
 """ Original Django Database Settings

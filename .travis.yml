@@ -16,7 +16,26 @@ python:
   # - "3.6-dev" # 3.6 development branch
   # - "3.7-dev" # 3.7 development branch
   # - "nightly" # currently points to 3.7-dev
-# command to install dependencies
+
+
+services: postgresql
+
+env:
+# - DJANGO="x.y.z"
+  - WEB_CONCURRENCY=2
+  - DEBUG=True
+  - SECRET_KEY=s3cr3tk3y
+
+
+# Install dependencies
 install: "pip install -r requirements.txt"
-# command to run tests
-script: python manage.py test
+
+# Create a test database
+before_script:
+  - psql -c "CREATE DATABASE travisdb;" -U postgres
+  - python manage.py makemigrations auth core profiles projects courses
+  - python manage.py migrate
+
+# Run tests
+script: 
+  - python manage.py test
