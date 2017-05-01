@@ -43,15 +43,25 @@ env:
 install:
   # Install different Django version on each build [5].
   - pip install -q Django==$DJANGO_VERSION
+  - pip install coverage
+  - pip install flake8
+  - pip install coveralls
   - pip install -r requirements.txt
 
 before_script:
   # Create a test database, adapted from [2] and [3].
   - psql -c "CREATE DATABASE travisdb;" -U postgres
+  # @TODO: (andgates) Is Django Version actually being set?
+  - python manage.py --version
   # Perform initial migrations
   - python manage.py makemigrations auth core profiles projects courses
   - python manage.py migrate
 
 # Run unit tests
-script: 
-  - python manage.py test
+script:
+  # Flake8 to enforce style, too many errrors to think about rn.
+#  - flake8
+  # Use coverage to run unit tests. Only report on files from this directory.
+  - coverage run --source='.' manage.py test
+after_success:
+  - coveralls
