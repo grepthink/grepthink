@@ -70,7 +70,7 @@ class Profile(models.Model):
     institution = models.TextField(max_length=100, blank=True)
     location = models.TextField(max_length=100, blank=True)
 
-    avatar = models.ImageField(upload_to= 'avatars/', default="")
+    #avatar = models.ImageField(upload_to= 'avatars/', default="")
 
     # TODO: Interest - ManyToOne, Past Classes,
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
