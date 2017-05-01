@@ -79,5 +79,6 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
 
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        url(r'^google/$', core_views.google_api, name='google_api'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

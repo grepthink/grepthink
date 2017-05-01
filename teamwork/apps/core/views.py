@@ -47,10 +47,14 @@ def index(request):
 def about(request):
     return render(request, 'core/about.html')
 
+#Sean testing
+def google_api(request):
+    return render(request, 'core/google_api.html')
+
 @login_required
 def view_matches(request):
     """
-    Generic view for serving a list of projects and potential teammate matches for 
+    Generic view for serving a list of projects and potential teammate matches for
         each project.
     """
     project_match_list = []
@@ -72,7 +76,7 @@ def view_matches(request):
 
         print("PROJECTS:")
         print(projects)
-        
+
         for project in projects:
             print("Project:")
             print(project)
