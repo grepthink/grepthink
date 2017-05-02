@@ -80,14 +80,10 @@ def po_match(project):
                 # otherwise we add them to a backup list
                 else:
                     if j.user in backup:
-                        print("known backup")
                         temp = backup[j.user]
-                        print(temp)
                         temp += (2 * knowWeight)
-                        print(temp)
                         backup[j.user] = temp
                     else:
-                        print("here")
                         backup[j.user] = 2
         learn = i.learn.all()
         for k in learn:
@@ -98,12 +94,10 @@ def po_match(project):
                     initial[k.user] = temp
                 else:
                     if k.user in backup:
-                        print("new learn")
                         temp = backup[k.user]
                         temp += (2 * learnWeight)
                         backup[k.user] = temp
                     else:
-                        print("Overhere")
                         backup[k.user] = 2
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
