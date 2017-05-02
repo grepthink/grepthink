@@ -47,10 +47,6 @@ def index(request):
 def about(request):
     return render(request, 'core/about.html')
 
-#Sean testing
-def google_api(request):
-    return render(request, 'core/google_api.html')
-
 @login_required
 def view_matches(request):
     """
