@@ -253,6 +253,15 @@ def save_event(request, username):
         for event in event_list:
             # @TODO: Save events to user profile
             print("Event Start " + event['start'])
+            hour = event['start'][11] + event['start'][12]
+            hour = int(hour)
+            print("Hour ")
+            print(hour)
+            minute = event['start'][14] + event['start'][15]
+            minute = int(minute)
+            print("Minute ")
+            print(minute)
+
             print("Event End " + event['end'])
 
         return HttpResponse("Schedule Saved")
