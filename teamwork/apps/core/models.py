@@ -45,18 +45,19 @@ def po_match(project):
             course.projects.all())
     if course.limit_weights:
         print("po_match values overridden by course instructor")
-        interestWeight = course.weigh_interest or 0
-        knowWeight = course.weigh_know or 0
-        learnWeight = course.weigh_learn or 0
+        interestWeight = course.weigh_interest or 1
+        knowWeight = course.weigh_know or 1
+        learnWeight = course.weigh_learn or 1
     else:
         # dependency injection
-        interestWeight = project.weigh_interest or course.weigh_interest or 0
-        knowWeight = project.weigh_know or course.weigh_know or 0
-        learnWeight = project.weigh_learn or course.weigh_learn or 0
+        interestWeight = project.weigh_interest or course.weigh_interest or 1
+        knowWeight = project.weigh_know or course.weigh_know or 1
+        learnWeight = project.weigh_learn or course.weigh_learn or 1
     # interest matching
     print("po_match called with", dict(interest=interestWeight, know=knowWeight,
         learn=learnWeight))
     interested = project.interest.all()
+    print("interest")
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
@@ -70,10 +71,6 @@ def po_match(project):
     for i in desired_skills:
         know = i.known.all()
         for j in know:
-            # print("\n\n")
-            # print(j)
-            # print (project.members.all())
-            # print("\n\n")
             # if is to allow for updating the score of users already counted
             if j.user not in project.members.all():
                 if j.user in initial:
@@ -82,7 +79,16 @@ def po_match(project):
                     initial[j.user] = temp
                 # otherwise we add them to a backup list
                 else:
-                    backup[j.user] = 2
+                    if j.user in backup:
+                        print("known backup")
+                        temp = backup[j.user]
+                        print(temp)
+                        temp += (2 * knowWeight)
+                        print(temp)
+                        backup[j.user] = temp
+                    else:
+                        print("here")
+                        backup[j.user] = 2
         learn = i.learn.all()
         for k in learn:
             if k.user not in project.members.all():
@@ -91,12 +97,21 @@ def po_match(project):
                     temp += (1 * learnWeight)
                     initial[k.user] = temp
                 else:
-                    backup[k.user] = 2
+                    if k.user in backup:
+                        print("new learn")
+                        temp = backup[k.user]
+                        temp += (2 * learnWeight)
+                        backup[k.user] = temp
+                    else:
+                        print("Overhere")
+                        backup[k.user] = 2
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
     # intial to and for more users
     if len(set(initial.keys())) < 10:
         initial.update(backup)
+
+    print(initial)
 
     return sort(initial)
     # past classes match

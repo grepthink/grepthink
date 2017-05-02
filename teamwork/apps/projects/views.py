@@ -187,6 +187,7 @@ def edit_project(request, slug):
             # Clear all memberships to avoid duplicates.
             memberships = Membership.objects.filter(project=project)
             if memberships is not None: memberships.delete()
+            
             for i in members:
                 Membership.objects.create(
                     user=i.user, project=project, invite_reason='')
