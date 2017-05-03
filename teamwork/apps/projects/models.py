@@ -226,11 +226,13 @@ class Project(models.Model):
         saturday_post = []
 
         # Loops through each member
-        for user in self.members:
+        for user in self.members.all():
+            print("%s:"%(user))
             # Loops through each event
-            for event in user.avail:
+            for event in user.profile.avail.all():
+                print("     %s"%(event))
                 # adds to list
-                event_list.append(user.avail)
+                event_list.append(user.profile.avail)
 
         # Sorts each event into respective days
         for i in event_list:

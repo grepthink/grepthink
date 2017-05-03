@@ -255,7 +255,6 @@ def save_event(request, username):
 
         # For each event
         for event in event_list:
-            # @TODO: Save events to user profile
             # Create event object
             busy = Events()
 

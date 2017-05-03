@@ -43,6 +43,13 @@ def view_one_project(request, slug):
     # TODO: fix up return calls
     """
     project = get_object_or_404(Project, slug=slug)
+
+
+    # SEAN TESTING
+    project.generate_avail()
+
+
+    #
     updates = project.get_updates()
 
     return render(request, 'projects/view_project.html',
