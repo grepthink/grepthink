@@ -233,7 +233,8 @@ def edit_schedule(request, username):
 
 @csrf_exempt
 def save_event(request, username):
-
+    #grab profile for the current user
+    profile = Profile.objects.get(user=request.user)
     # print("\n\nDebug: request.method = " + request.method + "\n\n")
 
     if request.method == 'POST' and request.is_ajax():
@@ -252,17 +253,45 @@ def save_event(request, username):
 
         for event in event_list:
             # @TODO: Save events to user profile
-            print("Event Start " + event['start'])
-            hour = event['start'][11] + event['start'][12]
-            hour = int(hour)
-            print("Hour ")
-            print(hour)
-            minute = event['start'][14] + event['start'][15]
-            minute = int(minute)
-            print("Minute ")
-            print(minute)
+            busy = Events()
 
-            print("Event End " + event['end'])
+            #function assumes start day and end day are the same
+            day = event['start'][8] + event['start'][9]
+            day = int(day)
+            s_hour = event['start'][11] + event['start'][12]
+            s_minute = event['start'][14] + event['start'][15]
+
+            s_hour = int(s_hour)
+            s_minute = int(s_minute)
+
+            e_hour = event['end'][11] + event['end'][12]
+            e_minute = event['end'][14] + event['end'][15]
+            e_hour = int(e_hour)
+            e_minute = int(e_minute)
+
+            busy.day = dayofweek(day)
+            busy.start_time_hour = s_hour
+            busy.start_time_min = s_minute
+            busy.end_time_hour = e_hour
+            busy.end_time_min = e_minute
+
+            busy.save()
+            #print(busy)
+            #TODO: clear out availibility before adding Schedule
+
+            #if profile.avail is not None: profile.avail.delete()
+
+            profile.avail.add(busy)
+            profile.save()
+
+            #print("Day: ")
+            #print(dayofweek(day))
+            #print("Hour: ")
+            #print(hour)
+            #print("Minute: ")
+            #print(minute)
+            #print("Event Start " + event['start'])
+            #print("Event End " + event['end'])
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
