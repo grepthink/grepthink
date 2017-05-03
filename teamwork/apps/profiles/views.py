@@ -233,7 +233,7 @@ def edit_schedule(request, username):
 
 @csrf_exempt
 def save_event(request, username):
-    #grab profile for the current user
+    # grab profile for the current user
     profile = Profile.objects.get(user=request.user)
     # print("\n\nDebug: request.method = " + request.method + "\n\n")
 
@@ -250,11 +250,16 @@ def save_event(request, username):
         # print("\n\nDebug: event_list = \n")
         # print(event_list)
         # print("\n")
+        # If user already has a schedule, delete it
+        if profile.avail.all() is not None: profile.avail.all().delete()
 
+        # For each event
         for event in event_list:
             # @TODO: Save events to user profile
+            # Create event object
             busy = Events()
 
+            # Get data
             #function assumes start day and end day are the same
             day = event['start'][8] + event['start'][9]
             day = int(day)
@@ -269,29 +274,18 @@ def save_event(request, username):
             e_hour = int(e_hour)
             e_minute = int(e_minute)
 
+            # Assign data
             busy.day = dayofweek(day)
             busy.start_time_hour = s_hour
             busy.start_time_min = s_minute
             busy.end_time_hour = e_hour
             busy.end_time_min = e_minute
 
+            # Save event
             busy.save()
-            #print(busy)
-            #TODO: clear out availibility before adding Schedule
-
-            #if profile.avail is not None: profile.avail.delete()
 
             profile.avail.add(busy)
             profile.save()
-
-            #print("Day: ")
-            #print(dayofweek(day))
-            #print("Hour: ")
-            #print(hour)
-            #print("Minute: ")
-            #print(minute)
-            #print("Event Start " + event['start'])
-            #print("Event End " + event['end'])
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
