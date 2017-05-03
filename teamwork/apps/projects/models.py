@@ -45,23 +45,29 @@ def to_bits(day):
     bitstring = [False]*48
     # Loops through each Event in array
     for event in day:
-        # Start time - End time to get # of slots to block off
-        diff = event.end_time_hour - event.start_time_hour
-        # Doubles because we are using 30 minute intervals
-        diff *= 2
-        # Blocks off times
-        for i in range (0, diff):
-            bitstring[(event.start_time_hour - 1) + i] = True
+        # Start = double start hour (30 min intervals)
+        start = 2*event.start_time_hour
+        # End = double End hour (30 min intervals)
+        end = 2*event.end_time_hour
+
+        # SPECIAL CASE: Because 12a == 0, we manually set end to 47
+        if event.end_time_hour == 0:
+            end = 47
+
+
+        for i in range (start, end+1):
+            bitstring[i] = True
         # If we ended in XX:30, block off next bit
         if event.end_time_min == 30:
-            bitstring[event.end_time_hour] = True
+            bitstring[end+1] = True
+        #print("END: %d"%(end))
 
-    # Manually block off 12a - 8a and 10p - 12a
-    for x in range(0, 16):
-        bitstring[x] = True
-    for x in range(44, 47):
-        bitstring[x] = True
 
+    # Manually block off 12a - 8a and 9p - 12a
+    for x in range(0, 17):
+        bitstring[x] = True
+    for x in range(42, 48):
+        bitstring[x] = True
 
     return bitstring
 
@@ -74,10 +80,10 @@ def from_bits(bitstring):
     end_hour = 0
     end_minute = 0
 
+    i = 0
     # For each index in bitstring
-    for i in range(0, len(bitstring)):
+    while i < len(bitstring):
         # If current index is False (Free)
-        #print(bitstring[i])
         if bitstring[i] is False:
             # If odd, start at xx:30
             if i % 2 != 0:
@@ -87,7 +93,6 @@ def from_bits(bitstring):
 
             # Loops until True (Busy)
             temp = i
-            #print(temp)
             while bitstring[temp] == False:
                 # If next element is True (Busy), we are at end of time slot
 
@@ -111,13 +116,17 @@ def from_bits(bitstring):
                         end_min = 30
                     # End hour is i/2
                     end_hour = floor(i/2)
+                    break
 
                 # Increase temp
                 temp += 1
+
+            # Add event to array
             event_array.append([start_hour, start_min, end_hour, end_min])
 
-    #print(event_array)
-    #print(event_array.millisecond)      #crashes program on purpose
+        # Update iterator
+        i=i+1
+
     return event_array
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -207,7 +216,7 @@ class Project(models.Model):
             newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
-                print(Project.objects.filter(slug=newslug).exists())
+                #print(Project.objects.filter(slug=newslug).exists())
                 newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
@@ -224,37 +233,29 @@ class Project(models.Model):
         temp = []
 
         sunday_list = []
-        sunday_post = []
 
         monday_list = []
-        monday_post = []
 
         teusday_list = []
-        teusday_post = []
 
         wednesday_list = []
-        wednesday_post=[]
 
         thursday_list = []
-        thursday_post = []
 
         friday_list = []
-        friday_post = []
 
         saturday_list = []
-        saturday_post = []
 
         # Loops through each member
         for user in self.members.all():
-            #print("%s:"%(user))
+            print("%s:"%(user))
             # Loops through each event
             for event in user.profile.avail.all():
-                #print("     %s"%(event))
+                print("     %s"%(event))
                 # adds to list
                 event_list.append(event)
 
         # Sorts each event into respective days
-        #print(event_list)
         for i in event_list:
             if i.day == "Sunday":
                 sunday_list.append(i)
@@ -274,7 +275,7 @@ class Project(models.Model):
 
         # Converts to and from bitstring to find FREE time
         sunday_list = to_bits(sunday_list)  #this is working
-        sunday_list = from_bits(sunday_list)    #this is not
+        sunday_list = from_bits(sunday_list)    #this is now working
         # Appends to list
         for i in sunday_list:
             pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
@@ -310,6 +311,7 @@ class Project(models.Model):
             pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
 
         # Returns list of possible events
+        print("\n\n%s\n\n"%(pos_event))
         return pos_event
 
     @staticmethod
