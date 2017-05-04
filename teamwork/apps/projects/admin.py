@@ -2,10 +2,7 @@
 from django.contrib import admin
 
 # Local Modules
-from .models import Project
-from .models import Membership
-from .models import ProjectUpdate
-from .models import Interest
+from .models import Interest, Membership, Project, ProjectUpdate
 
 # Register the following models for the admin site
 admin.site.register(Project)
