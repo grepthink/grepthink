@@ -128,6 +128,60 @@ def from_bits(bitstring):
         i=i+1
 
     return event_array
+class Meetings(models.Model):
+    """
+    Events: A database model (object) for Events (Availabiliy).
+
+    Fields:
+        event_name: a field that contains the name of a skill
+        day: Day of week
+        start_time_hour: Hour an event starts (1-24)
+        start_time_minute: Minute an event starts (1-60)
+        end_time_hour: Hour an event ends (1-24)
+        end_time_minute: Minute an event ends (1-60)
+
+
+    Methods:
+        __str__(self):                  Human readeable representation of the Event object.
+        save(self, *args, **kwargs):    Overides the default save operator...
+
+        """
+    # Day (Is this a character?)
+    day = models.CharField(max_length=255,default="")
+
+    # Times stored in 24h format
+    # Start time (Hours)
+    start_time_hour = models.SmallIntegerField()
+    # Start time (Minutes)
+    start_time_min = models.SmallIntegerField()
+    # End time (Hours)
+    end_time_hour = models.SmallIntegerField()
+    # End time (Minutes)
+    end_time_min = models.SmallIntegerField()
+    def __str__(self):
+        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+        #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
+        return event_string
+
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Event"
+        # Multiple Event objects are referred to as Projects.
+        verbose_name_plural = "Events"
+        ordering = ('day',)
+
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Project object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Project object in the database!
+        I don't know what super does...
+        """
+        super(Meetings, self).save(*args, **kwargs)
+
+
+
+
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
@@ -181,6 +235,9 @@ class Project(models.Model):
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
+
+    # meeting - Availabiliy
+    meeting = models.ManyToManyField(Meetings)
 
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)

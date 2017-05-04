@@ -43,13 +43,6 @@ def view_one_project(request, slug):
     # TODO: fix up return calls
     """
     project = get_object_or_404(Project, slug=slug)
-
-
-    # SEAN TESTING
-    project.generate_avail()
-
-
-    #
     updates = project.get_updates()
 
     return render(request, 'projects/view_project.html',
@@ -251,5 +244,28 @@ def find_meeting(request, slug):
     """
     Find and store possible meeting time for a given project
     """
+    # Gets current project
+    project = get_object_or_404(Project, slug=slug)
+
+    # If project already has a list of meeting times, delete it
+    if project.meeting.all() is not None: project.meeting.all().delete()
+
+    # Stores avaliablity in array
+    event = project.generate_avail
+
+    # Create Event object
+    free = Meetings()
+    for e in event:
+        free.day = event[0]
+        free.start_time_hour = event[1]
+        free.start_time_min = event[2]
+        free.end_time_hour = event[3]
+        free.end_time_min = event[4]
+        free.save()
+
+        project.meeting.add(free)
+        project.save()
+
+
     return render(request, 'projects/view_projects.html',
                   {'projects': projects})

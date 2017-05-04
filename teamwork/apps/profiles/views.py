@@ -233,7 +233,7 @@ def edit_schedule(request, username):
 
 @csrf_exempt
 def save_event(request, username):
-    # grab profile for the current user
+    #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
     # print("\n\nDebug: request.method = " + request.method + "\n\n")
 
@@ -247,9 +247,6 @@ def save_event(request, username):
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
-        # print("\n\nDebug: event_list = \n")
-        # print(event_list)
-        # print("\n")
         # If user already has a schedule, delete it
         if profile.avail.all() is not None: profile.avail.all().delete()
 
@@ -285,6 +282,7 @@ def save_event(request, username):
 
             profile.avail.add(busy)
             profile.save()
+
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
