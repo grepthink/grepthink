@@ -2,16 +2,17 @@
 Core views provide main site functionality.
 
 """
-from .models import *
-from .forms import *
-
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
+
+from .forms import *
+from .models import *
+
 
 def login_view(request):
     if request.user.is_authenticated():

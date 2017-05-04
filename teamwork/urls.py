@@ -13,16 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
-from django.contrib import admin
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
+from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 from teamwork.apps.core import views as core_views
+from teamwork.apps.courses import views as course_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
-from teamwork.apps.courses import views as course_views
 
 urlpatterns = [
         #/

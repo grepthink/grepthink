@@ -1,13 +1,14 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
-from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
+from teamwork.apps.projects.models import *
+
 
 # profiles is already imported from projects, not necessary here
 
