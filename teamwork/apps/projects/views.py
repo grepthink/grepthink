@@ -39,13 +39,17 @@ def view_projects(request):
 
 def view_one_project(request, slug):
     """
-    Public method that takes a request and a projecttitle, retrieves the Project object 
-    from the model with given projecttitle.  Renders projects/view_project.html
-    # TODO: fix up return calls
+    Public method that takes a request and a slug, retrieves the Project object 
+    from the model with given project slug.  Renders projects/view_project.html
+    
+    Passing status check unit test in test_views.py.
     """
 
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
+
+    # Get the course given a project wow ethan great job keep it up.
+    course = Course.objects.get(projects=project)
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -54,7 +58,7 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name, 
         'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates})
+        'project': project, 'updates': updates, 'course' : course})
 
 
 @login_required
@@ -155,8 +159,14 @@ def create_project(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
     else:
+        # Populate page info with new project headers/title
+        page_name = "Create Project"
+        page_description = "Post a new project"
+        title = "Create Project"
+        # Send form for initial project creation
         form = ProjectForm(request.user.id)
-    return render(request, 'projects/create_project.html', {'form': form})
+    return render(request, 'projects/create_project.html', {'page_name': page_name, 
+        'page_description': page_description, 'title' : title, 'form': form})
 
 
 @login_required
@@ -166,6 +176,11 @@ def edit_project(request, slug):
     Based off courses/views.py/edit_course
     """
     project = get_object_or_404(Project, slug=slug)
+
+    # Populate page info with edit project title/name
+    page_name = "Edit Project"
+    page_description = "Make changes to " + project.title
+    title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
     if not request.user.username == project.creator and request.user not in project.members.all(
@@ -203,9 +218,9 @@ def edit_project(request, slug):
             return redirect(view_one_project, project.slug)
     else:
         form = ProjectForm(request.user.id, instance=project)
-    return render(request, 'projects/edit_project.html',
-                  {'form': form,
-                   'project': project})
+    return render(request, 'projects/edit_project.html', {'page_name': page_name, 
+        'page_description': page_description, 'title' : title, 
+        'form': form, 'project': project})
 
 
 @login_required

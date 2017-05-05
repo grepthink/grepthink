@@ -48,7 +48,7 @@ class ViewProjectTestCase(TestCase):
         Confirms that view_one_project sucesfully returns a 200 response when given the
         slug of an existing project.
 
-        Decorator override_settings to avoid errors with whitenoise.
+        Decorator override_settings to avoid errors with whitenoise when using client().
         """
 
         # Create a test project to be servered
