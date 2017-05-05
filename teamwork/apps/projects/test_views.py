@@ -13,18 +13,22 @@ from django.urls import reverse
 
 from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
+from teamwork.apps.courses.models import *
 
 
 def create_project(title, creator, tagline, content, slug, resource, avail_mem=True, sponsor=False):
     # Create a dummy project (with no M2M relationships) that will be associated with user1
-    return Project.objects.create(title="Test Project 1", creator="user_test1",
-        tagline="Test Tagline 1", content="Test Content 1",
-        avail_mem=True, sponsor=False, slug="test1-slug",resource="Test Resource 1")
+    return Project.objects.create(title=title, creator=creator,
+        tagline=tagline, content=content,
+        avail_mem=avail_mem, sponsor=sponsor, slug=slug,resource=resource)
 
 def create_user(username, email, password):
     # Create a test user as an attribute of ProjectTestCase, for future use
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
+
+def create_course(name, slug, info, term):
+    return Course.objects.create(name=name, slug=slug, info=info, term=term)
 
 
 class ViewProjectTestCase(TestCase):
@@ -40,6 +44,10 @@ class ViewProjectTestCase(TestCase):
     def setUp(self):
         """
         Initialize project, user, and membership objects for use in test methods.
+
+        # Actually not need in this simple test. But will be useful in other tests.
+        # user1 = create_user('user_test1', 'test1@test.com', 'groupthink')
+        # Membership.objects.create(user=user1, project=project1, invite_reason='')
         """
 
     @override_settings(STATICFILES_STORAGE = None)
@@ -51,12 +59,15 @@ class ViewProjectTestCase(TestCase):
         Decorator override_settings to avoid errors with whitenoise when using client().
         """
 
+        # The course is now looked up in view_one_project because it is needed for breadcrumbs.
+        course1 = create_course("Test Course 1", "test-course1", "Test Info", "Test Term")
+
         # Create a test project to be servered
         project1 = create_project("Test Project 1", "user_test1", "Test Tagline 1", 
             "Test Content 1", "test1-slug", "Test Resource 1")
 
-        # Not used in this test but will be used to test other project views.
-        # user1 = create_user('user_test1', 'test1@test.com', 'groupthink')
+        # Add the project to the course many to many field so the course lookup is sucesfull.
+        course1.projects.add(project1)
 
         # Get the response using reverse to load the url with keyword arg: slug of project 1
         response = self.client.get(reverse('view_one_project', kwargs={'slug':project1.slug}))

@@ -32,12 +32,13 @@ def index(request):
     # Populate with defaults for not logged in user
     page_name = "Explore"
     page_description = "Public Projects and Courses"
-    title = "Home"
+    title = "Explore"
     date_updates = None
 
     if request.user.is_authenticated():
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
+        title = "Timeline"
         all_courses = Course.get_my_courses(request.user)
         date_updates = []
         for course in all_courses:
