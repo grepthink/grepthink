@@ -27,8 +27,8 @@ def create_user(username, email, password):
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
 
-def create_course(name, slug, info, term):
-    return Course.objects.create(name=name, slug=slug, info=info, term=term)
+def create_course(name, slug, info):
+    return Course.objects.create(name=name, info=info, slug=slug)
 
 
 class ViewProjectTestCase(TestCase):
@@ -60,7 +60,7 @@ class ViewProjectTestCase(TestCase):
         """
 
         # The course is now looked up in view_one_project because it is needed for breadcrumbs.
-        course1 = create_course("Test Course 1", "test-course1", "Test Info", "Test Term")
+        course1 = create_course("Test Course 1", "test-course1", "Test Info")
 
         # Create a test project to be servered
         project1 = create_project("Test Project 1", "user_test1", "Test Tagline 1", 
