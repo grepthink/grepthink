@@ -36,19 +36,25 @@ def view_projects(request):
     return _projects(request, projects)
 
 
-@login_required
+
 def view_one_project(request, slug):
     """
-    Public method that takes a request and a projecttitle, retrieves the Project object from the model
-    with given projecttitle.  Renders projects/view_project.html
+    Public method that takes a request and a projecttitle, retrieves the Project object 
+    from the model with given projecttitle.  Renders projects/view_project.html
     # TODO: fix up return calls
     """
+
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
-    return render(request, 'projects/view_project.html',
-                  {'project': project,
-                   'updates': updates})
+    # Populate with project name and tagline
+    page_name = project.title or "Project"
+    page_description = project.tagline or "Tagline"
+    title = project.title or "Project"
+
+    return render(request, 'projects/view_project.html', {'page_name': page_name, 
+        'page_description': page_description, 'title' : title,
+        'project': project, 'updates': updates})
 
 
 @login_required

@@ -32,6 +32,7 @@ def index(request):
     # Populate with defaults for not logged in user
     page_name = "Explore"
     page_description = "Public Projects and Courses"
+    title = "Home"
     date_updates = None
 
     if request.user.is_authenticated():
@@ -43,7 +44,8 @@ def index(request):
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {'page_name' : page_name,
-         'page_description' : page_description, 'date_updates' : date_updates})
+         'page_description' : page_description, 'title' : title,
+         'date_updates' : date_updates})
 
 def about(request):
     return render(request, 'core/about.html')
