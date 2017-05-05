@@ -4,12 +4,17 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
+from django.db.models import Q
+from django.contrib.auth.models import User
 
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 
 from .forms import *
 from .models import *
+
+import json
 
 
 def _projects(request, projects):
@@ -60,6 +65,36 @@ def view_one_project(request, slug):
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course})
 
+
+def select_members(request):
+    if request.method == 'POST' and request.is_ajax():
+        # Not sure if db save should be handled here or in create_project
+        selected_members_json = request.POST.get('data')
+
+        print("\n\nDebug: data : " + selected_members_json + "\n\n")
+
+        # Load json user list into a python list of dicts
+        selected_members = json.loads(selected_members_json)
+
+        return HttpResponse("Form Submitted")
+
+    elif request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:            
+            results = User.objects.filter( 
+                Q( first_name__contains = q ) |
+                Q( last_name__contains = q ) |
+                Q( username__contains = q ) ).order_by( 'username' )
+        for u in results:
+            data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
 
 @login_required
 def create_project(request):
