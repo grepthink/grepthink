@@ -246,7 +246,7 @@ def save_event(request, username):
 
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
-
+        print("\n\n%s\n\n"%(event_list))
         # If user already has a schedule, delete it
         if profile.avail.all() is not None: profile.avail.all().delete()
 

@@ -38,6 +38,16 @@ def rand_code(size):
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
 
+def dayasday(day):
+    return {
+        "Sunday": '2017-04-09T',
+        "Monday": '2017-04-10T',
+        "Teusday": '2017-04-11T',
+        "Wednesday": '2017-04-12T',
+        "Thursday": '2017-04-13T',
+        "Friday": '2017-04-14T',
+        "Saturday": '2017-04-15T',
+    }.get(day, '2017-04-00T')
 
 # Given an array, creates a bitstring based on meeting times
 def to_bits(day):
@@ -369,7 +379,21 @@ class Project(models.Model):
 
         # Returns list of possible events
         print("\n\n%s\n\n"%(pos_event))
-        return pos_event
+
+        ajax = []
+        for i in range(len(pos_event)):
+            d = {}
+            d['start'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][1], pos_event[i][2])
+            d['end'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][3], pos_event[i][4])
+            d['title'] = 'Meeting'
+            #print("\n%s\n"%(d))
+            ajax.append(d)
+
+        #print("\n\n%s\n\n"%(ajax))
+
+
+
+        return ajax
 
     @staticmethod
     def get_my_projects(user):
