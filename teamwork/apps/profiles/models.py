@@ -107,10 +107,8 @@ class Alert(models.Model):
         from    - Profile: person sending alert, or None (if System)
         to      - Profile: person receiving alert
         date    - DateTime: time sent
-        type    - str: type of alert (see below)
+        msg     - str: alert body
         read    - boolean: whether alert has been written/marked as read
-        project - Project: relevant project or None
-        course  - Course: relevant course or None
 
     Types:
         'course_inv'    - invitation to a course
@@ -119,16 +117,12 @@ class Alert(models.Model):
     from = models.ForeignKey(User, default=None)
     to = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(max_length=20, default="null")
+    # type = models.CharField(max_length=20, default="null")
+    msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
-    project = models.ForeignKey(Projects)
-    course = models.ForeignKey(Courses)
 
     def __str__(self):
-        if self.type == 'course_inv':
-            return str(self.from) + " has invited you to join " + str(self.course)
-        else:
-            return "Error: No alert type " + self.type
+        return str(self.from) + " -> " + str(self.to) + " : " + str()
 
 
 class Profile(models.Model):
