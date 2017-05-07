@@ -22,15 +22,19 @@
 
                     {% if project.avail_mem %}
                         {% if project.sponsor %}
-                            <div class="box box-solid box-warning">
+                            <div class="box box-solid box-warning"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% else %}
-                            <div class="box box-solid box-danger">
+                            <div class="box box-solid box-success"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% endif %}
                     {% else %}
                         {% if project.sponsor %}
-                            <div class="box box-solid box-success">
+                            <div class="box box-solid box-warning"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% else %}
-                            <div class="box box-solid box-primary">
+                            <div class="box box-solid box-danger"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% endif %}
                     {% endif %}
                     <div class="box-header">
@@ -64,13 +68,13 @@
                             {% endif %}
                         </p>
                         <p>
-                            <strong> 
+                            <strong>Sponsored</strong>
                             {% if project.sponsor %}
-                                THIS PROJECT IS SPONSORED!
+                                Yes
                             {% else %}
-                                THIS PROJECT IS NOT SPONSORED!
+                                No
                             {% endif %}
-                            </strong>
+
                         </p>
                     </div>
                     <div class="box-footer clearfix">

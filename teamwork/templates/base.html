@@ -1,8 +1,8 @@
 {% extends 'adminlte/base.html' %}
 
 {# Generic page title. Pass title in the return dictionary of your view. #}
-{% block title %} 
-{{ title|default:_('Teamwork') }} | {{ site_title|default:_('Teamwork') }} 
+{% block title %}
+{{ title|default:_('Teamwork') }} | {{ site_title|default:_('Teamwork') }}
 {% endblock title %}
 
 {% block meta %}
@@ -31,8 +31,8 @@
 {% block content_header %}
   <section class="content-header">
     <h1>
-        {% block page_name %} 
-          {{ page_name|default:_('Teamwork') }} 
+        {% block page_name %}
+          {{ page_name|default:_('Teamwork') }}
         {% endblock page_name%}
         {% comment %}
           If you don't want a description, copy this into your template:
@@ -42,11 +42,11 @@
         {% endcomment %}
         {% block no_description %}
 
-          <small>
+          <!-- <small>
             {% block page_description %}
             {{ page_description|default:_('Default Description') }}
             {% endblock page_description %}
-          </small>
+          </small> -->
 
         {% endblock no_description %}
     </h1>

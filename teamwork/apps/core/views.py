@@ -23,7 +23,7 @@ def login_view(request):
 
 def index(request):
     """
-    The main index of Teamwork, reffered to as "Home" in the sidebar. 
+    The main index of Teamwork, reffered to as "Home" in the sidebar.
     Accessible to public and logged in users.
     """
     # TODO: get feed of project updates (or public projects) to display on login
@@ -47,10 +47,6 @@ def index(request):
 def about(request):
     return render(request, 'core/about.html')
 
-#Sean testing
-def google_api(request):
-    return render(request, 'core/google_api.html')
-
 @login_required
 def view_matches(request):
     """
@@ -61,39 +57,39 @@ def view_matches(request):
     course_set = []
 
     if request.user.profile.isProf:
-        print("Begin Best Matches")
+        # print("Begin Best Matches")
         courses = Course.get_my_created_courses(request.user)
-        print(courses)
+        # print(courses)
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
-        print(course_set)
-        print(project_match_list)
+        # print(course_set)
+        # print(project_match_list)
     else:
         projects = Project.get_my_projects(request.user)
 
-        print("PROJECTS:")
-        print(projects)
+        # print("PROJECTS:")
+        # print(projects)
 
         for project in projects:
-            print("Project:")
-            print(project)
+            # print("Project:")
+            # print(project)
             p_match = po_match(project)
-            print("p_match:")
-            print(p_match)
+            # print("p_match:")
+            # print(p_match)
             project_match_list.extend([(project, p_match)])
 
-        print("Project Match List:")
-        print(project_match_list)
+        # print("Project Match List:")
+        # print(project_match_list)
 
-        for project in project_match_list:
-            print("project in project_match_list")
-            print(project)
-            print(project[0].title)
-            if project[1]:
-                print(project[1][0].username)
+        # for project in project_match_list:
+            # print("project in project_match_list")
+            # print(project)
+            # print(project[0].title)
+            # if project[1]:
+            #     print(project[1][0].username)
 
     return render(request, 'core/view_matches.html', {
         'project_match_list' : project_match_list, 'course_set': course_set

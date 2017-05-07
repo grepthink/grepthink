@@ -137,8 +137,10 @@ def create_project(request):
 
             # loop through the members in the object and make m2m rows for them
             for i in members:
-                Membership.objects.create(
-                    user=i.user, project=project, invite_reason='')
+                mem_courses = Course.get_my_courses(i.user)
+                if in_course in mem_courses:
+                    Membership.objects.create(
+                        user=i.user, project=project, invite_reason='')
 
             # if user is not a prof
             if not user.isProf:
@@ -188,6 +190,7 @@ def edit_project(request, slug):
             # Clear all memberships to avoid duplicates.
             memberships = Membership.objects.filter(project=project)
             if memberships is not None: memberships.delete()
+
             for i in members:
                 Membership.objects.create(
                     user=i.user, project=project, invite_reason='')
@@ -225,6 +228,12 @@ def post_update(request, slug):
     Post an update for a given project
     """
     project = get_object_or_404(Project, slug=slug)
+
+    if not request.user.username == project.creator and request.user not in project.members.all(
+    ):
+        #redirect them with a message
+        messages.info(request, 'Only current members can post an update for a project!')
+        return HttpResponseRedirect('/project/all')
 
     if request.method == 'POST':
         form = UpdateForm(request.user.id, request.POST)

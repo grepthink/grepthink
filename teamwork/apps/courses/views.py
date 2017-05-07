@@ -2,6 +2,8 @@
 from .models import *
 from .forms import *
 
+from teamwork.apps.projects.models import *
+
 # Django Imports
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import messages

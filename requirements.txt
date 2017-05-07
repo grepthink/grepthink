@@ -7,5 +7,3 @@ Unipath==1.1
 django-adminlte2
 Markdown
 Pillow
-numpy
-google-api-python-client

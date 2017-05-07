@@ -117,8 +117,7 @@ def edit_profile(request, username):
     #handle deleting profile
     elif request.POST.get('delete_profile'):
         page_user = get_object_or_404(User, username=username)
-        page_user.is_active = False
-        page_user.save()
+        page_user.delete()
         return redirect('about')
 
     #original form
