@@ -48,6 +48,18 @@ class Skills(models.Model):
         """
         super(Skills, self).save(*args, **kwargs)
 
+# Converts a number into a weekday
+def dayofweek(number):
+    return {
+        9: "Sunday",
+        10: "Monday",
+        11: "Teusday",
+        12: "Wednesday",
+        13: "Thursday",
+        14: "Friday",
+        15: "Saturday",
+    }.get(number, "Day that doesnt exist")
+
 class Events(models.Model):
     """
     Events: A database model (object) for Events (Availabiliy).
@@ -79,7 +91,8 @@ class Events(models.Model):
     # End time (Minutes)
     end_time_min = models.SmallIntegerField()
     def __str__(self):
-        event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
+        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+        #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
         return event_string
 
     class Meta:

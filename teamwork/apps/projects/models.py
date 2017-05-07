@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import random
 import string
+from math import floor
 
 # Django modules
 from django.contrib.auth.models import User
@@ -37,7 +38,105 @@ def rand_code(size):
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
 
+def dayasday(day):
+    return {
+        "Sunday": '2017-04-09T',
+        "Monday": '2017-04-10T',
+        "Teusday": '2017-04-11T',
+        "Wednesday": '2017-04-12T',
+        "Thursday": '2017-04-13T',
+        "Friday": '2017-04-14T',
+        "Saturday": '2017-04-15T',
+    }.get(day, '2017-04-00T')
 
+# Given an array, creates a bitstring based on meeting times
+def to_bits(day):
+    # Creates array of all 0's of length 48
+    bitstring = [False]*48
+    # Loops through each Event in array
+    for event in day:
+        # Start = double start hour (30 min intervals)
+        start = 2*event.start_time_hour
+        # End = double End hour (30 min intervals)
+        end = 2*event.end_time_hour
+
+        # SPECIAL CASE: Because 12a == 0, we manually set end to 47
+        if event.end_time_hour == 0:
+            end = 47
+
+
+        for i in range (start, end+1):
+            bitstring[i] = True
+        # If we ended in XX:30, block off next bit
+        if event.end_time_min == 30:
+            bitstring[end+1] = True
+
+
+    # Manually block off 12a - 8a and 9p - 12a
+    for x in range(0, 17):
+        bitstring[x] = True
+    for x in range(42, 48):
+        bitstring[x] = True
+
+    return bitstring
+
+#given a bitstring, converts to array containing start and end time
+def from_bits(bitstring):
+    event_array = []
+    temp = 0
+    start_hour = 0
+    start_min = 0
+    end_hour = 0
+    end_minute = 0
+
+    i = 0
+    # For each index in bitstring
+    while i < len(bitstring):
+        # If current index is False (Free)
+        if bitstring[i] is False:
+            # If odd, start at xx:30
+            if i % 2 != 0:
+                start_min = 30
+            # Start hour is i/2
+            start_hour = floor(i/2)
+
+            # Loops until True (Busy)
+            temp = i
+            while bitstring[temp] == False:
+                # If next element is True (Busy), we are at end of time slot
+
+                # Getting out of range Here
+                # What to do if last element in array?
+                if temp == len(bitstring) - 1:
+                    # Update i
+                    i = temp
+                    # If odd, end at xx:30
+                    if i % 2 != 0:
+                        end_min = 30
+                    # End hour is i/2
+                    end_hour = floor(i/2)
+                    break
+
+                elif bitstring[temp + 1] == True:
+                    # Update i
+                    i = temp
+                    # If odd, end at xx:30
+                    if i % 2 != 0:
+                        end_min = 30
+                    # End hour is i/2
+                    end_hour = floor(i/2)
+                    break
+
+                # Increase temp
+                temp += 1
+
+            # Add event to array
+            event_array.append([start_hour, start_min, end_hour, end_min])
+
+        # Update iterator
+        i=i+1
+
+    return event_array
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -88,10 +187,13 @@ class Project(models.Model):
     resource = models.TextField(
         max_length=4000, default="*No resources provided*")
 
-    interest = models.ManyToManyField(Interest, default='')
+    interest = models.ManyToManyField(Interest, default=None)
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
+
+    # meetings - Availabiliy as an ajax string
+    meetings = models.TextField(default='')
 
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
@@ -109,7 +211,12 @@ class Project(models.Model):
         Human readeable representation of the Project object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return self.title
+        mem = ""
+        for m in self.members.all():
+            mem += "\t%s\n"%(m.username)
+
+        info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator, mem, self.avail_mem, self.sponsor, self.slug)
+        return info
 
     def save(self, *args, **kwargs):
         """
@@ -136,68 +243,7 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
-    # Given an array, creates a bitstring based on meeting times
-    def to_bits(day):
-        # Creates array of all 0's of length 48
-        bitstring = [False]*48
 
-        # Loops through each Event in array
-        for event in day:
-            # Start time - End time to get # of slots to block off
-            diff = event.end_time_hour - event.start_time_hour
-            # Doubles because we are using 30 minute intervals
-            diff *= 2
-            # Blocks off times
-            for i in diff:
-                bitstring[(event.start_time_hour - 1) + i] = True
-            # If we ended in XX:30, block off next bit
-            if event.end_time_min == 30:
-                bitstring[event.end_time_hour] = True
-
-        # Manually block off 12a - 8a and 10p - 12a
-        for x in range(0, 16):
-            bitstring[x] = True
-        for x in range(44, 47):
-            bitstring[x] = True
-
-        return bitstring
-
-    #given a bitstring, converts to array containing start and end time
-    def from_bits(bitstring):
-        event_array = []
-        temp = 0
-        start_hour = 0
-        start_min = 0
-        end_hour = 0
-        end_minute = 0
-
-        # For each index in bitstring
-        for i in bitstring:
-            # If current index is False (Free)
-            if bitstring[i] is False:
-                # If odd, start at xx:30
-                if i % 2 != 0:
-                    start_min = 30
-                # Start hour is i/2
-                start_hour = floor(i/2)
-
-                # Loops until True (Busy)
-                temp = i
-                while bitstring[temp] == False:
-                    # If next element is True (Busy), we are at end of time slot
-                    if bitstring[temp + 1] == True:
-                        # Update i
-                        i = temp
-                        # If odd, end at xx:30
-                        if i % 2 != 0:
-                            end_min = 30
-                        # End hour is i/2
-                        end_hour = floor(i/2)
-                    # Increase temp
-                    temp += 1
-                event_array.append([start_hour, start_min, end_hour, end_min])
-
-        return event_array
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
     def generate_avail(self):
         event_list = []     # list of all events for each user
@@ -205,32 +251,25 @@ class Project(models.Model):
         temp = []
 
         sunday_list = []
-        sunday_post = []
 
         monday_list = []
-        monday_post = []
 
         teusday_list = []
-        teusday_post = []
 
         wednesday_list = []
-        wednesday_post=[]
 
         thursday_list = []
-        thursday_post = []
 
         friday_list = []
-        friday_post = []
 
         saturday_list = []
-        saturday_post = []
 
         # Loops through each member
-        for user in self.members:
+        for user in self.members.all():
             # Loops through each event
-            for event in user.avail:
+            for event in user.profile.avail.all():
                 # adds to list
-                event_list.append(user.avail)
+                event_list.append(event)
 
         # Sorts each event into respective days
         for i in event_list:
@@ -249,45 +288,58 @@ class Project(models.Model):
             if i.day == "Saturday":
                 saturday_list.append(i)
 
-            # Converts to and from bitstring to find FREE time
-            sunday_list = to_bits(sunday_list)
-            sunday_list = from_bits(sunday_list)
-            # Appends to list
-            for i in sunday_list:
-                pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
 
-            monday_list = to_bits(monday_list)
-            monday_list = from_bits(monday_list)
-            for i in monday_list:
-                pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
+        # Converts to and from bitstring to find FREE time
+        sunday_list = to_bits(sunday_list)  #this is working
+        sunday_list = from_bits(sunday_list)    #this is now working
+        # Appends to list
+        for i in sunday_list:
+            pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
 
-            teusday_list = to_bits(teusday_list)
-            teusday_list = from_bits(teusday_list)
-            for i in teusday_list:
-                pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
+        monday_list = to_bits(monday_list)
+        monday_list = from_bits(monday_list)
+        for i in monday_list:
+            pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
 
-            wednesday_list = to_bits(wednesday_list)
-            wednesday_list = from_bits(wednesday_list)
-            for i in wednesday_list:
-                pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
+        teusday_list = to_bits(teusday_list)
+        teusday_list = from_bits(teusday_list)
+        for i in teusday_list:
+            pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
 
-            thursday_list = to_bits(thursday_list)
-            thursday_list = from_bits(thursday_list)
-            for i in thursday_list:
-                pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
+        wednesday_list = to_bits(wednesday_list)
+        wednesday_list = from_bits(wednesday_list)
+        for i in wednesday_list:
+            pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
 
-            friday_list = to_bits(friday_list)
-            friday_list = from_bits(friday_list)
-            for i in friday_list:
-                pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
+        thursday_list = to_bits(thursday_list)
+        thursday_list = from_bits(thursday_list)
+        for i in thursday_list:
+            pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
 
-            saturday_list = to_bits(saturday_list)
-            saturday_list = from_bits(saturday_list)
-            for i in saturday_list:
-                pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
+        friday_list = to_bits(friday_list)
+        friday_list = from_bits(friday_list)
+        for i in friday_list:
+            pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
+
+        saturday_list = to_bits(saturday_list)
+        saturday_list = from_bits(saturday_list)
+        for i in saturday_list:
+            pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
 
         # Returns list of possible events
-        return pos_event
+
+        ajax = []
+        for i in range(len(pos_event)):
+            # d is a dictionary
+            d = {}
+            d['start'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][1], pos_event[i][2])
+            d['end'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][3], pos_event[i][4])
+            d['title'] = 'Meeting'
+            # appends dictionary to list
+            ajax.append(d)
+
+        # returns list of dictionaries
+        return ajax
 
     @staticmethod
     def get_my_projects(user):

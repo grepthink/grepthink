@@ -73,17 +73,6 @@ def view_profile(request, username):
     # gets all projects where user has interest
     my_projects = Project.objects.filter(interest__in=my_interests)
 
-    """
-    print("\n\n")
-    for p in my_projects:
-        interest_in_project = p.interest.all()
-        print(p.title)
-        for i in interest_in_project:
-            print(i.interest)
-            print(i.interest_reason)
-    print("\n\n")
-    """
-
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
         'page_user': page_user, 'profile':profile
@@ -232,27 +221,53 @@ def edit_schedule(request, username):
 
 @csrf_exempt
 def save_event(request, username):
-
-    # print("\n\nDebug: request.method = " + request.method + "\n\n")
+    #grab profile for the current user
+    profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST' and request.is_ajax():
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
 
-        # print("\n\nDebug: jsonEvents = " + jsonEvents + "\n\n")
-
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
-        # print("\n\nDebug: event_list = \n")
-        # print(event_list)
-        # print("\n")
+        # If user already has a schedule, delete it
+        if profile.avail.all() is not None: profile.avail.all().delete()
 
+        # For each event
         for event in event_list:
-            # @TODO: Save events to user profile
-            print("Event Start " + event['start'])
-            print("Event End " + event['end'])
+            # Create event object
+            busy = Events()
+
+            # Get data
+            #function assumes start day and end day are the same
+            day = event['start'][8] + event['start'][9]
+            day = int(day)
+            s_hour = event['start'][11] + event['start'][12]
+            s_minute = event['start'][14] + event['start'][15]
+
+            s_hour = int(s_hour)
+            s_minute = int(s_minute)
+
+            e_hour = event['end'][11] + event['end'][12]
+            e_minute = event['end'][14] + event['end'][15]
+            e_hour = int(e_hour)
+            e_minute = int(e_minute)
+
+            # Assign data
+            busy.day = dayofweek(day)
+            busy.start_time_hour = s_hour
+            busy.start_time_min = s_minute
+            busy.end_time_hour = e_hour
+            busy.end_time_min = e_minute
+
+            # Save event
+            busy.save()
+
+            profile.avail.add(busy)
+            profile.save()
+
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")

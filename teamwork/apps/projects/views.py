@@ -45,6 +45,7 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
+
     return render(request, 'projects/view_project.html',
                   {'project': project,
                    'updates': updates})
@@ -253,5 +254,19 @@ def find_meeting(request, slug):
     """
     Find and store possible meeting time for a given project
     """
+    # Gets current project
+    project = get_object_or_404(Project, slug=slug)
+
+    # If project already has a list of meeting times, delete it
+    if project.meetings is not None: project.meetings.delete()
+
+    # Stores avaliablity in list
+    event = project.generate_avail
+
+    # Adds meeting to model
+    project.meetings.add(event)
+    project.save()
+
+
     return render(request, 'projects/view_projects.html',
                   {'projects': projects})
