@@ -9,6 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
 
+
 # profiles is already imported from projects, not necessary here
 
 
@@ -44,7 +45,7 @@ def po_match(project):
     course = next(course for course in Course.objects.all() if project in
             course.projects.all())
     if course.limit_weights:
-        print("po_match values overridden by course instructor")
+        # print("po_match values overridden by course instructor")
         interestWeight = course.weigh_interest or 1
         knowWeight = course.weigh_know or 1
         learnWeight = course.weigh_learn or 1
@@ -53,11 +54,8 @@ def po_match(project):
         interestWeight = project.weigh_interest or course.weigh_interest or 1
         knowWeight = project.weigh_know or course.weigh_know or 1
         learnWeight = project.weigh_learn or course.weigh_learn or 1
-    # interest matching
-    print("po_match called with", dict(interest=interestWeight, know=knowWeight,
-        learn=learnWeight))
+
     interested = project.interest.all()
-    print("interest")
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
@@ -105,8 +103,34 @@ def po_match(project):
     if len(set(initial.keys())) < 10:
         initial.update(backup)
 
-    print(initial)
-
     return sort(initial)
     # past classes match
     # scheduling match
+
+def auto_ros(course, teamSize):
+    match_list = []
+    all_projects = course.projects.all()
+    assigned = []
+    roster = []
+
+    # Get all the base matches for ALL projects
+    for pro in all_projects:
+        p_match = po_match(pro)
+        match_list.extend([(pro, p_match, len(p_match))])
+
+    sorted_list = match_list.sort(key=lambda x: x[2])
+
+    for x in match_list:
+        temp_team = []
+        for y in range(0, x[2]):
+            temp_user = x[1][y]
+            if len(temp_team) == teamSize:
+                break
+            elif temp_user in assigned:
+                continue
+            else:
+                temp_team.append(temp_user)
+                assigned.append(temp_user)
+        roster.extend([x[0], temp_team])
+
+    return roster
