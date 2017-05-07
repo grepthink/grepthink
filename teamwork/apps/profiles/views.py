@@ -73,17 +73,6 @@ def view_profile(request, username):
     # gets all projects where user has interest
     my_projects = Project.objects.filter(interest__in=my_interests)
 
-    """
-    print("\n\n")
-    for p in my_projects:
-        interest_in_project = p.interest.all()
-        print(p.title)
-        for i in interest_in_project:
-            print(i.interest)
-            print(i.interest_reason)
-    print("\n\n")
-    """
-
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
         'page_user': page_user, 'profile':profile
@@ -235,18 +224,15 @@ def edit_schedule(request, username):
 def save_event(request, username):
     #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
-    # print("\n\nDebug: request.method = " + request.method + "\n\n")
 
     if request.method == 'POST' and request.is_ajax():
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
 
-        # print("\n\nDebug: jsonEvents = " + jsonEvents + "\n\n")
-
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
-        print("\n\n%s\n\n"%(event_list))
+
         # If user already has a schedule, delete it
         if profile.avail.all() is not None: profile.avail.all().delete()
 

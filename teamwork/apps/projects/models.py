@@ -70,7 +70,6 @@ def to_bits(day):
         # If we ended in XX:30, block off next bit
         if event.end_time_min == 30:
             bitstring[end+1] = True
-        #print("END: %d"%(end))
 
 
     # Manually block off 12a - 8a and 9p - 12a
@@ -138,59 +137,6 @@ def from_bits(bitstring):
         i=i+1
 
     return event_array
-class Meetings(models.Model):
-    """
-    Events: A database model (object) for Events (Availabiliy).
-
-    Fields:
-        event_name: a field that contains the name of a skill
-        day: Day of week
-        start_time_hour: Hour an event starts (1-24)
-        start_time_minute: Minute an event starts (1-60)
-        end_time_hour: Hour an event ends (1-24)
-        end_time_minute: Minute an event ends (1-60)
-
-
-    Methods:
-        __str__(self):                  Human readeable representation of the Event object.
-        save(self, *args, **kwargs):    Overides the default save operator...
-
-        """
-    # Day (Is this a character?)
-    day = models.CharField(max_length=255,default="")
-
-    # Times stored in 24h format
-    # Start time (Hours)
-    start_time_hour = models.SmallIntegerField()
-    # Start time (Minutes)
-    start_time_min = models.SmallIntegerField()
-    # End time (Hours)
-    end_time_hour = models.SmallIntegerField()
-    # End time (Minutes)
-    end_time_min = models.SmallIntegerField()
-    def __str__(self):
-        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
-        #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
-        return event_string
-
-    class Meta:
-        # Verbose name is the same as class name in this case.
-        verbose_name = "Event"
-        # Multiple Event objects are referred to as Projects.
-        verbose_name_plural = "Events"
-        ordering = ('day',)
-
-    def save(self, *args, **kwargs):
-        """
-        Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
-        """
-        super(Meetings, self).save(*args, **kwargs)
-
-
-
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -241,13 +187,13 @@ class Project(models.Model):
     resource = models.TextField(
         max_length=4000, default="*No resources provided*")
 
-    interest = models.ManyToManyField(Interest, default='')
+    interest = models.ManyToManyField(Interest, default=None)
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
-    # meeting - Availabiliy
-    meeting = models.ManyToManyField(Meetings)
+    # meetings - Availabiliy as an ajax string
+    meetings = models.TextField(default='')
 
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
@@ -265,7 +211,12 @@ class Project(models.Model):
         Human readeable representation of the Project object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return self.title
+        mem = ""
+        for m in self.members.all():
+            mem += "\t%s\n"%(m.username)
+
+        info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator, mem, self.avail_mem, self.sponsor, self.slug)
+        return info
 
     def save(self, *args, **kwargs):
         """
@@ -283,7 +234,6 @@ class Project(models.Model):
             newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
-                #print(Project.objects.filter(slug=newslug).exists())
                 newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
@@ -315,10 +265,8 @@ class Project(models.Model):
 
         # Loops through each member
         for user in self.members.all():
-            print("%s:"%(user))
             # Loops through each event
             for event in user.profile.avail.all():
-                print("     %s"%(event))
                 # adds to list
                 event_list.append(event)
 
@@ -378,21 +326,18 @@ class Project(models.Model):
             pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
 
         # Returns list of possible events
-        print("\n\n%s\n\n"%(pos_event))
 
         ajax = []
         for i in range(len(pos_event)):
+            # d is a dictionary
             d = {}
             d['start'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][1], pos_event[i][2])
             d['end'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][3], pos_event[i][4])
             d['title'] = 'Meeting'
-            #print("\n%s\n"%(d))
+            # appends dictionary to list
             ajax.append(d)
 
-        #print("\n\n%s\n\n"%(ajax))
-
-
-
+        # returns list of dictionaries
         return ajax
 
     @staticmethod

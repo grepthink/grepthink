@@ -45,7 +45,6 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
-    #project.generate_avail()
 
     return render(request, 'projects/view_project.html',
                   {'project': project,
@@ -250,23 +249,14 @@ def find_meeting(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     # If project already has a list of meeting times, delete it
-    #if project.meeting.all() is not None: project.meeting.all().delete()
+    if project.meetings is not None: project.meetings.delete()
 
-    # Stores avaliablity in array
-    #event = project.generate_avail
+    # Stores avaliablity in list
+    event = project.generate_avail
 
-    # Create Event object
-    #free = Meetings()
-    #for e in event:
-    #    free.day = event[0]
-    #    free.start_time_hour = event[1]
-    #    free.start_time_min = event[2]
-    #    free.end_time_hour = event[3]
-    #    free.end_time_min = event[4]
-    #    free.save()
-
-    #    project.meeting.add(free)
-    #    project.save()
+    # Adds meeting to model
+    project.meetings.add(event)
+    project.save()
 
 
     return render(request, 'projects/view_projects.html',
