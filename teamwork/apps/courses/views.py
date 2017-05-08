@@ -119,11 +119,12 @@ def join_course(request):
     Public method that takes a request, renders form that enables a user
     to add a course, renders in join_course.html
     """
-    if request.method == 'POST':
 
-        page_name = "Join Course"
-        page_description = "Join a Course!"
-        title = "Join Course"
+    page_name = "Join Course"
+    page_description = "Join a Course!"
+    title = "Join Course"
+    
+    if request.method == 'POST':
         # send the current user.id to filter out
         form = JoinCourseForm(request.user.id,request.POST)
         #if form is accepted
