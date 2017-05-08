@@ -37,7 +37,8 @@ def view_courses(request):
     #else returns a list of courses the user is enrolled in
     else:
         all_courses = Course.get_my_courses(request.user)
-        return _courses(request, all_courses)
+        
+    return _courses(request, all_courses)
 
 
 @login_required
