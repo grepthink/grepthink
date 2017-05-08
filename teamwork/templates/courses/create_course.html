@@ -13,10 +13,6 @@
     <li><a href="{% url 'create_course' %}">Create a new course</a></li>
 </ol>
 
-<div class="page-header">
-    <h1> Create Course </h1>
-</div>
-
 <form action="{% url 'create_course' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}

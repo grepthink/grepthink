@@ -14,15 +14,6 @@
     </li>
 </ol>
 
-<h2 class="page-header">
-    {{ course.name }}
-    <i class="fa fa-graduation-cap"></i>
-    <i class="pull-right">
-        <b>{{ course.term }}</b>
-        {{ course.year }}
-    </i>
-</h2>
-
 <div>
     {% if user.username == course.creator %}
     <div class="alert alert-success" role="alert">

@@ -10,9 +10,6 @@
 {% endblock head %}
 
 {% block content %}
-<div class="page-header">
-    <h1> Statistics </h1>
-</div>
 <section class="statistics">
     <div class="My Courses">
             <div class="col-sm-6 col-md-4">
@@ -39,7 +36,7 @@
                             {% endfor %}
                         </p>
                         <p>
-                            <h7>Students Not in Projects: {{students_projects_not|length}} 
+                            <h7>Students Not in Projects: {{students_projects_not|length}}
                             </h7>
                             {% for student in students_projects_not %}
                                 <h8>

@@ -7,9 +7,6 @@
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
-    <h1> Join Course by add code </h1>
-  </div>
   <form action="{% url 'join_course' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
