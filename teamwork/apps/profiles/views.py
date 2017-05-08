@@ -277,3 +277,15 @@ def save_event(request, username):
 
 
     return HttpResponse("Failure")
+
+@login_required
+def view_alerts(request):
+
+    user = request.user
+
+    alerts = Alert.objects.filter(sender=user)
+
+    return render(request, 'profiles/alerts.html', {
+        'alerts': alerts
+        })
+

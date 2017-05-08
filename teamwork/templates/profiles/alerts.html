@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
+
+{% block content %}
+
+{% for alert in alerts %}
+<p>{{ alert.msg }}</p>
+{% empty %}
+    <p>There are no alerts</p>
+{% endfor %}
+
+{% endblock content %}
+

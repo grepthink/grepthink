@@ -117,7 +117,7 @@ class Alert(models.Model):
     Alert: A notification directed to a specific user
 
     Fields:
-        from    - Profile: person sending alert, or None (if System)
+        sender  - Profile: person sending alert, or None (if System)
         to      - Profile: person receiving alert
         date    - DateTime: time sent
         msg     - str: alert body
@@ -127,15 +127,15 @@ class Alert(models.Model):
         'course_inv'    - invitation to a course
     """
 
-    from = models.ForeignKey(User, default=None)
-    to = models.ForeignKey(User)
+    sender = models.ForeignKey(User, default=None, related_name="sender")
+    to = models.ForeignKey(User, related_name="to")
     date = models.DateTimeField(auto_now_add=True)
     # type = models.CharField(max_length=20, default="null")
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.from) + " -> " + str(self.to) + " : " + str()
+        return str(self.sender) + " -> " + str(self.to) + " : " + str()
 
 
 class Profile(models.Model):
