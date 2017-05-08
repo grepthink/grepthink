@@ -18,41 +18,63 @@
             <div class="col-sm-6 col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h2 class="panel-title">{{ cur_course.name}}
+                        <h2 class="panel-title"><b>Students:</b> {{cleanup_students|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                            {% for student in cleanup_students %}
+                                <li>{{student}}</li>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Projects:</b> {{cleanup_projects|length}}
                         </h2>
                     </div>
                     <div class="panel-body">
                         <p>
-                            <h3>Students: {{cleanup_students|length}} </h3>
-                            {% for student in cleanup_students %}
-                                <h4>
-                                <li>{{student}}</li>
-                                </h4>
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <h5>Projects: {{cleanup_projects|length}} </h5>
                             {% for project in cleanup_projects %}
-                                <h6>
-                                <li>{{project}}</li>
-                                </h6>
+                                <li>{{project.title}}</li>
+                                <ul>
+                                    {% for mem in project.members.all %}
+                                        <li>{{mem}}</li>
+
+                                    {% endfor %}
+                                </ul>
                             {% endfor %}
                         </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Students Not in Projects:</b> {{students_projects_not|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body">
                         <p>
-                            <h7>Students Not in Projects: {{students_projects_not|length}} 
-                            </h7>
                             {% for student in students_projects_not %}
-                                <h8>
                                 <li>{{student}}</li>
-                                </h8>
                             {% endfor %}
                         </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Emails:</b> {{emails|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body">
                         <p>
-                            <h9>Emails: {{emails|length}} </h9>
                             {% for student_email in emails %}
-                                <h10>
                                 <li>{{student_email}}</li>
-                                </h10>
                             {% endfor %}
                         </p>
                     </div>

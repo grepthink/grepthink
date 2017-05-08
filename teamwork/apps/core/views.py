@@ -32,8 +32,9 @@ def index(request):
     page_name = "Explore"
     page_description = "Public Projects and Courses"
     date_updates = None
+    logged_in = request.user.is_authenticated();
 
-    if request.user.is_authenticated():
+    if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
         all_courses = Course.get_my_courses(request.user)
@@ -42,7 +43,8 @@ def index(request):
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {'page_name' : page_name,
-         'page_description' : page_description, 'date_updates' : date_updates})
+         'page_description' : page_description, 'date_updates' : date_updates,
+         'logged_in': logged_in})
 
 def about(request):
     return render(request, 'core/about.html')
