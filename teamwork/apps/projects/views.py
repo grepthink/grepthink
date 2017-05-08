@@ -101,6 +101,10 @@ def create_project(request):
     """
     Public method that creates a form and renders the request to create_project.html
     """
+    # Populate page info with new project headers/title
+    page_name = "Create Project"
+    page_description = "Post a new project"
+    title = "Create Project"
     user_id = request.user.id
     user = Profile.objects.get(user=user_id)
     #enrollment objects containing current user
@@ -126,6 +130,13 @@ def create_project(request):
         return HttpResponseRedirect('/')
 
     if request.method == 'POST':
+        # Not sure if db save should be handled here or in create_project
+        selected_members_json = request.POST.get('data.q')
+
+        #print("\n\nDebug: data : " + selected_members_json + "\n\n")
+
+        # Load json user list into a python list of dicts
+        selected_members = json.loads(selected_members_json)
         form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # create an object for the input
@@ -143,6 +154,7 @@ def create_project(request):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
 
             project.save()
+
 
             # Handle desired skills
             desired = form.cleaned_data.get('desired_skills')
@@ -194,10 +206,6 @@ def create_project(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
     else:
-        # Populate page info with new project headers/title
-        page_name = "Create Project"
-        page_description = "Post a new project"
-        title = "Create Project"
         # Send form for initial project creation
         form = ProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'page_name': page_name, 

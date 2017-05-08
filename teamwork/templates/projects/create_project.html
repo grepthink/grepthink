@@ -111,6 +111,8 @@ $(document).ready(function() {
 {# Old form below #}
 <br><br><br>
 
+{% comment %}
+
 <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
@@ -129,6 +131,6 @@ $(document).ready(function() {
     <input type="submit" value="Post Project">
 </form>
 
-
+{% endcomment %}
 
 {% endblock content %}
