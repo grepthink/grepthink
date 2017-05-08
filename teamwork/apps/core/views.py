@@ -2,16 +2,17 @@
 Core views provide main site functionality.
 
 """
-from .models import *
-from .forms import *
-
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
+
+from .forms import *
+from .models import *
+
 
 def login_view(request):
     if request.user.is_authenticated():
@@ -31,18 +32,21 @@ def index(request):
     # Populate with defaults for not logged in user
     page_name = "Explore"
     page_description = "Public Projects and Courses"
+    title = "Explore"
     date_updates = None
 
     if request.user.is_authenticated():
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
+        title = "Timeline"
         all_courses = Course.get_my_courses(request.user)
         date_updates = []
         for course in all_courses:
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {'page_name' : page_name,
-         'page_description' : page_description, 'date_updates' : date_updates})
+         'page_description' : page_description, 'title' : title,
+         'date_updates' : date_updates})
 
 def about(request):
     return render(request, 'core/about.html')

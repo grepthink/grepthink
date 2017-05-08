@@ -6,27 +6,27 @@ Database Models for the objects: Project, Membership, Intrest, ProjectUpdate
 
 # Built-in modules
 from __future__ import unicode_literals
-from datetime import datetime
+
 import random
 import string
 from math import floor
-
-# Django modules
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-import numpy as np
-
-# Not used currently
-from django.db.models import Q
+from datetime import datetime
 
 # Third-party Modules
 import markdown
+import numpy as np
+# Django modules
+from django.contrib.auth.models import User
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+# Not used currently
+from django.db.models import Q
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
-# Local Modules
 from teamwork.apps.profiles.models import *
+
+
 # from teamwork.apps.courses.models import Course
 # can't do this, would cause dependency loop :(
 

@@ -1,15 +1,17 @@
 # import of other files in app
-from .models import *
-from .forms import *
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+# Django Imports
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
+from django.shortcuts import get_object_or_404, redirect, render
 
 from teamwork.apps.projects.models import *
 
-# Django Imports
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.contrib import messages
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+from .forms import *
+from .models import *
+
 
 def _courses(request, courses):
     """

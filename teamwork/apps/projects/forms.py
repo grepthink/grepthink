@@ -8,13 +8,10 @@ Used when creating/editing/deleting projects, adding project updates, and showin
 from django import forms
 from django.db.models import *
 
-# Local modules
-# Import project database models
-from .models import *
-# Import course database models
 from teamwork.apps.courses.models import *
-# Import profile database models
 from teamwork.apps.profiles.models import *
+
+from .models import *
 
 
 class ProjectForm(forms.ModelForm):

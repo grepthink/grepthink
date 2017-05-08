@@ -1,17 +1,19 @@
-from .models import *
-from .forms import *
+import json
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from teamwork.apps.projects.models import *
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.contrib import messages
-from teamwork.apps.profiles.forms import SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
-import json
+from teamwork.apps.profiles.forms import SignUpForm
+from teamwork.apps.projects.models import *
+
+from .forms import *
+from .models import *
 
 
 def signup(request):
