@@ -81,10 +81,11 @@ def auto_gen(request, slug):
     """
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
-    teamSize = 4
+    teamSize = 5
 
     auto = auto_ros(course, teamSize)
+    print(auto)
 
     return render(request, 'core/auto_gen.html', {
-        'project_match_list' : project_match_list, 'course': course
+        'auto_gen' : auto, 'course': course
         })

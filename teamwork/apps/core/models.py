@@ -59,7 +59,7 @@ def po_match(project):
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        if i.user not in project.members.all():
+        if i.user not in project.members.all() and project not in Project.get_created_projects(i.user):
             initial[i.user] = (i.interest * interestWeight)
 
     # Skill Matching
@@ -69,14 +69,15 @@ def po_match(project):
     for i in desired_skills:
         know = i.known.all()
         for j in know:
+            cur_course = Course.get_my_courses(j.user)
             # if is to allow for updating the score of users already counted
-            if j.user not in project.members.all():
+            if j.user not in project.members.all() and project not in Project.get_created_projects(j.user):
                 if j.user in initial:
                     temp = initial[j.user]
                     temp += (2 * knowWeight)
                     initial[j.user] = temp
                 # otherwise we add them to a backup list
-                else:
+                elif course in cur_course:
                     if j.user in backup:
                         temp = backup[j.user]
                         temp += (2 * knowWeight)
@@ -85,12 +86,13 @@ def po_match(project):
                         backup[j.user] = 2
         learn = i.learn.all()
         for k in learn:
-            if k.user not in project.members.all():
+            cur_course = Course.get_my_courses(j.user)
+            if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
                 if k.user in initial:
                     temp = initial[k.user]
                     temp += (1 * learnWeight)
                     initial[k.user] = temp
-                else:
+                # elif course in cur_course:
                     if k.user in backup:
                         temp = backup[k.user]
                         temp += (2 * learnWeight)
@@ -118,19 +120,35 @@ def auto_ros(course, teamSize):
         p_match = po_match(pro)
         match_list.extend([(pro, p_match, len(p_match))])
 
+    # Sort the list of projects from least interest to most
     sorted_list = match_list.sort(key=lambda x: x[2])
 
+    # Mark all curent memebers as assigned before assigning
+    for z in match_list:
+        for mem in z[0].members.all():
+            assigned.append(mem)
+
+    # Now Generate suggested rosters
     for x in match_list:
         temp_team = []
+        # loop through the suggested members
         for y in range(0, x[2]):
             temp_user = x[1][y]
+            # exit loop if the team is full
             if len(temp_team) == teamSize:
                 break
-            elif temp_user in assigned:
+            # skip the person if they have already been assigned
+            elif (temp_user in assigned) or (temp_user in x[0].members.all()):
                 continue
+            # do the actually assignment
             else:
+                # add the user to the suggested team
                 temp_team.append(temp_user)
+                # flag the user as assigned
                 assigned.append(temp_user)
-        roster.extend([x[0], temp_team])
-
+        # add the project and team to the roster
+        roster.append([x[0], temp_team])
+    for p in roster:
+        for mem in p[1]:
+            Membership.objects.create(user=mem, project=p[0], invite_reason='')
     return roster

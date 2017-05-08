@@ -78,7 +78,7 @@
                         </p>
                     </div>
                     <div class="box-footer clearfix">
-                      {% if request.user.username == project.creator or request.user in project.members.all %}
+                      {% if request.user.username == project.creator %}
                         <a href="{% url 'edit_project' project.slug %}">
                             <button class="btn btn-success">
                                 <i class="fa fa-edit"></i>
