@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %} Potential Roster {% endblock %}
+
+{% block head %}
+<link href="{% static 'css/projects.css' %}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
+<div class="page-header">
+    <h1> Potential Roster </h1>
+</div>
+<div>
+    <button class="btn btn-success">
+        Set Roster
+    </button>
+</div>
+<section class="prof-matches">
+{% for i in auto_gen %}
+    <div class="col-sm-6 col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ i.0.title }}</h3>
+            </div>
+            <div class="panel-body">
+                <p>
+                    <strong>Owner</strong>
+                    <span class="label label-success">
+                        {{ i.0.creator }}
+                    </span>
+                </p>
+                <p>
+                    <strong>Current Members</strong>
+                    {% for mem in i.0.members.all %}
+                        {% if mem.username != null %}
+                        <a href="{% url 'profile' mem.username %}">
+                        <span class="label label-primary">
+                                <i class="fa fa-user"></i>
+                                {{ mem.username }}
+                        </span>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                <!-- <p>The following students may work well with this project: </p>
+                <p>
+                <ol>
+                    {% for match in i.1 %}
+                    <li>
+                        <a href="{% url 'profile' match.username %}">
+                        <span class="label label-primary">
+                            <i class="fa fa-user"></i>
+                            {{ match.username }}
+                        </span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ol>
+                </p> -->
+            </div>
+
+        </div>
+    </div>
+{% empty %}
+    {# If the projects list is empty, display empty message #}
+    <div class="alert alert-warning" role="alert">
+        <i class="fa fa-warning"></i>
+        Could not generate a roster
+    </div>
+{% endfor %}
+</section>
+
+{% endblock content %}
