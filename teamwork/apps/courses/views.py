@@ -18,10 +18,13 @@ def _courses(request, courses):
     Private method that will be used for paginator once I figure out how to get it working.
     """
     page = request.GET.get('page')
+    page_name = "Courses"
+    page_description = "Course List"
+    title = "Courses"
 
     return render(request,
             'courses/view_courses.html',
-            {'courses': courses,}
+            {'courses': courses,'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 @login_required
@@ -31,13 +34,14 @@ def view_courses(request):
     then calls _projects to render the request to template view_projects.html
     """
 
-    #If user is a professor, they can see all courses they have created
+    # If user is a professor, they can see all courses they have created
     if request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
-    #else returns a list of courses the user is enrolled in
+    # else returns a list of courses the user is enrolled in
     else:
         all_courses = Course.get_my_courses(request.user)
-        
+
+    # Returns all courses
     return _courses(request, all_courses)
 
 
