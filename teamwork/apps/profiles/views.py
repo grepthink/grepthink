@@ -20,6 +20,11 @@ def signup(request):
     """
     public method that generates a form a user uses to sign up for an account
     """
+
+    page_name = "Signup"
+    page_description = "Sign up for Groupthink!"
+    title = "Signup"
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if not form.is_valid():
@@ -58,7 +63,7 @@ def signup(request):
 
     else:
         return render(request, 'profiles/signup.html',
-                      {'form': SignUpForm()})
+                      {'form': SignUpForm(), 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
 def view_profile(request, username):
@@ -69,6 +74,9 @@ def view_profile(request, username):
     """
     user = request.user
     profile = Profile.objects.get(user=user)
+    page_name = "Profile"
+    page_description = "%s's Profile"%(user.username)
+    title = "View Profile"
 
     # gets all interest objects of the current user
     my_interests = Interest.objects.filter(user=user)
@@ -77,7 +85,7 @@ def view_profile(request, username):
 
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile
+        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
         })
 
 
@@ -97,6 +105,10 @@ def edit_profile(request, username):
 
     #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
+
+    page_name = "Edit Profile"
+    page_description = "Edit %s's Profile"%(profile.user.username)
+    title = "Edit Profile"
 
     #handle deleting known_skills
     if request.POST.get('delete_known'):
@@ -206,7 +218,7 @@ def edit_profile(request, username):
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
-        'learn_skills_list':learn_skills_list })
+        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @login_required
 def edit_schedule(request, username):
@@ -218,8 +230,12 @@ def edit_schedule(request, username):
     TODO: The whole shebang
 
     """
+    user = get_object_or_404(User, username=username)
+    page_name = "Edit Schedule"
+    page_description = "Edit %s's Schedule"%(user.username)
+    title = "Edit Schedule"
 
-    return render(request, 'profiles/edit_schedule.html')
+    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @csrf_exempt
 def save_event(request, username):
