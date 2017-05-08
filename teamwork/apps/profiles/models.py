@@ -112,6 +112,31 @@ class Events(models.Model):
         super(Events, self).save(*args, **kwargs)
 
 
+class Alert(models.Model):
+    """
+    Alert: A notification directed to a specific user
+
+    Fields:
+        from    - Profile: person sending alert, or None (if System)
+        to      - Profile: person receiving alert
+        date    - DateTime: time sent
+        msg     - str: alert body
+        read    - boolean: whether alert has been written/marked as read
+
+    Types:
+        'course_inv'    - invitation to a course
+    """
+
+    from = models.ForeignKey(User, default=None)
+    to = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add=True)
+    # type = models.CharField(max_length=20, default="null")
+    msg = models.CharField(max_length=500)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.from) + " -> " + str(self.to) + " : " + str()
+
 
 class Profile(models.Model):
     """
