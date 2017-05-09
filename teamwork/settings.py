@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     #'django_extensions',
 
     'django.contrib.admin',
+
+    'chartjs'
 ]
 
 MIDDLEWARE_CLASSES = [

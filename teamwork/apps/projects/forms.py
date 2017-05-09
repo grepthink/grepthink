@@ -241,6 +241,10 @@ class ProjectForm(forms.ModelForm):
         max_length=20,
         required=False)
 
+    teamSize = forms.IntegerField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=True)
+
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",
         required=False)

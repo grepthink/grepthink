@@ -82,7 +82,10 @@ def view_matches(request):
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
     else:
-        projects = Project.get_my_projects(request.user)
+        my_projects = Project.get_my_projects(request.user)
+        my_created = Project.get_created_projects(request.user)
+        projects = my_projects | my_created
+        projects = list(set(projects))
         for project in projects:
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
@@ -99,9 +102,8 @@ def auto_gen(request, slug):
     """
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
-    teamSize = 5
 
-    auto = auto_ros(course, teamSize)
+    auto = auto_ros(course)
     print(auto)
 
     return render(request, 'core/auto_gen.html', {

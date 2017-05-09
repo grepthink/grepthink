@@ -100,8 +100,20 @@ def view_stats(request, slug):
     for i in students_num:
         emails.append(i.user.email)
 
+    num_in = len(students_projects)
+    num_not = len(students_projects_not)
+    num_total = len(students_num)
+    num_projects = len(projects_num)
+
     return render(request, 'courses/view_statistics.html', {
-        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students, 'projects_num': projects_num, 'cleanup_projects': cleanup_projects, 'students_projects': students_projects, 'students_projects_not': students_projects_not, 'emails': emails, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'cur_course': cur_course, 'students_num': students_num,
+        'cleanup_students': cleanup_students, 'projects_num': projects_num,
+        'cleanup_projects': cleanup_projects, 'students_projects': students_projects,
+        'students_projects_not': students_projects_not, 'emails': emails,
+        'page_name' : page_name, 'page_description': page_description, 'title': title,
+        'num_in': num_in, 'num_not': num_not, 'num_total': num_total,
+        'num_projects': num_projects
+        })
 
 def projects_in_course(slug):
     """
@@ -123,7 +135,7 @@ def join_course(request):
     page_name = "Join Course"
     page_description = "Join a Course!"
     title = "Join Course"
-    
+
     if request.method == 'POST':
         # send the current user.id to filter out
         form = JoinCourseForm(request.user.id,request.POST)

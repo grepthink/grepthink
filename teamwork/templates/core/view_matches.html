@@ -14,7 +14,7 @@
 <section class="matches">
     <div class="row">
     {% for p_match_tup in project_match_list %}
-        <div class="col-sm-6 col-md-4">
+        <div class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
@@ -53,7 +53,10 @@
                             </span>
                             </a>
                         </li>
-
+                        {% empty %}
+                        <h3>
+                            <font color="red">Could not find any matches for this project</font>
+                        </h3>
                         {% endfor %}
                     </ol>
                     </p>
@@ -97,7 +100,7 @@
     <div class="row">
         {% for p_match_tup in project_match_list %}
             {% if course.name == p_match_tup.0.name %}
-                <div class="col-sm-6 col-md-4">
+                <div class="col-md-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">{{ p_match_tup.1.title }}</h3>
@@ -134,6 +137,10 @@
                                     </span>
                                     </a>
                                 </li>
+                                {% empty %}
+                                <h3>
+                                    <font color="red">Could not find any matches for this project</font>
+                                </h3>
                                 {% endfor %}
                             </ol>
                             </p>
