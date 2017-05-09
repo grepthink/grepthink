@@ -130,6 +130,7 @@ $(document).ready(function() {
   </div>
         <div class="box-body">
         <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% csrf_token %}
             {% for mem in project.members.all %}
                 <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
                 </button>
