@@ -23,7 +23,7 @@ def _projects(request, projects):
     """
     page = request.GET.get('page')
 
-    
+
     # Populate with page name and title
     page_name = "My Projects"
     page_description = "Projects created by " + request.user.username
@@ -99,7 +99,7 @@ def select_members(request):
         data['items'] = []
         q = request.GET.get('q')
         if q is not None:
-            results = User.objects.filter( 
+            results = User.objects.filter(
                 Q( first_name__contains = q ) |
                 Q( last_name__contains = q ) |
                 Q( username__contains = q ) ).order_by( 'username' )
@@ -339,13 +339,13 @@ def find_meeting(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     # If project already has a list of meeting times, delete it
-    if project.meetings is not None: project.meetings.delete()
+    if project.meetings is not None: project.meetings = ''
 
     # Stores avaliablity in list
-    event = project.generate_avail
+    event = project.generate_avail()
 
     # Adds meeting to model
-    project.meetings.add(event)
+    project.meetings = event
     project.save()
 
 
