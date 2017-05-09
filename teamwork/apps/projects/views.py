@@ -64,8 +64,10 @@ def view_one_project(request, slug):
 
     find_meeting(slug)
 
-    jsonDec = json.decoder.JSONDecoder()
-    readable = jsonDec.decode(project.readable_meetings)
+    readable = ""
+    if project.readable_meetings:
+        jsonDec = json.decoder.JSONDecoder()
+        readable = jsonDec.decode(project.readable_meetings)
 
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
@@ -84,18 +86,30 @@ def view_one_project(request, slug):
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
-        # Not sure if db save should be handled here or in create_project
-        #selected_members_json = request.POST.get('q')
+        print('why')
+        return HttpResponse("Form Submitted")
 
-        #print("\n\nDebug: data : " + selected_members_json + "\n\n")
+    elif request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = User.objects.filter(
+                Q( first_name__contains = q ) |
+                Q( last_name__contains = q ) |
+                Q( username__contains = q ) ).order_by( 'username' )
+        for u in results:
+            data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
 
-        # Load json user list into a python list of dicts
-        #selected_members = json.loads(selected_members_json)
 
-        # selected_members_json = request.POST.getlist("members")
-        # print("\n\nDebug: selected_members_json : \n\n")
-        # print(selected_members_json)
+    return HttpResponse("Failure")
 
+def edit_select_members(request, slug):
+    if request.method == 'POST' and request.is_ajax():
+        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -125,18 +139,23 @@ def create_project(request):
     page_name = "Create Project"
     page_description = "Post a new project"
     title = "Create Project"
-    user_id = request.user.id
-    user = Profile.objects.get(user=user_id)
-    #enrollment objects containing current user
-    enroll = Enrollment.objects.filter(user=request.user)
-    #current courses user is in
+
+    # Get the current user, once and only once.
+    user = request.user
+
+    profile = Profile.objects.get(user=user)
+
+    # Enrollment objects containing current user
+    enroll = Enrollment.objects.filter(user=user)
+    # Current courses user is in
     cur_courses = Course.objects.filter(enrollment__in=enroll)
     no_postable_classes = False
 
-    my_created_courses = Course.objects.filter(creator=request.user.username)
-    #If user is in 0 courses
+    my_created_courses = Course.objects.filter(creator=user.username)
+
+    # If user is in 0 courses
     if len(enroll) == 0 and len(my_created_courses) == 0:
-        #Redirect them to homepage and tell them to join a course
+        # Redirect them to homepage and tell them to join a course
         messages.info(request,
                       'You need to join a course before creating projects!')
         return HttpResponseRedirect('/')
@@ -144,19 +163,13 @@ def create_project(request):
     if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
-    if len(enroll) >= 1 and no_postable_classes and not user.isProf:
-        #Redirect them to homepage and tell them to join a course
+    if len(enroll) >= 1 and no_postable_classes and not profile.isProf:
+        # Redirect them to homepage and tell them to join a course
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
 
     if request.method == 'POST':
-        # Not sure if db save should be handled here or in create_project
-        #selected_members_json = request.POST.get('q')
-
-        # Load json user list into a python list of dicts
-        #selected_members = json.loads(selected_members_json)
-
-        form = ProjectForm(request.user.id, request.POST)
+        form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
             # create an object for the input
             project = Project()
@@ -172,9 +185,9 @@ def create_project(request):
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
+            project.resource = ''
 
             project.save()
-
 
             # Handle desired skills
             desired = form.cleaned_data.get('desired_skills')
@@ -198,22 +211,21 @@ def create_project(request):
                         # This is how we can use the reverse of the relationship
                         # add the skill to the current profile
                         project.desired_skills.add(desired_skill)
-                        project.save(
-                        )  #taking profile.save() out of these if's and outside lets all the changes be saved at once
+                        project.save()  
+                        #taking profile.save() out of these if's and outside lets all the changes be saved at once
                         # This is how we can get all the skills from a user
                     # Project content
             project.content = form.cleaned_data.get('content')
-
-            # Local list of memebers, used to create Membership objects
-            # Now not getting this list through the form, because this list is created
-            # using select2 javascript.
-            members = request.POST.getlist('members')
-            print(members)
 
             project.save()
 
             in_course = form.cleaned_data.get('course')
             in_course.projects.add(project)
+
+            # Local list of memebers, used to create Membership objects
+            # Now not getting this list through the form, because this list is created
+            # using select2 javascript.
+            members = request.POST.getlist('members')
 
             # loop through the members in the object and make m2m rows for them
             for i in members:
@@ -224,16 +236,18 @@ def create_project(request):
                         user=i_user, project=project, invite_reason='')
 
             # if user is not a prof
-            if not user.isProf:
+            if not profile.isProf:
                 Membership.objects.create(
-                    user=user.user, project=project, invite_reason='')
+                    user=user, project=project, invite_reason='')
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
+        else:
+            messages.info(request,'Errors in form')
     else:
         # Send form for initial project creation
-        form = ProjectForm(request.user.id)
+        form = CreateProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'form': form})
 
@@ -258,7 +272,23 @@ def edit_project(request, slug):
         messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
 
+        # Remove a user from the project
+    if request.POST.get('remove_user'):
+        f_username = request.POST.get('remove_user')
+        print("username")
+        print(f_username)
+        f_user = User.objects.get(username=f_username)
+        print("user id")
+        print(f_user.id)
+        to_delete = Membership.objects.filter(user=f_user, project=project)
+        for mem_obj in to_delete:
+            mem_obj.delete()
+
     if request.method == 'POST':
+
+        print(request.POST.get('remove_user'))
+
+
         form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # edit the project object, omitting slug
@@ -274,15 +304,18 @@ def edit_project(request, slug):
 
             project.save()
 
-            members = form.cleaned_data.get('members')
+            members = request.POST.getlist('members')
 
-            # Clear all memberships to avoid duplicates.
-            memberships = Membership.objects.filter(project=project)
-            if memberships is not None: memberships.delete()
+            in_course = form.cleaned_data.get('course')
+            in_course.projects.add(project)
 
+            # loop through the members in the object and make m2m rows for them
             for i in members:
-                Membership.objects.create(
-                    user=i.user, project=project, invite_reason='')
+                i_user = User.objects.get(username=i)
+                mem_courses = Course.get_my_courses(i_user)
+                if in_course in mem_courses:
+                    Membership.objects.create(
+                        user=i_user, project=project, invite_reason='')
 
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
