@@ -38,6 +38,18 @@ def rand_code(size):
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
 
+# Converts a number into a weekday
+def dayofweek(number):
+    return {
+        9: "Sunday",
+        10: "Monday",
+        11: "Teusday",
+        12: "Wednesday",
+        13: "Thursday",
+        14: "Friday",
+        15: "Saturday",
+    }.get(number, "Day that doesnt exist")
+    
 def dayasday(day):
     return {
         "Sunday": '2017-04-09T',
@@ -194,6 +206,7 @@ class Project(models.Model):
 
     # meetings - Availabiliy as an ajax string
     meetings = models.TextField(default='')
+    readable_meetings = models.TextField(null=True)
 
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)

@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from teamwork.apps.courses.models import *
+import json
 
 from teamwork.apps.core.models import *
 
@@ -44,6 +45,8 @@ def view_one_project(request, slug):
     """
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
+
+    find_meeting(slug)
 
 
     return render(request, 'projects/view_project.html',
@@ -250,7 +253,7 @@ def post_update(request, slug):
                   {'form': form,
                    'project': project})
 @login_required
-def find_meeting(request, slug):
+def xfind_meeting(request, slug):
     """
     Find and store possible meeting time for a given project
     """
@@ -267,6 +270,51 @@ def find_meeting(request, slug):
     project.meetings.add(event)
     project.save()
 
+    return "Something"
+    #return render(request, 'projects/view_projects.html',
+    #              {'projects': projects})
 
-    return render(request, 'projects/view_projects.html',
-                  {'projects': projects})
+def find_meeting(slug):
+    """
+    Find and store possible meeting time for a given project
+    """
+    # Gets current project
+    project = get_object_or_404(Project, slug=slug)
+
+    # If project already has a list of meeting times, delete it
+    if project.meetings is not None: project.meetings = ''
+    if project.readable_meetings is not None: project.readable_meetings = ''
+
+    # Stores avaliablity in list
+    event_list = project.generate_avail()
+    readable_list = []
+
+    for event in event_list:
+
+        day = event['start'][8] + event['start'][9]
+        day = int(day)
+        day = dayofweek(day)
+        s_hour = event['start'][11] + event['start'][12]
+        s_minute = event['start'][14] + event['start'][15]
+
+        s_hour = int(s_hour)
+        s_minute = int(s_minute)
+
+        e_hour = event['end'][11] + event['end'][12]
+        e_minute = event['end'][14] + event['end'][15]
+        e_hour = int(e_hour)
+        e_minute = int(e_minute)
+
+        event_string = "%s -> %02d:%02d - %02d:%02d"%(day, s_hour, s_minute, e_hour, e_minute)
+        readable_list.append(event_string)
+
+    # Adds meeting to model
+    project.meetings = event_list
+    project.save()
+
+    project.readable_meetings = json.dumps(readable_list)
+    project.save()
+
+    return "Something"
+    #return render(request, 'projects/view_projects.html',
+    #              {'projects': projects})

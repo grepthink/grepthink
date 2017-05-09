@@ -35,6 +35,7 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
+            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Project Tools <span class="caret"></span>
@@ -141,6 +142,15 @@
                 {{ project.get_resource_as_markdown | safe }}
             </div>
             <!-- /.tab-pane End Updates -->
+
+            <!-- /.tab-pane request meeting -->
+            <div class="tab-pane" id="tab_4">
+                {% for p in project.readable_meetings %}
+                  {{p}}
+                {% endfor %}
+            </div>
+            <!-- /.tab-pane meeting -->
+
         </div>
         <!-- /.tab-content -->
     </div>
