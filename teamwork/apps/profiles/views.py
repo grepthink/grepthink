@@ -284,6 +284,7 @@ def view_alerts(request):
     user = request.user
 
     extra = Alert()
+    extra.sender = user
     extra.to = user
     extra.msg = "testing"
     extra.save()
