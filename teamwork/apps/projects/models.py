@@ -204,6 +204,9 @@ class Project(models.Model):
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
+    # Store the teamSize for team generation and auto switch accepting members
+    teamSize = models.IntegerField(default=4)
+
     # meetings - Availabiliy as an ajax string
     meetings = models.TextField(default='')
     readable_meetings = models.TextField(null=True)
