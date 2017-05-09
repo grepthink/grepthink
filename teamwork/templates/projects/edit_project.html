@@ -71,17 +71,15 @@ $(document).ready(function() {
 
 {% block content %}
 
-
-<section>
 <div class="row">
+
     <div class="col-md-6">
         <div class="box box-primary">
           <div class="box-header with-border">
             <h3 class="box-title">Edit Project</h3>
           </div>
           <div class="box-body">
-            <form action="{% url 'edit_project' project.slug %}" method="post" role="form"
-                class="clearfix" enctype="multipart/form-data">
+            <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.status }}
                 {% for field in form.visible_fields %}
@@ -115,44 +113,55 @@ $(document).ready(function() {
                     </button>
                 </div>
             </div>
-    </div></div>
-</div> <!-- Col 1 -->
 
+            </form>
+    </div>
+</div>
+ <!-- Col 1 -->
+
+</div> <!-- Row 1 -->
+
+<div class="row">
 
 <div class="col-md-6 clearfix">
 <div class="box box-danger">
   <div class="box-header with-border">
     <h3 class="box-title">Delete Members from {{project.title}}</h3>
   </div>
-
-<div class="box-body">
-    {% for mem in project.members.all %}
-        <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
-        </button>
-    {% endfor %} 
+        <div class="box-body">
+        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% for mem in project.members.all %}
+                <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
+                </button>
+            {% endfor %} 
+        </form> 
+        </div>
 </div>
-</form>
-</div> <!-- Row 1 -->
+</div>
 
-<div class="row">
-    <div class="col-md-10 clearfix">
-        <h2>Delete project</h2>
 
-        <p>
-            Note that deleting a project is <strong>IRREVERSIBLE</strong>, please make
-            sure you know what you are doing before pressing this button.
-        </p>
 
-        <a href="{% url 'delete_project' project.slug %}">
-            <button class="btn btn-danger" name="DELETE">
-                <i class="fa fa-trash"></i>
-                Delete project
-            </button>
-        </a>
+    <div class="col-md-6 clearfix">
+        <div class="box box-danger">
+          <div class="box-header with-border">
+            <h3 class="box-title">Delete Project: {{project.title}}</h3>
+          </div>
+              <div class="box-body">
+                    <p>
+                        Note that deleting a project is <strong>IRREVERSIBLE</strong>, please make
+                        sure you know what you are doing before pressing this button.
+                    </p>
+
+                    <a href="{% url 'delete_project' project.slug %}">
+                        <button class="btn btn-danger" name="DELETE">
+                            <i class="fa fa-trash"></i>
+                            Delete project
+                        </button>
+                    </a>
+                </div>
+            </div>
     </div>
 </div> <!-- Row 2 -->
-
-</section>
-
+</div>
 
 {% endblock content %}
