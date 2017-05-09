@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from teamwork.apps.courses.models import *
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -61,6 +62,11 @@ def view_one_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
 
+    find_meeting(slug)
+
+    jsonDec = json.decoder.JSONDecoder()
+    readable = jsonDec.decode(project.readable_meetings)
+
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
 
@@ -72,7 +78,8 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates, 'course' : course})
+        'project': project, 'updates': updates, 'course' : course,
+        'meetings': readable})
 
 
 def select_members(request):
@@ -88,7 +95,6 @@ def select_members(request):
         # selected_members_json = request.POST.getlist("members")
         # print("\n\nDebug: selected_members_json : \n\n")
         # print(selected_members_json)
-
 
         return HttpResponse("Form Submitted")
 
@@ -330,8 +336,8 @@ def post_update(request, slug):
     return render(request, 'projects/post_update.html',
                   {'form': form,
                    'project': project})
-@login_required
-def find_meeting(request, slug):
+
+def find_meeting(slug):
     """
     Find and store possible meeting time for a given project
     """
@@ -340,14 +346,38 @@ def find_meeting(request, slug):
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''
+    if project.readable_meetings is not None: project.readable_meetings = ''
 
     # Stores avaliablity in list
-    event = project.generate_avail()
+    event_list = project.generate_avail()
+    readable_list = []
+
+    for event in event_list:
+
+        day = event['start'][8] + event['start'][9]
+        day = int(day)
+        day = dayofweek(day)
+        s_hour = event['start'][11] + event['start'][12]
+        s_minute = event['start'][14] + event['start'][15]
+
+        s_hour = int(s_hour)
+        s_minute = int(s_minute)
+
+        e_hour = event['end'][11] + event['end'][12]
+        e_minute = event['end'][14] + event['end'][15]
+        e_hour = int(e_hour)
+        e_minute = int(e_minute)
+
+        event_string = "%s -> %02d:%02d - %02d:%02d"%(day, s_hour, s_minute, e_hour, e_minute)
+        readable_list.append(event_string)
 
     # Adds meeting to model
-    project.meetings = event
+    project.meetings = event_list
     project.save()
 
+    project.readable_meetings = json.dumps(readable_list)
+    project.save()
 
-    return render(request, 'projects/view_projects.html',
-                  {'projects': projects})
+    return "Something"
+    #return render(request, 'projects/view_projects.html',
+    #              {'projects': projects})
