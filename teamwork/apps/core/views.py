@@ -52,7 +52,7 @@ def index(request):
 
     return render(request, 'core/index.html', {'page_name' : page_name,
          'page_description' : page_description, 'title' : title,
-         'date_updates' : date_updates})
+         'date_updates' : date_updates, 'logged_in' : logged_in})
 
 def about(request):
     page_name = "About"
