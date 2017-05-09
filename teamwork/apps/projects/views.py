@@ -23,8 +23,16 @@ def _projects(request, projects):
     """
     page = request.GET.get('page')
 
-    return render(request, 'projects/view_projects.html',
-                  {'projects': projects})
+    
+    # Populate with page name and title
+    page_name = "My Projects"
+    page_description = "Projects created by " + request.user.username
+    title = "My Projects"
+
+
+    return render(request, 'projects/view_projects.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title,
+        'projects': projects})
 
 
 @login_required
