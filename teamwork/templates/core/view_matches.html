@@ -3,16 +3,12 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %} Potential Teammates {% endblock %}
 
 {% block head %}
 <link href="{% static 'css/projects.css' %}" rel="stylesheet">
 {% endblock head %}
 
 {% block content %}
-<div class="page-header">
-    <h1> Potential Teammates </h1>
-</div>
 
 {% if not user.profile.isProf%}
 <section class="matches">
@@ -38,7 +34,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                                <i class="fa fa-user"></i> 
+                                <i class="fa fa-user"></i>
                                 {{ mem.username }}
                         </span>
                         </a>
@@ -52,7 +48,7 @@
                         <li>
                             <a href="{% url 'profile' match.username %}">
                             <span class="label label-primary">
-                                <i class="fa fa-user"></i> 
+                                <i class="fa fa-user"></i>
                                 {{ match.username }}
                             </span>
                             </a>
@@ -119,7 +115,7 @@
                                     {% if mem.username != null %}
                                     <a href="{% url 'profile' mem.username %}">
                                     <span class="label label-primary">
-                                            <i class="fa fa-user"></i> 
+                                            <i class="fa fa-user"></i>
                                             {{ mem.username }}
                                     </span>
                                     </a>
@@ -133,7 +129,7 @@
                                 <li>
                                     <a href="{% url 'profile' match.username %}">
                                     <span class="label label-primary">
-                                        <i class="fa fa-user"></i> 
+                                        <i class="fa fa-user"></i>
                                         {{ match.username }}
                                     </span>
                                     </a>
@@ -181,9 +177,9 @@
         <a href="{% url 'create_course' %}" class="alert-link">
             create one now!
         </a>
-    </div>  
+    </div>
 {% endfor %}
 </section>
-{% endif %}  
+{% endif %}
 
 {% endblock content %}

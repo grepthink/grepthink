@@ -2,24 +2,30 @@
 Core views provide main site functionality.
 
 """
-from .models import *
-from .forms import *
-
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
 
+from .forms import *
+from .models import *
+
+
 def login_view(request):
+    page_name = "Login"
+    page_description = ""
+    title = "Login"
     if request.user.is_authenticated():
         # TODO: get feed of project updates (or public projects) to display on login
-        return render(request, 'courses/view_course.html')
+        return render(request, 'courses/view_course.html', {'page_name': page_name,
+            'page_description': page_description, 'title' : title})
     else:
         # Redirect user to login instead of public index (for ease of use)
-        return render(request, 'core/login.html')
+        return render(request, 'core/login.html', {'page_name': page_name,
+            'page_description': page_description, 'title' : title})
 
 def index(request):
     """
@@ -31,23 +37,29 @@ def index(request):
     # Populate with defaults for not logged in user
     page_name = "Explore"
     page_description = "Public Projects and Courses"
+    title = "Explore"
     date_updates = None
     logged_in = request.user.is_authenticated();
 
     if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
+        title = "Timeline"
         all_courses = Course.get_my_courses(request.user)
         date_updates = []
         for course in all_courses:
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {'page_name' : page_name,
-         'page_description' : page_description, 'date_updates' : date_updates,
-         'logged_in': logged_in})
+         'page_description' : page_description, 'title' : title,
+         'date_updates' : date_updates, 'logged_in' : logged_in})
 
 def about(request):
-    return render(request, 'core/about.html')
+    page_name = "About"
+    page_description = "About"
+    title = "About"
+    return render(request, 'core/about.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title})
 
 @login_required
 def view_matches(request):
@@ -57,6 +69,10 @@ def view_matches(request):
     """
     project_match_list = []
     course_set = []
+
+    page_name = "View Matches"
+    page_description = "View Matching Students"
+    title = "View Matches"
 
     if request.user.profile.isProf:
         courses = Course.get_my_created_courses(request.user)
@@ -72,8 +88,8 @@ def view_matches(request):
             project_match_list.extend([(project, p_match)])
 
     return render(request, 'core/view_matches.html', {
-        'project_match_list' : project_match_list, 'course_set': course_set
-        })
+        'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
+            'page_description': page_description, 'title' : title})
 
 
 def auto_gen(request, slug):
