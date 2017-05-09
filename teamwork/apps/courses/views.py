@@ -380,7 +380,7 @@ def update_course(request, slug):
     """
     course = get_object_or_404(Course, slug=slug)
     page_name = "Update Course"
-    page_desctiption = "Update %s"%(course.name)
+    page_description = "Update %s"%(course.name) or "Post a new update"
     title = "Update Course"
 
     if request.method == 'POST':
