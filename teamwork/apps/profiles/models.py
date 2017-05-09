@@ -137,6 +137,16 @@ class Alert(models.Model):
     def __str__(self):
         return str(self.sender) + " -> " + str(self.to) + " : " + str()
 
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Alert"
+        # Multiple Event objects are referred to as Projects.
+        verbose_name_plural = "Alerts"
+        ordering = ('date',)
+
+    def save(self, *args, **kwargs):
+        super(Alert, self).save(*args, **kwargs)
+
 
 class Profile(models.Model):
     """

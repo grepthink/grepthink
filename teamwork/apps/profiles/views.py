@@ -283,6 +283,10 @@ def view_alerts(request):
 
     user = request.user
 
+    extra = Alert()
+    extra.to = user
+    extra.msg = "testing"
+    extra.save()
     alerts = Alert.objects.filter(sender=user)
 
     return render(request, 'profiles/alerts.html', {
