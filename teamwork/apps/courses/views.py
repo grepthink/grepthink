@@ -181,11 +181,7 @@ def show_interest(request, slug):
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
     title = "Show Interest"
 
-
-    # if current course not in users enrolled courses
-    if not cur_course in user_courses and course.creator != user.username:
-        messages.info(request,'You are not enrolled in this course')
-        return HttpResponseRedirect('/course')
+    
     #if not enough projects or user is not professor
     if user.profile.isProf:
         #redirect them with a message
@@ -195,6 +191,11 @@ def show_interest(request, slug):
     if len(projects) == 0:
         #redirect them with a message
         messages.info(request,'No projects to show interest in!')
+        return HttpResponseRedirect('/course')
+
+    # if current course not in users enrolled courses
+    if not cur_course in user_courses and course.creator != user.username:
+        messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
 
 
