@@ -70,12 +70,17 @@ def view_one_project(request, slug):
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
         # Not sure if db save should be handled here or in create_project
-        selected_members_json = request.POST.get('data')
+        #selected_members_json = request.POST.get('q')
 
-        print("\n\nDebug: data : " + selected_members_json + "\n\n")
+        #print("\n\nDebug: data : " + selected_members_json + "\n\n")
 
         # Load json user list into a python list of dicts
-        selected_members = json.loads(selected_members_json)
+        #selected_members = json.loads(selected_members_json)
+
+        selected_members_json = request.POST.getlist("members")
+        print("\n\nDebug: selected_members_json : \n\n")
+        print(selected_members_json)
+
 
         return HttpResponse("Form Submitted")
 
@@ -86,7 +91,7 @@ def select_members(request):
         data['items'] = []
         q = request.GET.get('q')
         if q is not None:
-            results = User.objects.filter(
+            results = User.objects.filter( 
                 Q( first_name__contains = q ) |
                 Q( last_name__contains = q ) |
                 Q( username__contains = q ) ).order_by( 'username' )
@@ -132,12 +137,14 @@ def create_project(request):
 
     if request.method == 'POST':
         # Not sure if db save should be handled here or in create_project
-        selected_members_json = request.POST.get('data.q')
-
-        #print("\n\nDebug: data : " + selected_members_json + "\n\n")
+        #selected_members_json = request.POST.get('q')
+        selected_members_json = request.POST.getlist("members")
+        print("\n\nDebug: selected_members_json : \n\n")
+        print(selected_members_json)
 
         # Load json user list into a python list of dicts
-        selected_members = json.loads(selected_members_json)
+        #selected_members = json.loads(selected_members_json)
+
         form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # create an object for the input
@@ -187,6 +194,7 @@ def create_project(request):
 
             # Local list of memebers, used to create Membership objects
             members = form.cleaned_data.get('members')
+            print(members)
 
             project.save()
 
