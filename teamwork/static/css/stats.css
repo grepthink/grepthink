@@ -1,0 +1,23 @@
+.container {
+  width: 1280px;
+  margin: 0 auto;
+  overflow: auto;
+
+  .title {
+    text-align: center;
+    color: #FFA500;
+  }
+
+  .title__link {
+    display: inline-block;
+    color: white;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.chart-demo {
+  width: 640px;
+}

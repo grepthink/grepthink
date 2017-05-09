@@ -3,18 +3,22 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %} Statistics {% endblock %}
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
 
-{% block head %}
-<link href="{% static 'css/courses.css' %}" rel="stylesheet">
-{% endblock head %}
+{% endblock stylesheets %}
+
+
+{% block title %} Statistics {% endblock %}
 
 {% block content %}
 <div class="page-header">
     <h1> Statistics </h1>
 </div>
 <section class="statistics">
-    <div class="My Courses">
+     <!-- <div class="My Courses">
             <div class="col-sm-6 col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -81,7 +85,24 @@
                 </div>
             </div>
 
+    </div> -->
+    <div class="container">
+        <div class="chart-demo">
+            <h2 class="title">Doughnut Chart</h2>
+            <canvas id="doughnutChart" width="640" height="400"></canvas>
+            <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+            <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+            <script type="text/javascript">
+                var total_students = students_num;
+                var total_projects = cleanup_projects;
+                var students_not = students_projects_not;
+                var students_in = students_projects;
+            </script>
+            <script type="text/javascript" src="{% static 'js/stats.js' %}"></script>
+
+        </div>
     </div>
+
 </section>
 
 {% endblock content %}
