@@ -110,7 +110,7 @@ def view_stats(request, slug):
         'cleanup_students': cleanup_students, 'projects_num': projects_num,
         'cleanup_projects': cleanup_projects, 'students_projects': students_projects,
         'students_projects_not': students_projects_not, 'emails': emails,
-        'page_name' : page_name, 'page_description': page_description, 'title': title
+        'page_name' : page_name, 'page_description': page_description, 'title': title,
         'num_in': num_in, 'num_not': num_not, 'num_total': num_total,
         'num_projects': num_projects
         })
