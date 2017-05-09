@@ -3,11 +3,6 @@
 {% load static %}
 {% load i18n %}
 
-
-{% block head %}
-<link href="{% static 'css/projects.css' %}" rel="stylesheet">
-{% endblock head %}
-
 {% block content %}
 
 {% if not user.profile.isProf%}

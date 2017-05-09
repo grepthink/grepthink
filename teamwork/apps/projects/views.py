@@ -275,20 +275,13 @@ def edit_project(request, slug):
         # Remove a user from the project
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
-        print("username")
-        print(f_username)
         f_user = User.objects.get(username=f_username)
-        print("user id")
-        print(f_user.id)
         to_delete = Membership.objects.filter(user=f_user, project=project)
         for mem_obj in to_delete:
             mem_obj.delete()
+        return redirect(edit_project, slug)
 
     if request.method == 'POST':
-
-        print(request.POST.get('remove_user'))
-
-
         form = ProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # edit the project object, omitting slug
