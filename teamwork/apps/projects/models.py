@@ -49,7 +49,7 @@ def dayofweek(number):
         14: "Friday",
         15: "Saturday",
     }.get(number, "Day that doesnt exist")
-    
+
 def dayasday(day):
     return {
         "Sunday": '2017-04-09T',
@@ -232,7 +232,7 @@ class Project(models.Model):
             mem += "\t%s\n"%(m.username)
 
         info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator, mem, self.avail_mem, self.sponsor, self.slug)
-        return info
+        return self.title
 
     def save(self, *args, **kwargs):
         """
