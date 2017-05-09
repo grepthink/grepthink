@@ -136,7 +136,7 @@ def auto_ros(course):
         for y in range(0, x[2]):
             temp_user = x[1][y]
             # exit loop if the team is full
-            if len(temp_team) == x[0].teamSize:
+            if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
                 break
             # skip the person if they have already been assigned
             elif (temp_user in assigned) or (temp_user in x[0].members.all()):
