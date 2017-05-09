@@ -160,6 +160,9 @@ class Interest(models.Model):
     interest = models.PositiveIntegerField()
     interest_reason = models.CharField(max_length=100)
 
+    def __str__(self):
+        return("%s: %d"%(self.user.username, self.interest))
+
 
 class Project(models.Model):
     """
@@ -405,6 +408,9 @@ class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
+
+    def __str__(self):
+        return("%s: %s"%(self.user.username, self.project.title))
 
 
 class ProjectUpdate(models.Model):
