@@ -12,6 +12,12 @@ Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),
                ('Fall', 'Fall'), )
 
 
+def ForbiddenNamesValidator(value):
+    forbidden_names = ['new', 'join']
+
+    if value.lower() in forbidden_names:
+        raise ValidationError('This is a reserved word.')
+
 #Creates the course form
 class CourseForm(forms.ModelForm):
     """
@@ -44,6 +50,7 @@ class CourseForm(forms.ModelForm):
         only_students = Profile.objects.exclude(
             Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
         self.fields['students'].queryset = only_students
+        self.fields['name'].validators.append(ForbiddenNamesValidator)
 
     #course name field
     name = forms.CharField(

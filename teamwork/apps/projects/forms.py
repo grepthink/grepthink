@@ -10,9 +10,15 @@ from django.db.models import *
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
+from django.core.exceptions import ValidationError
 
 from .models import *
 
+def ForbiddenNamesValidator(value):
+    forbidden_names = ['create', 'all']
+
+    if value.lower() in forbidden_names:
+        raise ValidationError('This is a reserved word.')
 
 class CreateProjectForm(forms.ModelForm):
     """
@@ -30,7 +36,7 @@ class CreateProjectForm(forms.ModelForm):
     Methods:
         __init__ :
     """
-    
+
     # used for filtering the queryset
     def __init__(self, uid, *args, **kwargs):
         super(CreateProjectForm, self).__init__(*args, **kwargs)
@@ -73,6 +79,8 @@ class CreateProjectForm(forms.ModelForm):
         # Model Profile, isProf set on user creation
         if not user.profile.isProf:
             self.fields['sponsor'].widget = forms.HiddenInput()
+
+        self.fields['title'].validators.append(ForbiddenNamesValidator)
 
     title = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255)
