@@ -117,12 +117,16 @@ class CreateProjectForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    teamSize = forms.IntegerField(
+        min_value=0, max_value=10, label="Max Team Size",
+        required=False)
+
     class Meta:
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor',
             'desired_skills', 'course', 'content', 'slug',
-            'weigh_interest', 'weigh_know', 'weigh_learn',
+            'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize'
         ]
 
 
@@ -257,12 +261,16 @@ class ProjectForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    teamSize = forms.IntegerField(
+        min_value=0, max_value=10, label="Max Team Size",
+        required=False)
+
     class Meta:
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor',
             'desired_skills', 'course', 'content', 'slug', 'resource',
-            'weigh_interest', 'weigh_know', 'weigh_learn'
+            'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize'
         ]
 
 
