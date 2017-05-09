@@ -92,13 +92,12 @@
             <canvas id="doughnutChart" width="640" height="400"></canvas>
             <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
             <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
-            <script type="text/javascript">
-                var total_students = students_num;
-                var total_projects = cleanup_projects;
-                var students_not = students_projects_not;
-                var students_in = students_projects;
+            <script type="text/javascript" src="{% static 'js/stats.js' %}">
+            var total_students = students_num;
+            var total_projects = cleanup_projects;
+            var students_not = students_projects_not;
+            var students_in = students_projects;
             </script>
-            <script type="text/javascript" src="{% static 'js/stats.js' %}"></script>
 
         </div>
     </div>
