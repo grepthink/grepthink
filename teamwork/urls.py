@@ -86,7 +86,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
 
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
-
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
