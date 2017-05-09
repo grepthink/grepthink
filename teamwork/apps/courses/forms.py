@@ -1,11 +1,11 @@
 #imports forms
 from django import forms
-#imports all tables from models
-from .models import *
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from teamwork.apps.profiles.models import *
-from django.db.models import Q
+
+from .models import *
 
 #Choices for term
 Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),

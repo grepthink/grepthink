@@ -9,28 +9,28 @@
 <div class="row">
   <div class="col-md-10">
     <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
-          {% csrf_token %}  
-          {{ form.status }}    
+          {% csrf_token %}
+          {{ form.status }}
 
           <div class="col-sm-8">
             <h5>Full Name</h5>
-            {{ form.name }}            
+            {{ form.name }}
           </div>
 
           <div class="col-sm-4">
             <h5>Avatar</h5>
-            {{ form.avatar }}            
+            {{ form.avatar }}
             <button class="btn btn-danger btn-sm" name="delete_avatar" value="delete_avatar">Remove Avatar</button>
           </div> 
 
           <div class="col-sm-8">
             <h5>Institution</h5>
-            {{ form.institution }}            
+            {{ form.institution }}
           </div>
 
           <div class="col-sm-8">
             <h5>Location</h5>
-            {{ form.location }}            
+            {{ form.location }}
           </div>   
 
           <div class="col-sm-9">

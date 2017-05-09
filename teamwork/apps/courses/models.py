@@ -6,22 +6,22 @@ Database Models for the objects: Course, Enrollment
 #Build-in modules
 from __future__ import unicode_literals
 
+import datetime
+import random
+import string
+#Other imports
+import uuid
+
+from django.contrib import auth
 # Django modules
 from django.contrib.auth.models import User
-from django.contrib import auth
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 # import of project models
 from teamwork.apps.projects.models import Project
-
-#Other imports
-import uuid
-import random
-import string
-import datetime
 
 
 def get_user_courses(self):

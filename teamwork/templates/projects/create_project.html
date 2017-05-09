@@ -2,15 +2,122 @@
 {% load static %}
 {% load i18n %}
 
-{% block head %}
-<script src="{% static 'js/projects.js' %}"></script>
-<script src="{% static 'js/app.js' %}"></script>
-{% endblock head %}
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/select_members/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for members to add",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+});
+
+</script>
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+  {{block.super}}
+{% endblock stylesheets %}
+
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for this project #}
+<li class="active"><a href="{% url 'create_project' %}"> Create Project </a></li>
+
+{% endblock crumb %}
+
 
 {% block content %}
-<div class="page-header">
-    <h1> Create Project </h1>
+
+{# Working on new forms and select2 #}
+
+<section>
+<div class="box box-primary">
+  <div class="box-header with-border">
+    <h3 class="box-title">New Project</h3>
+  </div>
+  <!-- /.box-header -->
+  <!-- form start -->
+  <form role="form" action="{% url 'create_project' %}" method="post">
+    {% csrf_token %}
+    <div class="box-body">
+
+
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+          {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
+        {% endif %}
+        {{ field }}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+
+      <div class="form-group">
+        <label>Add Members</label>
+        <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+        </select>
+      </div>
+
+    <!-- /.box-body -->
+
+    <div class="box-footer">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
 </div>
+</section>
+
+{# Old form below #}
+<br><br><br>
+
+{% comment %}
+
 <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
@@ -18,7 +125,7 @@
     <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
         {% if field.label == 'Content' %}
-          {% include 'markdown_editor.html' with textarea='id_content' %}
+          {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
         {% endif %}
         {{ field }}
         {% for error in field.errors %}
@@ -28,5 +135,7 @@
     {% endfor %}
     <input type="submit" value="Post Project">
 </form>
+
+{% endcomment %}
 
 {% endblock content %}

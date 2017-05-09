@@ -7,9 +7,6 @@
 {% endblock head %}
 
 {% block content %}
-  <div class="page-header">
-    <h1> Show Interest in projects </h1>
-  </div>
   <form action="{% url 'show_interest' cur_course.slug %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
