@@ -88,11 +88,18 @@ def view_stats(request, slug):
     for i in students_num:
         emails.append(i.user.email)
 
+    num_in = len(students_projects)
+    num_not = len(students_projects_not)
+    num_total = len(students_num)
+    num_projects = len(projects_num)
+
     return render(request, 'courses/view_statistics.html', {
         'cur_course': cur_course, 'students_num': students_num,
         'cleanup_students': cleanup_students, 'projects_num': projects_num,
         'cleanup_projects': cleanup_projects, 'students_projects': students_projects,
-        'students_projects_not': students_projects_not, 'emails': emails
+        'students_projects_not': students_projects_not, 'emails': emails,
+        'num_in': num_in, 'num_not': num_not, 'num_total': num_total,
+        'num_projects': num_projects
         })
 
 def projects_in_course(slug):

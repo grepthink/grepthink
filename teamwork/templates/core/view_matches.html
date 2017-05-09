@@ -18,7 +18,7 @@
 <section class="matches">
     <div class="row">
     {% for p_match_tup in project_match_list %}
-        <div class="col-sm-6 col-md-4">
+        <div class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
@@ -38,7 +38,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                                <i class="fa fa-user"></i> 
+                                <i class="fa fa-user"></i>
                                 {{ mem.username }}
                         </span>
                         </a>
@@ -52,12 +52,15 @@
                         <li>
                             <a href="{% url 'profile' match.username %}">
                             <span class="label label-primary">
-                                <i class="fa fa-user"></i> 
+                                <i class="fa fa-user"></i>
                                 {{ match.username }}
                             </span>
                             </a>
                         </li>
-
+                        {% empty %}
+                        <h3>
+                            <font color="red">Could not find any matches for this project</font>
+                        </h3>
                         {% endfor %}
                     </ol>
                     </p>
@@ -101,7 +104,7 @@
     <div class="row">
         {% for p_match_tup in project_match_list %}
             {% if course.name == p_match_tup.0.name %}
-                <div class="col-sm-6 col-md-4">
+                <div class="col-md-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">{{ p_match_tup.1.title }}</h3>
@@ -119,7 +122,7 @@
                                     {% if mem.username != null %}
                                     <a href="{% url 'profile' mem.username %}">
                                     <span class="label label-primary">
-                                            <i class="fa fa-user"></i> 
+                                            <i class="fa fa-user"></i>
                                             {{ mem.username }}
                                     </span>
                                     </a>
@@ -133,11 +136,15 @@
                                 <li>
                                     <a href="{% url 'profile' match.username %}">
                                     <span class="label label-primary">
-                                        <i class="fa fa-user"></i> 
+                                        <i class="fa fa-user"></i>
                                         {{ match.username }}
                                     </span>
                                     </a>
                                 </li>
+                                {% empty %}
+                                <h3>
+                                    <font color="red">Could not find any matches for this project</font>
+                                </h3>
                                 {% endfor %}
                             </ol>
                             </p>
@@ -181,9 +188,9 @@
         <a href="{% url 'create_course' %}" class="alert-link">
             create one now!
         </a>
-    </div>  
+    </div>
 {% endfor %}
 </section>
-{% endif %}  
+{% endif %}
 
 {% endblock content %}
