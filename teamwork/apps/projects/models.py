@@ -43,7 +43,7 @@ def dayofweek(number):
     return {
         9: "Sunday",
         10: "Monday",
-        11: "Teusday",
+        11: "Tuesday",
         12: "Wednesday",
         13: "Thursday",
         14: "Friday",
