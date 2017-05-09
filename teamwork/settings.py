@@ -162,7 +162,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# Define the static and media stuff, so Django won’t have problems finding your css/js files:
+# Define the static and media stuff, so Django won't have problems finding your css/js files:
 STATIC_ROOT = PROJECT_DIR.parent.child('static')
 STATIC_URL = '/static/'
 
