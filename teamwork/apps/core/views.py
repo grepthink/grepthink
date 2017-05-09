@@ -39,8 +39,9 @@ def index(request):
     page_description = "Public Projects and Courses"
     title = "Explore"
     date_updates = None
+    logged_in = request.user.is_authenticated();
 
-    if request.user.is_authenticated():
+    if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
@@ -74,40 +75,35 @@ def view_matches(request):
     title = "View Matches"
 
     if request.user.profile.isProf:
-        # print("Begin Best Matches")
         courses = Course.get_my_created_courses(request.user)
-        # print(courses)
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
-        # print(course_set)
-        # print(project_match_list)
     else:
         projects = Project.get_my_projects(request.user)
-
-        # print("PROJECTS:")
-        # print(projects)
-
         for project in projects:
-            # print("Project:")
-            # print(project)
             p_match = po_match(project)
-            # print("p_match:")
-            # print(p_match)
             project_match_list.extend([(project, p_match)])
-
-        # print("Project Match List:")
-        # print(project_match_list)
-
-        # for project in project_match_list:
-            # print("project in project_match_list")
-            # print(project)
-            # print(project[0].title)
-            # if project[1]:
-            #     print(project[1][0].username)
 
     return render(request, 'core/view_matches.html', {
         'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
+
+
+def auto_gen(request, slug):
+    """
+    Generic view for serving a list of projects and potential teammate matches for
+        each project.
+    """
+    course = get_object_or_404(Course, slug=slug)
+    project_match_list = []
+    teamSize = 5
+
+    auto = auto_ros(course, teamSize)
+    print(auto)
+
+    return render(request, 'core/auto_gen.html', {
+        'auto_gen' : auto, 'course': course
+        })

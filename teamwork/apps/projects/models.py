@@ -239,7 +239,7 @@ class Project(models.Model):
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
 
-        self.slug = slugify(self.slug)
+            self.slug = slugify(self.slug)
 
         super(Project, self).save(*args, **kwargs)
 
