@@ -145,9 +145,10 @@
 
             <!-- /.tab-pane request meeting -->
             <div class="tab-pane" id="tab_4">
-                {% for p in project.readable_meetings %}
-                  {{p}}
+                {% for p in meetings %}
+                  <br>{{p}}</br>
                 {% endfor %}
+
             </div>
             <!-- /.tab-pane meeting -->
 

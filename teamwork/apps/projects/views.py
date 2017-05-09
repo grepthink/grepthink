@@ -48,10 +48,15 @@ def view_one_project(request, slug):
 
     find_meeting(slug)
 
+    jsonDec = json.decoder.JSONDecoder()
+    readable = jsonDec.decode(project.readable_meetings)
+
+
+
 
     return render(request, 'projects/view_project.html',
                   {'project': project,
-                   'updates': updates})
+                   'updates': updates, 'meetings': readable})
 
 
 @login_required
