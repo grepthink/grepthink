@@ -14,7 +14,6 @@ from datetime import datetime
 
 # Third-party Modules
 import markdown
-import numpy as np
 # Django modules
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
