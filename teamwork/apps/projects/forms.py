@@ -70,7 +70,7 @@ class ProjectForm(forms.ModelForm):
         only_students = Profile.objects.exclude(
             Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
 
-        self.fields['members'].queryset = only_students
+        #self.fields['members'].queryset = only_students
 
         # If user is professor
         if user.profile.isProf:
@@ -97,10 +97,10 @@ class ProjectForm(forms.ModelForm):
     tagline = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=38)
 
-    members = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        queryset=User.objects.all(),
-        required=False)
+    # members = forms.ModelMultipleChoiceField(
+    #     widget=forms.CheckboxSelectMultiple,
+    #     queryset=User.objects.all(),
+    #     required=False)
 
     accepting = forms.BooleanField(
         initial=True, label='accepting members', required=False)
@@ -147,7 +147,7 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
-            'title', 'tagline', 'members', 'accepting', 'sponsor',
+            'title', 'tagline', 'accepting', 'sponsor',
             'desired_skills', 'course', 'content', 'slug', 'resource',
             'weigh_interest', 'weigh_know', 'weigh_learn'
         ]

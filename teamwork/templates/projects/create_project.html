@@ -81,24 +81,29 @@ $(document).ready(function() {
   <form role="form" action="{% url 'create_project' %}" method="post">
     {% csrf_token %}
     <div class="box-body">
-      <div class="form-group">
-        <label for="title">Project Title</label>
-        <input type="text" class="form-control input-lg" id="title" placeholder="Enter a project title">
-      </div>
-      <div class="form-group">
-        <label for="tagline">Tagline</label>
-        <input type="text" class="form-control" id="tagline" placeholder="Enter a project tagline (max 33 characters)">
+
+
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Content' %}
+          {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
+        {% endif %}
+        {{ field }}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+
       <div class="form-group">
         <label>Add Members</label>
-        <select class="form-control select2" id="members" multiple="multiple" style="width: 100%;">
+        <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
         </select>
       </div>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"> Is your project accepting new members?
-        </label>
-      </div>
-    </div>
+
     <!-- /.box-body -->
 
     <div class="box-footer">

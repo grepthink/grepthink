@@ -77,9 +77,9 @@ def select_members(request):
         # Load json user list into a python list of dicts
         #selected_members = json.loads(selected_members_json)
 
-        selected_members_json = request.POST.getlist("members")
-        print("\n\nDebug: selected_members_json : \n\n")
-        print(selected_members_json)
+        # selected_members_json = request.POST.getlist("members")
+        # print("\n\nDebug: selected_members_json : \n\n")
+        # print(selected_members_json)
 
 
         return HttpResponse("Form Submitted")
@@ -138,9 +138,6 @@ def create_project(request):
     if request.method == 'POST':
         # Not sure if db save should be handled here or in create_project
         #selected_members_json = request.POST.get('q')
-        selected_members_json = request.POST.getlist("members")
-        print("\n\nDebug: selected_members_json : \n\n")
-        print(selected_members_json)
 
         # Load json user list into a python list of dicts
         #selected_members = json.loads(selected_members_json)
@@ -193,7 +190,9 @@ def create_project(request):
             project.content = form.cleaned_data.get('content')
 
             # Local list of memebers, used to create Membership objects
-            members = form.cleaned_data.get('members')
+            # Now not getting this list through the form, because this list is created
+            # using select2 javascript.
+            members = request.POST.getlist('members')
             print(members)
 
             project.save()
@@ -203,10 +202,11 @@ def create_project(request):
 
             # loop through the members in the object and make m2m rows for them
             for i in members:
-                mem_courses = Course.get_my_courses(i.user)
+                i_user = User.objects.get(username=i)
+                mem_courses = Course.get_my_courses(i_user)
                 if in_course in mem_courses:
                     Membership.objects.create(
-                        user=i.user, project=project, invite_reason='')
+                        user=i_user, project=project, invite_reason='')
 
             # if user is not a prof
             if not user.isProf:
