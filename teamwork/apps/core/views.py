@@ -100,6 +100,10 @@ def auto_gen(request, slug):
     Generic view for serving a list of projects and potential teammate matches for
         each project.
     """
+    page_name = "Potential Roster"
+    page_description = "Auto Generate Groups"
+    title = "Auto Generate Groupts"
+    
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
 
@@ -107,5 +111,5 @@ def auto_gen(request, slug):
     print(auto)
 
     return render(request, 'core/auto_gen.html', {
-        'auto_gen' : auto, 'course': course
-        })
+        'auto_gen' : auto, 'course': course, 'page_name': page_name,
+            'page_description': page_description, 'title' : title})
