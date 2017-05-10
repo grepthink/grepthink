@@ -117,8 +117,8 @@ class Alert(models.Model):
     Alert: A notification directed to a specific user
 
     Fields:
-        sender  - Profile: person sending alert, or None (if System)
-        to      - Profile: person receiving alert
+        sender  - User: person sending alert, or None (if System)
+        to      - User: person receiving alert
         date    - DateTime: time sent
         msg     - str: alert body
         read    - boolean: whether alert has been written/marked as read

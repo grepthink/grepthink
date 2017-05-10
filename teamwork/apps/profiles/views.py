@@ -286,11 +286,24 @@ def view_alerts(request):
     extra = Alert()
     extra.sender = user
     extra.to = user
-    extra.msg = "testing"
+    extra.msg = "You viewed your alerts"
     extra.save()
-    alerts = Alert.objects.filter(sender=user)
+    alerts = Alert.objects.filter(to=user)
+    unread = alerts.filter(read=False)
+    archive = alerts.filter(read=True)
 
     return render(request, 'profiles/alerts.html', {
-        'alerts': alerts
+        'unread': unread,
+        'archive': archive
         })
 
+@login_required
+def read_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = True
+        alert.save()
+    else:
+        print("Attempt to delete alert caught by internet police: " + str(alert.id))
+    return redirect(view_alerts)

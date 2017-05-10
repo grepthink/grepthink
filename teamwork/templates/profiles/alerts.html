@@ -6,11 +6,47 @@
 
 {% block content %}
 
-{% for alert in alerts %}
-<p>{{ alert.msg }}</p>
-{% empty %}
-<p>There are no alerts</p>
-{% endfor %}
+
+<div class="panel box box-primary">
+    <div class="box-header with-border pull-right-container">
+        <a href="#unread" data-toggle="collapse">
+            <h4 class="box-title">
+                Unread notifications
+            </h4>
+        </a>
+        <small class="label pull-right bg-blue">
+            {{ unread|length }}
+        </small>
+    </div>
+    <div class="panel-collapse collapse" id="unread">
+        {% for alert in unread %}
+        <p>{{ alert.msg }} : {{ alert.date }} #{{ alert.id }}</p>
+        {% empty %}
+        <p>There are no alerts</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="panel box box-primary">
+    <div class="box-header with-border pull-right-container">
+        <a href="#archive" data-toggle="collapse">
+            <h4 class="box-title">
+                Notification archive
+            </h4>
+        </a>
+        <small class="label pull-right bg-blue">
+            {{ archive|length }}
+        </small>
+    </div>
+    <div class="panel-collapse collapse" id="archive">
+        {% for alert in archive %}
+        <p>{{ alert.msg }} : {{ alert.date }} #{{ alert.id }}</p>
+        {% empty %}
+        <p>There are no alerts</p>
+        {% endfor %}
+    </div>
+</div>
+
 
 {% endblock content %}
 
