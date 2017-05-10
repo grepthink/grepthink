@@ -162,17 +162,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-"""
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, 'static'),
-]
-"""
-# Define the static and media stuff, so Django won’t have problems finding your css/js files:
+# Define the static and media stuff, so Django won't have problems finding your css/js files:
 STATIC_ROOT = PROJECT_DIR.parent.child('static')
 STATIC_URL = '/static/'
 
