@@ -24,7 +24,7 @@
                 <tr>
                     <th style="max-width:50px">Date</th>
                     <th>Contents</th>
-                    <th>
+                    <th style="max-width:10px">
                         Actions
                     </th>
                 </tr>
@@ -32,7 +32,7 @@
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
                     <td>{{ alert.msg }}</td>
-                    <td class="pull-right-container">
+                    <td class="pull-right-container" style="max-width:10px">
                         <div class="btn btn-sm pull-right">
                             <a href="{% url 'read_alert' alert.id %}"><i class="fa fa-eye"></i></a>
                         </div>
@@ -65,7 +65,7 @@
                 <tr>
                     <th style="max-width:50px">Date</th>
                     <th>Contents</th>
-                    <th>
+                    <th style="max-width:10px">
                         Actions
                     </th>
                 </tr>
@@ -73,7 +73,11 @@
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
                     <td>{{ alert.msg }}</td>
-                    <td class="pull-right-container">
+                    <td class="pull-right-container" style="max-width:10px">
+                        <div class="btn btn-sm pull-right">
+                            <a href="{% url 'unread_alert' alert.id %}"><i
+                                    class="fa fa-eye-slash"></i></a>
+                        </div>
                         <div class="btn btn-sm pull-right">
                             <a href="{% url 'delete_alert' alert.id %}"><i
                                     class="fa fa-trash"></i></a>

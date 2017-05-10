@@ -315,6 +315,16 @@ def read_alert(request, ident):
     return redirect(view_alerts)
 
 @login_required
+def unread_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = False
+        alert.save()
+    return redirect(view_alerts)
+
+
+@login_required
 def delete_alert(request, ident):
     user = request.user
     alert = get_object_or_404(Alert, id=ident)
