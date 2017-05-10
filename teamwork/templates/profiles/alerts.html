@@ -11,39 +11,83 @@
     <div class="box-header with-border pull-right-container">
         <a href="#unread" data-toggle="collapse">
             <h4 class="box-title">
-                Unread notifications
+                Unread
             </h4>
         </a>
-        <small class="label pull-right bg-blue">
+        <span class="label pull-right bg-blue">
             {{ unread|length }}
-        </small>
+        </span>
     </div>
-    <div class="panel-collapse collapse" id="unread">
-        {% for alert in unread %}
-        <p>{{ alert.msg }} : {{ alert.date }} #{{ alert.id }}</p>
-        {% empty %}
-        <p>There are no alerts</p>
-        {% endfor %}
+    <div class="panel-collapse collapse in" id="unread">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="max-width:50px">Date</th>
+                    <th>Contents</th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                {% for alert in unread %}
+                <tr>
+                    <td style="max-width:50px">{{ alert.date }}</td>
+                    <td>{{ alert.msg }}</td>
+                    <td class="pull-right-container">
+                        <div class="btn btn-sm pull-right">
+                            <a href="{% url 'read_alert' alert.id %}"><i class="fa fa-eye"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="width:100%;text-align:center">There are no alerts</p>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<div class="panel box box-primary">
+<div class="panel box box-default">
     <div class="box-header with-border pull-right-container">
         <a href="#archive" data-toggle="collapse">
             <h4 class="box-title">
-                Notification archive
+                Archive
             </h4>
         </a>
-        <small class="label pull-right bg-blue">
+        <span class="label pull-right bg-gray">
             {{ archive|length }}
-        </small>
+        </span>
     </div>
     <div class="panel-collapse collapse" id="archive">
-        {% for alert in archive %}
-        <p>{{ alert.msg }} : {{ alert.date }} #{{ alert.id }}</p>
-        {% empty %}
-        <p>There are no alerts</p>
-        {% endfor %}
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="max-width:50px">Date</th>
+                    <th>Contents</th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+                {% for alert in archive %}
+                <tr>
+                    <td style="max-width:50px">{{ alert.date }}</td>
+                    <td>{{ alert.msg }}</td>
+                    <td class="pull-right-container">
+                        <div class="btn btn-sm pull-right">
+                            <a href="{% url 'delete_alert' alert.id %}"><i
+                                    class="fa fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="width:100%;text-align:center">There are no alerts</p>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     </div>
 </div>
 

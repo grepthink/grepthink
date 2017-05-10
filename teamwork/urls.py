@@ -88,5 +88,7 @@ urlpatterns = [
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert,
+                name="delete_alert"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
