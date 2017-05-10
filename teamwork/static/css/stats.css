@@ -29,3 +29,9 @@ statistics
 .legend .in { background-color: #1789D4; }
 .legend .out { background-color: #CB4B16; }
 .legend .count { float: right; margin-right: 20px; }
+
+.ScrollStyle
+{
+    max-height: 600px;
+    overflow-y: scroll;
+}
