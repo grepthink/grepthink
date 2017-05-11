@@ -1,87 +1,183 @@
-{% extends 'adminlte/lib/_main_sidebar.html' %}
+{% load adminlte_helpers %}
 
-{# This sidebar template is no longer used. See core/custom_sidebar.html #}
+{% load static %}
 
-{% block user_panel %}
-{{block.super}}
-{% endblock user_panel %}
-
-
-{% block nav_links %}
-    <div class="alert alert-danger alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-        &times;
-        </button>
-        Warning: Current template must extend base.html. Default sidebar template /adminlte/lib/_main_sidebar.html has been loaded as a fallback.
-    </div>
+<!-- Left side column. contains the sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
 
     {% if user.is_authenticated %}
+        <!-- Sidebar user panel -->
+        {% block user_panel %}
+        <div class="user-panel">
+            <div class="pull-left image">
 
-        <li>
-            <a href="{% url 'index' %}">
-                <i class="fa fa-dashboard"></i> <span>Home</span>
-            </a>
-        </li>
+            <!-- Set the user image in sidebar -->
+              {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" class="img-circle" alt="User Image">
+              {% else %}
+                <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                    class="img-circle" alt="User Image">
+              {% endif %}
 
-        <li>
-            <a href="{% url 'create_project' %}">
-                <i class="fa fa-plus"></i> <span>Create Project</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'view_projects' %}">
-                <i class="fa fa-briefcase"></i> <span>My Projects</span>
-            </a>
-        </li>
-
-        {% if user.profile.isProf %}
-              <li>
-                  <a href="{% url 'create_course' %}">
-                      <i class="fa fa-plus"></i> <span>Create Course</span>
-                  </a>
-              </li>
-        {% endif %}
-
-
-        <li>
-            <a href="{% url 'view_course' %}">
-                <i class="fa fa-graduation-cap"></i> <span>My Courses</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'profile' user.username %}">
-                <i class="fa fa-user"></i> <span>Profile</span>
-            </a>
-        </li>
-
-        <li>
-            <a href="{% url 'edit_profile' user.username %}">
-                <i class="fa fa-wrench"></i> <span>Edit Profile</span>
-            </a>
-        </li>
+            </div>
+            <div class="pull-left info">
+                <p>{% firstof user.get_short_name user.get_username %}</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        {% endblock %}
     {% endif %}
 
 
-    <!-- Temporary sidebar links for easy testing, will move later -->
-    {% if not user.is_authenticated %}
-    <li>
-        <a href="{% url 'about' %}">
-            <i class="fa fa-lightbulb-o"></i> <span>About</span>
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'login' %}">
-            <i class="fa fa-sign-in"></i> <span>Login</span>
-        </a>
-    </li>
+        <!-- search form -->
+        <div class="sidebar-form">
+            <div class="input-group">
+                <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
+                       autocomplete="off">
+                <span class="input-group-btn">
+            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+            </button>
+          </span>
+            </div>
+        </div>
 
-    <li>
-        <a href="{% url 'signup' %}">
-            <i class="fa fa-user"></i> <span>Signup</span>
-        </a>
-    </li>
-    {% endif %}
-    
-{% endblock nav_links %}
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        {% block nav_links_ul %}
+        <ul class="sidebar-menu">
+            {% block nav_links_outer %}
+            <li class="header">{% block nav_heading %}MAIN NAVIGATION{% endblock %}</li>
+
+            {% block nav_links %}
+
+
+              {% if user.is_authenticated %}
+
+                    <li>
+                        <a href="{% url 'index' %}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'create_project' %}">
+                            <i class="fa fa-plus"></i> 
+                            <span>Create Project</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'view_projects' %}">
+                            <i class="fa fa-briefcase"></i> 
+                            <span>My Projects</span>
+                        </a>
+                    </li>
+                    {% if user.profile.isProf %}
+                        <li>
+                            <a href="{% url 'view_matches' %}">
+                                <i class="fa fa-spinner"></i> 
+                                <span>Auto Generate Groups</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                        <a href="{% url 'view_matches' %}">
+                            <i class="fa fa-handshake-o"></i> 
+                            <span>My Matches</span>
+                        </a>
+                    </li>
+                    {% endif%}
+
+                    {% if user.profile.isProf %}
+                      <li>
+                          <a href="{% url 'create_course' %}">
+                              <i class="fa fa-plus"></i>
+                              <span>Create Course</span>
+                          </a>
+                      </li>
+                    {% endif %}
+
+                    <li class="treeview">
+                        <a href="{% url 'view_course' %}">
+                            <i class="fa fa-graduation-cap"></i>
+                                <span>My Courses</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                            <ul class="treeview-menu">
+                                <li><a href="{% url 'view_course' %}"><i class="fa fa-circle-o"></i> View All </a></li>
+                                {% if user.get_user_courses %}
+                                {% for course in user.get_user_courses %}
+                                    <li class="">
+                                        <a href="{% url 'view_one_course' course.slug %}"><i class="fa fa-circle-o">
+                                        </i>  {{ course.name }} </a>
+                                    </li>
+                                 {% endfor %}
+                                 {% endif %}
+                            </ul>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'profile' user.username %}">
+                            <i class="fa fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'edit_profile' user.username %}">
+                            <i class="fa fa-wrench"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'edit_schedule' user.username %}">
+                            <i class="fa fa-calendar-plus-o"></i>
+                            <span>Edit Schedule</span>
+                        </a>
+                    </li>
+
+                {% endif %}
+
+
+                <!-- Logged out sidebar links -->
+                {% if not user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'index' %}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'about' %}">
+                            <i class="fa fa-lightbulb-o"></i>
+                            <span>About</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'login' %}">
+                            <i class="fa fa-sign-in"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'signup' %}">
+                            <i class="fa fa-user"></i>
+                            <span>Signup</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+            {% endblock nav_links %}
+            {% endblock nav_links_outer %}
+        </ul>
+        {% endblock nav_links_ul %}
+    </section>
+    <!-- /.sidebar -->
+</aside>

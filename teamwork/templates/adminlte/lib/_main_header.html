@@ -1,10 +1,79 @@
-{% extends 'adminlte/lib/_main_header.html' %}
+{% load adminlte_helpers i18n %}
+{% load static %}
 
-{% block logo %}
-<a href="{% block logo_href %}/{% endblock %}" class="logo">
-  <!-- mini logo for sidebar mini 50x50 pixels -->
-  <span class="logo-mini"><b>G</b>T</span>
-  <!-- logo for regular state and mobile devices -->
-  <span class="logo-lg"><b>Team</b>Work</span>
-</a>
-{% endblock %}
+<header class="main-header">
+    <!-- Logo -->
+    {% block logo %}
+    <a href="{% block logo_href %}/{% endblock %}" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        <span class="logo-mini">{% block logo_text_small %}<b>G</b>T{% endblock %}</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg">{% block logo_text %}<b>Team</b>Work{% endblock %}</span>
+    </a>
+    {% endblock %}
+
+    <!-- Header Navbar: style can be found in header.less -->
+    {% block nav_bar %}
+    <nav class="navbar navbar-static-top">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </a>
+
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+                {% block header_dropdowns %}
+                    {% if request.user.is_authenticated %}
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    {% if user.profile.avatar %}
+                                        <img class="user-image"
+                                        src="{{ user.profile.avatar.url }}" alt="User Image">
+                                    {% else %}
+                                        <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
+                                        class="user-image" alt="User Image">
+                                    {% endif %}
+                                <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% block user_header %}
+                                <li class="user-header">
+                                    {% if user.profile.avatar %}
+                                        <img class="img-circle" 
+                                        src="{{ user.profile.avatar.url }}" alt="User Image">
+                                    {% else %}
+                                        <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                                        class="img-circle" alt="User Image">
+                                    {% endif %}
+                                    <p>
+                                        {% firstof request.user.get_short_name request.user.get_username %}
+                                        <small>Grepper since {{ request.user.date_joined }}</small>
+                                    </p>
+                                </li>
+                                {% endblock %}
+
+                                <!-- Menu Footer-->
+                                {% block menu_footer %}
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="{% block change_password_url %}{% url 'admin:password_change' %}{% endblock %}"
+                                           class="btn btn-default btn-flat">{% trans 'Change password' %}</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a>
+                                    </div>
+                                </li>
+                                {% endblock %}
+
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endblock header_dropdowns %}
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+</header>
