@@ -3,10 +3,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-# Model imports
+from teamwork.apps.profiles.models import Profile
+
 from .models import *
 
-from teamwork.apps.profiles.models import Profile
 
 # Define an inline admin descriptor for Profile model
 # which acts a bit like a singleton

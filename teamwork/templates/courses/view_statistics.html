@@ -3,65 +3,106 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+
+{% endblock stylesheets %}
+
+
 {% block title %} Statistics {% endblock %}
 
-{% block head %}
-<link href="{% static 'css/courses.css' %}" rel="stylesheet">
-{% endblock head %}
-
 {% block content %}
-<div class="page-header">
-    <h1> Statistics </h1>
-</div>
 <section class="statistics">
-    <div class="My Courses">
-            <div class="col-sm-6 col-md-4">
+    <div class="row">
+        <div class="col-md-6">
+             <div class="box box-primary">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         <h2 class="panel-title"><b>In Project VS Not in Project</b>
+                         </h2>
+                     </div>
+                     <div class="panel-body" style="height: 600px">
+                        <input type="hidden" id="total_students" name="variable" value="{{ num_total }}">
+                        <input type="hidden" id="total_projects" name="variable" value="{{ num_projects }}">
+                        <input type="hidden" id="students_not" name="variable" value="{{ num_not }}">
+                        <input type="hidden" id="students_projects" name="variable" value="{{ num_in }}">
+                        <canvas id="doughnutChart" width="550" height="550"></canvas>
+
+                        <ul class="legend" style="top: 100px; right: 100px; position: absolute">
+                            <li><h3><span class="in"></span> IN <b>{{num_in}}</b></h3></li>
+                            <li><h3><span class="out"></span> OUT <b>{{num_not}}</b></h3></li>
+                        </ul>
+                     </div>
+
+                     <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+                     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+                     <script type="text/javascript" src="{% static 'js/stats.js' %}"></script>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-6">
+             <div class="box box-primary">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         <h2 class="panel-title"><b>Students Not in Projects:</b> {{students_projects_not|length}}
+                         </h2>
+                     </div>
+                     <div class="panel-body ScrollStyle">
+                         <p>
+                             {% for student in students_projects_not %}
+                                 <li>{{student}}</li>
+                             {% endfor %}
+                         </p></br>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="row">
+        <div class="col-md-6">
+            <div class="box box-primary">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h2 class="panel-title">{{ cur_course.name}}
+                        <h2 class="panel-title"><b>Projects:</b> {{cleanup_projects|length}}
                         </h2>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body ScrollStyle">
                         <p>
-                            <h3>Students: {{cleanup_students|length}} </h3>
-                            {% for student in cleanup_students %}
-                                <h4>
-                                <li>{{student}}</li>
-                                </h4>
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <h5>Projects: {{cleanup_projects|length}} </h5>
                             {% for project in cleanup_projects %}
-                                <h6>
-                                <li>{{project}}</li>
-                                </h6>
+                                <li>{{project.title}}</li>
+                                <ul>
+                                    {% for mem in project.members.all %}
+                                        <li>{{mem}}</li>
+
+                                    {% endfor %}
+                                </ul>
                             {% endfor %}
-                        </p>
-                        <p>
-                            <h7>Students Not in Projects: {{students_projects_not|length}} 
-                            </h7>
-                            {% for student in students_projects_not %}
-                                <h8>
-                                <li>{{student}}</li>
-                                </h8>
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <h9>Emails: {{emails|length}} </h9>
-                            {% for student_email in emails %}
-                                <h10>
-                                <li>{{student_email}}</li>
-                                </h10>
-                            {% endfor %}
-                        </p>
+                        </p></br>
                     </div>
                 </div>
             </div>
-
+        </div>
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Emails:</b> {{emails|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body ScrollStyle">
+                        <p>
+                            {% for student_email in emails %}
+                                <li>{{student_email}}</li>
+                            {% endfor %}
+                        </p></br>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
-
 {% endblock content %}
 
 

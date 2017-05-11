@@ -3,17 +3,14 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %} Projects {% endblock %}
-
-{% block head %}
-<link href="{% static 'css/projects.css' %}" rel="stylesheet">
-{% endblock head %}
-
-
 {% block content %}
-<div class="page-header">
-    <h1> Projects </h1>
-</div>
+
+
+{% include "projects/partial_project_box.html" with projects=projects %}
+
+
+{% comment %}
+
 <section class="projects">
     <div class="row">
       {% for project in projects %}
@@ -109,5 +106,5 @@
     </div>
 
 </section>
-
+{% endcomment %}
 {% endblock content %}

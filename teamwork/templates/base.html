@@ -18,10 +18,6 @@
 {% endblock stylesheets %}
 
 
-{% block nav_sidebar %}
-    {% include 'core/custom_sidebar.html' %}
-{% endblock nav_sidebar%}
-
 
 
 {# Inject "skin-green" into the class of body #}
@@ -42,18 +38,18 @@
         {% endcomment %}
         {% block no_description %}
 
-          <!-- <small>
+          <small>
             {% block page_description %}
             {{ page_description|default:_('Default Description') }}
             {% endblock page_description %}
-          </small> -->
+          </small>
 
         {% endblock no_description %}
     </h1>
     {% block breadcrumbs %}
         {# Breadcrumb implementation left to developers #}
         <ol class="breadcrumb">
-          {# <li><a href="{% url 'index' %}">Home</a></li> #}
+          <li><a href="{% url 'index' %}"><i class="fa fa-dashboard"></i>Home</a></li>
           {# Add your breadcrumbs in the crumb block #}
           {% block crumb %}
           {% endblock crumb %}

@@ -1,16 +1,22 @@
 #imports forms
 from django import forms
-#imports all tables from models
-from .models import *
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from teamwork.apps.profiles.models import *
-from django.db.models import Q
+
+from .models import *
 
 #Choices for term
 Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),
                ('Fall', 'Fall'), )
 
+
+def ForbiddenNamesValidator(value):
+    forbidden_names = ['new', 'join']
+
+    if value.lower() in forbidden_names:
+        raise ValidationError('This is a reserved word.')
 
 #Creates the course form
 class CourseForm(forms.ModelForm):
@@ -44,6 +50,7 @@ class CourseForm(forms.ModelForm):
         only_students = Profile.objects.exclude(
             Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
         self.fields['students'].queryset = only_students
+        self.fields['name'].validators.append(ForbiddenNamesValidator)
 
     #course name field
     name = forms.CharField(

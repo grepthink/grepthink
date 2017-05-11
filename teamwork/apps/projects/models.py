@@ -6,27 +6,26 @@ Database Models for the objects: Project, Membership, Intrest, ProjectUpdate
 
 # Built-in modules
 from __future__ import unicode_literals
-from datetime import datetime
+
 import random
 import string
 from math import floor
-
-# Django modules
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-import numpy as np
-
-# Not used currently
-from django.db.models import Q
+from datetime import datetime
 
 # Third-party Modules
 import markdown
+# Django modules
+from django.contrib.auth.models import User
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+# Not used currently
+from django.db.models import Q
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
-# Local Modules
 from teamwork.apps.profiles.models import *
+
+
 # from teamwork.apps.courses.models import Course
 # can't do this, would cause dependency loop :(
 
@@ -37,6 +36,18 @@ def rand_code(size):
     return ''.join([
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
+
+# Converts a number into a weekday
+def dayofweek(number):
+    return {
+        9: "Sunday",
+        10: "Monday",
+        11: "Tuesday",
+        12: "Wednesday",
+        13: "Thursday",
+        14: "Friday",
+        15: "Saturday",
+    }.get(number, "Day that doesnt exist")
 
 def dayasday(day):
     return {
@@ -148,6 +159,9 @@ class Interest(models.Model):
     interest = models.PositiveIntegerField()
     interest_reason = models.CharField(max_length=100)
 
+    def __str__(self):
+        return("%s: %d"%(self.user.username, self.interest))
+
 
 class Project(models.Model):
     """
@@ -192,8 +206,12 @@ class Project(models.Model):
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
+    # Store the teamSize for team generation and auto switch accepting members
+    teamSize = models.IntegerField(default=4)
+
     # meetings - Availabiliy as an ajax string
     meetings = models.TextField(default='')
+    readable_meetings = models.TextField(null=True)
 
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
@@ -216,7 +234,7 @@ class Project(models.Model):
             mem += "\t%s\n"%(m.username)
 
         info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator, mem, self.avail_mem, self.sponsor, self.slug)
-        return info
+        return self.title
 
     def save(self, *args, **kwargs):
         """
@@ -389,6 +407,9 @@ class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
     invite_reason = models.CharField(max_length=64)
+
+    def __str__(self):
+        return("%s: %s"%(self.user.username, self.project.title))
 
 
 class ProjectUpdate(models.Model):

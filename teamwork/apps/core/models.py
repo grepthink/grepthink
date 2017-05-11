@@ -1,13 +1,14 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
-from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
+from teamwork.apps.projects.models import *
+
 
 
 # profiles is already imported from projects, not necessary here
@@ -109,7 +110,7 @@ def po_match(project):
     # past classes match
     # scheduling match
 
-def auto_ros(course, teamSize):
+def auto_ros(course):
     match_list = []
     all_projects = course.projects.all()
     assigned = []
@@ -135,7 +136,7 @@ def auto_ros(course, teamSize):
         for y in range(0, x[2]):
             temp_user = x[1][y]
             # exit loop if the team is full
-            if len(temp_team) == teamSize:
+            if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
                 break
             # skip the person if they have already been assigned
             elif (temp_user in assigned) or (temp_user in x[0].members.all()):

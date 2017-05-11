@@ -3,30 +3,19 @@
 {% load static %}
 {% load i18n %}
 
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
+
+{% endblock crumb %}
+
 
 {% block content %}
-
-
-<form action="" method="post" role="form">
-    {% csrf_token %}
-    {% for field in form.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-        <span class="help-block">{{ field.help_text|safe }}</span>
-        {% endif %}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
-</form>
-
-<h2 class="page-header">
-    <i class="fa fa-globe"></i> {{ project.title }}
-    <small class="pull-right">Date: 3/3/2017</small>
-</h2>
 
 <div>
     <!-- Custom Tabs -->
@@ -35,6 +24,7 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
+            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Project Tools <span class="caret"></span>
@@ -141,6 +131,16 @@
                 {{ project.get_resource_as_markdown | safe }}
             </div>
             <!-- /.tab-pane End Updates -->
+
+            <!-- /.tab-pane request meeting -->
+            <div class="tab-pane" id="tab_4">
+                {% for p in meetings %}
+                  <br>{{p}}</br>
+                {% endfor %}
+
+            </div>
+            <!-- /.tab-pane meeting -->
+
         </div>
         <!-- /.tab-content -->
     </div>

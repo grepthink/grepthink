@@ -9,7 +9,6 @@
 {% block content %}
   <!-- <h1 class="logo"><a href="{% url 'index' %}">Teamwork</a></h1> -->
   <div class="signup">
-    <h2>{% trans 'Sign up for Teamwork' %}</h2>
     <form action="{% url 'signup' %}" method="post" role="form">
       {% csrf_token %}
       {% for field in form.visible_fields %}

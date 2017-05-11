@@ -8,12 +8,13 @@ Database Models for the objects: Skills, Profile
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.template.defaultfilters import slugify
+from django.utils import timezone
+
 
 class Skills(models.Model):
     """
@@ -53,7 +54,7 @@ def dayofweek(number):
     return {
         9: "Sunday",
         10: "Monday",
-        11: "Teusday",
+        11: "Tuesday",
         12: "Wednesday",
         13: "Thursday",
         14: "Friday",

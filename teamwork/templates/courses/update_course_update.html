@@ -18,10 +18,6 @@
     </li>
 </ol>
 
-<div class="page-header">
-    <h1> Edit Update for {{ course.name }}</h1>
-</div>
-
 <div class="row">
     <div class="col-md-10">
         <form action="{% url 'update_course_update' course.slug update.id %}" method="post"

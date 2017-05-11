@@ -1,25 +1,30 @@
 # import of other files in app
-from .models import *
-from .forms import *
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+# Django Imports
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
+from django.shortcuts import get_object_or_404, redirect, render
 
 from teamwork.apps.projects.models import *
 
-# Django Imports
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.contrib import messages
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+from .forms import *
+from .models import *
+
 
 def _courses(request, courses):
     """
     Private method that will be used for paginator once I figure out how to get it working.
     """
     page = request.GET.get('page')
+    page_name = "Courses"
+    page_description = "Course List"
+    title = "Courses"
 
     return render(request,
             'courses/view_courses.html',
-            {'courses': courses,}
+            {'courses': courses,'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 @login_required
@@ -29,13 +34,15 @@ def view_courses(request):
     then calls _projects to render the request to template view_projects.html
     """
 
-    #If user is a professor, they can see all courses they have created
+    # If user is a professor, they can see all courses they have created
     if request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
-    #else returns a list of courses the user is enrolled in
+    # else returns a list of courses the user is enrolled in
     else:
         all_courses = Course.get_my_courses(request.user)
-        return _courses(request, all_courses)
+
+    # Returns all courses
+    return _courses(request, all_courses)
 
 
 @login_required
@@ -44,18 +51,23 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
     """
+    page_name = "View Course"
+    page_description = "View Course Information"
+    title = "%s"%(slug)
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
 
     return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'date_updates': date_updates
-        })
+        'course': course , 'projects': projects, 'date_updates': date_updates, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 
 @login_required
 def view_stats(request, slug):
     cur_course = get_object_or_404(Course, slug=slug)
+    page_name = "Statistics"
+    page_description = "Statistics for %s"%(cur_course.name)
+    title = "Statistics"
 
     if not request.user.profile.isProf:
         return redirect(view_one_course, cur_course.slug)
@@ -88,8 +100,19 @@ def view_stats(request, slug):
     for i in students_num:
         emails.append(i.user.email)
 
+    num_in = len(students_projects)
+    num_not = len(students_projects_not)
+    num_total = len(students_num)
+    num_projects = len(projects_num)
+
     return render(request, 'courses/view_statistics.html', {
-        'cur_course': cur_course, 'students_num': students_num, 'cleanup_students': cleanup_students, 'projects_num': projects_num, 'cleanup_projects': cleanup_projects, 'students_projects': students_projects, 'students_projects_not': students_projects_not, 'emails': emails
+        'cur_course': cur_course, 'students_num': students_num,
+        'cleanup_students': cleanup_students, 'projects_num': projects_num,
+        'cleanup_projects': cleanup_projects, 'students_projects': students_projects,
+        'students_projects_not': students_projects_not, 'emails': emails,
+        'page_name' : page_name, 'page_description': page_description, 'title': title,
+        'num_in': num_in, 'num_not': num_not, 'num_total': num_total,
+        'num_projects': num_projects
         })
 
 def projects_in_course(slug):
@@ -108,6 +131,11 @@ def join_course(request):
     Public method that takes a request, renders form that enables a user
     to add a course, renders in join_course.html
     """
+
+    page_name = "Join Course"
+    page_description = "Join a Course!"
+    title = "Join Course"
+
     if request.method == 'POST':
         # send the current user.id to filter out
         form = JoinCourseForm(request.user.id,request.POST)
@@ -131,7 +159,7 @@ def join_course(request):
             return redirect(view_courses)
     else:
         form = JoinCourseForm(request.user.id)
-    return render(request, 'courses/join_course.html', {'form': form})
+    return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
 def show_interest(request, slug):
@@ -149,11 +177,11 @@ def show_interest(request, slug):
     # current courses user is in
     user_courses = Course.objects.filter(enrollment__in=enroll)
 
+    page_name = "Show Interest"
+    page_description = "Show Interest in Projects for %s"%(cur_course.name)
+    title = "Show Interest"
 
-    # if current course not in users enrolled courses
-    if not cur_course in user_courses and course.creator != user.username:
-        messages.info(request,'You are not enrolled in this course')
-        return HttpResponseRedirect('/course')
+    
     #if not enough projects or user is not professor
     if user.profile.isProf:
         #redirect them with a message
@@ -163,6 +191,11 @@ def show_interest(request, slug):
     if len(projects) == 0:
         #redirect them with a message
         messages.info(request,'No projects to show interest in!')
+        return HttpResponseRedirect('/course')
+
+    # if current course not in users enrolled courses
+    if not cur_course in user_courses and course.creator != user.username:
+        messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
 
 
@@ -222,7 +255,7 @@ def show_interest(request, slug):
 
     return render(
             request, 'courses/show_interest.html',
-            {'form': form,'cur_course': cur_course}
+            {'form': form,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 
@@ -231,6 +264,11 @@ def create_course(request):
     """
     Public method that creates a form and renders the request to create_course.html
     """
+
+    page_name = "Create Course"
+    page_description = "Create a Course!"
+    title = "Create Course"
+
     #If user is not a professor
     if not request.user.profile.isProf:
         #redirect them to the /course directory
@@ -270,7 +308,7 @@ def create_course(request):
             return redirect(view_one_course, course.slug)
     else:
         form = CourseForm(request.user.id)
-    return render(request, 'courses/create_course.html', {'form': form})
+    return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
 def edit_course(request, slug):
@@ -279,6 +317,9 @@ def edit_course(request, slug):
     https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
     """
     course = get_object_or_404(Course, slug=slug)
+    page_name = "Edit Course"
+    page_description = "Edit %s"%(course.name)
+    title = "Edit Course"
 
     #if user is not a professor or they did not create course
     if not request.user.profile.isProf or not course.creator == request.user.username:
@@ -316,7 +357,7 @@ def edit_course(request, slug):
         form = CourseForm(request.user.id, instance=course)
     return render(
             request, 'courses/edit_course.html',
-            {'form': form,'course': course}
+            {'form': form,'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 
@@ -338,6 +379,9 @@ def update_course(request, slug):
     Post an update for a given course
     """
     course = get_object_or_404(Course, slug=slug)
+    page_name = "Update Course"
+    page_description = "Update %s"%(course.name) or "Post a new update"
+    title = "Update Course"
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
@@ -354,7 +398,7 @@ def update_course(request, slug):
 
     return render(
             request, 'courses/update_course.html',
-            {'form': form, 'course': course}
+            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 

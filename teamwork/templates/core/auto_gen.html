@@ -3,16 +3,16 @@
 {% load static %}
 {% load i18n %}
 
+{% block content %}
+
+
+
+{% include "projects/partial_project_box.html" with projects=projects %}
+
+
+{% comment %}
 {% block title %} Potential Roster {% endblock %}
 
-{% block head %}
-<link href="{% static 'css/projects.css' %}" rel="stylesheet">
-{% endblock head %}
-
-{% block content %}
-<div class="page-header">
-    <h1> Potential Roster </h1>
-</div>
 <div>
     <button class="btn btn-success">
         Set Roster
@@ -72,5 +72,6 @@
     </div>
 {% endfor %}
 </section>
+{% endcomment %}
 
 {% endblock content %}

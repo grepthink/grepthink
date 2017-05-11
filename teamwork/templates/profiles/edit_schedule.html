@@ -4,8 +4,32 @@
 
 {# Clear out javascript block at bottom of page so we can import specific js #}
 {% block javascript %}
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+
+<script src="{% static 'js/schedule.js' %}"></script>
 
 {% endblock javascript %}
+
 
 {% block stylesheets %}
 
@@ -16,6 +40,18 @@
   <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
 
 {% endblock stylesheets %}
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'edit_profile' user.username %}"> {{user.username}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'edit_schedule' user.username %}"> Edit Schedule </a></li>
+
+{% endblock crumb %}
+
 
 
 {% block content %}
@@ -55,25 +91,6 @@
       <!-- /.row -->
 
 </section>
-
-
-<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-
-<!-- Slimscroll -->
-<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
-
-<script src="{% static 'js/fastclick.js' %}"></script>
-
-<script src="{% static 'js/app.min.js' %}"></script>
-
-<script src="{% static 'js/moment.min.js' %}"></script>
-
-<script src="{% static 'js/fullcalendar.min.js' %}"></script>
-
-<script src="{% static 'js/schedule.js' %}"></script>
-
 
 
 
