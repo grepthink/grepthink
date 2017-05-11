@@ -108,10 +108,11 @@ def auto_gen(request, slug):
     project_match_list = []
 
     auto = auto_ros(course)
-    print(auto)
 
+    # Get just the projects so partial_project_box.html can loop through easily.
+    # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]
-    print(projects)
+
 
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
