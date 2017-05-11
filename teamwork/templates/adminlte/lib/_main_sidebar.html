@@ -99,7 +99,8 @@
                       </li>
                     {% endif %}
 
-                    <li class="treeview">
+                    {# Hard coded to active. Haven't found a good way to dynamically set active class #}
+                    <li class="treeview active">
                         <a href="{% url 'view_course' %}">
                             <i class="fa fa-graduation-cap"></i>
                                 <span>My Courses</span>
