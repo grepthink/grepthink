@@ -3,6 +3,13 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/matches.css' %}">
+
+{% endblock stylesheets %}
+
 {% block content %}
 
 {% if not user.profile.isProf%}
@@ -14,7 +21,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body ScrollStyle">
                     <p class="lead">
                         {{ p_match_tup.0.tagline }}
                     </p>
@@ -100,7 +107,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">{{ p_match_tup.1.title }}</h3>
                         </div>
-                        <div class="panel-body">
+                        <div class="panel-body ScrollStyle">
                             <p>
                                 <strong>Owner</strong>
                                 <span class="label label-success">
