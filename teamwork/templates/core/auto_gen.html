@@ -3,9 +3,16 @@
 {% load static %}
 {% load i18n %}
 
+{% block content %}
+
+
+
+{% include "projects/partial_project_box.html" with projects=projects %}
+
+
+{% comment %}
 {% block title %} Potential Roster {% endblock %}
 
-{% block content %}
 <div>
     <button class="btn btn-success">
         Set Roster
@@ -65,5 +72,6 @@
     </div>
 {% endfor %}
 </section>
+{% endcomment %}
 
 {% endblock content %}

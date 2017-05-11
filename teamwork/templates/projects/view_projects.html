@@ -3,8 +3,14 @@
 {% load static %}
 {% load i18n %}
 
-
 {% block content %}
+
+
+{% include "projects/partial_project_box.html" with projects=projects %}
+
+
+{% comment %}
+
 <section class="projects">
     <div class="row">
       {% for project in projects %}
@@ -100,5 +106,5 @@
     </div>
 
 </section>
-
+{% endcomment %}
 {% endblock content %}

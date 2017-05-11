@@ -130,8 +130,6 @@
                 </ul>
             </div>
             <div class="tab-pane" id="projects">
-                <div class="row">
-
                   <div class="row">
                     <div class="alert alert-info" role="alert">
                         <a href="{% url 'show_interest' course.slug %}" class="alert-link">
@@ -140,98 +138,9 @@
                     </div>
                   </div>
 
-                    {% for project in projects %}
-                    <div class="col-sm-6 col-md-4">
-                        {% if project.avail_mem %}
-                            {% if project.sponsor %}
-                                <div class="box box-solid box-warning"
-                                onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                            {% else %}
-                                <div class="box box-solid box-success"
-                                onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                            {% endif %}
-                        {% else %}
-                            {% if project.sponsor %}
-                                <div class="box box-solid box-warning"
-                                onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                            {% else %}
-                                <div class="box box-solid box-danger"
-                                onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                            {% endif %}
-                        {% endif %}
-                            <div class="box-header">
-                                <h3 class="box-title">{{ project.title }}</h3>
-                            </div>
-                            <div class="box-body">
-                                <p class="lead">
-                                    {{ project.tagline }}
-                                </p>
-                                <p>
-                                    <strong>Owner</strong>
-                                    <span class="label label-success"
-                                        onclick="window.location =
-                                        '{% url 'profile' project.creator %}'">
-                                        {{ project.creator }}
-                                    </span>
-                                </p>
-                                <p><strong>Members</strong>
-                                    {% for mem in project.members.all %}
-                                    {% if mem.username != null %}
-                                    <span class="label label-primary"
-                                        onclick="window.location =
-                                        '{% url 'profile' mem.username %}'">
-                                        {{ mem.username }}
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    <strong>Accepting Members</strong>
-                                    {% if project.avail_mem %}
-                                        Yes
-                                    {% else %}
-                                        No
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    <strong>Sponsored</strong>
-                                    {% if project.sponsor %}
-                                        Yes
-                                    {% else %}
-                                        No
-                                    {% endif %}
 
-                                </p>
-                            </div>
-                        <div class="box-footer clearfix">
-                            {% if request.user.username == project.creator or request.user in project.members.all %}
-                            <a href="{% url 'edit_project' project.slug %}">
-                                <button class="btn btn-success">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                            </a>
-                          {% endif %}
-                            <a href="{% url 'view_one_project' project.slug %}"
-                                class="pull-right">
-                                <button class="btn btn-info">
-                                    <i class="fa fa-eye"></i>
-                                    View
-                                </button>
-                            </a>
-                        </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fa fa-warning"></i>
-                        There are no projects yet. Go ahead and
-                        <a href="{% url 'create_project' %}" class="alert-link">
-                            create one now!
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
+                    {% include "projects/partial_project_box.html" with projects=projects %}
+
             </div>
             <div class="tab-pane" id="members">
                 <h3>Instructor</h3>

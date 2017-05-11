@@ -1,0 +1,81 @@
+
+
+{% for project in projects %}
+    {% if forloop.first %}<div class="row">{% endif %}
+    <div class="col-md-4">
+      <div class="box {% if project.sponsor %} box-info {% elif project.avail_mem %} box-success {% else %} box-default {% endif %}">
+        <div class="box-header with-border">
+          <h3 class="box-title">{{project.title}}</h3>
+        </div><!-- /.box-header -->
+        <div class="box-body">
+          <p class="lead">{{project.tagline}}</p>
+          <p>
+              <strong>Owner</strong>
+              <a href="{% url 'profile' project.creator %}">
+                <span class="label label-success">
+                    {{ project.creator }}
+                </span>
+              </a>
+          </p>
+          <p><strong>Members</strong>
+              {% for mem in project.members.all %}
+              {% if mem.username != null %}
+              <a href="{% url 'profile' mem.username %}">
+                <span class="label label-primary">
+                  {{ mem.username }}
+                </span>
+              </a>
+              {% endif %}
+              {% endfor %}
+          </p>
+          <p>
+              <strong>Accepting Members</strong>
+              {% if project.avail_mem %}
+                  Yes
+              {% else %}
+                  No
+              {% endif %}
+          </p>
+          <p>
+              <strong>Sponsored</strong>
+              {% if project.sponsor %}
+                  Yes
+              {% else %}
+                  No
+              {% endif %}
+
+          </p>
+        </div><!-- /.box-body -->
+
+        <div class="box-footer clearfix">
+            {% if request.user.username == project.creator or request.user in project.members.all %}
+            <a href="{% url 'edit_project' project.slug %}">
+                <button class="btn btn-success">
+                    <i class="fa fa-edit"></i>
+                    Edit
+                </button>
+            </a>
+          {% endif %}
+            <a href="{% url 'view_one_project' project.slug %}"
+                class="pull-right">
+                <button class="btn btn-primary">
+                    <i class="fa fa-eye"></i>
+                    View
+                </button>
+            </a>
+        </div><!-- /.box-footer -->
+
+
+      </div><!-- /.box -->
+    </div>
+    {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+    {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+{% empty %}
+  <div class="alert alert-warning" role="alert">
+      <i class="fa fa-warning"></i>
+      There are no projects yet. Go ahead and
+      <a href="{% url 'create_project' %}" class="alert-link">
+          create one now!
+      </a>
+  </div>
+{% endfor %}

@@ -110,6 +110,9 @@ def auto_gen(request, slug):
     auto = auto_ros(course)
     print(auto)
 
+    projects = [x[0] for x in auto]
+    print(projects)
+
     return render(request, 'core/auto_gen.html', {
-        'auto_gen' : auto, 'course': course, 'page_name': page_name,
+        'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
