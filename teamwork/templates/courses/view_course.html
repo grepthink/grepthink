@@ -27,13 +27,13 @@
     {% endif %}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-            <li class="active">
+            <li class="">
                 <a href="#description" data-toggle="tab" aria-expanded="true">
                     Description
                     <i class="fa fa-info-circle"></i>
                 </a>
             </li>
-            <li class="">
+            <li class="active">
                 <a href="#projects" data-toggle="tab"aria-expanded="false">
                     Projects
                     <i class="fa fa-code-fork"></i>
@@ -54,7 +54,20 @@
             {% endif %}
         </ul>
         <div class="tab-content" style="background-color: #ecf0f5">
-            <div class="tab-pane active" id="description">
+            <div class="tab-pane active" id="projects">
+                  <div class="row">
+                    <div class="alert alert-info" role="alert">
+                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                            Show interest in these projects!
+                        </a>
+                    </div>
+                  </div>
+
+
+                    {% include "projects/partial_project_box.html" with projects=projects %}
+
+            </div>
+            <div class="tab-pane" id="description">
                 <h3>Description</h3>
                 {{ course.info }}
                 <h3>Updates</h3>
@@ -128,19 +141,6 @@
                         <i class="fa fa-clock-o"></i>
                     </li>
                 </ul>
-            </div>
-            <div class="tab-pane" id="projects">
-                  <div class="row">
-                    <div class="alert alert-info" role="alert">
-                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                            Show interest in these projects!
-                        </a>
-                    </div>
-                  </div>
-
-
-                    {% include "projects/partial_project_box.html" with projects=projects %}
-
             </div>
             <div class="tab-pane" id="members">
                 <h3>Instructor</h3>
