@@ -330,3 +330,12 @@ class UpdateForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['update_title', 'update']
+
+class ResourceForm(forms.ModelForm):
+
+    src_title = forms.CharField(max_length=255,required=True)
+    src_link = forms.CharField(max_length=4000)
+
+    class Meta:
+        model = Project
+        fields = ['src_title', 'src_link']
