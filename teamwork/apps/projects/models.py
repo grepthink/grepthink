@@ -440,6 +440,17 @@ class ProjectUpdate(models.Model):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
 
+class ResourceUpdate(models.Model):
+
+    project = models.ForeignKey(Project)
+    date = models.DateTimeField(auto_now_add=True, editable=True)
+    user = models.ForeignKey(User)
+    src_title = models.CharField(max_length=255, default="Default Resource Title")
+    src_link = models.CharField(max_length=255, default="Default Resource Link")
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.user.username, self.project.title)
+
 # project status: open/closed and number available
 # currently commented to avoid conflict with other files
 """
