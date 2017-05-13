@@ -295,3 +295,57 @@ def save_event(request, username):
 
 
     return HttpResponse("Failure")
+
+@login_required
+def view_alerts(request):
+
+    user = request.user
+
+    page_name = "Alerts"
+    page_description = "Your notifications"
+
+    # Testing by injecting alerts every time
+    # extra = Alert()
+    # extra.sender = user
+    # extra.to = user
+    # extra.msg = "You viewed your alerts"
+    # extra.save()
+    alerts = Alert.objects.filter(to=user)
+    unread = alerts.filter(read=False)
+    archive = alerts.filter(read=True)
+
+    return render(request, 'profiles/alerts.html', {
+        'unread': unread,
+        'archive': archive,
+        'page_name': page_name,
+        'page_description': page_description
+        })
+
+@login_required
+def read_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = True
+        alert.save()
+    # else:
+        # print("Attempt to read alert caught by internet police: " + str(alert.id))
+    return redirect(view_alerts)
+
+@login_required
+def unread_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = False
+        alert.save()
+    return redirect(view_alerts)
+
+
+@login_required
+def delete_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id and alert.read is True:
+        alert.delete()
+    return redirect(view_alerts)
