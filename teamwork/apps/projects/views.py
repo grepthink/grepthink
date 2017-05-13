@@ -367,6 +367,13 @@ def post_update(request, slug):
                   {'form': form,
                    'project': project})
 
+@login_required
+def resource_update(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+
+    return render(request, 'projects/add_resource.html')
+
 def find_meeting(slug):
     """
     Find and store possible meeting time for a given project

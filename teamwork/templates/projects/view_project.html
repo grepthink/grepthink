@@ -32,7 +32,7 @@
                 <ul class="dropdown-menu">
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'edit_project' project.slug %}">Edit</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Add Resource</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation" class="divider"></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li>
