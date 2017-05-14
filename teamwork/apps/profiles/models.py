@@ -113,6 +113,41 @@ class Events(models.Model):
         super(Events, self).save(*args, **kwargs)
 
 
+class Alert(models.Model):
+    """
+    Alert: A notification directed to a specific user
+
+    Fields:
+        sender  - User: person sending alert, or None (if System)
+        to      - User: person receiving alert
+        date    - DateTime: time sent
+        msg     - str: alert body
+        read    - boolean: whether alert has been written/marked as read
+
+    Types:
+        'course_inv'    - invitation to a course
+    """
+
+    sender = models.ForeignKey(User, default=None, related_name="sender")
+    to = models.ForeignKey(User, related_name="to")
+    date = models.DateTimeField(auto_now_add=True)
+    # type = models.CharField(max_length=20, default="null")
+    msg = models.CharField(max_length=500)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.sender) + " -> " + str(self.to) + " : " + str()
+
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Alert"
+        # Multiple Event objects are referred to as Projects.
+        verbose_name_plural = "Alerts"
+        ordering = ('date',)
+
+    def save(self, *args, **kwargs):
+        super(Alert, self).save(*args, **kwargs)
+
 
 class Profile(models.Model):
     """

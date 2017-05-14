@@ -29,7 +29,7 @@ def login_view(request):
 
 def index(request):
     """
-    The main index of Teamwork, reffered to as "Home" in the sidebar.
+    The main index of Teamwork, referred to as "Home" in the sidebar.
     Accessible to public and logged in users.
     """
     # TODO: get feed of project updates (or public projects) to display on login

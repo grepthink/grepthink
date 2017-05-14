@@ -88,5 +88,11 @@ urlpatterns = [
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
+        url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
+
+        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert,
+                name="delete_alert"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
