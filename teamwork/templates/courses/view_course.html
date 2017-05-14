@@ -53,20 +53,25 @@
             </li>
             {% endif %}
         </ul>
+
         <div class="tab-content" style="background-color: #ecf0f5">
+
             <div class="tab-pane active" id="projects">
                   <div class="row">
+                    {% if user.username != course.creator %}
                     <div class="alert alert-info" role="alert">
                         <a href="{% url 'show_interest' course.slug %}" class="alert-link">
                             Show interest in these projects!
                         </a>
                     </div>
                   </div>
+                  {% endif %}
 
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
+
             <div class="tab-pane" id="description">
                 <h3>Description</h3>
                 {{ course.info }}
