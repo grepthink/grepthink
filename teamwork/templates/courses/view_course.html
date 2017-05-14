@@ -57,8 +57,9 @@
         <div class="tab-content" style="background-color: #ecf0f5">
 
             <div class="tab-pane active" id="projects">
+                {% if user.username != course.creator %}
                   <div class="row">
-                    {% if user.username != course.creator %}
+
                     <div class="alert alert-info" role="alert">
                         <a href="{% url 'show_interest' course.slug %}" class="alert-link">
                             Show interest in these projects!
