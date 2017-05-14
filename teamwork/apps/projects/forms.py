@@ -333,8 +333,19 @@ class UpdateForm(forms.ModelForm):
 
 class ResourceForm(forms.ModelForm):
 
-    src_title = forms.CharField(max_length=255,required=True)
-    src_link = forms.CharField(max_length=4000)
+    def __init__(self, uid, *args, **kwargs):
+        super(ResourceForm, self).__init__(*args, **kwargs)
+
+        user = User.objects.get(id=uid)
+
+    src_title = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    src_link = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
 
     class Meta:
         model = Project
