@@ -4,7 +4,6 @@
 
 {% block content %}
 
-{# TODO: implement way to edit skills #}
 
 <div class="row">
   <div class="col-md-10">
@@ -21,7 +20,7 @@
             <h5>Avatar</h5>
             {{ form.avatar }}
             <button class="btn btn-danger btn-sm" name="delete_avatar" value="delete_avatar">Remove Avatar</button>
-          </div> 
+          </div>
 
           <div class="col-sm-8">
             <h5>Institution</h5>
@@ -31,28 +30,28 @@
           <div class="col-sm-8">
             <h5>Location</h5>
             {{ form.location }}
-          </div>   
+          </div>
 
           <div class="col-sm-9">
             <h5>Bio</h5>
             {{ form.bio }}
-          </div>       
+          </div>
 
           {% if not user.profile.isProf%}
-            <div class="col-sm-5">     
-              <h5>Known Skills 
+            <div class="col-sm-5">
+              <h5>Known Skills
                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Separate skills by comma">
                   <i class='glyphicon glyphicon-info-sign'></i></a></h5>
-                  {{ form.known_skill }}            
+                  {{ form.known_skill }}
             </div>
 
             <div class="col-sm-5">
               <h5>Skills I Want to Learn
                 <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Separate skills by comma">
                     <i class='glyphicon glyphicon-info-sign'></i></a></h5>
-                    {{ form.learn_skill }}            
+                    {{ form.learn_skill }}
             </div>
-            {% endif %}                                                    
+            {% endif %}
 
             {% if not user.profile.isProf%}
             <hr>
@@ -60,19 +59,19 @@
                 {% for skill in known_skills_list %}
                     <button class="btn btn-danger btn-sm" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                     </button>
-                {% endfor %} 
+                {% endfor %}
             </div>
 
             <div class="col-sm-5">
                 {% for skill in learn_skills_list %}
                     <button class="btn btn-danger btn-sm" name="delete_learn" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                     </button>
-                {% endfor %}             
+                {% endfor %}
             </div>
           {% endif %}
 
-          <div class="pull-right">      
-              <input type="submit" value="Save Changes">     
+          <div class="pull-right">
+              <input type="submit" value="Save Changes">
             </div>
 
             <hr>
