@@ -8,4 +8,4 @@ django-adminlte2
 Markdown
 Pillow
 numpy
-chartjs
+django-chartjs
