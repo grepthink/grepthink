@@ -2,9 +2,10 @@
 
 {# Generic page title. Pass title in the return dictionary of your view. #}
 {% block title %}
-{{ title|default:_('Teamwork') }} | {{ site_title|default:_('Teamwork') }}
+{{ title|default:_('GrepThink') }} | {{ site_title|default:_('GrepThink') }}
 {% endblock title %}
 
+{# Is there any reason to override the meta block... - andgates #}
 {% block meta %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
@@ -28,7 +29,7 @@
   <section class="content-header">
     <h1>
         {% block page_name %}
-          {{ page_name|default:_('Teamwork') }}
+          {{ page_name|default:_('GrepThink') }}
         {% endblock page_name%}
         {% comment %}
           If you don't want a description, copy this into your template:

@@ -35,11 +35,15 @@ def index(request):
     # TODO: get feed of project updates (or public projects) to display on login
 
     # Populate with defaults for not logged in user
-    page_name = "Explore"
-    page_description = "Public Projects and Courses"
-    title = "Explore"
+    page_name = "GrepThink"
+    page_description = "Build Better Teams"
+    title = "Welcome"
     date_updates = None
     logged_in = request.user.is_authenticated();
+
+    if not logged_in:
+        return render(request, 'core/landing.html', {'page_name' : page_name,
+            'page_description' : page_description, 'title' : title})
 
     if logged_in:
         page_name = "Timeline"
