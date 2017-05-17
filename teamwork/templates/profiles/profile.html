@@ -4,6 +4,15 @@
 
 {% load static %}
 
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'profile' page_user.username %}">Profile</a></li>
+
+{% endblock crumb %}
+
+
 {% block content %}
 <!-- Profile Image -->
 <div class="box box-primary">

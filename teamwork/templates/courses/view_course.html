@@ -3,16 +3,19 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
-<ol class="breadcrumb">
-    <li><a href="{% url 'index' %}">Home</a></li>
+
+{% block crumb %}
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
         <a href="{% url 'view_one_course' course.slug %}">
             {{ course.name }}
         </a>
     </li>
-</ol>
+{% endblock crumb %}
+
+
+{% block content %}
+
 
 <div>
     {% if user.username == course.creator %}

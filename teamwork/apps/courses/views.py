@@ -122,7 +122,7 @@ def projects_in_course(slug):
     """
     # Gets current course
     cur_course = Course.objects.get(slug=slug)
-    projects = Project.objects.filter(course=cur_course)
+    projects = Project.objects.filter(course=cur_course).order_by('-tagline')
     return projects
 
 @login_required
