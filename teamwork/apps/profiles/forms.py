@@ -128,7 +128,7 @@ class ProfileForm(forms.ModelForm):
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=255, required=False)
 
-  
+
   learn_skill = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=255, required=False)

@@ -221,6 +221,7 @@ class Course(models.Model):
 
         return my_courses
 
+    @staticmethod
     def get_my_created_courses(user):
         """
         Gets a list ofcourse objects the current user has created

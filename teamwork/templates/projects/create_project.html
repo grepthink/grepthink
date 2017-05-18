@@ -2,6 +2,12 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+{% endblock stylesheets %}
+
 {% block javascript %}
 {{block.super}}
 <script src="{% static 'js/select2.full.min.js' %}"></script>
@@ -50,13 +56,6 @@ $(document).ready(function() {
 </script>
 
 {% endblock javascript %}
-
-{% block stylesheets %}
-  <!-- Select2 -->
-  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
-  {{block.super}}
-{% endblock stylesheets %}
-
 
 {# Add the breadcrumbs for this page #}
 {% block crumb %}
