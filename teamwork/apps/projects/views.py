@@ -387,6 +387,9 @@ def resource_update(request, slug):
             new_update.src_title = form.cleaned_data.get('src_title')
             new_update.user = request.user
             new_update.save()
+            print(new_update.src_link)
+            print(new_update.src_title)
+            print(new_update.date)
             return redirect(view_one_project, project.slug)
     else:
         form = ResourceForm(request.user.id)
