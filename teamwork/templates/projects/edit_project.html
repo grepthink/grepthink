@@ -54,7 +54,9 @@ $(document).ready(function() {
 {% block stylesheets %}
   <!-- Select2 -->
   <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
   {{block.super}}
+
 {% endblock stylesheets %}
 
 
@@ -129,11 +131,46 @@ $(document).ready(function() {
 <div class="row">
 
 <div class="col-md-6 clearfix">
+<div class="box box-info">
+  <div class="box-header with-border">
+    <h3 class="box-title">Edit Desired Skills for {{project.title}}</h3>
+  </div>
+        <div class="box-body">
+        {# Need to fix button grouping #}
+        <div class="btn-group">
+        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for skill in project.desired_skills.all %}
+                <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                </button>
+            {% empty %}
+            <lead>No desired skills to remove</lead>
+            {% endfor %}
+        </form>
+        </div>
+
+        <div class="add-skill">
+          <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>Add Members</label>
+            <select class="form-control select2" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+            </select>
+          </div>
+          </form>
+        </div>
+
+
+        </div>
+</div>
+</div>
+
+<div class="col-md-6 clearfix">
 <div class="box box-danger">
   <div class="box-header with-border">
     <h3 class="box-title">Delete Members from {{project.title}}</h3>
   </div>
         <div class="box-body">
+        <div class="btn-grid">
         <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
             {% csrf_token %}
             {% for mem in project.members.all %}
@@ -141,6 +178,7 @@ $(document).ready(function() {
                 </button>
             {% endfor %}
         </form>
+        </div>
         </div>
 </div>
 </div>

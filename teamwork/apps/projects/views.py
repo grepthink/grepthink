@@ -272,13 +272,20 @@ def edit_project(request, slug):
         messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
 
-        # Remove a user from the project
+    # Remove a user from the project
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Membership.objects.filter(user=f_user, project=project)
         for mem_obj in to_delete:
             mem_obj.delete()
+        return redirect(edit_project, slug)
+
+    # Remove a desired skill from the project
+    if request.POST.get('remove_desired_skill'):
+        skillname = request.POST.get('remove_desired_skill')
+        to_delete = Skills.objects.get(skill=skillname)
+        project.desired_skills.remove(to_delete)
         return redirect(edit_project, slug)
 
     if request.method == 'POST':
