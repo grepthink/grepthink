@@ -16,6 +16,7 @@ from .forms import *
 from .models import *
 
 import json
+import csv
 
 
 def _projects(request, projects):
@@ -211,7 +212,7 @@ def create_project(request):
                         # This is how we can use the reverse of the relationship
                         # add the skill to the current profile
                         project.desired_skills.add(desired_skill)
-                        project.save()  
+                        project.save()
                         #taking profile.save() out of these if's and outside lets all the changes be saved at once
                         # This is how we can get all the skills from a user
             # Project content
@@ -281,8 +282,15 @@ def edit_project(request, slug):
             mem_obj.delete()
         return redirect(edit_project, slug)
 
+    if request.POST.get('send_emails'):
+        csv_data = project.csv
+        if csv_data:            
+            csvout = csv.writer(csv_data)
+            print("CSVOUT========================")
+            print(csvout)
+
     if request.method == 'POST':
-        form = ProjectForm(request.user.id, request.POST)
+        form = ProjectForm(request.user.id, request.POST, request.FILES)
         if form.is_valid():
             # edit the project object, omitting slug
             project.title = form.cleaned_data.get('title')
@@ -296,8 +304,13 @@ def edit_project(request, slug):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             # Project content
             project.content = form.cleaned_data.get('content')
-            
             project.save()
+
+            # handle csv upload
+            csv_file = form.cleaned_data.get('csv')
+            if csv_file:
+                project.csv = csv_file
+                project.save()
 
             members = request.POST.getlist('members')
 
