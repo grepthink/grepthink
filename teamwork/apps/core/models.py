@@ -101,6 +101,13 @@ def po_match(project):
                         backup[k.user] = temp
                     else:
                         backup[k.user] = 2
+
+
+        for l in initial.keys():
+            temp = initial[l]
+            temp += by_schedule(l, project)
+
+
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
     # intial to and for more users
@@ -155,14 +162,14 @@ def auto_ros(course):
             Membership.objects.create(user=mem, project=p[0], invite_reason='')
     return roster
 
-def match_by_meetings(user, project):
-"""
-    Summary: Takes in a user and a project, compares users availability
-        to the avalibility of other users in a specific project.
-    Params: User - user object
-            Project - Project object
-    Returns: An integer that is floor(# meeting hours/ # pos meetings)
-"""
+def by_schedule(user, project):
+    """
+        Summary: Takes in a user and a project, compares users availability
+            to the avalibility of other users in a specific project.
+        Params: User - user object
+                Project - Project object
+        Returns: An integer that is floor(# meeting hours/ # pos meetings)
+    """
     event_list = []     # list of all events for each user
     pos_event = []      # list of possible meeting times
     sunday_list = []
