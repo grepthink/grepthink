@@ -211,7 +211,7 @@ def create_project(request):
                         # This is how we can use the reverse of the relationship
                         # add the skill to the current profile
                         project.desired_skills.add(desired_skill)
-                        project.save()  
+                        project.save()
                         #taking profile.save() out of these if's and outside lets all the changes be saved at once
                         # This is how we can get all the skills from a user
             # Project content
@@ -296,7 +296,7 @@ def edit_project(request, slug):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             # Project content
             project.content = form.cleaned_data.get('content')
-            
+
             project.save()
 
             members = request.POST.getlist('members')
