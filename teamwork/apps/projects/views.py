@@ -87,7 +87,6 @@ def view_one_project(request, slug):
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -110,7 +109,6 @@ def select_members(request):
 
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -387,9 +385,6 @@ def resource_update(request, slug):
             new_update.src_title = form.cleaned_data.get('src_title')
             new_update.user = request.user
             new_update.save()
-            print(new_update.src_link)
-            print(new_update.src_title)
-            print(new_update.date)
             return redirect(view_one_project, project.slug)
     else:
         form = ResourceForm(request.user.id)
