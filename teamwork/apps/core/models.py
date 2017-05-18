@@ -103,16 +103,16 @@ def po_match(project):
                         backup[k.user] = 2
 
 
-        for l in initial.keys():
-            temp = initial[l]
-            temp += by_schedule(l, project)
-
-
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
     # intial to and for more users
     if len(set(initial.keys())) < 10:
         initial.update(backup)
+
+    for l in initial.keys():
+        temp = initial[l]
+        temp += by_schedule(l, project)
+        initial[l] = temp
 
     return sort(initial)
     # past classes match
@@ -183,7 +183,7 @@ def by_schedule(user, project):
     total_meetings = 0
 
     # Loops through each member
-    for mem in self.members.all():
+    for mem in project.members.all():
         # Loops through each event
         for event in mem.profile.avail.all():
             # adds to list
@@ -210,50 +210,51 @@ def by_schedule(user, project):
         if i.day == "Saturday":
             saturday_list.append(i)
 
-        # Converts to and from bitstring to find FREE time
-        sunday_list = to_bits(sunday_list)  #this is working
-        sunday_list = from_bits(sunday_list)    #this is now working
-        # Appends to list
-        for i in sunday_list:
-            pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    # Converts to and from bitstring to find FREE time
+    sunday_list = to_bits(sunday_list)  #this is working
+    sunday_list = from_bits(sunday_list)    #this is now working
+    # Appends to list
+    for i in sunday_list:
+        pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        monday_list = to_bits(monday_list)
-        monday_list = from_bits(monday_list)
-        for i in monday_list:
-            pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    monday_list = to_bits(monday_list)
+    monday_list = from_bits(monday_list)
+    for i in monday_list:
+        pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        teusday_list = to_bits(teusday_list)
-        teusday_list = from_bits(teusday_list)
-        for i in teusday_list:
-            pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    teusday_list = to_bits(teusday_list)
+    teusday_list = from_bits(teusday_list)
+    for i in teusday_list:
+        pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        wednesday_list = to_bits(wednesday_list)
-        wednesday_list = from_bits(wednesday_list)
-        for i in wednesday_list:
-            pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    wednesday_list = to_bits(wednesday_list)
+    wednesday_list = from_bits(wednesday_list)
+    for i in wednesday_list:
+        pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        thursday_list = to_bits(thursday_list)
-        thursday_list = from_bits(thursday_list)
-        for i in thursday_list:
-            pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    thursday_list = to_bits(thursday_list)
+    thursday_list = from_bits(thursday_list)
+    for i in thursday_list:
+        pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        friday_list = to_bits(friday_list)
-        friday_list = from_bits(friday_list)
-        for i in friday_list:
-            pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    friday_list = to_bits(friday_list)
+    friday_list = from_bits(friday_list)
+    for i in friday_list:
+        pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
-        saturday_list = to_bits(saturday_list)
-        saturday_list = from_bits(saturday_list)
-        for i in saturday_list:
-            pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
-            total_hours = total_hours + (i[2] - i[0])
+    saturday_list = to_bits(saturday_list)
+    saturday_list = from_bits(saturday_list)
+    for i in saturday_list:
+        pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])
+        total_hours = total_hours + (i[2] - i[0])
 
     total_meetings = len(pos_event)
+    #print("\n\nStudent: %s\nMeeting List: %s\nHours: %d\nMeetings: %d\nHours/Meetings: %d\n\n"%(user.profile, pos_event, total_hours, total_meetings, total_hours/total_meetings))
 
     return floor(total_hours/total_meetings)
