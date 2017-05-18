@@ -65,7 +65,7 @@ $(document).ready(function() {
           right: 'none'
         },
         // Day of week shouldn't contain hard coded date.
-        columnFormat: 'dddd',
+        columnFormat: 'ddd',
         businessHours: {
             // days of week. an array of zero-based day of week integers (0=Sunday)
             dow: [ 1, 2, 3, 4, 5], // Monday - Friday
