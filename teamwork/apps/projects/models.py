@@ -373,6 +373,7 @@ class Project(models.Model):
 
         return proj
 
+    @staticmethod
     def get_all_projects():
         """
         Gets a list of project objects. Used in views then passed to the template.
@@ -380,6 +381,7 @@ class Project(models.Model):
         projects = Project.objects.filter()
         return projects
 
+    @staticmethod
     def get_created_projects(user):
         """
         Gets a list of porject objects that the user created. Used in views then passed to the template

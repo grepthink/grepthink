@@ -284,7 +284,7 @@ def edit_project(request, slug):
 
     if request.POST.get('send_emails'):
         csv_data = project.csv
-        if csv_data:            
+        if csv_data:
             csvout = csv.writer(csv_data)
             print("CSVOUT========================")
             print(csvout)
@@ -304,6 +304,7 @@ def edit_project(request, slug):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             # Project content
             project.content = form.cleaned_data.get('content')
+
             project.save()
 
             # handle csv upload
