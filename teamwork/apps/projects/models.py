@@ -217,6 +217,8 @@ class Project(models.Model):
     weigh_know = models.IntegerField(default=1)
     weigh_learn = models.IntegerField(default=1)
 
+    csv = models.FileField(upload_to='csv_files/', default="")
+
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.
@@ -371,6 +373,7 @@ class Project(models.Model):
 
         return proj
 
+    @staticmethod
     def get_all_projects():
         """
         Gets a list of project objects. Used in views then passed to the template.
@@ -378,6 +381,7 @@ class Project(models.Model):
         projects = Project.objects.filter()
         return projects
 
+    @staticmethod
     def get_created_projects(user):
         """
         Gets a list of porject objects that the user created. Used in views then passed to the template

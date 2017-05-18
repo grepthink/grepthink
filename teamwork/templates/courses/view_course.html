@@ -3,16 +3,19 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
-<ol class="breadcrumb">
-    <li><a href="{% url 'index' %}">Home</a></li>
+
+{% block crumb %}
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
         <a href="{% url 'view_one_course' course.slug %}">
             {{ course.name }}
         </a>
     </li>
-</ol>
+{% endblock crumb %}
+
+
+{% block content %}
+
 
 <div>
     {% if user.username == course.creator %}
@@ -53,20 +56,26 @@
             </li>
             {% endif %}
         </ul>
+
         <div class="tab-content" style="background-color: #ecf0f5">
+
             <div class="tab-pane active" id="projects">
+                {% if user.username != course.creator %}
                   <div class="row">
+
                     <div class="alert alert-info" role="alert">
                         <a href="{% url 'show_interest' course.slug %}" class="alert-link">
                             Show interest in these projects!
                         </a>
                     </div>
                   </div>
+                  {% endif %}
 
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
+
             <div class="tab-pane" id="description">
                 <h3>Description</h3>
                 {{ course.info }}

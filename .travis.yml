@@ -61,6 +61,8 @@ before_script:
 script:
   # Flake8 to enforce style, too many errrors to think about rn.
 #  - flake8
+  # How about lets just fail the build if someone forgot a print statement...
+  - flake8 --select=T003
   # Use coverage to run unit tests. Only report on files from this directory.
   - coverage run --source='.' manage.py test
 after_success:
