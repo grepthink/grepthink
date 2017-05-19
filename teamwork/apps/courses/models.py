@@ -36,8 +36,8 @@ def get_user_courses(self):
         #Gets current user's enrollments, by looking for user in  Enrollment table
         myEnrollment = Enrollment.objects.filter(user=self)
 
-        print("myEnrollment:")
-        print(myEnrollment)
+        #print("myEnrollment:")
+        #print(myEnrollment)
 
         #Filters for courses based on enrollment
         my_courses = Course.objects.filter(enrollment__in=myEnrollment)
@@ -90,6 +90,15 @@ class Course(models.Model):
     # define the terms for the multiple choice
     Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'),
                    ('Summer', 'Summer'), ('Fall', 'Fall'), )
+
+    Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
+                       (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                       (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                       (24, '12:00'), )
+
+    Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
+                       (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                       (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
@@ -157,6 +166,19 @@ class Course(models.Model):
     limit_creation = models.BooleanField(
         #defaulted to False
         default=False)
+
+    # limits student from showing interest
+    limit_interest = models.BooleanField(
+        #defaulted to false
+        default=False)
+
+    lower_time_bound = models.IntegerField(
+        choices=Lower_Boundary_Choice,
+        default=16)
+        
+    upper_time_bound = models.IntegerField(
+        choices=Upper_Boundary_Choice,
+        default=42)
 
     limit_weights = models.BooleanField(default=False)
     weigh_interest = models.IntegerField(default=1)

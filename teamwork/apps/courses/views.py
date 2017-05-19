@@ -195,6 +195,11 @@ def show_interest(request, slug):
         #redirect them with a message
         messages.info(request,'No projects to show interest in!')
         return HttpResponseRedirect('/course')
+    if cur_course.limit_interest:
+        #redirect them with a message
+        messages.info(request,'Can no longer show interest!')
+        return HttpResponseRedirect('/course')
+
 
     # if current course not in users enrolled courses
     if not cur_course in user_courses and course.creator != user.username:
@@ -329,7 +334,7 @@ def edit_course(request, slug):
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
-    
+
     # Builds csv_dict[students full name] = email address
     if request.POST.get('send_emails'):
         # grab the csv
@@ -368,7 +373,12 @@ def edit_course(request, slug):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
+
+            course.limit_interest = data.get('limit_interest')
+            course.lower_time_bound = data.get('lower_time_bound')
+            course.upper_time_bound = data.get('upper_time_bound')
             course.save()
+
 
             #handle csv upload
             if request.POST and request.FILES:

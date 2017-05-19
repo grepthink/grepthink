@@ -23,17 +23,22 @@
                          <h2 class="panel-title"><b>In Project VS Not in Project</b>
                          </h2>
                      </div>
-                     <div class="panel-body" style="height: 600px">
+                     <div class="panel-body" style="position: relative; min-height: 170px; min-width: 100px">
                         <input type="hidden" id="total_students" name="variable" value="{{ num_total }}">
                         <input type="hidden" id="total_projects" name="variable" value="{{ num_projects }}">
                         <input type="hidden" id="students_not" name="variable" value="{{ num_not }}">
                         <input type="hidden" id="students_projects" name="variable" value="{{ num_in }}">
-                        <canvas id="doughnutChart" style="position: absolute" width="550" height="550"></canvas>
+                        <div style="position: absolute; width: 70px, height: 70px;">
+                            <canvas id="doughnutChart" style="z-index: 1;"></canvas>
 
-                        <ul class="legend" style="top: 100px; right: 100px; position: absolute">
-                            <li><h3><span class="in"></span> IN <b>{{num_in}}</b></h3></li>
-                            <li><h3><span class="out"></span> OUT <b>{{num_not}}</b></h3></li>
-                        </ul>
+                            
+                        </div>
+                        <div style="position: absolute; top: 10px; right: 10px">
+                                <ul class="legend">
+                                    <li><h3><span class="in"></span> IN <b>{{num_in}}</b></h3></li>
+                                    <li><h3><span class="out"></span> OUT <b>{{num_not}}</b></h3></li>
+                                </ul>
+                            </div>
                      </div>
 
                      <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>

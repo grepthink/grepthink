@@ -62,6 +62,7 @@ def view_one_project(request, slug):
 
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
+    resources = project.get_resources()
 
     find_meeting(slug)
 
@@ -82,12 +83,11 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course,
-        'meetings': readable})
+        'meetings': readable, 'resources': resources})
 
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -110,7 +110,6 @@ def select_members(request):
 
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -126,6 +125,23 @@ def edit_select_members(request, slug):
                 Q( username__contains = q ) ).order_by( 'username' )
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
+def add_desired_skills(request, slug):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
 
@@ -273,7 +289,29 @@ def edit_project(request, slug):
         messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
 
-        # Remove a user from the project
+    # Add a member to the project
+    if request.POST.get('members'):
+        # Get the course that this project is in
+        this_course = Course.objects.get(projects=project)
+        # Get the members to add, as a list
+        members = request.POST.getlist('members')
+
+        curr_members = Membership.objects.filter(project=project)
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+            # Don't add a member if they already have membership in project
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this projects memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+                Membership.objects.create(
+                    user=mem_to_add, project=project, invite_reason='')
+        return redirect(edit_project, slug)
+
+    # Remove a user from the project
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
@@ -282,15 +320,41 @@ def edit_project(request, slug):
             mem_obj.delete()
         return redirect(edit_project, slug)
 
+    # Add skills to the project
+    if request.POST.get('desired_skills'):
+        skills = request.POST.getlist('desired_skills')
+        for s in skills:
+            s_lower = s.lower()
+            # Check if lowercase version of skill is in db
+            if Skills.objects.filter(skill=s_lower):
+                # Skill already exists, then pull it up
+                desired_skill = Skills.objects.get(skill=s_lower)
+            else:
+                # Add the new skill to the Skills table
+                desired_skill = Skills.objects.create(skill=s_lower)
+                # Save the new object
+                desired_skill.save()
+            # Add the skill to the project (as a desired_skill)
+            project.desired_skills.add(desired_skill)
+            project.save()
+        return redirect(edit_project, slug)
+
+    # Remove a desired skill from the project
+    if request.POST.get('remove_desired_skill'):
+        skillname = request.POST.get('remove_desired_skill')
+        to_delete = Skills.objects.get(skill=skillname)
+        project.desired_skills.remove(to_delete)
+        return redirect(edit_project, slug)
+
     if request.method == 'POST':
-        form = ProjectForm(request.user.id, request.POST, request.FILES)
+        form = EditProjectForm(request.user.id, request.POST)
+
         if form.is_valid():
             # edit the project object, omitting slug
             project.title = form.cleaned_data.get('title')
             project.tagline = form.cleaned_data.get('tagline')
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
-            project.resource = form.cleaned_data.get('resource')
             project.teamSize = form.cleaned_data.get('teamSize')
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
@@ -299,23 +363,11 @@ def edit_project(request, slug):
             project.content = form.cleaned_data.get('content')
 
             project.save()
-            members = request.POST.getlist('members')
-
-            in_course = form.cleaned_data.get('course')
-            in_course.projects.add(project)
-
-            # loop through the members in the object and make m2m rows for them
-            for i in members:
-                i_user = User.objects.get(username=i)
-                mem_courses = Course.get_my_courses(i_user)
-                if in_course in mem_courses:
-                    Membership.objects.create(
-                        user=i_user, project=project, invite_reason='')
 
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
-        form = ProjectForm(request.user.id, instance=project)
+        form = EditProjectForm(request.user.id, instance=project)
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'form': form, 'project': project})
@@ -367,19 +419,47 @@ def post_update(request, slug):
                   {'form': form,
                    'project': project})
 
+@login_required
+def resource_update(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+
+    if not request.user.username == project.creator and request.user not in project.members.all(
+    ):
+        #redirect them with a message
+        messages.info(request, 'Only current members can post an update for a project!')
+        return HttpResponseRedirect('/project/all')
+
+    if request.method == 'POST':
+        form = ResourceForm(request.user.id, request.POST)
+        if form.is_valid():
+            new_update = ResourceUpdate(project=project)
+            new_update.src_link = form.cleaned_data.get('src_link')
+            new_update.src_title = form.cleaned_data.get('src_title')
+            new_update.user = request.user
+            new_update.save()
+            return redirect(view_one_project, project.slug)
+    else:
+        form = ResourceForm(request.user.id)
+
+    return render(request, 'projects/add_resource.html',{'form': form, 'project': project})
+
 def find_meeting(slug):
     """
     Find and store possible meeting time for a given project
     """
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
+    course = Course.objects.get(projects=project)
+    low = course.lower_time_bound
+    high = course.upper_time_bound
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''
     if project.readable_meetings is not None: project.readable_meetings = ''
 
     # Stores avaliablity in list
-    event_list = project.generate_avail()
+    event_list = project.generate_avail(low, high)
     readable_list = []
 
     for event in event_list:
