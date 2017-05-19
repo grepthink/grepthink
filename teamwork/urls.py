@@ -42,6 +42,8 @@ urlpatterns = [
          url(r'^project/(?P<slug>[^/]+)/delete/$', project_views.delete_project, name='delete_project'),
         # Post update for individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
+        # Add new resource (based on slug)
+        url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
         # Join a course (valid for all courses)
@@ -87,6 +89,8 @@ urlpatterns = [
 
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
+
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
