@@ -352,9 +352,7 @@ def edit_course(request, slug):
             # Email is stored in 13th value
             for row in reader:
                 # Save student in dict, key=name & value=email
-                csv_dict[row[4]] = row[13]
-        else:
-            print("csv_data empty")
+                csv_dict[row[4]] = row[13]        
 
 
     if request.method == 'POST':
@@ -384,7 +382,6 @@ def edit_course(request, slug):
             if request.POST and request.FILES:
                 csv_upload = request.FILES['csv_file']
                 if csv_upload:
-                    print("saving csv file to course")
                     course.csv_file = csv_upload
                     course.save()
 
