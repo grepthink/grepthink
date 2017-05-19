@@ -291,8 +291,8 @@ def save_event(request, username):
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     else:
+        pass
         #print("\n\nDebug: Request method was not post \n\n")
-
 
     return HttpResponse("Failure")
 
