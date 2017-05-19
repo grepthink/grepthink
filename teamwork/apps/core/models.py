@@ -10,12 +10,12 @@ from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
 from teamwork.apps.projects.views import to_bits, from_bits
 
-
-
-# profiles is already imported from projects, not necessary here
-
-
-# send in the current list of
+"""
+    Summary: this function is called to sort the  list of matches by score
+    Params:
+       match: the list of matched students
+    returns: a sorted list of students from best score to worst
+"""
 def sort(match):
     topScores = sorted(set(match.values()))
     matches = []
@@ -30,9 +30,6 @@ def sort(match):
 	Summary: this function is called to find matches for a project
 	Params:
 		project: the project looking for matches
-		interestWeight: the weight the user can assign to interest, or default to 1
-		knowWeight: the weight the user can assign to knowing a skill, or defaults to 1
-		leanrWeight: the weight the user can assign to wanting to learn a skill, or default to 1
 	returns: a list of the top users that match with a project, based on there cumulative score
 		collected after each pass
 """
@@ -97,10 +94,10 @@ def po_match(project):
                 # elif course in cur_course:
                     if k.user in backup:
                         temp = backup[k.user]
-                        temp += (2 * learnWeight)
+                        temp += (1 * learnWeight)
                         backup[k.user] = temp
                     else:
-                        backup[k.user] = 2
+                        backup[k.user] = 1
 
 
     # we compare the size of the intial list to check if there are at least
@@ -109,6 +106,9 @@ def po_match(project):
     if len(set(initial.keys())) < 10:
         initial.update(backup)
 
+    # Schedule Matching
+    # Look through the currently selected students and reward those with the best schedule for 
+    # meeting with the current members
     for l in initial.keys():
         temp = initial[l]
         temp += by_schedule(l, project)
