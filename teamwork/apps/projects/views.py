@@ -373,13 +373,16 @@ def find_meeting(slug):
     """
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
+    course = Course.objects.get(projects=project)
+    low = course.lower_time_bound
+    high = course.upper_time_bound
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''
     if project.readable_meetings is not None: project.readable_meetings = ''
 
     # Stores avaliablity in list
-    event_list = project.generate_avail()
+    event_list = project.generate_avail(low, high)
     readable_list = []
 
     for event in event_list:
