@@ -51,11 +51,18 @@
                 </div>
                 {% endfor %}
 
-            <div class="pull-right">
-                <button class="btn btn-success" type="submit" name="SUBMIT">
-                    Join Course
-                </button>
-            </div>
+            {% if user.profile.isProf %}
+                <span></span>
+            {% else %}
+                <div class="pull-right">
+                    <a href="{% url 'join_course' %}">
+                        <button class="btn btn-success"
+                         type="submit" name="SUBMIT">
+                            Join Course
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
 
             </section>
         </div>
