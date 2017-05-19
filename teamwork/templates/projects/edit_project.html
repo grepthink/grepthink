@@ -45,6 +45,41 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
+
+  $(".s2_desired_skills").select2({
+    ajax: {
+      url: "ajax/add_desired_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
 });
 
 </script>
@@ -73,7 +108,7 @@ $(document).ready(function() {
 
 {% block content %}
 
-<div class="row">
+<div class = "row">
 
     <div class="col-md-6">
         <div class="box box-primary">
@@ -124,43 +159,62 @@ $(document).ready(function() {
             </form>
     </div>
 </div>
+</div>
  <!-- Col 1 -->
 
-</div> <!-- Row 1 -->
-
-<div class="row">
 
 <div class="col-md-6 clearfix">
 <div class="box box-info">
   <div class="box-header with-border">
-    <h3 class="box-title">Edit Desired Skills for {{project.title}}</h3>
+    <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
   </div>
-        <div class="box-body">
-        {# Need to fix button grouping #}
-        <div class="btn-group">
-        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for skill in project.desired_skills.all %}
-                <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
-                </button>
-            {% empty %}
-            <lead>No desired skills to remove</lead>
-            {% endfor %}
-        </form>
-        </div>
 
-        <div class="add-skill">
-          <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
-          <div class="form-group">
-            <label>Add Members</label>
-            <select class="form-control select2" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
-            </select>
+  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+    {% csrf_token %}
+      <div class="box-body">
+        <div class="form-group">
+          <label>Add Desired Skills</label>
+          <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+          </select>
+        </div>
+      </div>
+
+      <div class="box-footer">
+
+          <div class="pull-left">
+          <a href="{% url 'view_one_project' project.slug %}">
+              <button class="btn btn-danger" type="button">
+                  Cancel
+              </button>
+          </a>
           </div>
-          </form>
-        </div>
+          <div class="pull-right">
+              <button class="btn btn-success" type="submit" name="SUBMIT">
+                  Add Desired Skills
+              </button>
+          </div>
+      </div>
+    </form>
+</div>
+</div>
 
-
-        </div>
+<div class="col-md-6 clearfix">
+<div class="box box-info">
+  <div class="box-header with-border">
+    <h3 class="box-title">Remove Desired Skills from {{project.title}}</h3>
+  </div>
+  <div class="box-body">
+  {# Need to fix button grouping #}
+    <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for skill in project.desired_skills.all %}
+            <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+            </button>
+        {% empty %}
+        <lead>No desired skills to remove</lead>
+        {% endfor %}
+    </form>
+  </div>
 </div>
 </div>
 
@@ -185,27 +239,26 @@ $(document).ready(function() {
 
 
 
-    <div class="col-md-6 clearfix">
-        <div class="box box-danger">
-          <div class="box-header with-border">
-            <h3 class="box-title">Delete Project: {{project.title}}</h3>
-          </div>
-              <div class="box-body">
-                    <p>
-                        Note that deleting a project is <strong>IRREVERSIBLE</strong>, please make
-                        sure you know what you are doing before pressing this button.
-                    </p>
+  <div class="col-md-6 clearfix">
+      <div class="box box-danger">
+        <div class="box-header with-border">
+          <h3 class="box-title">Delete Project: {{project.title}}</h3>
+        </div>
+            <div class="box-body">
+                  <p>
+                      Note that deleting a project is <strong>IRREVERSIBLE</strong>, please make
+                      sure you know what you are doing before pressing this button.
+                  </p>
 
-                    <a href="{% url 'delete_project' project.slug %}">
-                        <button class="btn btn-danger" name="DELETE">
-                            <i class="fa fa-trash"></i>
-                            Delete project
-                        </button>
-                    </a>
-                </div>
-            </div>
-    </div>
-</div> <!-- Row 2 -->
+                  <a href="{% url 'delete_project' project.slug %}">
+                      <button class="btn btn-danger" name="DELETE">
+                          <i class="fa fa-trash"></i>
+                          Delete project
+                      </button>
+                  </a>
+              </div>
+          </div>
+  </div>
 </div>
 
 {% endblock content %}

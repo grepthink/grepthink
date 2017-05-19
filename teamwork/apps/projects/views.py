@@ -86,7 +86,6 @@ def view_one_project(request, slug):
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -109,7 +108,6 @@ def select_members(request):
 
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
-        print('why')
         return HttpResponse("Form Submitted")
 
     elif request.method == 'GET' and request.is_ajax():
@@ -125,6 +123,23 @@ def edit_select_members(request, slug):
                 Q( username__contains = q ) ).order_by( 'username' )
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
+def add_desired_skills(request, slug):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
 
@@ -279,6 +294,25 @@ def edit_project(request, slug):
         to_delete = Membership.objects.filter(user=f_user, project=project)
         for mem_obj in to_delete:
             mem_obj.delete()
+        return redirect(edit_project, slug)
+
+    # Add skills to the project
+    if request.POST.get('desired_skills'):
+        skills = request.POST.getlist('desired_skills')
+        for s in skills:
+            s_lower = s.lower()
+            # Check if lowercase version of skill is in db
+            if Skills.objects.filter(skill=s_lower):
+                # Skill already exists, then pull it up
+                desired_skill = Skills.objects.get(skill=s_lower)
+            else:
+                # Add the new skill to the Skills table
+                desired_skill = Skills.objects.create(skill=s_lower)
+                # Save the new object
+                desired_skill.save()
+            # Add the skill to the project (as a desired_skill)
+            project.desired_skills.add(desired_skill)
+            project.save()
         return redirect(edit_project, slug)
 
     # Remove a desired skill from the project
