@@ -277,8 +277,6 @@ class ProjectForm(forms.ModelForm):
         min_value=0, max_value=10, label="Max Team Size",
         required=False)
 
-    csv = forms.FileField(required=False)
-
     class Meta:
         model = Project
         fields = [

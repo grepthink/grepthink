@@ -120,6 +120,8 @@ class CourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+
     #META CLASS
     class Meta:
         model = Course

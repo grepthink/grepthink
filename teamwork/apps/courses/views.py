@@ -12,6 +12,9 @@ from teamwork.apps.projects.models import *
 from .forms import *
 from .models import *
 
+import csv
+import codecs
+
 
 def _courses(request, courses):
     """
@@ -181,7 +184,7 @@ def show_interest(request, slug):
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
     title = "Show Interest"
 
-    
+
     #if not enough projects or user is not professor
     if user.profile.isProf:
         #redirect them with a message
@@ -326,11 +329,33 @@ def edit_course(request, slug):
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
+    
+    # Builds csv_dict[students full name] = email address
+    if request.POST.get('send_emails'):
+        # grab the csv
+        csv_file = course.csv_file
+        if csv_file:
+            csv_dict = {}
+            # django stores File as bytes array, need to decode to string as we read
+            contents = csv_file.read().decode("utf-8")
+            # split contents of csv on new line, iterable is needed for csv.reader
+            lines = contents.splitlines()
+            # does all the backend splitting of csv, from 'csv' module
+            reader = csv.reader(lines)
+
+            # Name is stored in 4th value
+            # Email is stored in 13th value
+            for row in reader:
+                # Save student in dict, key=name & value=email
+                csv_dict[row[4]] = row[13]
+        else:
+            print("csv_data empty")
+
 
     if request.method == 'POST':
 
         # send the current user.id to filter out
-        form = CourseForm(request.user.id,request.POST)
+        form = CourseForm(request.user.id,request.POST, request.FILES)
         if form.is_valid():
             # edit the course object, omitting slug
             data = form.cleaned_data
@@ -343,9 +368,16 @@ def edit_course(request, slug):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-
-
             course.save()
+
+            #handle csv upload
+            if request.POST and request.FILES:
+                csv_upload = request.FILES['csv_file']
+                if csv_upload:
+                    print("saving csv file to course")
+                    course.csv_file = csv_upload
+                    course.save()
+
             # clear all enrollments
             enrollments = Enrollment.objects.filter(course=course)
             if enrollments is not None: enrollments.delete()

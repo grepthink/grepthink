@@ -282,13 +282,6 @@ def edit_project(request, slug):
             mem_obj.delete()
         return redirect(edit_project, slug)
 
-    if request.POST.get('send_emails'):
-        csv_data = project.csv
-        if csv_data:
-            csvout = csv.writer(csv_data)
-            print("CSVOUT========================")
-            print(csvout)
-
     if request.method == 'POST':
         form = ProjectForm(request.user.id, request.POST, request.FILES)
         if form.is_valid():
@@ -306,13 +299,6 @@ def edit_project(request, slug):
             project.content = form.cleaned_data.get('content')
 
             project.save()
-
-            # handle csv upload
-            csv_file = form.cleaned_data.get('csv')
-            if csv_file:
-                project.csv = csv_file
-                project.save()
-
             members = request.POST.getlist('members')
 
             in_course = form.cleaned_data.get('course')
