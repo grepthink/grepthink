@@ -1,13 +1,38 @@
-{% extends 'base.html' %}
 
-{% load staticfiles i18n %}
+{% extends "adminlte/login.html" %}
 
-{% block head %}
-  <link href="{% static 'js/signup.css' %}" rel="stylesheet">
-{% endblock head %}
+{# Hard coded title because title and site_title not sent to login since auth_views is used #}
+{% block title %}
+{{ title|default:_('Signup') }} | {{ site_title|default:_('GrepThink') }}
+{% endblock title %}
 
 {% block content %}
-  <!-- <h1 class="logo"><a href="{% url 'index' %}">Teamwork</a></h1> -->
+
+{% block logo %}
+
+<div class="login-logo">
+    <a href="{% block logo_href %}/{% endblock %}">
+        {% block logo_text %} <b>Grep</b>Think {% endblock logo_text %}
+    </a>
+</div>
+{% endblock logo %}
+
+{% block form %}
+
+{% block login_form %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                &times;
+                </button>
+                {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
   <div class="signup">
     <form action="{% url 'signup' %}" method="post" role="form">
       {% csrf_token %}
@@ -23,9 +48,27 @@
           {% endfor %}
         </div>
       {% endfor %}
-      <button type="submit" class="btn btn-primary btn-lg">{% trans 'Create an account' %}</button>
-      {{ form.errors }}
-      {{ form.non_field_errors }}
-    </form>
+
   </div>
+
+
+
+        <div class="row">
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'about' %}" class="btn btn-link">Frquently Asked Questions</a>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign up</button>
+        </div>
+        <!-- /.col -->
+      </div>
+
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    </form>
+{% endblock login_form %}
+
+{% endblock form %}
+
 {% endblock content %}

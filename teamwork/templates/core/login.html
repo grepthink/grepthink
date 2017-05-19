@@ -2,7 +2,7 @@
 
 {# Hard coded title because title and site_title not sent to login since auth_views is used #}
 {% block title %}
-{{ title|default:_('Login') }} | {{ site_title|default:_('Teamwork') }}
+{{ title|default:_('Login') }} | {{ site_title|default:_('GrepThink') }}
 {% endblock title %}
 
 {% block content %}
@@ -11,7 +11,7 @@
 
 <div class="login-logo">
     <a href="{% block logo_href %}/{% endblock %}">
-        {% block logo_text %} <b>Team</b>Work {% endblock logo_text %}
+        {% block logo_text %} <b>Grep</b>Think {% endblock logo_text %}
     </a>
 </div>
 {% endblock logo %}
