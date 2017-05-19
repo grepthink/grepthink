@@ -35,11 +35,12 @@ git merge master
 
 #### Example commit message
 ```
-Add How 2 GrepThink to docs
+Add introspective commit example
 
-Think that commit messages are weird.
+Ponder the purpose of a commit message.
 
-Understand the choice to prefer imperative commit titles. See how it is not a simple task to write as if you are:
+Understand the choice to prefer imperative commit titles. 
+See how it is not easy to write as if you are:
 
 - commanding someone
 - barking orders
