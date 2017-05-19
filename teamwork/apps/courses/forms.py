@@ -120,6 +120,11 @@ class CourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    limit_interest = forms.BooleanField(
+        label="Disable ability for students to show interest in projects",
+        required=False)
+
+
     #META CLASS
     class Meta:
         model = Course

@@ -158,6 +158,11 @@ class Course(models.Model):
         #defaulted to False
         default=False)
 
+    # limits student from showing interest
+    limit_interest = models.BooleanField(
+        #defaulted to false
+        default=False)
+
     limit_weights = models.BooleanField(default=False)
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
