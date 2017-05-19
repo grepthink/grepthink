@@ -336,6 +336,9 @@ def edit_course(request, slug):
         return HttpResponseRedirect('/course')
 
     # Builds csv_dict[students full name] = email address
+    # TODO:For a more general approach would parse the header and check which columns are
+    # First Name, Middle Name, Last Name, and email. Even then, not all csv headers will
+    # have same label names
     if request.POST.get('send_emails'):
         # grab the csv
         csv_file = course.csv_file
@@ -351,8 +354,10 @@ def edit_course(request, slug):
             # Name is stored in 4th value
             # Email is stored in 13th value
             for row in reader:
-                # Save student in dict, key=name & value=email
-                csv_dict[row[4]] = row[13]        
+                fullname = row[4] + row[5] + row[6]
+                email = row[13]                
+                # Save student in dict, key=fullname & value=email
+                csv_dict[fullname] = email
 
 
     if request.method == 'POST':
