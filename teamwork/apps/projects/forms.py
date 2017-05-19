@@ -145,20 +145,20 @@ class CreateProjectForm(forms.ModelForm):
 
 class EditProjectForm(forms.ModelForm):
     """
-	ModelForm instance used to create/edit/delete a project
+    ModelForm instance used to create/edit/delete a project
 
-	Attributes (Fields):
-		title:   [CharField] Name of project
-		members:  [Checkbox] Selects project member(s) to create membership object(s)
-		accepting: [Boolean] True when project is looking for new teammembers. False when project full.
-		sponsor:   [Boolean] True when project is sponsored. False when project created by student.
-		course: [Course Obj] Course associated with this project.
-		content: [CharField] Verbose project description with markdown support.
-		slug:    [CharField] Human readable URL slug
+    Attributes (Fields):
+        title:   [CharField] Name of project
+        members:  [Checkbox] Selects project member(s) to create membership object(s)
+        accepting: [Boolean] True when project is looking for new teammembers. False when project full.
+        sponsor:   [Boolean] True when project is sponsored. False when project created by student.
+        course: [Course Obj] Course associated with this project.
+        content: [CharField] Verbose project description with markdown support.
+        slug:    [CharField] Human readable URL slug
 
-	Methods:
-		__init__ :
-	"""
+    Methods:
+        __init__ :
+    """
 
     # used for filtering the queryset
     def __init__(self, uid, *args, **kwargs):
@@ -229,9 +229,9 @@ class EditProjectForm(forms.ModelForm):
 
 class ViewProjectForm(forms.ModelForm):
     """
-	Is this still used? - andgates
+    Is this still used? - andgates
 
-	"""
+    """
 
     def __init__(self, *args, **kwargs):
         super(ViewProjectForm, self).__init__(*args, **kwargs)
@@ -245,18 +245,18 @@ class ViewProjectForm(forms.ModelForm):
 
 class UpdateForm(forms.ModelForm):
     """
-	Form used for submitting project updates
+    Form used for submitting project updates
 
 
-	Attributes (Fields):
-		update_title: [CharField] Name of project update
-		update:       [CharField] Project update content
-		user:		  [User] 	  User object associated with form submitter
+    Attributes (Fields):
+        update_title: [CharField] Name of project update
+        update:       [CharField] Project update content
+        user:		  [User] 	  User object associated with form submitter
 
-	Methods:
-		__init__ :	gets the current user when initiating the form
+    Methods:
+        __init__ :	gets the current user when initiating the form
 
-	"""
+    """
 
     # used for filtering the queryset
     def __init__(self, uid, *args, **kwargs):
@@ -275,3 +275,23 @@ class UpdateForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['update_title', 'update']
+
+class ResourceForm(forms.ModelForm):
+
+    def __init__(self, uid, *args, **kwargs):
+        super(ResourceForm, self).__init__(*args, **kwargs)
+
+        user = User.objects.get(id=uid)
+
+    src_title = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    src_link = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+
+    class Meta:
+        model = Project
+        fields = ['src_title', 'src_link']

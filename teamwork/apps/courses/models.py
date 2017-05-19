@@ -36,8 +36,8 @@ def get_user_courses(self):
         #Gets current user's enrollments, by looking for user in  Enrollment table
         myEnrollment = Enrollment.objects.filter(user=self)
 
-        print("myEnrollment:")
-        print(myEnrollment)
+        #print("myEnrollment:")
+        #print(myEnrollment)
 
         #Filters for courses based on enrollment
         my_courses = Course.objects.filter(enrollment__in=myEnrollment)

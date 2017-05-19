@@ -398,6 +398,9 @@ class Project(models.Model):
     def get_updates(self):
         return ProjectUpdate.objects.filter(project=self)
 
+    def get_resources(self):
+        return ResourceUpdate.objects.filter(project=self)
+
     """ Unfortunately not possible due to dependency loop
     def course(self):
         return next(course for course in Course.objects.all() if this in
@@ -443,6 +446,22 @@ class ProjectUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
+
+class ResourceUpdate(models.Model):
+
+    project = models.ForeignKey(Project)
+    date = models.DateTimeField(auto_now_add=True, editable=True)
+    user = models.ForeignKey(User)
+    src_title = models.CharField(max_length=255, default="Default Resource Title")
+    src_link = models.CharField(max_length=2000, default="Default Resource Link")
+
+    class Meta:
+        verbose_name = "Resource Update"
+        verbose_name_plural = "Resource Updates"
+        ordering = ("-date", )
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.user.username, self.project.title)
 
 # project status: open/closed and number available
 # currently commented to avoid conflict with other files

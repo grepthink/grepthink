@@ -61,6 +61,7 @@ def view_one_project(request, slug):
 
     project = get_object_or_404(Project, slug=slug)
     updates = project.get_updates()
+    resources = project.get_resources()
 
     find_meeting(slug)
 
@@ -81,7 +82,7 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course,
-        'meetings': readable})
+        'meetings': readable, 'resources': resources})
 
 
 def select_members(request):
@@ -415,6 +416,31 @@ def post_update(request, slug):
     return render(request, 'projects/post_update.html',
                   {'form': form,
                    'project': project})
+
+@login_required
+def resource_update(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+
+    if not request.user.username == project.creator and request.user not in project.members.all(
+    ):
+        #redirect them with a message
+        messages.info(request, 'Only current members can post an update for a project!')
+        return HttpResponseRedirect('/project/all')
+
+    if request.method == 'POST':
+        form = ResourceForm(request.user.id, request.POST)
+        if form.is_valid():
+            new_update = ResourceUpdate(project=project)
+            new_update.src_link = form.cleaned_data.get('src_link')
+            new_update.src_title = form.cleaned_data.get('src_title')
+            new_update.user = request.user
+            new_update.save()
+            return redirect(view_one_project, project.slug)
+    else:
+        form = ResourceForm(request.user.id)
+
+    return render(request, 'projects/add_resource.html',{'form': form, 'project': project})
 
 def find_meeting(slug):
     """
