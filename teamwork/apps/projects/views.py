@@ -287,6 +287,28 @@ def edit_project(request, slug):
         messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
 
+    # Add a member to the project
+    if request.POST.get('members'):
+        # Get the course that this project is in
+        this_course = Course.objects.get(projects=project)
+        # Get the members to add, as a list
+        members = request.POST.getlist('members')
+
+        curr_members = Membership.objects.filter(project=project)
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+            # Don't add a member if they already have membership in project
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this projects memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+                Membership.objects.create(
+                    user=mem_to_add, project=project, invite_reason='')
+        return redirect(edit_project, slug)
+
     # Remove a user from the project
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
@@ -323,14 +345,13 @@ def edit_project(request, slug):
         return redirect(edit_project, slug)
 
     if request.method == 'POST':
-        form = ProjectForm(request.user.id, request.POST)
+        form = EditProjectForm(request.user.id, request.POST)
         if form.is_valid():
             # edit the project object, omitting slug
             project.title = form.cleaned_data.get('title')
             project.tagline = form.cleaned_data.get('tagline')
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
-            project.resource = form.cleaned_data.get('resource')
             project.teamSize = form.cleaned_data.get('teamSize')
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
@@ -340,23 +361,10 @@ def edit_project(request, slug):
             
             project.save()
 
-            members = request.POST.getlist('members')
-
-            in_course = form.cleaned_data.get('course')
-            in_course.projects.add(project)
-
-            # loop through the members in the object and make m2m rows for them
-            for i in members:
-                i_user = User.objects.get(username=i)
-                mem_courses = Course.get_my_courses(i_user)
-                if in_course in mem_courses:
-                    Membership.objects.create(
-                        user=i_user, project=project, invite_reason='')
-
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
-        form = ProjectForm(request.user.id, instance=project)
+        form = EditProjectForm(request.user.id, instance=project)
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'form': form, 'project': project})

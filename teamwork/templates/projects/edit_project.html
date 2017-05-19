@@ -115,8 +115,8 @@ $(document).ready(function() {
           <div class="box-header with-border">
             <h3 class="box-title">Edit Project</h3>
           </div>
+          <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
           <div class="box-body">
-            <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.status }}
                 {% for field in form.visible_fields %}
@@ -128,17 +128,6 @@ $(document).ready(function() {
                     {% endfor %}
                 </div>
                 {% endfor %}
-
-              <div class="form-group">
-                <label>Add Members</label>
-                <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
-                </select>
-              </div>
-
-              <div class="form-group">
-                  <label>Drop a CSV</label>
-                  {{ form.csv }} bam
-              </div>
 
             <div class="box-footer">
 
@@ -162,6 +151,59 @@ $(document).ready(function() {
 </div>
  <!-- Col 1 -->
 
+<div class="col-md-6 clearfix">
+<div class="box box-success">
+  <div class="box-header with-border">
+    <h3 class="box-title">Add members to {{project.title}}</h3>
+  </div>
+
+    <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+      {% csrf_token %}
+        <div class="box-body">
+          <div class="form-group">
+            <label>Add Members</label>
+            <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+            </select>
+          </div>
+        </div>
+
+        <div class="box-footer">
+
+            <div class="pull-left">
+            <a href="{% url 'view_one_project' project.slug %}">
+                <button class="btn btn-danger" type="button">
+                    Cancel
+                </button>
+            </a>
+            </div>
+            <div class="pull-right">
+                <button class="btn btn-success" type="submit" name="SUBMIT">
+                    Add member(s)
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+
+<div class="col-md-6 clearfix">
+<div class="box box-danger">
+  <div class="box-header with-border">
+    <h3 class="box-title">Remove Members from {{project.title}}</h3>
+  </div>
+        <div class="box-body">
+        <div class="btn-grid">
+        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for mem in project.members.all %}
+                <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
+                </button>
+            {% endfor %}
+        </form>
+        </div>
+        </div>
+</div>
+</div>
 
 <div class="col-md-6 clearfix">
 <div class="box box-info">
@@ -190,7 +232,7 @@ $(document).ready(function() {
           </div>
           <div class="pull-right">
               <button class="btn btn-success" type="submit" name="SUBMIT">
-                  Add Desired Skills
+                  Add Desired Skill(s)
               </button>
           </div>
       </div>
@@ -199,7 +241,7 @@ $(document).ready(function() {
 </div>
 
 <div class="col-md-6 clearfix">
-<div class="box box-info">
+<div class="box box-danger">
   <div class="box-header with-border">
     <h3 class="box-title">Remove Desired Skills from {{project.title}}</h3>
   </div>
@@ -217,27 +259,6 @@ $(document).ready(function() {
   </div>
 </div>
 </div>
-
-<div class="col-md-6 clearfix">
-<div class="box box-danger">
-  <div class="box-header with-border">
-    <h3 class="box-title">Delete Members from {{project.title}}</h3>
-  </div>
-        <div class="box-body">
-        <div class="btn-grid">
-        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for mem in project.members.all %}
-                <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
-                </button>
-            {% endfor %}
-        </form>
-        </div>
-        </div>
-</div>
-</div>
-
-
 
   <div class="col-md-6 clearfix">
       <div class="box box-danger">
