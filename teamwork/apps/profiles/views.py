@@ -106,6 +106,10 @@ def edit_profile(request, username):
     #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
 
+    if request.user.username != username:
+        messages.info(request, 'You cannot access the user profile specified!')
+        return redirect(view_profile, request.user.username)
+
     page_name = "Edit Profile"
     page_description = "Edit %s's Profile"%(profile.user.username)
     title = "Edit Profile"
