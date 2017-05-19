@@ -146,6 +146,8 @@ class CourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+
     #META CLASS
     class Meta:
         model = Course
