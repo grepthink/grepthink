@@ -262,4 +262,6 @@ def by_schedule(user, project):
     total_meetings = len(pos_event)
     #print("\n\nStudent: %s\nMeeting List: %s\nHours: %d\nMeetings: %d\nHours/Meetings: %d\n\n"%(user.profile, pos_event, total_hours, total_meetings, total_hours/total_meetings))
 
+    if total_meetings == 0:
+        return 1
     return floor(total_hours/total_meetings)

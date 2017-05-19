@@ -85,8 +85,8 @@ def to_bits(day, l, h):
 
     # Manually block off time bounds given by professor
     for x in range(0, l):
-        bitstring[x] = Tru8
-    for x in range(h, 49):
+        bitstring[x] = True
+    for x in range(h, 48):
         bitstring[x] = True
 
     return bitstring
