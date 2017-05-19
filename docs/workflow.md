@@ -33,6 +33,26 @@ git merge master
 [1] [Suggested commit message style](https://github.com/erlang/otp/wiki/Writing-good-commit-messages).
 
 
+#### Example commit message
+```
+Add How 2 GrepThink to docs
+
+Think that commit messages are weird.
+
+Understand the choice to prefer imperative commit titles. See how it is not a simple task to write as if you are:
+
+- commanding someone
+- barking orders
+- a robot
+
+Find some comfort in the fact that this choice increases:
+
+- [x] consistency
+- [x] readability
+- [x] your git etiquette level
+- [ ] the quality of your code
+```
+
 ## Migration Files
 
 ### Early Development:
