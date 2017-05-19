@@ -61,7 +61,7 @@ def dayasday(day):
     }.get(day, '2017-04-00T')
 
 # Given an array, creates a bitstring based on meeting times
-def to_bits(day):
+def to_bits(day, l, h):
     # Creates array of all 0's of length 48
     bitstring = [False]*48
     # Loops through each Event in array
@@ -83,10 +83,10 @@ def to_bits(day):
             bitstring[end+1] = True
 
 
-    # Manually block off 12a - 8a and 9p - 12a
-    for x in range(0, 17):
-        bitstring[x] = True
-    for x in range(42, 48):
+    # Manually block off time bounds given by professor
+    for x in range(0, l):
+        bitstring[x] = Tru8
+    for x in range(h, 49):
         bitstring[x] = True
 
     return bitstring
@@ -265,7 +265,7 @@ class Project(models.Model):
 
 
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
-    def generate_avail(self):
+    def generate_avail(self, l, h):
         event_list = []     # list of all events for each user
         pos_event = []      # list of possible meeting times
         temp = []
@@ -310,38 +310,38 @@ class Project(models.Model):
 
 
         # Converts to and from bitstring to find FREE time
-        sunday_list = to_bits(sunday_list)  #this is working
+        sunday_list = to_bits(sunday_list, l, h)  #this is working
         sunday_list = from_bits(sunday_list)    #this is now working
         # Appends to list
         for i in sunday_list:
             pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
 
-        monday_list = to_bits(monday_list)
+        monday_list = to_bits(monday_list, l, h)
         monday_list = from_bits(monday_list)
         for i in monday_list:
             pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
 
-        teusday_list = to_bits(teusday_list)
+        teusday_list = to_bits(teusday_list, l, h)
         teusday_list = from_bits(teusday_list)
         for i in teusday_list:
             pos_event.append(["Teusday", i[0], i[1], i[2], i[3]])
 
-        wednesday_list = to_bits(wednesday_list)
+        wednesday_list = to_bits(wednesday_list, l, h)
         wednesday_list = from_bits(wednesday_list)
         for i in wednesday_list:
             pos_event.append(["Wednesday", i[0], i[1], i[2], i[3]])
 
-        thursday_list = to_bits(thursday_list)
+        thursday_list = to_bits(thursday_list, l, h)
         thursday_list = from_bits(thursday_list)
         for i in thursday_list:
             pos_event.append(["Thursday", i[0], i[1], i[2], i[3]])
 
-        friday_list = to_bits(friday_list)
+        friday_list = to_bits(friday_list, l, h)
         friday_list = from_bits(friday_list)
         for i in friday_list:
             pos_event.append(["Friday", i[0], i[1], i[2], i[3]])
 
-        saturday_list = to_bits(saturday_list)
+        saturday_list = to_bits(saturday_list, l, h)
         saturday_list = from_bits(saturday_list)
         for i in saturday_list:
             pos_event.append(["Saturday", i[0], i[1], i[2], i[3]])

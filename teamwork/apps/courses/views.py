@@ -349,6 +349,8 @@ def edit_course(request, slug):
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
             course.limit_interest = data.get('limit_interest')
+            course.lower_time_bound = data.get('lower_time_bound')
+            course.upper_time_bound = data.get('upper_time_bound')
 
 
             course.save()

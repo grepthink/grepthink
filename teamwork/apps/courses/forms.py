@@ -11,6 +11,14 @@ from .models import *
 Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),
                ('Fall', 'Fall'), )
 
+Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
+                   (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                   (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                   (24, '12:00'), )
+
+Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
+                   (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                   (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
 def ForbiddenNamesValidator(value):
     forbidden_names = ['new', 'join']
@@ -120,6 +128,18 @@ class CourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    lower_time_bound = forms.ChoiceField(
+            label="Custom Lower Time Boundary for Scheduling",
+            #Choices from Lower_Boundary_Choice
+            choices=Lower_Boundary_Choice,
+            #Field Required
+            required=False)
+    upper_time_bound = forms.ChoiceField(
+            label="Custom Upper Time Boundary for Scheduling",
+            #Choices from Upper_Boundary_Choice
+            choices=Upper_Boundary_Choice,
+            #Field Required
+            required=False)
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
         required=False)
