@@ -98,11 +98,8 @@ $(document).ready(function() {
 {% block content %}
 
   <div class="row">
-
     <div class="col-md-6">
-
         <div class="box box-primary">
-
             <div class="box-header with-border">
                 <h3 class="box-title">Edit Profile</h3>
             </div>
@@ -146,29 +143,25 @@ $(document).ready(function() {
                     </div>
 
                     <div class="form-group">
+                        {% for skill in known_skills_list %}
+                            <button class="btn btn-danger btn-sm" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                            </button>
+                        {% endfor %}
+                    </div>                    
+
+                    <div class="form-group">
                       <h5>Skills I Want to Learn
                         <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Separate skills by comma">
                             <i class='glyphicon glyphicon-info-sign'></i></a></h5>
                             {{ form.learn_skill }}
                     </div>
-                    {% endif %}
-
-                    {% if not user.profile.isProf%}
-                    <hr>
-                    <div class="form-group">
-                        {% for skill in known_skills_list %}
-                            <button class="btn btn-danger btn-sm" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
-                            </button>
-                        {% endfor %}
-                    </div>
-
                     <div class="form-group">
                         {% for skill in learn_skills_list %}
                             <button class="btn btn-danger btn-sm" name="delete_learn" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                             </button>
                         {% endfor %}
                     </div>
-                  {% endif %}
+                    {% endif %}
 
                   <div class="box-footer">
                       <div class="pull-left">
