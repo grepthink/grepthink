@@ -107,7 +107,7 @@ def auto_gen(request, slug):
     page_name = "Potential Roster"
     page_description = "Auto Generate Groups"
     title = "Auto Generate Groupts"
-    
+
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
 
@@ -121,3 +121,85 @@ def auto_gen(request, slug):
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
+
+def matchstats(request, project_match_list, project):
+    print("====================MATCHSTATS BITCHES =======================")
+    """
+        Get project object that was clicked on
+        
+    """
+
+    skill_match = {}
+    matched_students = []
+    interest_match = {}
+    interest_reason_tuple = []
+    cur_project = ''
+    desired_skills = ''
+
+    # create array of matched students
+    print("project parameter:",project);
+    print("project_match_list:", project_match_list)
+    regex = r"<User: [^>]*>"
+    reg_match = re.finditer(regex, project_match_list)
+    for item in reg_match:
+        print("reg_match:", item.group())
+        username = item.group().split(": ")[1].replace(">","")
+
+        matched_students.append(username)
+
+    # find each students' known_skills that are desired by cur_project
+    for stud in matched_students:
+        student = get_object_or_404(User, username=stud)
+        profile = Profile.objects.get(user=student)
+        similar_skills = []
+
+        projects = Project.get_my_projects(student)
+        print("cur_project:",cur_project)
+        print("get_my_projects(",student,"):", projects)
+
+        if (len(projects) > 0):
+            for k_skill in profile.known_skills.all():
+                for p in projects:
+                    print("p.title:",p.title,"project:",project)
+                    if (p.title == project):
+                        cur_project = p
+                if (cur_project):
+                    desired_skills = cur_project.desired_skills.all()
+
+                for d_skill in desired_skills:
+
+                    if (k_skill == d_skill):
+                        similar_skills.append(k_skill)
+
+        # interested = cur_project.interest.all()
+        all_interests = Interest.objects.filter(project__in=projects)
+        interests = all_interests.filter(user=student)
+        # for inter in interests:
+        #     print("stud:",stud,"interest: ",inter.interest_reason)
+
+        # get newest entry
+        if (len(interests) > 0):
+            # print("len of interests", len(interests), "student:",stud)
+            # print("len(inter)-1 -> reason", interests[len(interests)-1].interest_reason)
+            interest_match[stud] = ([interests[len(interests)-1].interest, interests[len(interests)-1].interest_reason])
+        else:
+            interest_match[stud] = ([0, "Student hasn't showed interest, yet"])
+
+        if (len(similar_skills) > 0):
+            skill_match[stud] = similar_skills
+        else:
+            skill_match[stud] = ["No similar skills"]
+        # interest_match[stud] = []
+        # store dict with username as key
+        # value = [interest, interest_reason]
+
+
+
+    user = request.user
+    print("=========================END MATCHSTATS=========================")
+
+    return render(request, 'core/matchstats.html',{
+        'skill_match':skill_match, 'project':project,
+        'interest_reason_tuple':interest_reason_tuple,
+        'user':user, 'interest_match':interest_match,
+        })
