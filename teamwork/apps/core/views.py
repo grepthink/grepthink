@@ -126,7 +126,10 @@ def auto_gen(request, slug):
 def matchstats(request, project_match_list, project):
     print("====================MATCHSTATS BITCHES =======================")
     """
-        Get project object that was clicked on
+        TODO:Logic around cur_project needs some changing, need to get all projects in a course
+        i.e. get_all_projects instead of get_my_projects
+
+        Then we are chillen
 
     """
 
@@ -145,7 +148,6 @@ def matchstats(request, project_match_list, project):
     for item in reg_match:
         print("reg_match:", item.group())
         username = item.group().split(": ")[1].replace(">","")
-
         matched_students.append(username)
 
     # find each students' known_skills that are desired by cur_project

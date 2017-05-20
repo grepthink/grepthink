@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
+
+{% block content %}
+
+{# if Prof, then display interest values and reasoning for each student also #}
+{% if user.profile.isProf%}
+
+    <h3>MatchStats: {{ cur_project }}</h3>    
+
+    {% for key, value in skill_match.items %}
+        <div>
+            <a href="{% url 'profile' key %}">
+                <span class="label label-primary">
+                        <i class="fa fa-user"></i>
+                        {{ key }}
+                </span>
+            </a>
+            <h5><u> Skills Valued: </u></h5>
+            <label> c++, c# </label>
+
+            {% for skill in value %}
+                <p> {{ skill }} </p>
+            {% endfor %}
+
+            {% for key2, value2 in interest_match.items %}
+
+                {% if key == key2 %}
+                    <h5><u>Interest Reason:</u></h5>
+                    <p> Value of Interest: {{ value2.0 }} </p>
+                    <p> {{ value2.1 }} </p>
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+    {% endfor %}
+{# else if student etc, display only matched skills #}
+{% else %}
+    <h3>MatchStats: {{ cur_project }} -- {{ user }}</h3>
+
+    {% for key, value in skill_match.items %}
+    	<div>
+        	<a href="{% url 'profile' key %}">
+        	    <span class="label label-primary">
+        	            <i class="fa fa-user"></i>
+        	            {{ key }}
+        	    </span>
+            </a>
+            <h5><u> Skills Valued: </u></h5>
+
+            {% for skill in value %}
+        		<p> {{ skill }} </p>
+            {% endfor %}
+
+        </div>
+     {% endfor %}
+
+{% endif %}
+{% endblock content %}
