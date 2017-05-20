@@ -34,11 +34,11 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li>
+                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li> -->
                 </ul>
             </li>
-            <li class="dropdown">
+            <!-- <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Show Interest <span class="caret"></span>
                 </a>
@@ -49,7 +49,7 @@
                     <li role="presentation" class="divider"></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Interested</a></li>
                 </ul>
-            </li>
+            </li> -->
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
         </ul>
         <div class="tab-content">
