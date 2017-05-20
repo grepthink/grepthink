@@ -9,7 +9,7 @@
 {# if Prof, then display interest values and reasoning for each student also #}
 {% if user.profile.isProf%}
 
-    <h3>MatchStats: {{ cur_project }}</h3>    
+    <h3>MatchStats: {{ cur_project }}</h3>
 
     {% for key, value in skill_match.items %}
         <div>
@@ -20,7 +20,6 @@
                 </span>
             </a>
             <h5><u> Skills Valued: </u></h5>
-            <label> c++, c# </label>
 
             {% for skill in value %}
                 <p> {{ skill }} </p>
@@ -33,7 +32,6 @@
                     <p> Value of Interest: {{ value2.0 }} </p>
                     <p> {{ value2.1 }} </p>
                 {% endif %}
-
             {% endfor %}
 
         </div>
