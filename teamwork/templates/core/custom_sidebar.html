@@ -55,7 +55,6 @@
 
 
               {% if user.is_authenticated %}
-
                     <li>
                         <a href="{% url 'index' %}">
                             <i class="fa fa-dashboard"></i>
@@ -65,28 +64,28 @@
 
                     <li>
                         <a href="{% url 'create_project' %}">
-                            <i class="fa fa-plus"></i> 
+                            <i class="fa fa-plus"></i>
                             <span>Create Project</span>
                         </a>
                     </li>
 
                     <li>
                         <a href="{% url 'view_projects' %}">
-                            <i class="fa fa-briefcase"></i> 
+                            <i class="fa fa-briefcase"></i>
                             <span>My Projects</span>
                         </a>
                     </li>
                     {% if user.profile.isProf %}
                         <li>
                             <a href="{% url 'view_matches' %}">
-                                <i class="fa fa-spinner"></i> 
+                                <i class="fa fa-spinner"></i>
                                 <span>Auto Generate Groups</span>
                             </a>
                         </li>
                     {% else %}
                         <li>
                         <a href="{% url 'view_matches' %}">
-                            <i class="fa fa-handshake-o"></i> 
+                            <i class="fa fa-handshake-o"></i>
                             <span>My Matches</span>
                         </a>
                     </li>
@@ -277,7 +276,7 @@
         </a>
     </li>
     {% endif %}
-    
+
 {% endblock nav_links %}
 
 {% endcomment %}
