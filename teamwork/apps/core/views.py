@@ -12,6 +12,7 @@ from teamwork.apps.projects.models import *
 
 from .forms import *
 from .models import *
+import re
 
 
 def login_view(request):
@@ -126,7 +127,7 @@ def matchstats(request, project_match_list, project):
     print("====================MATCHSTATS BITCHES =======================")
     """
         Get project object that was clicked on
-        
+
     """
 
     skill_match = {}
