@@ -7,10 +7,12 @@ Used when creating/editing/deleting projects, adding project updates, and showin
 # Django modules
 from django import forms
 from django.db.models import *
+from django.core.validators import *
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 from django.core.exceptions import ValidationError
+from django.forms import URLField
 
 from .models import *
 
@@ -280,7 +282,7 @@ class ResourceForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
         super(ResourceForm, self).__init__(*args, **kwargs)
-
+        self.fields['src_link'].validators.append(URLValidator)
         user = User.objects.get(id=uid)
 
     src_title = forms.CharField(
@@ -295,3 +297,18 @@ class ResourceForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['src_title', 'src_link']
+
+    def clean(self):
+        super(ResourceForm, self).clean()
+        if not validate_url(self.cleaned_data.get('src_link')):
+            self._errors['src_link'] = self.error_class(['Invalid URL'])
+
+        return self.cleaned_data
+
+def validate_url(url):
+    url_form_field = URLField()
+    try:
+        url = url_form_field.clean(url)
+    except ValidationError:
+        return False
+    return True
