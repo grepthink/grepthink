@@ -21,7 +21,11 @@ from django.db import models
 # Not used currently
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+
+from django.core.validators import URLValidator
+
 from django.utils import timezone
+
 
 from teamwork.apps.profiles.models import *
 
@@ -452,7 +456,7 @@ class ResourceUpdate(models.Model):
     date = models.DateTimeField(auto_now_add=True, editable=True)
     user = models.ForeignKey(User)
     src_title = models.CharField(max_length=255, default="Default Resource Title")
-    src_link = models.CharField(max_length=2000, default="Default Resource Link")
+    src_link = models.URLField(max_length=2000, default="Default Resource Link")
 
     class Meta:
         verbose_name = "Resource Update"
@@ -461,6 +465,8 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
+
+
 
 # project status: open/closed and number available
 # currently commented to avoid conflict with other files
