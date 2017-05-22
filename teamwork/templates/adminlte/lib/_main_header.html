@@ -59,8 +59,8 @@
                                 {% block menu_footer %}
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="{% block change_password_url %}{% url 'admin:password_change' %}{% endblock %}"
-                                           class="btn btn-default btn-flat">{% trans 'Change password' %}</a>
+                                        <a href="{% url 'edit_profile' user.username %}"
+                                           class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
                                     </div>
                                     <div class="pull-right">
                                         <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a>
