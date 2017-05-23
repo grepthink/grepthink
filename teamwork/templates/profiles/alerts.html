@@ -32,7 +32,7 @@
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
                     <td>
-                        {% if alert.sender != user %}
+                        {% if alert.sender != profile.user %}
                         <span class="label label-primary">
                             {{ alert.sender.username }}
                         </span>
@@ -81,7 +81,7 @@
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
                     <td>
-                        {% if alert.sender != user %}
+                        {% if alert.sender != profile.user %}
                         <span class="label label-primary">
                             {{ alert.sender.username }}
                         </span>

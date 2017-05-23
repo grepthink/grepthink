@@ -304,6 +304,7 @@ def save_event(request, username):
 def view_alerts(request):
 
     user = request.user
+    profile = Profile.objects.get(user=user)
 
     page_name = "Alerts"
     page_description = "Your notifications"
@@ -314,12 +315,16 @@ def view_alerts(request):
     # extra.to = user
     # extra.msg = "You viewed your alerts"
     # extra.save()
-    alerts = Alert.objects.filter(to=user)
-    unread = alerts.filter(read=False)
-    archive = alerts.filter(read=True)
+
+    # alerts = Alert.objects.filter(to=user)
+    # unread = alerts.filter(read=False)
+    # archive = alerts.filter(read=True)
+
+    unread = profile.unread_alerts()
+    archive = profile.read_alerts()
 
     return render(request, 'profiles/alerts.html', {
-        'user': user,
+        'profile': profile,
         'unread': unread,
         'archive': archive,
         'page_name': page_name,

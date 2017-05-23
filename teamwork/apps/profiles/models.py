@@ -193,6 +193,14 @@ class Profile(models.Model):
         # True at the same time
         return not(self == other)
 
+    # Alert functions, self explanitory
+    def alerts(self):
+        return Alert.objects.filter(to=self.user)
+    def unread_alerts(self):
+        return Alert.objects.filter(to=self.user,read=False)
+    def read_alerts(self):
+        return Alert.objects.filter(to=self.user,read=True)
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
