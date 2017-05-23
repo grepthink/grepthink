@@ -319,6 +319,7 @@ def view_alerts(request):
     archive = alerts.filter(read=True)
 
     return render(request, 'profiles/alerts.html', {
+        'user': user,
         'unread': unread,
         'archive': archive,
         'page_name': page_name,
