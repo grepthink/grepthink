@@ -3,6 +3,56 @@
 
 #### Goal: define a team-wide git workflow to minimize conflicts
 
+## How 2 GrepThink
+
+```bash
+# Keep your branch up to date with master to avoid an auto-merge fail
+git checkout master
+git pull
+git checkout my-helpful-branch-name
+git merge master
+
+# Migration files are not tracked due to rapid development; to be safe, name all apps after a pull
+python manage.py makemigrations auth profiles projects courses core
+python manage.py migrate
+python manage.py runserver
+
+# Commit and push to remote often
+# Optionally be awesome; commit without -m so you can
+#  add details to your commit message [1].
+git add -A
+git commit -m "Add How 2 GrepThink to docs"
+git push
+
+# Compare your branch to master before you merge, here or on github
+git diff master my-helpful-branch-name --minimal
+
+# Open a pull request or if you think you're hot stuff
+git merge master
+```
+[1] [Suggested commit message style](https://github.com/erlang/otp/wiki/Writing-good-commit-messages).
+
+
+#### Example commit message
+```
+Add introspective commit example
+
+Ponder the purpose of a commit message.
+
+Understand the choice to prefer imperative commit titles. 
+See how it is not easy to write as if you are:
+
+- commanding someone
+- barking orders
+- a robot
+
+Find some comfort in the fact that this choice increases:
+
+- [x] consistency
+- [x] readability
+- [x] your git etiquette level
+- [ ] the quality of your code
+```
 
 ## Migration Files
 

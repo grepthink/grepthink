@@ -113,7 +113,7 @@ class ProfileForm(forms.ModelForm):
               max_length=50, required=False)
 
     bio = forms.CharField(
-              widget=forms.Textarea(attrs={'rows': 6, 'cols': 75}),
+              widget=forms.Textarea(attrs={'rows': 5}),
               max_length=500, required=False)
 
     institution = forms.CharField(

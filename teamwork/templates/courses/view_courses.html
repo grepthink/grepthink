@@ -22,19 +22,22 @@
             {% for course in courses %}
             <div class="panel panel-primary"
                 onclick="window.location.href='{% url 'view_one_course' course.slug %}'">
+                <!-- <div class="panel panel-primary"
+                    <a href="window.location.href='{% url 'view_one_course' course.slug %}'"</a> -->
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title">
-                        {{ course.name }}
+                        <a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a>
                         <i class="pull-right">
                             <b>{{ course.term }}</b>
-                            {{ course.year }}
+                        {{ course.year }}
                         </i>
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <p><i>{{ course.info }}</i></p>
+                    <p><i><a href="{% url 'view_one_course' course.slug %}">{{ course.info }}</a></i></p>
                 </div>
             </div>
+
 
             {% empty %}
             <div class="alert alert-warning" role="alert">
@@ -51,7 +54,7 @@
                 </div>
                 {% endfor %}
 
-            {% if user.profile.isProf %}
+            <!-- {% if user.profile.isProf %}
                 <span></span>
             {% else %}
                 <div class="pull-right">
@@ -62,7 +65,7 @@
                         </button>
                     </a>
                 </div>
-            {% endif %}
+            {% endif %} -->
 
             </section>
         </div>

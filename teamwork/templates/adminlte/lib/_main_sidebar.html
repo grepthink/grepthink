@@ -63,31 +63,24 @@
 
                     <li>
                         <a href="{% url 'create_project' %}">
-                            <i class="fa fa-plus"></i> 
+                            <i class="fa fa-pencil"></i>
                             <span>Create Project</span>
                         </a>
                     </li>
 
                     <li>
                         <a href="{% url 'view_projects' %}">
-                            <i class="fa fa-briefcase"></i> 
+                            <i class="fa fa-briefcase"></i>
                             <span>My Projects</span>
                         </a>
                     </li>
-                    {% if user.profile.isProf %}
+                    {% if not user.profile.isProf %}
                         <li>
                             <a href="{% url 'view_matches' %}">
-                                <i class="fa fa-spinner"></i> 
-                                <span>Auto Generate Groups</span>
+                                <i class="fa fa-handshake-o"></i>
+                                <span>My Matches</span>
                             </a>
                         </li>
-                    {% else %}
-                        <li>
-                        <a href="{% url 'view_matches' %}">
-                            <i class="fa fa-handshake-o"></i> 
-                            <span>My Matches</span>
-                        </a>
-                    </li>
                     {% endif%}
 
                     {% if user.profile.isProf %}
@@ -95,6 +88,15 @@
                           <a href="{% url 'create_course' %}">
                               <i class="fa fa-plus"></i>
                               <span>Create Course</span>
+                          </a>
+                      </li>
+                    {% endif %}
+                    
+                    {% if not user.profile.isProf %}
+                      <li>
+                          <a href="{% url 'join_course' %}">
+                              <i class="fa fa-plus"></i>
+                              <span>Join Course</span>
                           </a>
                       </li>
                     {% endif %}
