@@ -131,6 +131,10 @@ def matchstats(request, project_match_list, project):
 
         Then we are chillen
 
+
+        cur_course = get_object_or_404(Course, slug=slug)
+
+        Create User Mistype: "Frquently Asked"
     """
     # just some temp data
     page_name = "MATCHSTATS"
