@@ -123,6 +123,7 @@ class Alert(models.Model):
         date    - DateTime: time sent
         msg     - str: alert body
         read    - boolean: whether alert has been written/marked as read
+        url     - str: URL for related page, or None
 
     Types:
         'course_inv'    - invitation to a course
@@ -134,6 +135,7 @@ class Alert(models.Model):
     # type = models.CharField(max_length=20, default="null")
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
+    url = models.CharField(max_length=500,default="")
 
     def __str__(self):
         return str(self.sender) + " -> " + str(self.to) + " : " + str()

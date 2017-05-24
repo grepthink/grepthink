@@ -14,6 +14,7 @@ from teamwork.apps.projects.models import *
 
 from .forms import *
 from .models import *
+from django.urls import reverse
 
 
 def signup(request):
@@ -310,15 +311,12 @@ def view_alerts(request):
     page_description = "Your notifications"
 
     # Testing by injecting alerts every time
-    # extra = Alert()
-    # extra.sender = user
-    # extra.to = user
-    # extra.msg = "You viewed your alerts"
-    # extra.save()
-
-    # alerts = Alert.objects.filter(to=user)
-    # unread = alerts.filter(read=False)
-    # archive = alerts.filter(read=True)
+    #extra = Alert()
+    #extra.sender = user
+    #extra.to = user
+    #extra.msg = "You viewed your alerts"
+    #extra.url = reverse('profile', args=[user.username])
+    #extra.save()
 
     unread = profile.unread_alerts()
     archive = profile.read_alerts()

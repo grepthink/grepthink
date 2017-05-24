@@ -7,6 +7,8 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render
 
+from django.urls import reverse
+
 from teamwork.apps.projects.models import *
 
 from .forms import *
@@ -57,6 +59,7 @@ def view_one_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
+
 
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates, 'page_name' : page_name, 'page_description': page_description, 'title': title})
@@ -308,6 +311,12 @@ def create_course(request):
             # loop through the members in the object and make m2m rows for them
             for i in students:
                 Enrollment.objects.create(user=i.user, course=course)
+                Alert.objects.create(
+                    sender=request.user,
+                    to=i.user,
+                    msg="You were enrolled in course " + course.name,
+                    url=reverse('view_one_course',args=[course.slug])
+                    )
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_one_course, course.slug)
@@ -355,10 +364,28 @@ def edit_course(request, slug):
 
             course.save()
             # clear all enrollments
+            print(students)
             enrollments = Enrollment.objects.filter(course=course)
-            if enrollments is not None: enrollments.delete()
-            for i in students:
-                Enrollment.objects.create(user=i.user, course=course)
+            print(enrollments)
+            for e in enrollments:
+                s = students.filter(user=e.user)
+                if not s.exists():
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=e.user,
+                        msg="You were dropped from course " + course.name,
+                        url=reverse('view_one_course',args=[course.slug])
+                    )
+                    e.delete()
+            for s in students:
+                if not enrollments.filter(course=course,user=s.user).exists():
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=s.user,
+                        msg="You were enrolled in course " + course.name,
+                        url=reverse('view_one_course',args=[course.slug])
+                    )
+                    Enrollment.objects.create(user=s.user, course=course)
 
         return redirect(view_one_course, course.slug)
     else:
