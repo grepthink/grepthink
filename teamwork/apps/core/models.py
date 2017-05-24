@@ -88,7 +88,7 @@ def po_match(project):
                         backup[j.user] = 2
         learn = i.learn.all()
         for k in learn:
-            cur_course = Course.get_my_courses(j.user)
+            cur_course = Course.get_my_courses(k.user)
             if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
                 if k.user in initial:
                     temp = initial[k.user]
@@ -110,7 +110,7 @@ def po_match(project):
         initial.update(backup)
 
     # Schedule Matching
-    # Look through the currently selected students and reward those with the best schedule for 
+    # Look through the currently selected students and reward those with the best schedule for
     # meeting with the current members
     for l in initial.keys():
         temp = initial[l]
