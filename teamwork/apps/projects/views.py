@@ -16,7 +16,6 @@ from .forms import *
 from .models import *
 
 import json
-import csv
 
 
 def _projects(request, projects):

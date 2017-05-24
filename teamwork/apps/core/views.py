@@ -118,6 +118,7 @@ def auto_gen(request, slug):
     # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]
 
+    print("auto_gen:", auto)
 
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
@@ -134,7 +135,7 @@ def matchstats(request, project_match_list, project):
 
         cur_course = get_object_or_404(Course, slug=slug)
 
-        Create User Mistype: "Frquently Asked"
+        Create User Mistype: 'Frquently Asked'
     """
     # just some temp data
     page_name = "MATCHSTATS"

@@ -322,6 +322,7 @@ class Project(models.Model):
         for i in monday_list:
             pos_event.append(["Monday", i[0], i[1], i[2], i[3]])
 
+        # "TEU-SDAY"
         teusday_list = to_bits(teusday_list, l, h)
         teusday_list = from_bits(teusday_list)
         for i in teusday_list:
