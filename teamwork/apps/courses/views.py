@@ -156,6 +156,12 @@ def join_course(request):
                     if not Enrollment.objects.filter(user=request.user, course=i).exists():
                         #creates an enrollment relation with the current user and the selected course
                         Enrollment.objects.create(user=request.user, course=i)
+                        Alert.objects.create(
+                                sender=request.user,
+                                to=User.objects.filter(username=i.creator).get(),
+                                msg=request.user.username + " used the addcode to enroll in " + i.name,
+                                url=reverse('profile',args=[request.user.username])
+                                )
                     return redirect(view_one_course, i.slug)
 
             #returns to view courses
