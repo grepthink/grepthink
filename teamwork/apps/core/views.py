@@ -107,7 +107,7 @@ def auto_gen(request, slug):
     """
     page_name = "Potential Roster"
     page_description = "Auto Generate Groups"
-    title = "Auto Generate Groupts"
+    title = "Auto Generate Groups"
 
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
@@ -132,7 +132,7 @@ def matchstats(request, project_match_list, project):
         Then we are chillen
 
     """
-    # just some temp data 
+    # just some temp data
     page_name = "MATCHSTATS"
     page_description = "MATCHSTATS"
     title = "MATCHSTATS"
