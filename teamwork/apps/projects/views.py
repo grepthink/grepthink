@@ -16,6 +16,7 @@ from .forms import *
 from .models import *
 
 import json
+import csv
 
 
 def _projects(request, projects):
@@ -347,6 +348,7 @@ def edit_project(request, slug):
 
     if request.method == 'POST':
         form = EditProjectForm(request.user.id, request.POST)
+
         if form.is_valid():
             # edit the project object, omitting slug
             project.title = form.cleaned_data.get('title')

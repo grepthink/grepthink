@@ -128,6 +128,8 @@ class CourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+
     lower_time_bound = forms.ChoiceField(
             label="Custom Lower Time Boundary for Scheduling",
             #Choices from Lower_Boundary_Choice
@@ -144,6 +146,7 @@ class CourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
     #META CLASS
     class Meta:
