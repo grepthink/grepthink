@@ -3,67 +3,57 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+
+{% endblock stylesheets %}
+
 {% block content %}
-
-
-
-{% include "projects/partial_project_box.html" with projects=projects %}
-
-
-{% comment %}
-{% block title %} Potential Roster {% endblock %}
-
+<!-- Currently is a placebo
 <div>
     <button class="btn btn-success">
         Set Roster
     </button>
-</div>
+</div> -->
 <section class="prof-matches">
+    <div class="row">
 {% for i in auto_gen %}
-    <div class="col-sm-6 col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{ i.0.title }}</h3>
-            </div>
-            <div class="panel-body">
-                <p>
-                    <strong>Owner</strong>
-                    <span class="label label-success">
-                        {{ i.0.creator }}
-                    </span>
-                </p>
-                <p>
-                    <strong>Current Members</strong>
-                    {% for mem in i.0.members.all %}
-                        {% if mem.username != null %}
-                        <a href="{% url 'profile' mem.username %}">
-                        <span class="label label-primary">
-                                <i class="fa fa-user"></i>
-                                {{ mem.username }}
-                        </span>
-                        </a>
-                        {% endif %}
-                    {% endfor %}
-                </p>
-                <!-- <p>The following students may work well with this project: </p>
-                <p>
-                <ol>
-                    {% for match in i.1 %}
-                    <li>
-                        <a href="{% url 'profile' match.username %}">
-                        <span class="label label-primary">
-                            <i class="fa fa-user"></i>
-                            {{ match.username }}
-                        </span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ol>
-                </p> -->
-            </div>
+    <div class="col-md-3"style="height:10%; width:30%;">
+    <a href="{% url 'view_one_project' i.0.slug %}" style="none">
+      <div class="box box-widget widget-user-2">
 
+
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header {% if i.0.sponsor %} bg-yellow {% elif i.0.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
+          <div class="widget-user-image">
+            <img class="img-circle" src="http://www.ucsc.edu/images/thought-provoking/art-conversation-non-traditional.jpg" alt="User Avatar">
+          </div>
+          <!-- /.widget-user-image -->
+          <h3 class="widget-user-username">{{i.0.title}}</h3>
+          <h5 class="widget-user-desc">{{i.0.tagline}}</h5>
+        </div><!-- /.box-header -->
+
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+              <h3>Current Members</h3>
+                {% for mem in i.0.members.all %}
+                  {% if mem.username != null %}
+                  <li style="height: 10%"><a href="{% url 'profile' mem.username %}">
+                  <span class="label label-primary" >
+                          <i class="fa fa-user"></i>
+                          {{ mem.username }}
+                  </span></li>
+                  {% endif %}
+              {% endfor %}
+          </ul>
         </div>
-    </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+        {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+      </div><!-- /.box -->
+  </div>
+
 {% empty %}
     {# If the projects list is empty, display empty message #}
     <div class="alert alert-warning" role="alert">
@@ -71,7 +61,6 @@
         Could not generate a roster
     </div>
 {% endfor %}
+    </div>
 </section>
-{% endcomment %}
-
 {% endblock content %}
