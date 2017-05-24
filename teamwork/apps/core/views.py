@@ -132,6 +132,10 @@ def matchstats(request, project_match_list, project):
         Then we are chillen
 
     """
+    # just some temp data 
+    page_name = "MATCHSTATS"
+    page_description = "MATCHSTATS"
+    title = "MATCHSTATS"
 
     skill_match = {}
     matched_students = []
