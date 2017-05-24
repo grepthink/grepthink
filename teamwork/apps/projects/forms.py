@@ -131,16 +131,13 @@ class CreateProjectForm(forms.ModelForm):
         min_value=0, max_value=10, label="Max Team Size",
         required=False)
 
-    csv = forms.FileField(required=False)
-
 
     class Meta:
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor',
             'desired_skills', 'course', 'content', 'slug',
-            'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize',
-            'csv'
+            'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize',            
         ]
 
 
