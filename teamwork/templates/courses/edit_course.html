@@ -2,6 +2,13 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+
+{% endblock stylesheets %}
+
 {% block head %}
 <script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
@@ -32,7 +39,13 @@
             {% for field in form.visible_fields %}
             <div class="form-group{% if field.errors %} has-error{% endif %}">
                 <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                {{ field }}
+                {% if field.label == 'Students' %}
+                    <div style="max-height: 200px; overflow-y: scroll;">
+                        {{ field }}
+                    </div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
                 {% for error in field.errors %}
                 <label class="control-label">{{ error }}</label>
                 {% endfor %}

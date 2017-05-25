@@ -307,7 +307,7 @@ class Enrollment(models.Model):
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return ("%s: %s"%(self.course.name, self.user.username))
+        return ("%s"%(self.user.username))
 
 
 class CourseUpdate(models.Model):
