@@ -142,6 +142,10 @@ def matchstats(request, project_match_list, project):
     page_description = "MATCHSTATS"
     title = "MATCHSTATS"
 
+    # if student user
+    if not request.user.isProf:
+        # compare known and learn skills with all projects in course
+        print("nothing now")
     skill_match = {}
     matched_students = []
     interest_match = {}

@@ -86,7 +86,7 @@ def po_match(project):
                         backup[j.user] = temp
                     else:
                         backup[j.user] = 2
-        learn = i.learn.all()        
+        learn = i.learn.all()
         for k in learn:
             cur_course = Course.get_my_courses(k.user)
             if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
@@ -163,6 +163,7 @@ def auto_ros(course):
     for p in roster:
         for mem in p[1]:
             Membership.objects.create(user=mem, project=p[0], invite_reason='')
+    print("roster:", roster)
     return roster
 
 def by_schedule(user, project):
