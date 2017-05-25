@@ -184,6 +184,7 @@ class Course(models.Model):
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
     weigh_learn = models.IntegerField(default=1)
+    csv_file = models.FileField(upload_to='csv_files/', default="")
 
     # The Meta class provides some extra information about the Project model.
     class Meta:

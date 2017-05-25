@@ -220,8 +220,6 @@ class Project(models.Model):
     weigh_know = models.IntegerField(default=1)
     weigh_learn = models.IntegerField(default=1)
 
-    csv = models.FileField(upload_to='csv_files/', default="")
-
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.
