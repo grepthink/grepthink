@@ -50,7 +50,10 @@ def index(request):
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
-        all_courses = Course.get_my_courses(request.user)
+        if (request.user.profile.isProf):
+            all_courses = Course.get_my_created_courses(request.user)
+        else:
+            all_courses = Course.get_my_courses(request.user)
         date_updates = []
         for course in all_courses:
             date_updates.extend(course.get_updates_by_date())
