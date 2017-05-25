@@ -31,7 +31,19 @@
                 {% for alert in unread %}
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
-                    <td>{{ alert.msg }}</td>
+                    <td>
+                        {% if alert.sender != profile.user %}
+                        <span class="label label-primary">
+                            {{ alert.sender.username }}
+                        </span>
+                        {% endif %}
+                        {{ alert.msg }}
+                        {% if alert.url %}
+                        <div class="btn btn-primary btn-sm">
+                            <a href="{{ alert.url }}">Link</a>
+                        </div>
+                        {% endif %}
+                    </td>
                     <td class="pull-right-container" style="max-width:10px">
                         <div class="btn btn-sm pull-right">
                             <a href="{% url 'read_alert' alert.id %}"><i class="fa fa-eye"></i></a>
@@ -72,7 +84,19 @@
                 {% for alert in archive %}
                 <tr>
                     <td style="max-width:50px">{{ alert.date }}</td>
-                    <td>{{ alert.msg }}</td>
+                    <td>
+                        {% if alert.sender != profile.user %}
+                        <span class="label label-primary">
+                            {{ alert.sender.username }}
+                        </span>
+                        {% endif %}
+                        {{ alert.msg }}
+                        {% if alert.url %}
+                        <div class="btn btn-primary btn-sm">
+                            <a href="{{ alert.url }}">Link</a>
+                        </div>
+                        {% endif %}
+                    </td>
                     <td class="pull-right-container" style="max-width:10px">
                         <div class="btn btn-sm pull-right">
                             <a href="{% url 'unread_alert' alert.id %}"><i

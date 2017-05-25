@@ -7,8 +7,9 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render
 
+from django.urls import reverse
+
 from teamwork.apps.projects.models import *
-from teamwork.apps.core.views import my_matches
 
 from .forms import *
 from .models import *
@@ -61,8 +62,6 @@ def view_one_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
-
-    project_matches = my_matches(course)
 
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates, 'page_name' : page_name, 'page_description': page_description, 'title': title})
@@ -159,6 +158,12 @@ def join_course(request):
                     if not Enrollment.objects.filter(user=request.user, course=i).exists():
                         #creates an enrollment relation with the current user and the selected course
                         Enrollment.objects.create(user=request.user, course=i)
+                        Alert.objects.create(
+                                sender=request.user,
+                                to=User.objects.filter(username=i.creator).get(),
+                                msg=request.user.username + " used the addcode to enroll in " + i.name,
+                                url=reverse('profile',args=[request.user.username])
+                                )
                     return redirect(view_one_course, i.slug)
 
             #returns to view courses
@@ -314,6 +319,12 @@ def create_course(request):
             # loop through the members in the object and make m2m rows for them
             for i in students:
                 Enrollment.objects.create(user=i.user, course=course)
+                Alert.objects.create(
+                    sender=request.user,
+                    to=i.user,
+                    msg="You were enrolled in course " + course.name,
+                    url=reverse('view_one_course',args=[course.slug])
+                    )
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_one_course, course.slug)
@@ -395,9 +406,25 @@ def edit_course(request, slug):
 
             # clear all enrollments
             enrollments = Enrollment.objects.filter(course=course)
-            if enrollments is not None: enrollments.delete()
-            for i in students:
-                Enrollment.objects.create(user=i.user, course=course)
+            for e in enrollments:
+                s = students.filter(user=e.user)
+                if not s.exists():
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=e.user,
+                        msg="You were dropped from course " + course.name,
+                        url=reverse('view_one_course',args=[course.slug])
+                    )
+                    e.delete()
+            for s in students:
+                if not enrollments.filter(course=course,user=s.user).exists():
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=s.user,
+                        msg="You were enrolled in course " + course.name,
+                        url=reverse('view_one_course',args=[course.slug])
+                    )
+                    Enrollment.objects.create(user=s.user, course=course)
 
         return redirect(view_one_course, course.slug)
     else:

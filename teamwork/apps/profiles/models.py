@@ -123,6 +123,7 @@ class Alert(models.Model):
         date    - DateTime: time sent
         msg     - str: alert body
         read    - boolean: whether alert has been written/marked as read
+        url     - str: URL for related page, or None
 
     Types:
         'course_inv'    - invitation to a course
@@ -134,6 +135,7 @@ class Alert(models.Model):
     # type = models.CharField(max_length=20, default="null")
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
+    url = models.CharField(max_length=500,default="")
 
     def __str__(self):
         return str(self.sender) + " -> " + str(self.to) + " : " + str()
@@ -173,7 +175,7 @@ class Profile(models.Model):
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
 
-    #avatar = models.ImageField(upload_to= 'avatars/', default="")
+    avatar = models.ImageField(upload_to= 'avatars/', default="")
 
     # TODO: Interest - ManyToOne, Past Classes,
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
@@ -192,6 +194,14 @@ class Profile(models.Model):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
         return not(self == other)
+
+    # Alert functions, self explanitory
+    def alerts(self):
+        return Alert.objects.filter(to=self.user)
+    def unread_alerts(self):
+        return Alert.objects.filter(to=self.user,read=False)
+    def read_alerts(self):
+        return Alert.objects.filter(to=self.user,read=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

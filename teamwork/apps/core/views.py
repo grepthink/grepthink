@@ -125,8 +125,6 @@ def auto_gen(request, slug):
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
 
-def my_matches(course):
-    print("current course:", course)
 
 def matchstats(request, slug, project_match_list):
     """
