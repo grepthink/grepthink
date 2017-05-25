@@ -129,39 +129,31 @@ def my_matches(course):
     print("current course:", course)
 
 def matchstats(request, slug, project_match_list):
-    print("====================MATCHSTATS BITCHES =======================")
-    print("slug:",slug, project_match_list)
     """
-        TODO:Logic around cur_project needs some changing, need to get all projects in a course
-        i.e. get_all_projects instead of get_my_projects
-
-        Then we are chillen
-
         Create User Mistype: 'Frquently Asked'
     """
+    # print("====================MATCHSTATS BITCHES =======================")
+    # print("slug:",slug, project_match_list)
+
     # just some temp data
-    page_name = "MATCHSTATS"
-    page_description = "MATCHSTATS"
-    title = "MATCHSTATS"
+    page_name = "Matchstats"
+    page_description = "Stats on your matches"
+    title = "Matchstats"
 
     skill_match = {}
     matched_students = []
     interest_match = {}
     interest_reason_tuple = []
-    cur_project = ''
-    desired_skills = ''
 
     cur_project = get_object_or_404(Project, slug=slug)
     cur_desiredSkills = cur_project.desired_skills.all()
-    print("cur_project", cur_project)
-    print("cur_desiredSkills", cur_desiredSkills)
 
     # match_list is a str object so parse it for usernames...
     # i'm sure theres a better way, couldn't pass the object
     regex = r"<User: [^>]*>"
     reg_match = re.finditer(regex, project_match_list)
     for item in reg_match:
-        print("reg_match:", item.group())
+        # print("reg_match:", item.group())
         username = item.group().split(": ")[1].replace(">","")
         matched_students.append(username)
 
@@ -171,11 +163,6 @@ def matchstats(request, slug, project_match_list):
         profile = Profile.objects.get(user=student)
         similar_skills = []
 
-        # compare known and learn skills with all projects in this_course
-        # projects = Project.get_my_projects(student)
-        # print("get_my_projects(",student,") returns: ", projects)
-
-        # if (len(projects) > 0):
         for k_skill in profile.known_skills.all():
 
             for d_skill in cur_desiredSkills:
@@ -183,35 +170,23 @@ def matchstats(request, slug, project_match_list):
                 if (k_skill == d_skill):
                     similar_skills.append(k_skill)
 
-        # # interested = cur_project.interest.all()
-        # all_interests = Interest.objects.filter(project__in=projects)
-        # interests = all_interests.filter(user=student)
-        # # for inter in interests:
-        # #     print("stud:",stud,"interest: ",inter.interest_reason)
-        #
-        # # get newest entry
-        # if (len(interests) > 0):
-        #     # print("len of interests", len(interests), "student:",stud)
-        #     # print("len(inter)-1 -> reason", interests[len(interests)-1].interest_reason)
-        #     interest_match[stud] = ([interests[len(interests)-1].interest, interests[len(interests)-1].interest_reason])
-        # else:
-        #     interest_match[stud] = ([0, "Student hasn't showed interest, yet"])
+        all_interests = cur_project.interest.all()
+        interests = all_interests.filter(user=student)
+        # need to test with multiple interest entered
+        for interest in interests:
+            interest_match[stud] = ([interest, interest.interest_reason])
 
         if (len(similar_skills) > 0):
             skill_match[stud] = similar_skills
         else:
             skill_match[stud] = ["No similar skills"]
-        # interest_match[stud] = []
-        # store dict with username as key
-        # value = [interest, interest_reason]
-
 
 
     user = request.user
-    print("=========================END MATCHSTATS=========================")
+    # print("=========================END MATCHSTATS=========================")
 
     return render(request, 'core/matchstats.html',{
-        'skill_match':skill_match, 'cur_project' : cur_project,
-        'interest_reason_tuple':interest_reason_tuple,
-        'user':user, 'interest_match':interest_match,
+        'page_name':page_name,'page_description':page_description,
+        'title':title,'skill_match':skill_match, 'cur_project' : cur_project,
+        'interest_match':interest_match
         })

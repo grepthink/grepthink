@@ -157,7 +157,7 @@ def from_bits(bitstring):
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
     """
-    Intrest object relates a user to a intrest (may be changed in the future)
+    Interest object relates a user to a interest (may be changed in the future)
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
