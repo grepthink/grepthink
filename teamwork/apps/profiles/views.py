@@ -14,6 +14,7 @@ from teamwork.apps.projects.models import *
 
 from .forms import *
 from .models import *
+from django.urls import reverse
 
 
 def signup(request):
@@ -304,21 +305,24 @@ def save_event(request, username):
 def view_alerts(request):
 
     user = request.user
+    profile = Profile.objects.get(user=user)
 
     page_name = "Alerts"
     page_description = "Your notifications"
 
     # Testing by injecting alerts every time
-    # extra = Alert()
-    # extra.sender = user
-    # extra.to = user
-    # extra.msg = "You viewed your alerts"
-    # extra.save()
-    alerts = Alert.objects.filter(to=user)
-    unread = alerts.filter(read=False)
-    archive = alerts.filter(read=True)
+    #extra = Alert()
+    #extra.sender = user
+    #extra.to = user
+    #extra.msg = "You viewed your alerts"
+    #extra.url = reverse('profile', args=[user.username])
+    #extra.save()
+
+    unread = profile.unread_alerts()
+    archive = profile.read_alerts()
 
     return render(request, 'profiles/alerts.html', {
+        'profile': profile,
         'unread': unread,
         'archive': archive,
         'page_name': page_name,

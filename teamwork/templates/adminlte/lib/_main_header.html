@@ -26,51 +26,72 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 {% block header_dropdowns %}
-                    {% if request.user.is_authenticated %}
-                        <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    {% if user.profile.avatar %}
-                                        <img class="user-image"
-                                        src="{{ user.profile.avatar.url }}" alt="User Image">
-                                    {% else %}
-                                        <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
-                                        class="user-image" alt="User Image">
-                                    {% endif %}
-                                <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                {% block user_header %}
-                                <li class="user-header">
-                                    {% if user.profile.avatar %}
-                                        <img class="img-circle" 
-                                        src="{{ user.profile.avatar.url }}" alt="User Image">
-                                    {% else %}
-                                        <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                                        class="img-circle" alt="User Image">
-                                    {% endif %}
-                                    <p>
-                                        {% firstof request.user.get_short_name request.user.get_username %}
-                                        <small>Grepper since {{ request.user.date_joined }}</small>
-                                    </p>
-                                </li>
-                                {% endblock %}
 
-                                <!-- Menu Footer-->
-                                {% block menu_footer %}
-                                <li class="user-footer">
-                                    <div class="pull-left">
-                                        <a href="{% url 'edit_profile' user.username %}"
-                                           class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
-                                    </div>
-                                    <div class="pull-right">
-                                        <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a>
-                                    </div>
-                                </li>
-                                {% endblock %}
-
+                {% if request.user.is_authenticated %}
+                <li class="dropdown user notifications-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-bell-o"></i>
+                        {% if user.profile.unread_alerts|length > 0 %}
+                        <span class="label label-warning">{{ user.profile.unread_alerts|length }}</span>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="header">Your notifications</li>
+                        <li>
+                            <ul class="menu">
+                                {% for alert in user.profile.unread_alerts %}
+                                <li><a>{{ alert.msg }}</a></li>
+                                {% empty %}
+                                <li><i>There are no unread alerts</i></li>
+                                {% endfor %}
                             </ul>
                         </li>
-                    {% endif %}
+                        <li class="footer"><a href="{% url 'view_alerts' %}">View all alerts</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        {% if user.profile.avatar %}
+                        <img class="user-image"
+                        src="{{ user.profile.avatar.url }}" alt="User Image">
+                        {% else %}
+                        <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
+                        class="user-image" alt="User Image">
+                        {% endif %}
+                        <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% block user_header %}
+                        <li class="user-header">
+                            {% if user.profile.avatar %}
+                            <img class="img-circle"
+                            src="{{ user.profile.avatar.url }}" alt="User Image">
+                            {% else %}
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                            class="img-circle" alt="User Image">
+                            {% endif %}
+                            <p>
+                                {% firstof request.user.get_short_name request.user.get_username %}
+                                <small>Grepper since {{ request.user.date_joined }}</small>
+                            </p>
+                        </li>
+                        {% endblock %}
+
+                        <!-- Menu Footer-->
+                        {% block menu_footer %}
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="{% url 'edit_profile' user.username %}"
+                                    class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a>
+                            </div>
+                        </li>
+                        {% endblock %}
+                    </ul>
+                </li>
+                {% endif %}
                 {% endblock header_dropdowns %}
             </ul>
         </div>
