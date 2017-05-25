@@ -89,6 +89,15 @@ $(document).ready(function() {
         {% if field.label == 'Content' %}
           {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
         {% endif %}
+        {% if field.label == 'Weight of user interest in project' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of interest when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
+        {% if field.label == 'Weight of skills users already know' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of knowing a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
+        {% if field.label == 'Weight of skills users want to learn' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
         {{ field }}
         {% for error in field.errors %}
         <label class="control-label">{{ error }}</label>
