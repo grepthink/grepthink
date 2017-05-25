@@ -128,7 +128,16 @@ def auto_gen(request, slug):
 
 def matchstats(request, slug, project_match_list):
     """
-        Create User Mistype: 'Frquently Asked'
+        Displays why a user was matched with said project.
+        Returns two dicts:
+            -- skill_match:
+                stores a user's skills that are similar with said projects'
+                desired skills with their username as the key
+            -- interest_match:
+                Stores a users interest value and their reasoning for said project
+                as a tuple with their username as the key
+
+        TODO: could combine the two dicts if wanted.
     """
     # print("====================MATCHSTATS BITCHES =======================")
     # print("slug:",slug, project_match_list)
