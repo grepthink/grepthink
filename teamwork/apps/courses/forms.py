@@ -50,6 +50,9 @@ class CourseForm(forms.ModelForm):
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
             self.fields['term'].widget = forms.HiddenInput()
+        else:
+            self.fields['students'].widget = forms.HiddenInput()
+            self.fields['limit_interest'].widget = forms.HiddenInput()
 
         # get_sueruser_list
         superuser = User.objects.filter(is_superuser=True)
@@ -131,21 +134,21 @@ class CourseForm(forms.ModelForm):
 
     csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
-    lower_time_bound = forms.ChoiceField(
-            label="Custom Lower Time Boundary for Scheduling",
-            #Choices from Lower_Boundary_Choice
-            choices=Lower_Boundary_Choice,
-            #Field Required
-            required=False)
-    upper_time_bound = forms.ChoiceField(
-            label="Custom Upper Time Boundary for Scheduling",
-            #Choices from Upper_Boundary_Choice
-            choices=Upper_Boundary_Choice,
-            #Field Required
-            required=False)
-    # limit_interest = forms.BooleanField(
-    #     label="Disable ability for students to show interest in projects",
-    #     required=False)
+    # lower_time_bound = forms.ChoiceField(
+    #         label="Custom Lower Time Boundary for Scheduling",
+    #         #Choices from Lower_Boundary_Choice
+    #         choices=Lower_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    # upper_time_bound = forms.ChoiceField(
+    #         label="Custom Upper Time Boundary for Scheduling",
+    #         #Choices from Upper_Boundary_Choice
+    #         choices=Upper_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    limit_interest = forms.BooleanField(
+        label="Disable ability for students to show interest in projects",
+        required=False)
 
     csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
