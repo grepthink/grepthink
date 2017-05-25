@@ -17,7 +17,7 @@
 <!-- Profile Image -->
 <div class="box box-primary">
   <div class="box-body box-profile">
-    
+
     {% if page_user.profile.avatar %}
      <img class="profile-user-img img-responsive img-circle" src="{{ page_user.profile.avatar.url }}" alt="Profile Pic">
     {% endif %}
@@ -55,7 +55,7 @@
     <strong><i class="fa fa-file-text-o margin-r-5"></i> Bio</strong>
 
     <p>{{ page_user.profile.bio }}</p>
-
+{% if not page_user.profile.isProf %}
     <hr>
 
     <strong><i class="fa fa-pencil margin-r-5"></i> Known Skills</strong>
@@ -75,8 +75,10 @@
         <span class="label label-warning">{{ skill.skill }}</span>
        {% endfor%}
     </p>
+{% endif %}
   </div>
   <!-- /.box-body -->
 </div>
+
 
 {% endblock content %}

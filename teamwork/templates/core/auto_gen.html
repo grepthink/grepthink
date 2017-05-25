@@ -36,15 +36,15 @@
         </div><!-- /.box-header -->
 
         <div class="box-footer no-padding">
-          <ul class="nav nav-stacked">
-              <h3>Current Members</h3>
+          <ul class="nav nav-stacked" style="position: relative;">
+              <h3>Auto-team</h3>
                 {% for mem in i.0.members.all %}
                   {% if mem.username != null %}
-                  <li style="height: 10%"><a href="{% url 'profile' mem.username %}">
+                  <li style="height: 5%"><a href="{% url 'profile' mem.username %}">
                   <span class="label label-primary" >
                           <i class="fa fa-user"></i>
                           {{ mem.username }}
-                  </span></li>
+                  </span></a></li>
                   {% endif %}
               {% endfor %}
              {# <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a> #}

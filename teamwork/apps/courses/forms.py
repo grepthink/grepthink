@@ -49,6 +49,7 @@ class CourseForm(forms.ModelForm):
         #Renders slug as HiddenInput
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
+            self.fields['term'].widget = forms.HiddenInput()
 
         # get_sueruser_list
         superuser = User.objects.filter(is_superuser=True)
@@ -142,9 +143,9 @@ class CourseForm(forms.ModelForm):
             choices=Upper_Boundary_Choice,
             #Field Required
             required=False)
-    limit_interest = forms.BooleanField(
-        label="Disable ability for students to show interest in projects",
-        required=False)
+    # limit_interest = forms.BooleanField(
+    #     label="Disable ability for students to show interest in projects",
+    #     required=False)
 
     csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
