@@ -370,9 +370,7 @@ def edit_course(request, slug):
 
             course.save()
             # clear all enrollments
-            print(students)
             enrollments = Enrollment.objects.filter(course=course)
-            print(enrollments)
             for e in enrollments:
                 s = students.filter(user=e.user)
                 if not s.exists():
