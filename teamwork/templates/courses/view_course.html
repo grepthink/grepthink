@@ -48,6 +48,14 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
+            {% if not user.isProf %}
+            <li class="">
+                <a href="#matches" data-toggle="tab" aria-expanded="false">
+                    View Matches
+                    <i class="fa fa-heart"></i>
+                </a>
+            </li>
+            {% endif %}
             {% if user.username == course.creator %}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -70,7 +78,6 @@
                     </div>
                   </div>
                   {% endif %}
-
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
@@ -171,6 +178,10 @@
                 {% empty %}
                 <p>There are no students enrolled in this course</p>
                 {% endfor %}
+            </div>
+
+            <div class="tab-pane" id="matches">
+                {% include "core/partial_view_matches.html" %}
             </div>
             {% if user.username == course.creator %}
             <div class="tab-pane" id="admin">

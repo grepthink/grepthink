@@ -43,7 +43,7 @@
                         {% endif %}
                         {% endfor %}
                     </p>
-                    <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a>
+                    <a href="{% url 'matchstats' p_match_tup.0.slug p_match_tup.1 %}"><p> MatchStats </p> </a>
                     <p>The following students may work well with this project: </p>
                     <p>
                     <ol>

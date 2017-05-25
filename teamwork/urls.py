@@ -99,6 +99,6 @@ urlpatterns = [
         url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert,
                 name="delete_alert"),
 
-        url(r'^matchstats/(?P<project>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

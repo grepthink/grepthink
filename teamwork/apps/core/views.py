@@ -92,6 +92,7 @@ def view_matches(request):
         projects = my_projects | my_created
         projects = list(set(projects))
         for project in projects:
+            print("type(Project): ",type(project))
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
 
@@ -124,16 +125,17 @@ def auto_gen(request, slug):
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
 
-def matchstats(request, project_match_list, project):
+def my_matches(course):
+    print("current course:", course)
+
+def matchstats(request, slug, project_match_list):
     print("====================MATCHSTATS BITCHES =======================")
+    print("slug:",slug, project_match_list)
     """
         TODO:Logic around cur_project needs some changing, need to get all projects in a course
         i.e. get_all_projects instead of get_my_projects
 
         Then we are chillen
-
-
-        cur_course = get_object_or_404(Course, slug=slug)
 
         Create User Mistype: 'Frquently Asked'
     """
@@ -142,10 +144,6 @@ def matchstats(request, project_match_list, project):
     page_description = "MATCHSTATS"
     title = "MATCHSTATS"
 
-    # if student user
-    if not request.user.isProf:
-        # compare known and learn skills with all projects in course
-        print("nothing now")
     skill_match = {}
     matched_students = []
     interest_match = {}
@@ -153,9 +151,13 @@ def matchstats(request, project_match_list, project):
     cur_project = ''
     desired_skills = ''
 
-    # create array of matched students
-    print("project parameter:",project);
-    print("project_match_list:", project_match_list)
+    cur_project = get_object_or_404(Project, slug=slug)
+    cur_desiredSkills = cur_project.desired_skills.all()
+    print("cur_project", cur_project)
+    print("cur_desiredSkills", cur_desiredSkills)
+
+    # match_list is a str object so parse it for usernames...
+    # i'm sure theres a better way, couldn't pass the object
     regex = r"<User: [^>]*>"
     reg_match = re.finditer(regex, project_match_list)
     for item in reg_match:
@@ -169,37 +171,31 @@ def matchstats(request, project_match_list, project):
         profile = Profile.objects.get(user=student)
         similar_skills = []
 
-        projects = Project.get_my_projects(student)
-        print("cur_project:",cur_project)
-        print("get_my_projects(",student,"):", projects)
+        # compare known and learn skills with all projects in this_course
+        # projects = Project.get_my_projects(student)
+        # print("get_my_projects(",student,") returns: ", projects)
 
-        if (len(projects) > 0):
-            for k_skill in profile.known_skills.all():
-                for p in projects:
-                    print("p.title:",p.title,"project:",project)
-                    if (p.title == project):
-                        cur_project = p
-                if (cur_project):
-                    desired_skills = cur_project.desired_skills.all()
+        # if (len(projects) > 0):
+        for k_skill in profile.known_skills.all():
 
-                for d_skill in desired_skills:
+            for d_skill in cur_desiredSkills:
 
-                    if (k_skill == d_skill):
-                        similar_skills.append(k_skill)
+                if (k_skill == d_skill):
+                    similar_skills.append(k_skill)
 
-        # interested = cur_project.interest.all()
-        all_interests = Interest.objects.filter(project__in=projects)
-        interests = all_interests.filter(user=student)
-        # for inter in interests:
-        #     print("stud:",stud,"interest: ",inter.interest_reason)
-
-        # get newest entry
-        if (len(interests) > 0):
-            # print("len of interests", len(interests), "student:",stud)
-            # print("len(inter)-1 -> reason", interests[len(interests)-1].interest_reason)
-            interest_match[stud] = ([interests[len(interests)-1].interest, interests[len(interests)-1].interest_reason])
-        else:
-            interest_match[stud] = ([0, "Student hasn't showed interest, yet"])
+        # # interested = cur_project.interest.all()
+        # all_interests = Interest.objects.filter(project__in=projects)
+        # interests = all_interests.filter(user=student)
+        # # for inter in interests:
+        # #     print("stud:",stud,"interest: ",inter.interest_reason)
+        #
+        # # get newest entry
+        # if (len(interests) > 0):
+        #     # print("len of interests", len(interests), "student:",stud)
+        #     # print("len(inter)-1 -> reason", interests[len(interests)-1].interest_reason)
+        #     interest_match[stud] = ([interests[len(interests)-1].interest, interests[len(interests)-1].interest_reason])
+        # else:
+        #     interest_match[stud] = ([0, "Student hasn't showed interest, yet"])
 
         if (len(similar_skills) > 0):
             skill_match[stud] = similar_skills
@@ -215,7 +211,7 @@ def matchstats(request, project_match_list, project):
     print("=========================END MATCHSTATS=========================")
 
     return render(request, 'core/matchstats.html',{
-        'skill_match':skill_match, 'project':project,
+        'skill_match':skill_match, 'cur_project' : cur_project,
         'interest_reason_tuple':interest_reason_tuple,
         'user':user, 'interest_match':interest_match,
         })

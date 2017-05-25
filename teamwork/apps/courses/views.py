@@ -8,6 +8,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
 from django.shortcuts import get_object_or_404, redirect, render
 
 from teamwork.apps.projects.models import *
+from teamwork.apps.core.views import my_matches
 
 from .forms import *
 from .models import *
@@ -60,6 +61,8 @@ def view_one_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
+
+    project_matches = my_matches(course)
 
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates, 'page_name' : page_name, 'page_description': page_description, 'title': title})
@@ -355,7 +358,7 @@ def edit_course(request, slug):
             # Email is stored in 13th value
             for row in reader:
                 fullname = row[4] + row[5] + row[6]
-                email = row[13]                
+                email = row[13]
                 # Save student in dict, key=fullname & value=email
                 csv_dict[fullname] = email
 
