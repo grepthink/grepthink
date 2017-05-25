@@ -46,6 +46,18 @@ def index(request):
         return render(request, 'core/landing.html', {'page_name' : page_name,
             'page_description' : page_description, 'title' : title})
 
+    # If the user is a professor, return the dashboard html
+    if logged_in and request.user.profile.isProf:
+        page_name = "Dashboard"
+        page_description = "Instructor Control Panel"
+        title = "Dashboard"
+        all_courses = Course.get_my_created_courses(request.user)
+        return render(request, 'core/dashboard.html', {'page_name' : page_name,
+         'page_description' : page_description, 'title' : title,
+         'all_courses' : all_courses})
+
+
+
     if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"

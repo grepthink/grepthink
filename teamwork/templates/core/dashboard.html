@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Quick Links</h3>
+
+              <div class="box-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tbody><tr>
+                  <th>Course</th>
+                  <th>Edit</th>
+                  <th>Statistics</th>
+                  <th>Add Code</th>
+                  <th>Post Update</th>
+                  <th>Course Size</th>
+                </tr>
+                {% for course in all_courses %}
+                <tr>
+                  <td>{{course.name}}</td>
+                  <td>
+                    <a href="{% url 'edit_course' course.slug %}">
+                        <button class="btn btn-success">
+                            <i class="fa fa-edit"></i>
+                            Edit
+                        </button>
+                    </a>
+                  </td>
+                  <td>                    
+                    <a href="{% url 'view_statistics' course.slug %}">
+                        <button class="btn btn-info">
+                        <i class="fa fa-stats"></i>
+                        Stats
+                        </button>
+                    </a>
+                  </td>
+                  <td><i>{{course.addCode}}</i></td>
+                  <td>
+                    <a href="{% url 'update_course' course.slug %}">
+                    <button class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                    Post Update
+                    </button>
+                    </a>
+                  </td>
+                  <td><span class="label label-success">{{course.students.all.count}}</span><td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td>Please</td>
+                  <td>Create</td>
+                  <td>a</td>
+                  <td><span class="label label-success">course</span></td>
+                  <td>first</td>
+                  <td>thanks</td>
+                </tr>
+                {% endfor %}
+              </tbody></table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+</div>
+
+{% endblock content %}
