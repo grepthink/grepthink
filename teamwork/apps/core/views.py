@@ -106,8 +106,8 @@ def auto_gen(request, slug):
     """
     page_name = "Potential Roster"
     page_description = "Auto Generate Groups"
-    title = "Auto Generate Groupts"
-    
+    title = "Auto Generate Groups"
+
     course = get_object_or_404(Course, slug=slug)
     project_match_list = []
 

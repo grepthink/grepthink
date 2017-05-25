@@ -152,25 +152,97 @@
                 </ul>
             </div>
             <div class="tab-pane" id="members">
-                <h3>Instructor</h3>
-                <span class="label label-success"
-                    onclick="window.location =
-                    '{% url 'profile' course.creator %}'">
-                    {{ course.creator }}
-                </span>
-                <h3>Students</h3>
-                {% for studs in course.students.all %}
-                {% if studs.username != null %}
-                <span class="label label-primary"
-                    onclick="window.location =
-                    '{% url 'profile' studs.username %}'">
-                    {{ studs.username }}
-                </span>
-                <span> </span>
-                {% endif %}
-                {% empty %}
-                <p>There are no students enrolled in this course</p>
-                {% endfor %}
+
+            <div class="row">
+
+                <div class="col-md-3">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Instructors</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-info">1</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                        <li style="list-style-type: none;">
+                          {% if creator.profile.avatar %}
+                            <img src="{{ creator.profile.avatar.url }}" class="img-circle" alt="User Image">
+                          {% else %}
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                                class="img-circle" alt="User Image">
+                          {% endif %}
+                          <a class="users-list-name" href="{% url 'profile' course.creator %}">{{ course.creator }}</a>
+                          <span class="users-list-date"><a href="mailto:{{ course.creator.email }}" target="_top">{{ course.creator.email }}</a></span>
+                        </li>
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div>
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
+
+                <div class="col-md-9">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Students</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-danger">{{course.students.all.count}}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                        {% for studs in course.students.all %}
+                        {% if studs.username != null %}
+                        <a href="{% url 'profile' studs.username %}">
+                        <li style="list-style-type: none;">
+                          {% if studs.avatar %}
+                            <img src="{{ studs.avatar.url }}" class="img-circle" alt="User Image">
+                          {% else %}
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                                class="img-circle" alt="User Image">
+                          {% endif %}
+                          </a>
+                          <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
+                          <span class="users-list-date"><a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
+                        </li>
+                        {% endif %}
+                        {% empty %}
+                        <p>There are no students enrolled in this course</p>
+                        {% endfor %}
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div>
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
+                </div>
             </div>
             {% if user.username == course.creator %}
             <div class="tab-pane" id="admin">
