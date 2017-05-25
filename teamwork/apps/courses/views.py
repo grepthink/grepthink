@@ -141,6 +141,11 @@ def join_course(request):
     page_description = "Join a Course!"
     title = "Join Course"
 
+    if request.user.profile.isProf:
+        role = 'professor'
+    else:
+        role = 'student'
+
     if request.method == 'POST':
         # send the current user.id to filter out
         form = JoinCourseForm(request.user.id,request.POST)
@@ -155,9 +160,9 @@ def join_course(request):
             for i in all_courses:
                 if course_code == i.addCode:
                     #checks to see if an enrollment already exists
-                    if not Enrollment.objects.filter(user=request.user, course=i).exists():
+                    if not Enrollment.objects.filter(user=request.user, course=i, role=role).exists():
                         #creates an enrollment relation with the current user and the selected course
-                        Enrollment.objects.create(user=request.user, course=i)
+                        Enrollment.objects.create(user=request.user, course=i, role=role)
                         Alert.objects.create(
                                 sender=request.user,
                                 to=User.objects.filter(username=i.creator).get(),
@@ -285,11 +290,11 @@ def create_course(request):
     page_description = "Create a Course!"
     title = "Create Course"
 
-    #If user is not a professor
     if not request.user.profile.isProf:
         #redirect them to the /course directory
         messages.info(request,'Only Professor can create course!')
         return HttpResponseRedirect('/course')
+
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
@@ -318,13 +323,17 @@ def create_course(request):
             course.save()
             # loop through the members in the object and make m2m rows for them
             for i in students:
-                Enrollment.objects.create(user=i.user, course=course)
+                Enrollment.objects.create(user=i.user, course=course,role='student')
                 Alert.objects.create(
                     sender=request.user,
                     to=i.user,
                     msg="You were enrolled in course " + course.name,
                     url=reverse('view_one_course',args=[course.slug])
                     )
+            # add creator as a member of the course w/ specific role
+            if request.user.profile.isProf:
+                Enrollment.objects.create(user=request.user, course=course,role='professor')
+
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_one_course, course.slug)
