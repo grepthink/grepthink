@@ -3,6 +3,14 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+
+  {{block.super}}
+
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+
+{% endblock stylesheets %}
 
 {% block crumb %}
     <li><a href="{% url 'view_course' %}">Courses</a></li>
@@ -15,7 +23,6 @@
 
 
 {% block content %}
-
 
 <div>
     {% if user.username == course.creator %}
@@ -77,8 +84,52 @@
             </div>
 
             <div class="tab-pane" id="description">
-                <h3>Description</h3>
-                {{ course.info }}
+                <div>
+                <h3>Description: {{ course.info }}</h3>
+                </div>
+
+                {% comment %}
+
+                <div class="row">
+
+                  <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow" onclick="window.location ='{% url 'update_course' course.slug %}'">
+                      <div class="inner">
+                        <h3>{{course.students.all.count}}</h3>
+
+                        <p>Course Members</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                    <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                      <div class="inner">
+                        <h3>{{course.projects.all.count}}</h3>
+
+                        <p>Projects</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-briefcase"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                </div> <!-- ./row -->
+                
+                {% endcomment %}
+
                 <h3>Updates</h3>
                 <ul class="timeline">
                     {% if user.username == course.creator %}

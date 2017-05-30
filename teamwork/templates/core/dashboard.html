@@ -25,38 +25,31 @@
                   <th>Course</th>
                   <th>Edit</th>
                   <th>Statistics</th>
-                  <th>Add Code</th>
                   <th>Post Update</th>
+                  <th>Add Code</th>
                   <th>Course Size</th>
                 </tr>
                 {% for course in all_courses %}
                 <tr>
-                  <td>{{course.name}}</td>
+                  <td><lead>{{course.name}}</lead></td>
                   <td>
-                    <a href="{% url 'edit_course' course.slug %}">
-                        <button class="btn btn-success">
-                            <i class="fa fa-edit"></i>
-                            Edit
-                        </button>
+                    <a href="{% url 'edit_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <i class="glyphicon glyphicon-edit"></i> Edit
                     </a>
                   </td>
-                  <td>                    
-                    <a href="{% url 'view_statistics' course.slug %}">
-                        <button class="btn btn-info">
-                        <i class="fa fa-stats"></i>
-                        Stats
-                        </button>
+                  <td>
+                    <a href="{% url 'view_statistics' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <span class="badge bg-green">{{course.students.all.count}}</span>
+                      <i class="glyphicon glyphicon-stats"></i> Stats
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'update_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                    <i class="glyphicon glyphicon-upload"></i>
+                    Post Update
                     </a>
                   </td>
                   <td><i>{{course.addCode}}</i></td>
-                  <td>
-                    <a href="{% url 'update_course' course.slug %}">
-                    <button class="btn btn-success">
-                    <i class="fa fa-plus"></i>
-                    Post Update
-                    </button>
-                    </a>
-                  </td>
                   <td><span class="label label-success">{{course.students.all.count}}</span><td>
                 </tr>
                 {% empty %}
