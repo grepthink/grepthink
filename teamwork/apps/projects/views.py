@@ -79,6 +79,9 @@ def view_one_project(request, slug):
     page_description = project.tagline or "Tagline"
     title = project.title or "Project"
 
+
+    print(updates)
+
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course,
