@@ -278,14 +278,14 @@
                     {% if not course.limit_interest %}
                         <a href="{% url 'lock_interest' course.slug %}">
                             <button class="btn btn-danger" name="lock">
-                                <i class="fa fa-danger"></i>
+                                <i class="fa fa-info"></i>
                                 Lock
                             </button>
                         </a>
                     {% else %}
                         <a href="{% url 'lock_interest' course.slug %}">
                             <button class="btn btn-info" name="lock">
-                                <i class="fa fa-danger"></i>
+                                <i class="fa fa-info"></i>
                                 Unlock
                             </button>
                         </a>
