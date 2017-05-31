@@ -151,6 +151,7 @@ def auto_gen(request, slug):
     for i in auto:
         if i[1]:
             flag = True
+            break
 
 
     # Get just the projects so partial_project_box.html can loop through easily.
@@ -171,7 +172,7 @@ def assign_auto(request, slug):
     for p in auto:
         for mem in p[1]:
             Membership.objects.create(user=mem, project=p[0], invite_reason='')
-    print("Groups assigned")
+
     return redirect(auto_gen, course.slug)
 
 
