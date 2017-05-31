@@ -30,6 +30,7 @@ urlpatterns = [
         url(r'^about/$', core_views.about, name='about'),
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
+
         # /create_project/
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/
@@ -44,6 +45,11 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
+        url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
+        # for select2
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
+
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
         # Join a course (valid for all courses)
@@ -60,25 +66,18 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
-
-
-        # Edit existing update to course (based on slug and update id)
+        # Setup link to assign students
         url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',core_views.assign_auto, name='assign_auto'),
-
-
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', course_views.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',course_views.delete_course_update, name='delete_course_update'),
-
-
-        # Edit existing update to course (based on slug and update id)
+        # Button to lock interest
         url(r'^course/(?P<slug>[^/]+)/lock$',course_views.lock_interest, name='lock_interest'),
-
-
-
+        # link to show interest page
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
 
         # /admin/
         url(r'^admin/', admin.site.urls),
@@ -86,28 +85,25 @@ urlpatterns = [
         url(r'^login', auth_views.login, {'template_name': 'core/login.html'}, name='login'),
         #logout
         url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
+
         # /username/ - A users unique profile url
-        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
         # /username/edit - Edit user profile
         url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
-
+        # edit your schedule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
-
+        # save event for scehdule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
 
-        url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
-
+        # link to view matches for your projects
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        # see why this user matches
+            url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
         url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
-
         url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert,
                 name="delete_alert"),
-
-        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
