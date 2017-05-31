@@ -167,7 +167,7 @@ def auto_ros(course):
     #     for mem in p[1]:
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
-    
+
     return roster
 
 def by_schedule(user, project):
@@ -179,8 +179,8 @@ def by_schedule(user, project):
         Returns: An integer that is floor(# meeting hours/ # pos meetings)
     """
     course = Course.objects.get(projects=project)
-    low = course.lower_time_bound
-    high = course.upper_time_bound
+    low = project.lower_time_bound
+    high = project.upper_time_bound
 
     event_list = []     # list of all events for each user
     pos_event = []      # list of possible meeting times
