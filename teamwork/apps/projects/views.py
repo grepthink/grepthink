@@ -50,6 +50,43 @@ def view_projects(request):
     return _projects(request, projects)
 
 
+def view_meetings(request, slug):
+    """
+    Public method that takes a request and a slug, retrieves the Project object
+    from the model with given project slug.  Renders projects/view_project.html
+
+    Passing status check unit test in test_views.py.
+    """
+    from django.utils.safestring import mark_safe
+    project = get_object_or_404(Project, slug=slug)
+
+    find_meeting(slug)
+
+    readable = ""
+    if project.readable_meetings:
+        jsonDec = json.decoder.JSONDecoder()
+        readable = jsonDec.decode(project.readable_meetings)
+
+    # Get the course given a project wow ethan great job keep it up.
+    course = Course.objects.get(projects=project)
+
+    print(project.meetings)
+
+    #meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
+
+    meetings = mark_safe(project.meetings)
+
+
+    # Populate with project name and tagline
+    page_name = project.title or "Project"
+    page_description = project.tagline or "Meeting Times"
+    title = project.title or "Meetings"
+
+    return render(request, 'projects/meeting_times.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title,
+        'project': project, 'course' : course, 'json_events': meetings})
+
+
 
 def view_one_project(request, slug):
     """
@@ -82,7 +119,7 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course,
-        'meetings': readable, 'resources': resources})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 
 def select_members(request):
