@@ -45,6 +45,10 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
+
+        # View meeting times
+        url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
+
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
         # for select2
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
