@@ -4,7 +4,7 @@
 **/migrations/*
 
 # Ignore media folder
-teamwork/media/*
+
 
 # Database files
 .DS_Store
