@@ -54,9 +54,9 @@
                         {% if user.profile.avatar %}
                             <img class="user-image" src="{{ user.profile.avatar.url }}" alt="User Image">
                         {% else %}
-                            <!-- <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
-                        class="user-image" alt="User Image"> -->
-                            <img class="user-image" src="/media/avatars/Greppy.jpg" alt="User Image">
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
+                        class="user-image" alt="User Image">
+                            <!-- <img class="user-image" src="/media/avatars/Greppy.jpg" alt="User Image"> -->
                         {% endif %}
                         <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
                     </a>
@@ -66,9 +66,9 @@
                             {% if user.profile.avatar %}
                                 <img class="img-circle" src="{{ user.profile.avatar.url }}" alt="User Image">
                             {% else %}
-                            <!-- <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                            class="img-circle" alt="User Image"> -->
-                                <img class="img-circle" src="/media/avatars/Greppy.jpg" alt="User Image">
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                            class="img-circle" alt="User Image">
+                                <!-- <img class="img-circle" src="/media/avatars/Greppy.jpg" alt="User Image"> -->
                             {% endif %}
                             <p>
                                 {% firstof request.user.get_short_name request.user.get_username %}
