@@ -175,7 +175,7 @@ class Course(models.Model):
     lower_time_bound = models.IntegerField(
         choices=Lower_Boundary_Choice,
         default=16)
-        
+
     upper_time_bound = models.IntegerField(
         choices=Upper_Boundary_Choice,
         default=42)
@@ -299,12 +299,15 @@ class Enrollment(models.Model):
         # with a default of 0
         default=0)
 
+    # user role in a course
+    role = models.CharField(max_length=24, default="student")
+
     def __str__(self):
         """
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return ("%s: %s"%(self.course.name, self.user.username))
+        return ("%s"%(self.user.username))
 
 
 class CourseUpdate(models.Model):

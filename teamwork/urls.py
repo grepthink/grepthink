@@ -58,19 +58,22 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
         # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
-
-
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
-
-
-
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', course_views.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',course_views.delete_course_update, name='delete_course_update'),
+
+
+        # Edit existing update to course (based on slug and update id)
+        url(r'^course/(?P<slug>[^/]+)/lock$',course_views.lock_interest, name='lock_interest'),
+
+
+
+
         # /admin/
         url(r'^admin/', admin.site.urls),
         # /login/

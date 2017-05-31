@@ -20,25 +20,23 @@
         <section class="courses" clearfix>
 
             {% for course in courses %}
-            <div class="panel panel-primary"
-                onclick="window.location.href='{% url 'view_one_course' course.slug %}'">
-                <!-- <div class="panel panel-primary"
-                    <a href="window.location.href='{% url 'view_one_course' course.slug %}'"</a> -->
-                <div class="panel-heading clearfix">
-                    <h3 class="panel-title">
-                        <a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a>
-                        <i class="pull-right">
-                            <b>{{ course.term }}</b>
-                        {{ course.year }}
-                        </i>
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <p><i><a href="{% url 'view_one_course' course.slug %}">{{ course.info }}</a></i></p>
-                </div>
-            </div>
+            <div class="box box-widget widget-user-2">
+                <a href="{% url 'view_one_course' course.slug %}" style="none">
 
+              <!-- Add the bg color to the header using any of the bg-* classes -->
+             <div class="widget-user-header bg-primary">
+                <!-- /.widget-user-image -->
+                <h3 class="widget-user-username"><strong>{{course.name}}</strong></h3>
+                <h5 class="widget-user-desc"><span class="pull-right">{{course.term}}  {{course.year}}</span></h5>
 
+              </div><!-- /.box-header -->
+          </a>
+            <div class="box-footer ">
+                  <ul class="nav nav-stacked">
+                      <li><p style="font-size:20px; margin-left: 20px">{{ course.info }}</p></li>
+                  </ul>
+              </div>
+          </div><!-- /.box -->
             {% empty %}
             <div class="alert alert-warning" role="alert">
                 <i class="fa fa-warning"></i>
@@ -53,23 +51,27 @@
                     </a>
                 </div>
                 {% endfor %}
-
-            <!-- {% if user.profile.isProf %}
-                <span></span>
-            {% else %}
-                <div class="pull-right">
-                    <a href="{% url 'join_course' %}">
-                        <button class="btn btn-success"
-                         type="submit" name="SUBMIT">
-                            Join Course
-                        </button>
-                    </a>
-                </div>
-            {% endif %} -->
-
             </section>
         </div>
     </div>
+
+
+      <div class="box box-widget widget-user-2">
+
+
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header">
+          <!-- /.widget-user-image -->
+          <h3 class="widget-user-username">{{course.name}}</h3>
+          <h3 class="widget-user-username">{{course.term}}</h3>
+          <h3 class="widget-user-username">{{course.year}}</h3>
+        </div><!-- /.box-header -->
+
+        <div class="box-footer no-padding">
+          {{ course.info }}
+        </div>
+      </div><!-- /.box -->
+
     <!--paginator-->
 
     {% endblock content %}

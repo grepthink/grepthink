@@ -97,8 +97,9 @@ $(document).ready(function() {
 
 {% block content %}
 
-  <div class="row">
-    <div class="col-md-6">
+ <div class="row">
+
+    <div class="col-md-6 clearfix">
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">Edit Profile</h3>
@@ -111,12 +112,6 @@ $(document).ready(function() {
                   <div class="form-group">
                     <h5>Full Name</h5>
                     {{ form.name }}
-                  </div>
-
-                  <div class="form-group">
-                    <h5>Avatar</h5>
-                    {{ form.avatar }}
-                    <button class="btn btn-danger btn-sm" name="delete_avatar" value="delete_avatar">Delete Avatar</button>
                   </div>
 
                   <div class="form-group">
@@ -147,7 +142,7 @@ $(document).ready(function() {
                             <button class="btn btn-danger btn-sm" name="delete_known" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                             </button>
                         {% endfor %}
-                    </div>                    
+                    </div>
 
                     <div class="form-group">
                       <h5>Skills I Want to Learn
@@ -182,6 +177,21 @@ $(document).ready(function() {
           </div>
         </div>
 
+             <div class="col-md-6 clearfix">
+                 <div class="box box-primary">
+                   <div class="box-header with-border">
+                     <h3 class="box-title">Avatar</h3>
+                   </div>
+                   <div class="box-body">
+                       <div class="form-group">
+                         <span class="pull-left">{{ form.avatar }}</span>
+                         <button class="btn btn-danger btn-sm pull-right" name="delete_avatar" value="delete_avatar"><i class="fa fa-trash"></i> Delete Avatar</button>
+                       </div>
+                   </div>
+
+                   </div>
+               </div>
+
 {# next element in row #}
 <div class="col-md-6 clearfix">
 <div class="box box-danger">
@@ -189,7 +199,8 @@ $(document).ready(function() {
     <h3 class="box-title">Delete Account</h3>
   </div>
   <div class="box-body">
-      <div class="pull-left">
+      <span>Warning, this is a permanent deletion of your account</span>
+      <div class="pull-right">
         <button class="btn btn-danger btn-sm" name="delete_profile" value="delete_profile"><i class="fa fa-trash"> </i>
             Delete Account?
         </button>

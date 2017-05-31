@@ -28,6 +28,11 @@
     </ul>
 {% else %}
 {% block timeline %}
+    {% comment %}
+    {% if user.profile.isProf %}
+
+    {% else%}
+    {% endcomment %}
     <ul class="timeline">
         {% for date_update in date_updates %}
         <li class="time-label" style="list-style: none">
@@ -82,6 +87,7 @@
             <i class="fa fa-clock-o"></i>
         </li>
     </ul>
+    {# {% endif %} #}
 {% endblock timeline %}
 {% endif %}
 

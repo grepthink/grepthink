@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
+from teamwork.apps.courses.views import *
 
 from .forms import *
 from .models import *
@@ -56,8 +57,6 @@ def index(request):
          'page_description' : page_description, 'title' : title,
          'all_courses' : all_courses})
 
-
-
     if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
@@ -67,8 +66,26 @@ def index(request):
         else:
             all_courses = Course.get_my_courses(request.user)
         date_updates = []
+        print("size of my courses:", len(all_courses))
         for course in all_courses:
+            course_updates = course.get_updates_by_date()
+            print("course updates:", course_updates)
             date_updates.extend(course.get_updates_by_date())
+
+    # if logged_in:
+    #     page_name = "Timeline"
+    #     if request.user.profile.isProf:
+    #         page_description = "Home"
+    #         title = "Home"
+    #         return view_courses(request)
+    #     else:
+    #         page_description = "Recent Updates from Courses and Projects"
+    #         title = "Timeline"
+    #         all_courses = Course.get_my_courses(request.user)
+    #         date_updates = []
+    #         for course in all_courses:
+    #             date_updates.extend(course.get_updates_by_date())
+
 
     return render(request, 'core/index.html', {'page_name' : page_name,
          'page_description' : page_description, 'title' : title,

@@ -3,3 +3,8 @@
     max-height: 400px;
     overflow-y: scroll;
 }
+.smallScrollStyle
+{
+    max-height: 50px;
+    overflow-y: scroll;
+}
