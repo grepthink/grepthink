@@ -298,7 +298,7 @@ def create_course(request):
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CourseForm(request.user.id,request.POST)
+        form = CreateCourseForm(request.user.id,request.POST)
         if form.is_valid():
             # create an object for the input
             course = Course()
@@ -338,7 +338,7 @@ def create_course(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_one_course, course.slug)
     else:
-        form = CourseForm(request.user.id)
+        form = CreateCourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
@@ -386,7 +386,7 @@ def edit_course(request, slug):
     if request.method == 'POST':
 
         # send the current user.id to filter out
-        form = CourseForm(request.user.id,request.POST, request.FILES)
+        form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
         if form.is_valid():
             # edit the course object, omitting slug
             data = form.cleaned_data
@@ -437,7 +437,7 @@ def edit_course(request, slug):
 
         return redirect(view_one_course, course.slug)
     else:
-        form = CourseForm(request.user.id, instance=course)
+        form = EditCourseForm(request.user.id, slug,  instance=course)
     return render(
             request, 'courses/edit_course.html',
             {'form': form,'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
@@ -524,4 +524,17 @@ def delete_course_update(request, slug, id):
     if update.creator == request.user:
         update.delete()
 
+    return redirect(view_one_course, course.slug)
+
+def lock_interest(request, slug):
+    """
+    Lock the interest for a course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    if course.limit_interest:
+        course.limit_interest = False
+    else:
+        course.limit_interest = True
+
+    course.save()
     return redirect(view_one_course, course.slug)

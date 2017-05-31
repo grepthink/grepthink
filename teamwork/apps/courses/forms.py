@@ -27,7 +27,7 @@ def ForbiddenNamesValidator(value):
         raise ValidationError('This is a reserved word.')
 
 #Creates the course form
-class CourseForm(forms.ModelForm):
+class CreateCourseForm(forms.ModelForm):
     """
     Form used for a user to create a course
 
@@ -44,7 +44,135 @@ class CourseForm(forms.ModelForm):
 
     #Filters queryset based on conditions
     def __init__(self, uid, *args, **kwargs):
-        super(CourseForm, self).__init__(*args, **kwargs)
+        super(CreateCourseForm, self).__init__(*args, **kwargs)
+
+        #Renders slug as HiddenInput
+        if 'instance' in kwargs:
+            self.fields['slug'].widget = forms.HiddenInput()
+            self.fields['term'].widget = forms.HiddenInput()
+        else:
+            self.fields['students'].widget = forms.HiddenInput()
+            self.fields['limit_interest'].widget = forms.HiddenInput()
+
+        self.fields['name'].validators.append(ForbiddenNamesValidator)
+
+    #course name field
+    name = forms.CharField(
+        #Text input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With length 255
+        max_length=255,
+        #Field required
+        required=True)
+
+    #course info field
+    info = forms.CharField(
+        #Text input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With length 255
+        max_length=255,
+        #Field Required
+        required=True)
+
+    #Term field
+    term = forms.ChoiceField(
+        #Choices from Term_Choice
+        choices=Term_Choice,
+        #Field Required
+        required=True)
+
+    #Slug Field
+    slug = forms.CharField(
+        #Text Input
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        #With Length 20
+        max_length=20,
+        #Field NOT Required
+        required=False)
+
+    #Students field
+    students = forms.ModelMultipleChoiceField(
+        #Multiple Choice Selection
+        widget=forms.CheckboxSelectMultiple,
+        #From all user objects
+        queryset=User.objects.all(),
+        #Field NOT Required
+        required=False)
+
+    #Field for only professor creating courses
+    limit_creation = forms.BooleanField(
+        #Initially field is false
+        initial=False,
+        #Labeled as "Only professor can create projects?"
+        label='Only Professor can create projects?',
+        #Field NOT Required
+        required=False)
+
+    limit_weights = forms.BooleanField(
+        label="Limit projects to only use specified weights for matches",
+        required=False)
+
+    weigh_interest = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of user interest in project",
+        required=False)
+
+    weigh_know = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users already know",
+        required=False)
+
+    weigh_learn = forms.IntegerField(
+        min_value=0, max_value=5, label="Weight of skills users want to learn",
+        required=False)
+
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+
+    # lower_time_bound = forms.ChoiceField(
+    #         label="Custom Lower Time Boundary for Scheduling",
+    #         #Choices from Lower_Boundary_Choice
+    #         choices=Lower_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    # upper_time_bound = forms.ChoiceField(
+    #         label="Custom Upper Time Boundary for Scheduling",
+    #         #Choices from Upper_Boundary_Choice
+    #         choices=Upper_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    limit_interest = forms.BooleanField(
+        label="Disable ability for students to show interest in projects",
+        required=False)
+
+    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+
+    #META CLASS
+    class Meta:
+        model = Course
+        fields = ['name', 'info', 'term', 'students', 'slug', 'limit_creation',
+                'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
+
+
+#Edit the course form
+class EditCourseForm(forms.ModelForm):
+    """
+    Form used for a user to create a course
+
+    Attributes (Fields):
+        name: [CharField] Course name field
+        info: [CharField] Course information field
+        term: [ChoiceField] List of possible terms
+        slug: [CharField] Course slug
+        students: [ModelMultipleChoiceField] List of students
+
+    Methods:
+        __init__ :  Initializes form, filtering querysets for fields
+    """
+
+    #Filters queryset based on conditions
+    def __init__(self, uid, slug, *args, **kwargs):
+        super(EditCourseForm, self).__init__(*args, **kwargs)
+
+        curr_course = Course.objects.filter(slug=slug)
+        students_in_course = Enrollment.objects.filter(course=curr_course)
 
         #Renders slug as HiddenInput
         if 'instance' in kwargs:
@@ -56,12 +184,7 @@ class CourseForm(forms.ModelForm):
 
         # get_sueruser_list
         superuser = User.objects.filter(is_superuser=True)
-
-        #Hides superusers, professors, and current user(just to be safe)
-        # from 'students' field
-        only_students = Profile.objects.exclude(
-            Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
-        self.fields['students'].queryset = only_students
+        self.fields['students'].queryset = students_in_course
         self.fields['name'].validators.append(ForbiddenNamesValidator)
 
     #course name field
