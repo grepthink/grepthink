@@ -147,15 +147,35 @@ def auto_gen(request, slug):
 
     auto = auto_ros(course)
 
+    flag = False
+    for i in auto:
+        if i[1]:
+            flag = True
+
+
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]
 
-    print("auto_gen:", auto)
-
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
-            'page_description': page_description, 'title' : title})
+            'page_description': page_description, 'title' : title, 'flag': flag})
+
+def assign_auto(request, slug):
+    """
+    Assign the students to auto-gen teams
+    """
+    course = get_object_or_404(Course, slug=slug)
+    auto = auto_ros(course)
+
+    for p in auto:
+        for mem in p[1]:
+            Membership.objects.create(user=mem, project=p[0], invite_reason='')
+    print("Groups assigned")
+    return redirect(auto_gen, course.slug)
+
+
+
 
 
 def matchstats(request, slug, project_match_list):

@@ -127,7 +127,7 @@
                   </div> <!-- ./col -->
 
                 </div> <!-- ./row -->
-                
+
                 {% endcomment %}
 
                 <h3>Updates</h3>
@@ -312,7 +312,7 @@
                 <p>
                     <a href="{% url 'view_statistics' course.slug %}">
                         <button class="btn btn-info">
-                        <i class="fa fa-stats"></i>
+                        <i class="fa fa-line-chart"></i>
                         Stats
                         </button>
                     </a>
@@ -320,7 +320,7 @@
                 <h3>Email Roster</h3>
                 <p>
                     <button class="btn btn-info" name="send_emails" value="send_emails">
-                        <i class="fa fa-stats"></i>
+                        <i class="fa fa-envelope-o"></i>
                         Email Roster
                     </button>
                 </p>
@@ -329,14 +329,14 @@
                     {% if not course.limit_interest %}
                         <a href="{% url 'lock_interest' course.slug %}">
                             <button class="btn btn-danger" name="lock">
-                                <i class="fa fa-info"></i>
+                                <i class="fa fa-lock"></i>
                                 Lock
                             </button>
                         </a>
                     {% else %}
                         <a href="{% url 'lock_interest' course.slug %}">
                             <button class="btn btn-info" name="lock">
-                                <i class="fa fa-info"></i>
+                                <i class="fa fa-unlock"></i>
                                 Unlock
                             </button>
                         </a>
@@ -347,7 +347,8 @@
                 <p>
                     <a href="{% url 'auto_gen' course.slug %}">
                         <button class="btn btn-info">
-                        Generate
+                            <i class="fa fa-users"></i>
+                            Generate
                         </button>
                     </a>
                 </p>

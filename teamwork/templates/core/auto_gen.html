@@ -11,20 +11,25 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<!-- Currently is a placebo
 <div>
-    <button class="btn btn-success">
-        Set Roster
-    </button>
-</div> -->
+
+    <a href="{% url 'assign_auto' course.slug %}">
+        {% if flag %}
+            <button class="btn btn-success">
+        {% else %}
+            <button class="btn btn-success" title="Groups are full" disabled="">
+        {% endif %}
+            Set Roster
+        </button>
+    </a>
+
+</div>
 <section class="prof-matches">
     <div class="row">
 {% for i in auto_gen %}
     <div class="col-md-3"style="height:10%; width:30%;">
     <a href="{% url 'view_one_project' i.0.slug %}" style="none">
       <div class="box box-widget widget-user-2">
-
-
         <!-- Add the bg color to the header using any of the bg-* classes -->
         <div class="widget-user-header {% if i.0.sponsor %} bg-yellow {% elif i.0.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
           <div class="widget-user-image">
@@ -33,20 +38,28 @@
           <!-- /.widget-user-image -->
           <h3 class="widget-user-username">{{i.0.title}}</h3>
           <h5 class="widget-user-desc">{{i.0.tagline}}</h5>
-        </div><!-- /.box-header -->
+      </div><!-- /.box-header --></a>
 
         <div class="box-footer no-padding">
           <ul class="nav nav-stacked" style="position: relative;">
-              <h3>Auto-team</h3>
-                {% for mem in i.0.members.all %}
-                  {% if mem.username != null %}
-                  <li style="height: 5%"><a href="{% url 'profile' mem.username %}">
-                  <span class="label label-primary" >
-                          <i class="fa fa-user"></i>
-                          {{ mem.username }}
-                  </span></a></li>
-                  {% endif %}
-              {% endfor %}
+            {% for mem in i.0.members.all %}
+              {% if mem.username != null %}
+              <li style="height: 40px"><a href="{% url 'profile' mem.username %}">
+              <span class="label label-default" >
+                      <i class="fa fa-user"></i>
+                      {{ mem.username }}
+              </span></a></li>
+              {% endif %}
+          {% endfor %}
+              {% for mem in i.1 %}
+                {% if mem.username != null %}
+                <li style="height: 40px"><a href="{% url 'profile' mem.username %}">
+                <span class="label label-primary" >
+                        <i class="fa fa-user"></i>
+                        {{ mem.username }}
+                </span></a></li>
+                {% endif %}
+            {% endfor %}
              {# <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a> #}
           </ul>
         </div>
