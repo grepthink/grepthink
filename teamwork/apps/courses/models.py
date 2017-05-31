@@ -172,8 +172,6 @@ class Course(models.Model):
         #defaulted to false
         default=False)
 
-
-
     limit_weights = models.BooleanField(default=False)
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)

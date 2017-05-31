@@ -108,9 +108,9 @@ class CreateCourseForm(forms.ModelForm):
         #Field NOT Required
         required=False)
 
-    # limit_weights = forms.BooleanField(
-    #     label="Limit projects to only use specified weights for matches",
-    #     required=False)
+    limit_weights = forms.BooleanField(
+        label="Limit projects to only use specified weights for matches",
+        required=False)
 
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",
