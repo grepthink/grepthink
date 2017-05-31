@@ -181,6 +181,15 @@ class Project(models.Model):
 
     """
 
+    Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
+                       (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                       (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                       (24, '12:00'), )
+
+    Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
+                       (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                       (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
         max_length=255, default="No Project Title Provided")
@@ -219,6 +228,14 @@ class Project(models.Model):
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
     weigh_learn = models.IntegerField(default=1)
+
+    lower_time_bound = models.IntegerField(
+        choices=Lower_Boundary_Choice,
+        default=16)
+
+    upper_time_bound = models.IntegerField(
+        choices=Upper_Boundary_Choice,
+        default=42)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:

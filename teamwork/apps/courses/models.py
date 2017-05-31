@@ -172,13 +172,7 @@ class Course(models.Model):
         #defaulted to false
         default=False)
 
-    lower_time_bound = models.IntegerField(
-        choices=Lower_Boundary_Choice,
-        default=16)
 
-    upper_time_bound = models.IntegerField(
-        choices=Upper_Boundary_Choice,
-        default=42)
 
     limit_weights = models.BooleanField(default=False)
     weigh_interest = models.IntegerField(default=1)

@@ -116,6 +116,9 @@ def view_one_project(request, slug):
     page_description = project.tagline or "Tagline"
     title = project.title or "Project"
 
+
+    print(updates)
+
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'project': project, 'updates': updates, 'course' : course,
@@ -239,7 +242,8 @@ def create_project(request):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.resource = ''
-
+            project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
+            project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
             project.save()
 
             # Handle desired skills
@@ -397,6 +401,8 @@ def edit_project(request, slug):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             # Project content
             project.content = form.cleaned_data.get('content')
+            project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
+            project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
 
             project.save()
 
@@ -487,8 +493,8 @@ def find_meeting(slug):
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
     course = Course.objects.get(projects=project)
-    low = course.lower_time_bound
-    high = course.upper_time_bound
+    low = project.lower_time_bound
+    high = project.upper_time_bound
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''

@@ -160,10 +160,14 @@ def auto_ros(course):
                 assigned.append(temp_user)
         # add the project and team to the roster
         roster.append([x[0], temp_team])
-    for p in roster:
-        for mem in p[1]:
-            Membership.objects.create(user=mem, project=p[0], invite_reason='')
-    print("roster:", roster)
+
+
+    # Creates the membership objects, add the new students to respective teams
+    # for p in roster:
+    #     for mem in p[1]:
+    #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
+    # print("roster:", roster)
+    
     return roster
 
 def by_schedule(user, project):
