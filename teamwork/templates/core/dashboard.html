@@ -21,17 +21,24 @@
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
-                <tbody><tr>
-                  <th>Course</th>
-                  <th>Edit</th>
-                  <th>Statistics</th>
-                  <th>Post Update</th>
-                  <th>Add Code</th>
-                  <th>Course Size</th>
+                <tbody>
+                <tr>
+                  <th style="text-align: center;">Course</th>
+                  <th style="text-align: center;">Edit</th>
+                  <th style="text-align: center;">Statistics</th>
+                  <th style="text-align: center;">Post Update</th>
+                  <th style="text-align: center;">Add Code</th>
+                  <th style="text-align: center;">Course Size</th>
                 </tr>
                 {% for course in all_courses %}
-                <tr>
-                  <td><lead>{{course.name}}</lead></td>
+                <tr align="center">
+                  <td>
+                    <a style="link" href="{% url 'view_one_course' course.slug %}">
+                    <button class="btn btn-block btn-default btn-lg">
+                    {{course.name}}
+                    </button>
+                    </a>
+                  </td>
                   <td>
                     <a href="{% url 'edit_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
                       <i class="glyphicon glyphicon-edit"></i> Edit
@@ -39,7 +46,6 @@
                   </td>
                   <td>
                     <a href="{% url 'view_statistics' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
-                      <span class="badge bg-green">{{course.students.all.count}}</span>
                       <i class="glyphicon glyphicon-stats"></i> Stats
                     </a>
                   </td>
@@ -57,9 +63,9 @@
                   <td>Please</td>
                   <td>Create</td>
                   <td>a</td>
-                  <td><span class="label label-success">course</span></td>
+                  <td>course</td>
                   <td>first</td>
-                  <td>thanks</td>
+                  <td><span class="label label-success">thanks</span></td>
                 </tr>
                 {% endfor %}
               </tbody></table>
