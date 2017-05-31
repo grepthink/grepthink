@@ -14,6 +14,7 @@
 {% endblock crumb %}
 
 
+
 {% block content %}
 
 
@@ -41,7 +42,6 @@
                     Projects
                     <i class="fa fa-code-fork"></i>
                 </a>
-            </li>
             <li class="">
                 <a href="#members" data-toggle="tab" aria-expanded="false">
                     Members
@@ -275,10 +275,22 @@
                 </p>
                 <h3>Lock Interest</h3>
                 <p>
-                    <button class="btn btn-info" id="lock_interest" type="button">
-                        <i class="fa fa-stats"></i>
-                        Lock
-                    </button>
+                    {% if not course.limit_interest %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                            <button class="btn btn-danger" name="lock">
+                                <i class="fa fa-danger"></i>
+                                Lock
+                            </button>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                            <button class="btn btn-info" name="lock">
+                                <i class="fa fa-danger"></i>
+                                Unlock
+                            </button>
+                        </a>
+                    {% endif %}
+
                 </p>
                 <h3>Auto Generate Teams</h3>
                 <p>

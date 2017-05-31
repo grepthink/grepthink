@@ -525,3 +525,16 @@ def delete_course_update(request, slug, id):
         update.delete()
 
     return redirect(view_one_course, course.slug)
+
+def lock_interest(request, slug):
+    """
+    Lock the interest for a course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    if course.limit_interest:
+        course.limit_interest = False
+    else:
+        course.limit_interest = True
+
+    course.save()
+    return redirect(view_one_course, course.slug)
