@@ -51,6 +51,41 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
+
+  $(".s2_desired_skills").select2({
+    ajax: {
+      url: "ajax/add_desired_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
 });
 
 </script>
@@ -67,6 +102,88 @@ $(document).ready(function() {
 
 
 {% block content %}
+
+<div class = "row">
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">Create Project</h3>
+          </div>
+          <div class="box-body">
+          <form action="{% url 'create_project' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+
+                {% csrf_token %}
+                {{ form.status }}
+                {% for field in form.visible_fields %}
+                <div class="form-group{% if field.errors %} has-error{% endif %}">
+                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                    {% if field.label == 'Content' %}
+                      {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
+                    {% endif %}
+                    {% if field.label == 'Weight of user interest in project' %}
+                      <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of interest when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+                    {% endif %}
+                    {% if field.label == 'Weight of skills users already know' %}
+                      <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of knowing a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+                    {% endif %}
+                    {% if field.label == 'Weight of skills users want to learn' %}
+                      <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+                    {% endif %}
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <label class="control-label">{{ error }}</label>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </form>
+
+            <div class="box-body">
+              <div class="form-group">
+                <label>Add Desired Skills</label>
+                <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+                </select>
+              </div>
+            </div>
+            </div>
+        </div>
+ <!-- Col 1 -->
+
+
+    <!-- <div class="col-md-6 clearfix">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
+          </div>
+
+          <form action="{% url 'create_project' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% csrf_token %}
+              <div class="box-body">
+                <div class="form-group">
+                  <label>Add Desired Skills</label>
+                  <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
+              <div class="box-footer">
+                  <div class="pull-right">
+                      <button class="btn btn-success" type="submit" name="SUBMIT">
+                          Add Desired Skill(s)
+                      </button>
+                  </div>
+              </div>
+            </form>
+        </div>
+    </div> -->
+</div>
+
+
+
+
+
+
+
+
+{% comment %}
 
 {# Working on new forms and select2 #}
 
@@ -124,7 +241,7 @@ $(document).ready(function() {
 {# Old form below #}
 <br><br><br>
 
-{% comment %}
+
 
 <form action="{% url 'create_project' %}" method="post" role="form">
     {% csrf_token %}

@@ -224,6 +224,24 @@ def create_project(request):
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
 
+    # Add skills to the project
+    if request.POST.get('desired_skills'):
+        skills = request.POST.getlist('desired_skills')
+        for s in skills:
+            s_lower = s.lower()
+            # Check if lowercase version of skill is in db
+            if Skills.objects.filter(skill=s_lower):
+                # Skill already exists, then pull it up
+                desired_skill = Skills.objects.get(skill=s_lower)
+            else:
+                # Add the new skill to the Skills table
+                desired_skill = Skills.objects.create(skill=s_lower)
+                # Save the new object
+                desired_skill.save()
+            # Add the skill to the project (as a desired_skill)
+            project.desired_skills.add(desired_skill)
+            project.save()
+
     if request.method == 'POST':
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
@@ -236,41 +254,40 @@ def create_project(request):
             project.creator = request.user.username
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
-            project.resource = form.cleaned_data.get('resource')
             project.teamSize = form.cleaned_data.get('teamSize') or 4
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
-            project.resource = ''
-            project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
-            project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
+            # project.resource = ''
+            # project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
+            # project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
             project.save()
 
-            # Handle desired skills
-            desired = form.cleaned_data.get('desired_skills')
-            if desired:
-                # parse known on ','
-                skill_array = desired.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            desired_skill = Skills.objects.get(
-                                skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            desired_skill = Skills.objects.create(
-                                skill=stripped_skill.lower())
-                            # save the new object
-                            desired_skill.save()
-                        # This is how we can use the reverse of the relationship
-                        # add the skill to the current profile
-                        project.desired_skills.add(desired_skill)
-                        project.save()
-                        #taking profile.save() out of these if's and outside lets all the changes be saved at once
-                        # This is how we can get all the skills from a user
+            # # Handle desired skills
+            # desired = form.cleaned_data.get('desired_skills')
+            # if desired:
+            #     # parse known on ','
+            #     skill_array = desired.split(',')
+            #     for skill in skill_array:
+            #         stripped_skill = skill.strip()
+            #         if not (stripped_skill == ""):
+            #             # check if skill is in Skills table, lower standardizes input
+            #             if Skills.objects.filter(skill=stripped_skill.lower()):
+            #                 # skill already exists, then pull it up
+            #                 desired_skill = Skills.objects.get(
+            #                     skill=stripped_skill.lower())
+            #             else:
+            #                 # we have to add the skill to the table
+            #                 desired_skill = Skills.objects.create(
+            #                     skill=stripped_skill.lower())
+            #                 # save the new object
+            #                 desired_skill.save()
+            #             # This is how we can use the reverse of the relationship
+            #             # add the skill to the current profile
+            #             project.desired_skills.add(desired_skill)
+            #             project.save()
+            #             #taking profile.save() out of these if's and outside lets all the changes be saved at once
+            #             # This is how we can get all the skills from a user
             # Project content
             project.content = form.cleaned_data.get('content')
 
@@ -493,15 +510,16 @@ def find_meeting(slug):
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
     course = Course.objects.get(projects=project)
-    low = project.lower_time_bound
-    high = project.upper_time_bound
+    # low = project.lower_time_bound
+    # high = project.upper_time_bound
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''
     if project.readable_meetings is not None: project.readable_meetings = ''
 
     # Stores avaliablity in list
-    event_list = project.generate_avail(low, high)
+    # event_list = project.generate_avail(low, high)
+    event_list = project.generate_avail()
     readable_list = []
 
     for event in event_list:
