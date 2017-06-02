@@ -53,6 +53,8 @@ urlpatterns = [
         # for select2
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+
 
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),

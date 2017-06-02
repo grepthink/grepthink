@@ -186,6 +186,23 @@ def add_desired_skills(request, slug):
 
     return HttpResponse("Failure")
 
+def create_desired_skills(request):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
 @login_required
 def create_project(request):
     """
