@@ -98,14 +98,14 @@ $(document).ready(function() {
 {% block content %}
 
  <div class="row">
-
+<form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
     <div class="col-md-6 clearfix">
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">Edit Profile</h3>
             </div>
 
-          <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
+
               <div class="box-body">
                   {% csrf_token %}
                   {{ form.status }}
@@ -173,7 +173,7 @@ $(document).ready(function() {
                       </div>
                   </div>
                 </div>
-            </form>
+
           </div>
         </div>
 
@@ -191,6 +191,7 @@ $(document).ready(function() {
 
                    </div>
                </div>
+               </form>
 
 {# next element in row #}
 <div class="col-md-6 clearfix">

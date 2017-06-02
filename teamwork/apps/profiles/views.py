@@ -205,7 +205,7 @@ def edit_profile(request, username):
             if location:
                 profile.location = location
                 profile.save()
-            if ava:
+            if ava:                
                 profile.avatar = ava
                 profile.save()
 
