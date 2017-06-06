@@ -186,6 +186,23 @@ def add_desired_skills(request, slug):
 
     return HttpResponse("Failure")
 
+def create_desired_skills(request):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
 @login_required
 def create_project(request):
     """
@@ -224,54 +241,24 @@ def create_project(request):
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
 
+
     if request.method == 'POST':
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
-            # create an object for the input
+            # Create an object for the input
             project = Project()
-            # Project slug
+
+            # Fill all the simple fields and save project object.
             project.slug = form.cleaned_data.get('slug')
             project.title = form.cleaned_data.get('title')
             project.tagline = form.cleaned_data.get('tagline')
             project.creator = request.user.username
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
-            project.resource = form.cleaned_data.get('resource')
             project.teamSize = form.cleaned_data.get('teamSize') or 4
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
-            project.resource = ''
-            project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
-            project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
-            project.save()
-
-            # Handle desired skills
-            desired = form.cleaned_data.get('desired_skills')
-            if desired:
-                # parse known on ','
-                skill_array = desired.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            desired_skill = Skills.objects.get(
-                                skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            desired_skill = Skills.objects.create(
-                                skill=stripped_skill.lower())
-                            # save the new object
-                            desired_skill.save()
-                        # This is how we can use the reverse of the relationship
-                        # add the skill to the current profile
-                        project.desired_skills.add(desired_skill)
-                        project.save()
-                        #taking profile.save() out of these if's and outside lets all the changes be saved at once
-                        # This is how we can get all the skills from a user
-            # Project content
             project.content = form.cleaned_data.get('content')
 
             project.save()
@@ -284,7 +271,25 @@ def create_project(request):
             # using select2 javascript.
             members = request.POST.getlist('members')
 
-            # loop through the members in the object and make m2m rows for them
+            # Add skills to the project
+            if request.POST.get('desired_skills'):
+                skills = request.POST.getlist('desired_skills')
+                for s in skills:
+                    s_lower = s.lower()
+                    # Check if lowercase version of skill is in db
+                    if Skills.objects.filter(skill=s_lower):
+                        # Skill already exists, then pull it up
+                        desired_skill = Skills.objects.get(skill=s_lower)
+                    else:
+                        # Add the new skill to the Skills table
+                        desired_skill = Skills.objects.create(skill=s_lower)
+                        # Save the new object
+                        desired_skill.save()
+                    # Add the skill to the project (as a desired_skill)
+                    project.desired_skills.add(desired_skill)
+                    project.save()
+
+            # Loop through the members in the object and make m2m rows for them
             for i in members:
                 i_user = User.objects.get(username=i)
                 mem_courses = Course.get_my_courses(i_user)
@@ -292,7 +297,7 @@ def create_project(request):
                     Membership.objects.create(
                         user=i_user, project=project, invite_reason='')
 
-            # if user is not a prof
+            # Don't add the professor to the project (will still be owner)
             if not profile.isProf:
                 Membership.objects.create(
                     user=user, project=project, invite_reason='')
@@ -323,10 +328,17 @@ def edit_project(request, slug):
     title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
-    if not request.user.username == project.creator and request.user not in project.members.all(
-    ):
+    if not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
         messages.info(request, 'Only Project Owner can edit project!')
+        return HttpResponseRedirect('/project/all')
+
+    if request.POST.get('delete_project'):
+        # ## Check that the current user is the project owner
+        # if not request.user.username == project.creator:
+        #     messages.info(request,'Only project owner can delete project.')
+        # else:
+        project.delete()
         return HttpResponseRedirect('/project/all')
 
     # Add a member to the project
@@ -416,24 +428,6 @@ def edit_project(request, slug):
 
 
 @login_required
-def delete_project(request, slug):
-    """
-    Delete project method
-    """
-    project = get_object_or_404(Project, slug=slug)
-
-    ## Do something to check that the current user is the project owner
-    # if not request.user.id == project.owner.id:
-    #     return redirect(view_one_project, project.slug)
-    # else:
-    #     project.delete()
-    #     return redirect(view_projects)
-
-    project.delete()
-    return redirect(view_projects)
-
-
-@login_required
 def post_update(request, slug):
     """
     Post an update for a given project
@@ -493,15 +487,16 @@ def find_meeting(slug):
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
     course = Course.objects.get(projects=project)
-    low = project.lower_time_bound
-    high = project.upper_time_bound
+    # low = project.lower_time_bound
+    # high = project.upper_time_bound
 
     # If project already has a list of meeting times, delete it
     if project.meetings is not None: project.meetings = ''
     if project.readable_meetings is not None: project.readable_meetings = ''
 
     # Stores avaliablity in list
-    event_list = project.generate_avail(low, high)
+    # event_list = project.generate_avail(low, high)
+    event_list = project.generate_avail()
     readable_list = []
 
     for event in event_list:
