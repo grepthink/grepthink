@@ -31,6 +31,9 @@ urlpatterns = [
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
 
+        url(r'^search/$', core_views.search, name='search'),
+
+
         # /create_project/
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/

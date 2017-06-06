@@ -98,6 +98,57 @@ def about(request):
     return render(request, 'core/about.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title})
 
+def search(request):
+
+    page_name = "Search"
+    page_description = "Results"
+    title = "Search Results"
+
+    context = {'page_name': page_name, 
+    'page_description': page_description, 'title' : title}
+
+    if request.POST.get('q'):
+        raw_keywords = request.POST.get('q')
+        print("Keywords:")
+        print(raw_keywords)
+
+        keywords = []
+
+        if raw_keywords is not None:
+            if " " in raw_keywords:
+                keywords = raw_keywords.split(" ")
+            else:
+                keywords.append(raw_keywords)
+            for q in keywords:
+                user_results = User.objects.filter(
+                    Q( first_name__contains = q ) |
+                    Q( last_name__contains = q ) |
+                    Q( username__contains = q ) ).order_by('username')
+                project_results = Project.objects.filter(
+                    Q( title__contains = q ) |
+                    Q( content__contains = q ) |
+                    Q( tagline__contains = q ) ).order_by('title')
+                course_results = Course.objects.filter(
+                    Q( name__contains = q ) | 
+                    Q( info__contains = q ) ).order_by('name')
+
+            if user_results:
+                context['user_results'] = user_results
+            if project_results:
+                context['project_results'] = project_results
+            if course_results:
+                context['course_results'] = course_results
+
+            print("DEBUG 2:")
+            print("User results: ")
+            print(user_results)
+            print("project results")
+            print(project_results)
+            print("course results")
+            print(course_results)
+
+    return render(request, 'core/search_results.html', context)
+
 @login_required
 def view_matches(request):
     """
