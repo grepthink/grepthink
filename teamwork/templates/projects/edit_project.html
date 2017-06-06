@@ -271,12 +271,13 @@ $(document).ready(function() {
                       sure you know what you are doing before pressing this button.
                   </p>
 
-                  <a href="{% url 'delete_project' project.slug %}">
-                      <button class="btn btn-danger" name="DELETE">
+                  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+                  {% csrf_token %}
+                      <button class="btn btn-danger" name="delete_project" value="delete_project">
                           <i class="fa fa-trash"></i>
                           Delete project
                       </button>
-                  </a>
+                  </form>
               </div>
           </div>
   </div>
