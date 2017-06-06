@@ -241,23 +241,6 @@ def create_project(request):
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
 
-    # Add skills to the project
-    if request.POST.get('desired_skills'):
-        skills = request.POST.getlist('desired_skills')
-        for s in skills:
-            s_lower = s.lower()
-            # Check if lowercase version of skill is in db
-            if Skills.objects.filter(skill=s_lower):
-                # Skill already exists, then pull it up
-                desired_skill = Skills.objects.get(skill=s_lower)
-            else:
-                # Add the new skill to the Skills table
-                desired_skill = Skills.objects.create(skill=s_lower)
-                # Save the new object
-                desired_skill.save()
-            # Add the skill to the project (as a desired_skill)
-            project.desired_skills.add(desired_skill)
-            project.save()
 
     if request.method == 'POST':
         form = CreateProjectForm(user.id, request.POST)
@@ -317,6 +300,24 @@ def create_project(request):
             # Now not getting this list through the form, because this list is created
             # using select2 javascript.
             members = request.POST.getlist('members')
+
+            # Add skills to the project
+            if request.POST.get('desired_skills'):
+                skills = request.POST.getlist('desired_skills')
+                for s in skills:
+                    s_lower = s.lower()
+                    # Check if lowercase version of skill is in db
+                    if Skills.objects.filter(skill=s_lower):
+                        # Skill already exists, then pull it up
+                        desired_skill = Skills.objects.get(skill=s_lower)
+                    else:
+                        # Add the new skill to the Skills table
+                        desired_skill = Skills.objects.create(skill=s_lower)
+                        # Save the new object
+                        desired_skill.save()
+                    # Add the skill to the project (as a desired_skill)
+                    project.desired_skills.add(desired_skill)
+                    project.save()
 
             # loop through the members in the object and make m2m rows for them
             for i in members:
