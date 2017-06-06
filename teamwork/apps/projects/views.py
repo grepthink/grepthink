@@ -428,24 +428,6 @@ def edit_project(request, slug):
 
 
 @login_required
-def delete_project(request, slug):
-    """
-    Delete project method
-    """
-    project = get_object_or_404(Project, slug=slug)
-
-    ## Do something to check that the current user is the project owner
-    # if not request.user.id == project.owner.id:
-    #     return redirect(view_one_project, project.slug)
-    # else:
-    #     project.delete()
-    #     return redirect(view_projects)
-
-    project.delete()
-    return redirect(view_projects)
-
-
-@login_required
 def post_update(request, slug):
     """
     Post an update for a given project
