@@ -245,9 +245,10 @@ def create_project(request):
     if request.method == 'POST':
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
-            # create an object for the input
+            # Create an object for the input
             project = Project()
-            # Project slug
+
+            # Fill all the simple fields and save project object.
             project.slug = form.cleaned_data.get('slug')
             project.title = form.cleaned_data.get('title')
             project.tagline = form.cleaned_data.get('tagline')
@@ -258,37 +259,6 @@ def create_project(request):
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
-            # project.resource = ''
-            # project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
-            # project.upper_time_bound = form.cleaned_data.get('upper_time_bound')
-            project.save()
-
-            # # Handle desired skills
-            # desired = form.cleaned_data.get('desired_skills')
-            # if desired:
-            #     # parse known on ','
-            #     skill_array = desired.split(',')
-            #     for skill in skill_array:
-            #         stripped_skill = skill.strip()
-            #         if not (stripped_skill == ""):
-            #             # check if skill is in Skills table, lower standardizes input
-            #             if Skills.objects.filter(skill=stripped_skill.lower()):
-            #                 # skill already exists, then pull it up
-            #                 desired_skill = Skills.objects.get(
-            #                     skill=stripped_skill.lower())
-            #             else:
-            #                 # we have to add the skill to the table
-            #                 desired_skill = Skills.objects.create(
-            #                     skill=stripped_skill.lower())
-            #                 # save the new object
-            #                 desired_skill.save()
-            #             # This is how we can use the reverse of the relationship
-            #             # add the skill to the current profile
-            #             project.desired_skills.add(desired_skill)
-            #             project.save()
-            #             #taking profile.save() out of these if's and outside lets all the changes be saved at once
-            #             # This is how we can get all the skills from a user
-            # Project content
             project.content = form.cleaned_data.get('content')
 
             project.save()
@@ -319,7 +289,7 @@ def create_project(request):
                     project.desired_skills.add(desired_skill)
                     project.save()
 
-            # loop through the members in the object and make m2m rows for them
+            # Loop through the members in the object and make m2m rows for them
             for i in members:
                 i_user = User.objects.get(username=i)
                 mem_courses = Course.get_my_courses(i_user)
@@ -327,7 +297,7 @@ def create_project(request):
                     Membership.objects.create(
                         user=i_user, project=project, invite_reason='')
 
-            # if user is not a prof
+            # Don't add the professor to the project (will still be owner)
             if not profile.isProf:
                 Membership.objects.create(
                     user=user, project=project, invite_reason='')
@@ -358,10 +328,17 @@ def edit_project(request, slug):
     title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
-    if not request.user.username == project.creator and request.user not in project.members.all(
-    ):
+    if not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
         messages.info(request, 'Only Project Owner can edit project!')
+        return HttpResponseRedirect('/project/all')
+
+    if request.POST.get('delete_project'):
+        # ## Check that the current user is the project owner
+        # if not request.user.username == project.creator:
+        #     messages.info(request,'Only project owner can delete project.')
+        # else:
+        project.delete()
         return HttpResponseRedirect('/project/all')
 
     # Add a member to the project
@@ -448,24 +425,6 @@ def edit_project(request, slug):
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'form': form, 'project': project})
-
-
-@login_required
-def delete_project(request, slug):
-    """
-    Delete project method
-    """
-    project = get_object_or_404(Project, slug=slug)
-
-    ## Do something to check that the current user is the project owner
-    # if not request.user.id == project.owner.id:
-    #     return redirect(view_one_project, project.slug)
-    # else:
-    #     project.delete()
-    #     return redirect(view_projects)
-
-    project.delete()
-    return redirect(view_projects)
 
 
 @login_required

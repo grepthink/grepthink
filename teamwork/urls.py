@@ -39,8 +39,6 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
         # Edit individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/edit/$', project_views.edit_project, name='edit_project'),
-        # Delete individual course (based on slug)
-         url(r'^project/(?P<slug>[^/]+)/delete/$', project_views.delete_project, name='delete_project'),
         # Post update for individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
