@@ -89,6 +89,24 @@ def view_profile(request, username):
         'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
         })
 
+def edit_desired_skills(request, username):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
+
 
 @login_required
 def edit_profile(request, username):
@@ -115,21 +133,21 @@ def edit_profile(request, username):
     page_description = "Edit %s's Profile"%(profile.user.username)
     title = "Edit Profile"
 
-    #handle deleting known_skills
-    if request.POST.get('delete_known'):
-        skillname = request.POST.get('delete_known')
-        to_delete = Skills.objects.get(skill=skillname)
-        profile.known_skills.remove(to_delete)
-        form = ProfileForm(instance=profile)
-
-    #handle deleting learn_skills
-    elif request.POST.get('delete_learn'):
-        skillname = request.POST.get('delete_learn')
-        to_delete = Skills.objects.get(skill=skillname)
-        profile.learn_skills.remove(to_delete)
-        form = ProfileForm(instance=profile)
+    # #handle deleting known_skills
+    # if request.POST.get('delete_known'):
+    #     skillname = request.POST.get('delete_known')
+    #     to_delete = Skills.objects.get(skill=skillname)
+    #     profile.known_skills.remove(to_delete)
+    #     form = ProfileForm(instance=profile)
+    #
+    # #handle deleting learn_skills
+    # elif request.POST.get('delete_learn'):
+    #     skillname = request.POST.get('delete_learn')
+    #     to_delete = Skills.objects.get(skill=skillname)
+    #     profile.learn_skills.remove(to_delete)
+    #     form = ProfileForm(instance=profile)
     #handle deleting avatar
-    elif request.POST.get('delete_avatar'):
+    if request.POST.get('delete_avatar'):
         avatar = request.POST.get('delete_avatar')
         profile.avatar.delete()
         form = ProfileForm(instance=profile)
@@ -145,53 +163,53 @@ def edit_profile(request, username):
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             # grab each form element from the clean form
-            known = form.cleaned_data.get('known_skill')
-            learn = form.cleaned_data.get('learn_skill')
+            # known = form.cleaned_data.get('known_skill')
+            # learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
             name = form.cleaned_data.get('name')
             institution = form.cleaned_data.get('institution')
             location = form.cleaned_data.get('location')
             ava = form.cleaned_data.get('avatar')
-
-            # if we have an input in known_skills
-            if known:
-                # parse known on ','
-                skill_array = known.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            known_skill = Skills.objects.get(skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            known_skill = Skills.objects.create(skill=stripped_skill.lower())
-                            # save the new object
-                            known_skill.save()
-
-                        # add the skill to the current profile
-                        profile.known_skills.add(known_skill)
-                        profile.save()
-
-
-            # same as Known implemenation for learn_skills
-            if learn:
-                skill_array = learn.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            learn_skill = Skills.objects.get(skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            learn_skill = Skills.objects.create(skill=stripped_skill.lower())
-                            # save the new object
-                            learn_skill.save()
-                        profile.learn_skills.add(learn_skill)
-                        profile.save()
+            profile.save()
+            # # if we have an input in known_skills
+            # if known:
+            #     # parse known on ','
+            #     skill_array = known.split(',')
+            #     for skill in skill_array:
+            #         stripped_skill = skill.strip()
+            #         if not (stripped_skill == ""):
+            #             # check if skill is in Skills table, lower standardizes input
+            #             if Skills.objects.filter(skill=stripped_skill.lower()):
+            #                 # skill already exists, then pull it up
+            #                 known_skill = Skills.objects.get(skill=stripped_skill.lower())
+            #             else:
+            #                 # we have to add the skill to the table
+            #                 known_skill = Skills.objects.create(skill=stripped_skill.lower())
+            #                 # save the new object
+            #                 known_skill.save()
+            #
+            #             # add the skill to the current profile
+            #             profile.known_skills.add(known_skill)
+            #             profile.save()
+            #
+            #
+            # # same as Known implemenation for learn_skills
+            # if learn:
+            #     skill_array = learn.split(',')
+            #     for skill in skill_array:
+            #         stripped_skill = skill.strip()
+            #         if not (stripped_skill == ""):
+            #             # check if skill is in Skills table, lower standardizes input
+            #             if Skills.objects.filter(skill=stripped_skill.lower()):
+            #                 # skill already exists, then pull it up
+            #                 learn_skill = Skills.objects.get(skill=stripped_skill.lower())
+            #             else:
+            #                 # we have to add the skill to the table
+            #                 learn_skill = Skills.objects.create(skill=stripped_skill.lower())
+            #                 # save the new object
+            #                 learn_skill.save()
+            #             profile.learn_skills.add(learn_skill)
+                        # profile.save()
             #if data is entered, save it to the profile for the following
             if name:
                 profile.name = name
@@ -216,14 +234,17 @@ def edit_profile(request, username):
         #load form with prepopulated data
         form = ProfileForm(instance=profile)
 
-    known_skills_list = profile.known_skills.all()
-    learn_skills_list = profile.learn_skills.all()
+    # known_skills_list = profile.known_skills.all()
+    # learn_skills_list = profile.learn_skills.all()
     page_user = get_object_or_404(User, username=username)
 
+    # return render(request, 'profiles/edit_profile.html', {
+    #     'page_user': page_user, 'form':form, 'profile':profile,
+    #     'known_skills_list':known_skills_list,
+    #     'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
-        'known_skills_list':known_skills_list,
-        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
+        'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @login_required
 def edit_schedule(request, username):
