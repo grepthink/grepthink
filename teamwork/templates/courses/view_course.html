@@ -9,7 +9,7 @@
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
 
 {% block crumb %}
@@ -69,15 +69,16 @@
 
             <div class="tab-pane active" id="projects">
                 {% if user.username != course.creator %}
-                  <div class="row">
-
-                    <div class="alert alert-info" role="alert">
-                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                            Show interest in these projects!
-                        </a>
+                    {% if not course.limit_interest %}
+                    <div class="row">
+                        <div class="alert alert-info" role="alert">
+                            <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                                Show interest in these projects!
+                            </a>
+                        </div>
                     </div>
-                  </div>
-                  {% endif %}
+                    {% endif %}
+                {% endif %}
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
@@ -258,7 +259,7 @@
                       </div>
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body no-padding">
+                    <div class="box-body no-padding largeScrollStyle">
                       <ul class="users-list clearfix">
                         {% for studs in course.students.all %}
                         {% if studs.username != null %}
