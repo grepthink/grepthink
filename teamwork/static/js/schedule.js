@@ -80,6 +80,9 @@ $(document).ready(function() {
         // Can click day/week names to navigate views
         navLinks: true,
 
+        // Here Sean -andgates
+        allDaySlot: false,
+
         // Allow users to resize events.
         editable: true,
 

@@ -26,7 +26,7 @@ Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (3
                    (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
 def ForbiddenNamesValidator(value):
-    forbidden_names = ['create', 'all']
+    forbidden_names = ['create', 'all', 'delete']
 
     if value.lower() in forbidden_names:
         raise ValidationError('This is a reserved word.')
