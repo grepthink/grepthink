@@ -491,8 +491,10 @@ def find_meeting(slug):
     # high = project.upper_time_bound
 
     # If project already has a list of meeting times, delete it
-    if project.meetings is not None: project.meetings = ''
-    if project.readable_meetings is not None: project.readable_meetings = ''
+    if project.meetings is not None:
+        project.meetings = ''
+    if project.readable_meetings is not None:
+         project.readable_meetings = ''
 
     # Stores avaliablity in list
     # event_list = project.generate_avail(low, high)

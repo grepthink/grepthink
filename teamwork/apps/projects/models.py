@@ -306,6 +306,7 @@ class Project(models.Model):
         for user in self.members.all():
             # Loops through each event
             for event in user.profile.avail.all():
+
                 # adds to list
                 event_list.append(event)
 
@@ -315,7 +316,7 @@ class Project(models.Model):
                 sunday_list.append(i)
             if i.day == "Monday":
                 monday_list.append(i)
-            if i.day == "Teusday":
+            if i.day == "Tuesday":
                 teusday_list.append(i)
             if i.day == "Wednesday":
                 wednesday_list.append(i)

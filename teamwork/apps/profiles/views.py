@@ -248,9 +248,6 @@ def edit_schedule(request, username):
     Public method that takes a request and a username.
     Gets a list of 'events' from a calendar and stores the event as an array of tuples
     Redners profiles/edit_calendar.html
-
-    TODO: The whole shebang
-
     """
     user = get_object_or_404(User, username=username)
     page_name = "Edit Schedule"
