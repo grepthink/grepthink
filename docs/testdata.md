@@ -2,9 +2,7 @@ QA Test Data for GrepThink
 =====
 
 
-### Accounts:
-
-#### Professor Account:
+### Professor Account:
 
 
 Signup
@@ -47,6 +45,8 @@ The SEADS device monitors the aggregate electrical signal of the entire househol
 
 Skills:  android  c    git    java
 ```
+
+### Student Accounts
 
 
 

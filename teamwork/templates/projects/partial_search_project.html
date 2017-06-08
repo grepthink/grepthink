@@ -18,7 +18,7 @@
           <h5 class="widget-user-desc">{{project.tagline}}</h5>
         </div><!-- /.box-header -->
 
-        <div class="box-footer no-padding">
+        <div class="box-footer no-padding bg-gray">
           <ul class="nav nav-stacked">
             <li><a href="#">Accepting Members <span class="pull-right badge bg-red">
               {% if project.avail_mem %}
@@ -49,11 +49,10 @@
     {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
     {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
 {% empty %}
-  <div class="alert alert-warning" role="alert">
-      <i class="fa fa-warning"></i>
-      There are no projects yet. Go ahead and
-      <a href="{% url 'create_project' %}" class="alert-link">
-          create one now!
+  <div>
+      </h3>No projects found matching that query.</h3>
+      <a href="{% url 'create_project' %}">
+          You may want to create a project?
       </a>
   </div>
 {% endfor %}
