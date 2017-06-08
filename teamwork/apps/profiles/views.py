@@ -186,7 +186,8 @@ def edit_profile(request, username):
         profile.avatar.delete()
         form = ProfileForm(instance=profile)
     #handle deleting profile
-    elif request.POST.get('delete_profile'):
+    if request.POST.get('delete_profile'):
+        print ("we here")
         page_user = get_object_or_404(User, username=username)
         page_user.delete()
         return redirect('about')
@@ -205,45 +206,6 @@ def edit_profile(request, username):
             location = form.cleaned_data.get('location')
             ava = form.cleaned_data.get('avatar')
             profile.save()
-            # # if we have an input in known_skills
-            # if known:
-            #     # parse known on ','
-            #     skill_array = known.split(',')
-            #     for skill in skill_array:
-            #         stripped_skill = skill.strip()
-            #         if not (stripped_skill == ""):
-            #             # check if skill is in Skills table, lower standardizes input
-            #             if Skills.objects.filter(skill=stripped_skill.lower()):
-            #                 # skill already exists, then pull it up
-            #                 known_skill = Skills.objects.get(skill=stripped_skill.lower())
-            #             else:
-            #                 # we have to add the skill to the table
-            #                 known_skill = Skills.objects.create(skill=stripped_skill.lower())
-            #                 # save the new object
-            #                 known_skill.save()
-            #
-            #             # add the skill to the current profile
-            #             profile.known_skills.add(known_skill)
-            #             profile.save()
-            #
-            #
-            # # same as Known implemenation for learn_skills
-            # if learn:
-            #     skill_array = learn.split(',')
-            #     for skill in skill_array:
-            #         stripped_skill = skill.strip()
-            #         if not (stripped_skill == ""):
-            #             # check if skill is in Skills table, lower standardizes input
-            #             if Skills.objects.filter(skill=stripped_skill.lower()):
-            #                 # skill already exists, then pull it up
-            #                 learn_skill = Skills.objects.get(skill=stripped_skill.lower())
-            #             else:
-            #                 # we have to add the skill to the table
-            #                 learn_skill = Skills.objects.create(skill=stripped_skill.lower())
-            #                 # save the new object
-            #                 learn_skill.save()
-            #             profile.learn_skills.add(learn_skill)
-                        # profile.save()
             #if data is entered, save it to the profile for the following
             if name:
                 profile.name = name
