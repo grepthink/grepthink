@@ -137,7 +137,7 @@ $(document).ready(function() {
 
         <div class="form-group">
             {{ form.course.errors }}
-            <a class='desired-skills-tooltip' data-toggle="tooltip" data-placement="right" title="Select a course to post this project in.">
+            <a class='course-tooltip' data-toggle="tooltip" data-placement="right" title="Select a course to post this project in.">
             <i class='glyphicon glyphicon-info-sign'></i></a>
             <label for="{{ form.course.id_for_label }}" class="control-label">
             Course
@@ -159,14 +159,6 @@ $(document).ready(function() {
             Is this project currently <b>accepting new members</b>?:
             </label>
             {{ form.accepting }}
-        </div>
-
-        <div class="form-group">
-          <label>Add Desired Skills</label>
-          <a class='desired-skills-tooltip' data-toggle="tooltip" data-placement="right" title="List the skills that a potential team member should have. These will be used to recommend team members to you.">
-          <i class='glyphicon glyphicon-info-sign'></i></a>
-          <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
-          </select>
         </div>
 
       </div> <!-- Box 1 Body -->
@@ -237,13 +229,17 @@ $(document).ready(function() {
             {{ form.teamSize }}
         </div>
 
+        {% if request.user.profile.isProf %}
+
         <div class="form-group">
             {{ form.sponsor.errors }}
             <label for="{{ form.sponsor.id_for_label }}" class="control-label">
-            Is this a company <b>sponsored project</b>?:
+            Is this project <b>sponsored</b> by a company?:
             </label>
             {{ form.sponsor }}
         </div>
+
+        {% endif %}
 
         <div class="form-group">
             {{ form.weigh_interest.errors }}
