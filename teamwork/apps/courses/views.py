@@ -166,7 +166,7 @@ def join_course(request):
                         Alert.objects.create(
                                 sender=request.user,
                                 to=User.objects.filter(username=i.creator).get(),
-                                msg=request.user.username + " used the addcode to enroll in " + i.name,
+                                msg=" used the addcode to enroll in " + i.name,
                                 url=reverse('profile',args=[request.user.username])
                                 )
                     return redirect(view_one_course, i.slug)
