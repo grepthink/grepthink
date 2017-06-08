@@ -98,6 +98,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
         # save event for scehdule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
 
         # link to view matches for your projects
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
