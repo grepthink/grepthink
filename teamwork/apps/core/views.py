@@ -66,10 +66,8 @@ def index(request):
         else:
             all_courses = Course.get_my_courses(request.user)
         date_updates = []
-        print("size of my courses:", len(all_courses))
         for course in all_courses:
             course_updates = course.get_updates_by_date()
-            print("course updates:", course_updates)
             date_updates.extend(course.get_updates_by_date())
 
     # if logged_in:
@@ -99,6 +97,13 @@ def about(request):
         'page_description': page_description, 'title' : title})
 
 def search(request):
+    """
+    This works but...
+
+    If a user enters multiple search terms seperated by space,
+    only the last keyword will return results
+    - andgates
+    """
 
     page_name = "Search"
     page_description = "Results"
@@ -109,8 +114,8 @@ def search(request):
 
     if request.POST.get('q'):
         raw_keywords = request.POST.get('q')
-        print("Keywords:")
-        print(raw_keywords)
+        # print("Keywords:")
+        # print(raw_keywords)
 
         keywords = []
 
@@ -139,13 +144,13 @@ def search(request):
             if course_results:
                 context['course_results'] = course_results
 
-            print("DEBUG 2:")
-            print("User results: ")
-            print(user_results)
-            print("project results")
-            print(project_results)
-            print("course results")
-            print(course_results)
+            # print("DEBUG 2:")
+            # print("User results: ")
+            # print(user_results)
+            # print("project results")
+            # print(project_results)
+            # print("course results")
+            # print(course_results)
 
     return render(request, 'core/search_results.html', context)
 
