@@ -253,7 +253,7 @@
                       <h3 class="box-title">Students</h3>
 
                       <div class="box-tools pull-right">
-                        <span class="label label-danger">{{course.students.all.count}}</span>
+                        <span class="label label-danger">{{ students|length }}</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
                       </div>
@@ -261,7 +261,8 @@
                     <!-- /.box-header -->
                     <div class="box-body no-padding largeScrollStyle">
                       <ul class="users-list clearfix">
-                        {% for studs in course.students.all %}
+
+                        {% for studs in students %}
                         {% if studs.username != null %}
                         <a href="{% url 'profile' studs.username %}">
                         <li style="list-style-type: none;">
