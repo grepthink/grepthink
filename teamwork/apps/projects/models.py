@@ -88,11 +88,11 @@ def to_bits(day):
             bitstring[end+1] = True
 
 
-    # # Manually block off time bounds given by professor
-    # for x in range(0, l):
-    #     bitstring[x] = True
-    # for x in range(h, 48):
-    #     bitstring[x] = True
+    # Manually block off time bounds given by professor
+    for x in range(0, 16):
+        bitstring[x] = True
+    for x in range(44, 48):
+        bitstring[x] = True
 
     return bitstring
 
@@ -306,7 +306,6 @@ class Project(models.Model):
         for user in self.members.all():
             # Loops through each event
             for event in user.profile.avail.all():
-
                 # adds to list
                 event_list.append(event)
 
