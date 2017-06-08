@@ -9,7 +9,7 @@
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
 
 {% block crumb %}
@@ -258,7 +258,7 @@
                       </div>
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body no-padding">
+                    <div class="box-body no-padding largeScrollStyle">
                       <ul class="users-list clearfix">
                         {% for studs in course.students.all %}
                         {% if studs.username != null %}
