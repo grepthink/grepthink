@@ -259,7 +259,7 @@ $(document).ready(function() {
             <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for skill in known_skills_list %}
-                    <button class="btn btn-danger btn-sm" name="remove_known_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                    <button class="btn btn-danger btn-sm" name="known_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                     </button>
                 {% empty %}
                 <lead>No known skills to remove</lead>
@@ -271,7 +271,7 @@ $(document).ready(function() {
             <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for skill in learn_skills_list %}
-                    <button class="btn btn-danger btn-sm" name="remove_learn_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                    <button class="btn btn-danger btn-sm" name="learn_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
                     </button>
                 {% empty %}
                 <lead>No skills you want to learn to remove</lead>

@@ -151,7 +151,6 @@ def edit_profile(request, username):
                 profile.known_skills.add(known_skill)
                 profile.save()
 
-            return redirect(edit_profile, username)
         if learn:
             for s in learn:
                 s_lower = s.lower()
@@ -161,14 +160,25 @@ def edit_profile(request, username):
                     learn_skill = Skills.objects.get(skill=s_lower)
                 else:
                     # Add the new skill to the Skills table
-                    leanr_skill = Skills.objects.create(skill=s_lower)
+                    learn_skill = Skills.objects.create(skill=s_lower)
                     # Save the new object
                     learn_skill.save()
                 # Add the skill to the project (as a desired_skill)
                 profile.learn_skills.add(learn_skill)
                 profile.save()
 
-            return redirect(edit_profile, username)
+        return redirect(edit_profile, username)
+
+    if request.POST.get('known_remove'):
+        skillname = request.POST.get('known_remove')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.known_skills.remove(to_delete)
+        return redirect(edit_profile, username)
+    if request.POST.get('learn_remove'):
+        skillname = request.POST.get('learn_remove')
+        to_delete = Skills.objects.get(skill=skillname)
+        profile.learn_skills.remove(to_delete)
+        return redirect(edit_profile, username)
 
     #handle deleting avatar
     if request.POST.get('delete_avatar'):
@@ -258,17 +268,17 @@ def edit_profile(request, username):
         #load form with prepopulated data
         form = ProfileForm(instance=profile)
 
-    # known_skills_list = profile.known_skills.all()
-    # learn_skills_list = profile.learn_skills.all()
+    known_skills_list = profile.known_skills.all()
+    learn_skills_list = profile.learn_skills.all()
     page_user = get_object_or_404(User, username=username)
 
-    # return render(request, 'profiles/edit_profile.html', {
-    #     'page_user': page_user, 'form':form, 'profile':profile,
-    #     'known_skills_list':known_skills_list,
-    #     'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
-        'page_name' : page_name, 'page_description': page_description, 'title': title })
+        'known_skills_list':known_skills_list,
+        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
+    # return render(request, 'profiles/edit_profile.html', {
+    #     'page_user': page_user, 'form':form, 'profile':profile,
+    #     'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @login_required
 def edit_schedule(request, username):

@@ -103,7 +103,7 @@ urlpatterns = [
         # link to view matches for your projects
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
-            url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
 
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
