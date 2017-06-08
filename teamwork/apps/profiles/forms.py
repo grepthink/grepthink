@@ -124,14 +124,14 @@ class ProfileForm(forms.ModelForm):
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=50, required=False)
 
-    known_skill = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=255, required=False)
-
-
-    learn_skill = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=255, required=False)
+    # known_skill = forms.CharField(
+    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #           max_length=255, required=False)
+    #
+    #
+    # learn_skill = forms.CharField(
+    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #           max_length=255, required=False)
 
     avatar = forms.ImageField(required=False)
 
@@ -141,5 +141,6 @@ class ProfileForm(forms.ModelForm):
     class Meta:
       # was model=Skills not sure why or why it was working. This works also
         model = Profile
-        fields = ['name', 'bio', 'institution', 'location',
-                'known_skill', 'learn_skill']
+        # fields = ['name', 'bio', 'institution', 'location',
+        #         'known_skill', 'learn_skill']
+        fields = ['name', 'bio', 'institution', 'location']
