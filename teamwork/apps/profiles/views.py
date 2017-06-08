@@ -73,10 +73,11 @@ def view_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
     """
+    page_user = get_object_or_404(User, username=username)
     user = request.user
     profile = Profile.objects.get(user=user)
     page_name = "Profile"
-    page_description = "%s's Profile"%(user.username)
+    page_description = "%s's Profile"%(page_user.username)
     title = "View Profile"
 
     # gets all interest objects of the current user
@@ -84,7 +85,6 @@ def view_profile(request, username):
     # gets all projects where user has interest
     my_projects = Project.objects.filter(interest__in=my_interests)
 
-    page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
         'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
         })
