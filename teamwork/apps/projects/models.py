@@ -165,7 +165,7 @@ class Interest(models.Model):
     interest_reason = models.CharField(max_length=100)
 
     def __str__(self):
-        return("%s: %d"%(self.user.username, self.interest))
+        return("%d"%(self.interest))
 
 
 class Project(models.Model):

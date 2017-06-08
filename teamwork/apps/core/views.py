@@ -289,6 +289,7 @@ def matchstats(request, slug, project_match_list):
         all_interests = cur_project.interest.all()
         interests = all_interests.filter(user=student)
         # need to test with multiple interest entered
+        print(interests)
         for interest in interests:
             interest_match[stud] = ([interest, interest.interest_reason])
 
@@ -297,7 +298,7 @@ def matchstats(request, slug, project_match_list):
         else:
             skill_match[stud] = ["No similar skills"]
 
-
+    print(interest_match)
     user = request.user
     # print("=========================END MATCHSTATS=========================")
 

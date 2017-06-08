@@ -8,3 +8,8 @@
     max-height: 50px;
     overflow-y: scroll;
 }
+.largeScrollStyle
+{
+    max-height: 550px;
+    overflow-y: scroll;
+}
