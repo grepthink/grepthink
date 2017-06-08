@@ -8,7 +8,7 @@
             <div class="box-header">
               <h3 class="box-title">Quick Links</h3>
 
-              <!-- Hiding prof search NOT IMPLEMENTED 
+              <!-- Hiding prof search NOT IMPLEMENTED
               <div class="box-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
                   <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
@@ -28,6 +28,7 @@
                   <th style="text-align: center;">Edit</th>
                   <th style="text-align: center;">Statistics</th>
                   <th style="text-align: center;">Post Update</th>
+                  <th style="text-align: center;">Lock Interest</th>
                   <th style="text-align: center;">Add Code</th>
                   <th style="text-align: center;">Course Size</th>
                 </tr>
@@ -56,6 +57,19 @@
                     Post Update
                     </a>
                   </td>
+                  <td>
+                     {% if not course.limit_interest %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-lock"></i>
+                             Lock
+                         </a>
+                     {% else %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-unlock"></i>
+                             Unlock
+                         </a>
+                     {% endif %}
+                   </td>
                   <td><i>{{course.addCode}}</i></td>
                   <td><span class="label label-success">{{course.students.all.count}}</span><td>
                 </tr>

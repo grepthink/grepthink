@@ -69,15 +69,16 @@
 
             <div class="tab-pane active" id="projects">
                 {% if user.username != course.creator %}
-                  <div class="row">
-
-                    <div class="alert alert-info" role="alert">
-                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                            Show interest in these projects!
-                        </a>
+                    {% if not course.limit_interest %}
+                    <div class="row">
+                        <div class="alert alert-info" role="alert">
+                            <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                                Show interest in these projects!
+                            </a>
+                        </div>
                     </div>
-                  </div>
-                  {% endif %}
+                    {% endif %}
+                {% endif %}
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
