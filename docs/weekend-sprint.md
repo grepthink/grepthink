@@ -25,3 +25,5 @@ As a user I want
 7. Have fails safes planned out **Heroku plan has 4 day rollback and manual backup**
 
 8. Setup way to collect feedback 
+
+9. Upload docs and stuff for others to understand code base
