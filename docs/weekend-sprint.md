@@ -18,4 +18,10 @@ As a user I want
 
 4. A helpful about page and FAQ section.
 
-5. idk
+5. Emails?
+
+6. List of task for sponsored project
+
+7. Have fails safes planned out
+
+8. Setup way to collect feedback
