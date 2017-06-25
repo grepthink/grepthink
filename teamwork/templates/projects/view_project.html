@@ -3,30 +3,58 @@
 {% load static %}
 {% load i18n %}
 
+{# Clear out javascript block at bottom of page so we can import specific js #}
+{% block javascript %}
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+
+<script src="{% static 'js/schedule.js' %}"></script>
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+
+{% endblock stylesheets %}
+
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
+
+{% endblock crumb %}
+
 
 {% block content %}
-
-
-<form action="" method="post" role="form">
-    {% csrf_token %}
-    {% for field in form.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-        <span class="help-block">{{ field.help_text|safe }}</span>
-        {% endif %}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
-</form>
-
-<h2 class="page-header">
-    <i class="fa fa-globe"></i> {{ project.title }}
-    <small class="pull-right">Date: 3/3/2017</small>
-</h2>
 
 <div>
     <!-- Custom Tabs -->
@@ -35,6 +63,7 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
+            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Project Tools <span class="caret"></span>
@@ -42,24 +71,24 @@
                 <ul class="dropdown-menu">
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'edit_project' project.slug %}">Edit</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Add Resource</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li>
+                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li> -->
                 </ul>
             </li>
-            <li class="dropdown">
+            <!-- <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Show Interest <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">High Intrest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Moderate Intrest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Low Intrest</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">High Interest</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Moderate Interest</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Low Interest</a></li>
                     <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Intersted</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Interested</a></li>
                 </ul>
-            </li>
+            </li> -->
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
         </ul>
         <div class="tab-content">
@@ -88,6 +117,71 @@
             <!-- /.tab-pane Updates -->
             <div class="tab-pane" id="tab_2">
 
+                <h3>Updates</h3>
+                <ul class="timeline">
+                    <!-- timeline time label -->
+                    <li class="time-label" style="list-style: none">
+                        <span class="bg-red">
+                            {{project.title}}
+                        </span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    {% if user in project.members.all or user.username == project.creator%}
+                    <li style="list-style: none"
+                        onclick="window.location =
+                        '{% url 'post_update' project.slug %}'">
+                        <i class="fa fa-plus bg-green"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ffffff">
+                            <div class="timeline-header">
+                                Add an update
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                    {% for up in updates.all %}
+                    <li style="list-style: none">
+                        <i class="fa fa-comments bg-blue"></i>
+                        <div class="timeline-item">
+                            <div class="timeline-header clearfix">
+                                {{up.update_title}}
+                            </div>
+                            <div class="timeline-body">
+                                {{up.update}}
+                            </div>
+                            <div class="timeline-footer clearfix">
+                                <span class="label label-primary"
+                                    onclick="window.location =
+                                    '{% url 'profile' up.user.username %}'">
+                                    {{up.user.username}}
+                                </span>
+                                <i class="pull-right">
+                                    Posted {{up.date}}
+                                </i>
+                            </div>
+                        </div>
+                    </li>
+
+                    {% empty %}
+                    <li style="list-style: none">
+                        <i class="fa fa-times bg-red"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ffffff">
+                            <div class="timeline-header">
+                                There are no updates
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    <li style="list-style: none">
+                        <i class="fa fa-clock-o"></i>
+                    </li>
+                </ul>
+
+
+
+                {% comment %}
                 <!-- row -->
                 <div class="row">
                     <div class="col-md-12">
@@ -132,15 +226,54 @@
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
-
+                {% endcomment %}
             </div>
             <!-- /.tab-pane End Updates -->
 
             <!-- /.tab-pane Resources -->
             <div class="tab-pane" id="tab_3">
-                {{ project.get_resource_as_markdown | safe }}
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Resources</h3>
+                        <div class="box-body no-padding">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>Resource Title</th>
+                                        <th>URL Link</th>
+                                        <th>Posted By</th>
+                                        <th>Posted On</th>
+                                    </tr>
+                                    {% for re in resources.all %}
+                                    {% if re.src_title != null %}
+                                    <tr>
+                                        <td>{{re.src_title}}</td>
+                                        <td><a href="{{re.src_link}}">{{re.src_link}}</a></td>
+                                        <td>{{re.user.username}}</td>
+                                        <td>{{re.date}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.tab-pane End Updates -->
+            <!-- /.tab-pane End Resources -->
+
+            <!-- /.tab-pane request meeting -->
+            <div class="tab-pane" id="tab_4">
+                {% for p in meetings %}
+                  <br>{{p}}</br>
+                {% endfor %}
+
+                <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
+
+            </div>
+            <!-- /.tab-pane meeting -->
+
+
         </div>
         <!-- /.tab-content -->
     </div>

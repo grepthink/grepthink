@@ -1,23 +1,31 @@
-from .models import *
-from .forms import *
+import json
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
-from teamwork.apps.projects.models import *
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.contrib import messages
-from teamwork.apps.profiles.forms import SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect, JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
-import json
+from teamwork.apps.profiles.forms import SignUpForm
+from teamwork.apps.projects.models import *
+
+from .forms import *
+from .models import *
+from django.urls import reverse
 
 
 def signup(request):
     """
     public method that generates a form a user uses to sign up for an account
     """
+
+    page_name = "Signup"
+    page_description = "Sign up for Groupthink!"
+    title = "Signup"
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if not form.is_valid():
@@ -56,7 +64,7 @@ def signup(request):
 
     else:
         return render(request, 'profiles/signup.html',
-                      {'form': SignUpForm()})
+                      {'form': SignUpForm(), 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
 def view_profile(request, username):
@@ -65,30 +73,38 @@ def view_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
     """
+    page_user = get_object_or_404(User, username=username)
     user = request.user
     profile = Profile.objects.get(user=user)
+    page_name = "Profile"
+    page_description = "%s's Profile"%(page_user.username)
+    title = "View Profile"
 
     # gets all interest objects of the current user
     my_interests = Interest.objects.filter(user=user)
     # gets all projects where user has interest
     my_projects = Project.objects.filter(interest__in=my_interests)
 
-    """
-    print("\n\n")
-    for p in my_projects:
-        interest_in_project = p.interest.all()
-        print(p.title)
-        for i in interest_in_project:
-            print(i.interest)
-            print(i.interest_reason)
-    print("\n\n")
-    """
-
-    page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile
+        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
         })
 
+def edit_skills(request, username):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Skills.objects.filter(
+                Q( skill__contains = q ) ).order_by( 'skill' )
+        for s in results:
+            data['items'].append({'id': s.skill, 'text': s.skill})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
 
 @login_required
 def edit_profile(request, username):
@@ -107,29 +123,73 @@ def edit_profile(request, username):
     #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
 
-    #handle deleting known_skills
-    if request.POST.get('delete_known'):
-        skillname = request.POST.get('delete_known')
+    if request.user.username != username:
+        messages.info(request, 'You cannot access the user profile specified!')
+        return redirect(view_profile, request.user.username)
+
+    page_name = "Edit Profile"
+    page_description = "Edit %s's Profile"%(profile.user.username)
+    title = "Edit Profile"
+
+    # Add skills to the project learn_skills
+    if request.POST.get('known_skills') or request.POST.get('learn_skills'):
+        known = request.POST.getlist('known_skills')
+        learn = request.POST.getlist('learn_skills')
+        if known:
+            for s in known:
+                s_lower = s.lower()
+                # Check if lowercase version of skill is in db
+                if Skills.objects.filter(skill=s_lower):
+                    # Skill already exists, then pull it up
+                    known_skill = Skills.objects.get(skill=s_lower)
+                else:
+                    # Add the new skill to the Skills table
+                    known_skill = Skills.objects.create(skill=s_lower)
+                    # Save the new object
+                    known_skill.save()
+                # Add the skill to the project (as a desired_skill)
+                profile.known_skills.add(known_skill)
+                profile.save()
+
+        if learn:
+            for s in learn:
+                s_lower = s.lower()
+                # Check if lowercase version of skill is in db
+                if Skills.objects.filter(skill=s_lower):
+                    # Skill already exists, then pull it up
+                    learn_skill = Skills.objects.get(skill=s_lower)
+                else:
+                    # Add the new skill to the Skills table
+                    learn_skill = Skills.objects.create(skill=s_lower)
+                    # Save the new object
+                    learn_skill.save()
+                # Add the skill to the project (as a desired_skill)
+                profile.learn_skills.add(learn_skill)
+                profile.save()
+
+        return redirect(edit_profile, username)
+
+    if request.POST.get('known_remove'):
+        skillname = request.POST.get('known_remove')
         to_delete = Skills.objects.get(skill=skillname)
         profile.known_skills.remove(to_delete)
-        form = ProfileForm(instance=profile)
-
-    #handle deleting learn_skills
-    elif request.POST.get('delete_learn'):
-        skillname = request.POST.get('delete_learn')
+        return redirect(edit_profile, username)
+    if request.POST.get('learn_remove'):
+        skillname = request.POST.get('learn_remove')
         to_delete = Skills.objects.get(skill=skillname)
         profile.learn_skills.remove(to_delete)
-        form = ProfileForm(instance=profile)
+        return redirect(edit_profile, username)
+
     #handle deleting avatar
-    elif request.POST.get('delete_avatar'):
+    if request.POST.get('delete_avatar'):
         avatar = request.POST.get('delete_avatar')
         profile.avatar.delete()
         form = ProfileForm(instance=profile)
     #handle deleting profile
-    elif request.POST.get('delete_profile'):
+    if request.POST.get('delete_profile'):
+        print ("we here")
         page_user = get_object_or_404(User, username=username)
-        page_user.is_active = False
-        page_user.save()
+        page_user.delete()
         return redirect('about')
 
     #original form
@@ -138,53 +198,14 @@ def edit_profile(request, username):
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             # grab each form element from the clean form
-            known = form.cleaned_data.get('known_skill')
-            learn = form.cleaned_data.get('learn_skill')
+            # known = form.cleaned_data.get('known_skill')
+            # learn = form.cleaned_data.get('learn_skill')
             bio = form.cleaned_data.get('bio')
             name = form.cleaned_data.get('name')
             institution = form.cleaned_data.get('institution')
             location = form.cleaned_data.get('location')
             ava = form.cleaned_data.get('avatar')
-
-            # if we have an input in known_skills
-            if known:
-                # parse known on ','
-                skill_array = known.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            known_skill = Skills.objects.get(skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            known_skill = Skills.objects.create(skill=stripped_skill.lower())
-                            # save the new object
-                            known_skill.save()
-
-                        # add the skill to the current profile
-                        profile.known_skills.add(known_skill)
-                        profile.save()
-
-
-            # same as Known implemenation for learn_skills
-            if learn:
-                skill_array = learn.split(',')
-                for skill in skill_array:
-                    stripped_skill = skill.strip()
-                    if not (stripped_skill == ""):
-                        # check if skill is in Skills table, lower standardizes input
-                        if Skills.objects.filter(skill=stripped_skill.lower()):
-                            # skill already exists, then pull it up
-                            learn_skill = Skills.objects.get(skill=stripped_skill.lower())
-                        else:
-                            # we have to add the skill to the table
-                            learn_skill = Skills.objects.create(skill=stripped_skill.lower())
-                            # save the new object
-                            learn_skill.save()
-                        profile.learn_skills.add(learn_skill)
-                        profile.save()
+            profile.save()
             #if data is entered, save it to the profile for the following
             if name:
                 profile.name = name
@@ -216,7 +237,10 @@ def edit_profile(request, username):
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
-        'learn_skills_list':learn_skills_list })
+        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
+    # return render(request, 'profiles/edit_profile.html', {
+    #     'page_user': page_user, 'form':form, 'profile':profile,
+    #     'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @login_required
 def edit_schedule(request, username):
@@ -224,42 +248,126 @@ def edit_schedule(request, username):
     Public method that takes a request and a username.
     Gets a list of 'events' from a calendar and stores the event as an array of tuples
     Redners profiles/edit_calendar.html
-
-    TODO: The whole shebang
-
     """
+    user = get_object_or_404(User, username=username)
+    page_name = "Edit Schedule"
+    page_description = "Edit %s's Schedule"%(user.username)
+    title = "Edit Schedule"
 
-    return render(request, 'profiles/edit_schedule.html')
+    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 @csrf_exempt
 def save_event(request, username):
-
-    # print("\n\nDebug: request.method = " + request.method + "\n\n")
+    #grab profile for the current user
+    profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST' and request.is_ajax():
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
 
-        # print("\n\nDebug: jsonEvents = " + jsonEvents + "\n\n")
-
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
-        # print("\n\nDebug: event_list = \n")
-        # print(event_list)
-        # print("\n")
+        # If user already has a schedule, delete it
+        if profile.avail.all() is not None: profile.avail.all().delete()
 
+        # For each event
         for event in event_list:
-            # @TODO: Save events to user profile
-            print("Event Start " + event['start'])
-            print("Event End " + event['end'])
+            # Create event object
+            busy = Events()
+
+            # Get data
+            #function assumes start day and end day are the same
+            day = event['start'][8] + event['start'][9]
+            day = int(day)
+            s_hour = event['start'][11] + event['start'][12]
+            s_minute = event['start'][14] + event['start'][15]
+
+            s_hour = int(s_hour)
+            s_minute = int(s_minute)
+
+            e_hour = event['end'][11] + event['end'][12]
+            e_minute = event['end'][14] + event['end'][15]
+            e_hour = int(e_hour)
+            e_minute = int(e_minute)
+
+            # Assign data
+            busy.day = dayofweek(day)
+            busy.start_time_hour = s_hour
+            busy.start_time_min = s_minute
+            busy.end_time_hour = e_hour
+            busy.end_time_min = e_minute
+
+            # Save event
+            busy.save()
+
+            profile.avail.add(busy)
+            profile.save()
+
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     else:
-        print("\n\nDebug: Request method was not post \n\n")
-
+        pass
+        #print("\n\nDebug: Request method was not post \n\n")
 
     return HttpResponse("Failure")
+
+@login_required
+def view_alerts(request):
+
+    user = request.user
+    profile = Profile.objects.get(user=user)
+
+    page_name = "Alerts"
+    page_description = "Your notifications"
+
+    # Testing by injecting alerts every time
+    #extra = Alert()
+    #extra.sender = user
+    #extra.to = user
+    #extra.msg = "You viewed your alerts"
+    #extra.url = reverse('profile', args=[user.username])
+    #extra.save()
+
+    unread = profile.unread_alerts()
+    archive = profile.read_alerts()
+
+    return render(request, 'profiles/alerts.html', {
+        'profile': profile,
+        'unread': unread,
+        'archive': archive,
+        'page_name': page_name,
+        'page_description': page_description
+        })
+
+@login_required
+def read_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = True
+        alert.save()
+    # else:
+        # print("Attempt to read alert caught by internet police: " + str(alert.id))
+    return redirect(view_alerts)
+
+@login_required
+def unread_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id:
+        alert.read = False
+        alert.save()
+    return redirect(view_alerts)
+
+
+@login_required
+def delete_alert(request, ident):
+    user = request.user
+    alert = get_object_or_404(Alert, id=ident)
+    if alert.to.id is user.id and alert.read is True:
+        alert.delete()
+    return redirect(view_alerts)

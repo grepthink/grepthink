@@ -58,12 +58,20 @@ $(document).ready(function() {
 
     // Intilize the calendar. Options and callbacks set below.
     $('#calendar').fullCalendar({
-
         // Only show agendaWeek view for edit_schedule
         header: {
           left: 'none',
-          center: 'title',
-          right: 'agendaWeek'
+          center: 'none',
+          right: 'none'
+        },
+        // Day of week shouldn't contain hard coded date.
+        columnFormat: 'ddd',
+        businessHours: {
+            // days of week. an array of zero-based day of week integers (0=Sunday)
+            dow: [ 1, 2, 3, 4, 5], // Monday - Friday
+
+            start: '8:00', // a start time (10am in this example)
+            end: '22:00', // an end time (6pm in this example)
         },
         defaultView: 'agendaWeek',
 
@@ -71,6 +79,9 @@ $(document).ready(function() {
 
         // Can click day/week names to navigate views
         navLinks: true,
+
+        // Here Sean -andgates
+        allDaySlot: false,
 
         // Allow users to resize events.
         editable: true,

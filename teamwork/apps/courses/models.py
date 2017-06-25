@@ -6,22 +6,22 @@ Database Models for the objects: Course, Enrollment
 #Build-in modules
 from __future__ import unicode_literals
 
+import datetime
+import random
+import string
+#Other imports
+import uuid
+
+from django.contrib import auth
 # Django modules
 from django.contrib.auth.models import User
-from django.contrib import auth
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 # import of project models
 from teamwork.apps.projects.models import Project
-
-#Other imports
-import uuid
-import random
-import string
-import datetime
 
 
 def get_user_courses(self):
@@ -36,8 +36,8 @@ def get_user_courses(self):
         #Gets current user's enrollments, by looking for user in  Enrollment table
         myEnrollment = Enrollment.objects.filter(user=self)
 
-        print("myEnrollment:")
-        print(myEnrollment)
+        #print("myEnrollment:")
+        #print(myEnrollment)
 
         #Filters for courses based on enrollment
         my_courses = Course.objects.filter(enrollment__in=myEnrollment)
@@ -90,6 +90,15 @@ class Course(models.Model):
     # define the terms for the multiple choice
     Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'),
                    ('Summer', 'Summer'), ('Fall', 'Fall'), )
+
+    Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
+                       (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                       (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                       (24, '12:00'), )
+
+    Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
+                       (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                       (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
@@ -158,10 +167,16 @@ class Course(models.Model):
         #defaulted to False
         default=False)
 
+    # limits student from showing interest
+    limit_interest = models.BooleanField(
+        #defaulted to false
+        default=False)
+
     limit_weights = models.BooleanField(default=False)
     weigh_interest = models.IntegerField(default=1)
     weigh_know = models.IntegerField(default=1)
     weigh_learn = models.IntegerField(default=1)
+    csv_file = models.FileField(upload_to='csv_files/', default="")
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -221,6 +236,7 @@ class Course(models.Model):
 
         return my_courses
 
+    @staticmethod
     def get_my_created_courses(user):
         """
         Gets a list ofcourse objects the current user has created
@@ -275,12 +291,15 @@ class Enrollment(models.Model):
         # with a default of 0
         default=0)
 
+    # user role in a course
+    role = models.CharField(max_length=24, default="student")
+
     def __str__(self):
         """
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return self.course.name
+        return ("%s"%(self.user.username))
 
 
 class CourseUpdate(models.Model):

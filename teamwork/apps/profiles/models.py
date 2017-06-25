@@ -8,12 +8,13 @@ Database Models for the objects: Skills, Profile
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.db import models
-from django.utils import timezone
-from django.template.defaultfilters import slugify
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.template.defaultfilters import slugify
+from django.utils import timezone
+
 
 class Skills(models.Model):
     """
@@ -48,6 +49,18 @@ class Skills(models.Model):
         """
         super(Skills, self).save(*args, **kwargs)
 
+# Converts a number into a weekday
+def dayofweek(number):
+    return {
+        9: "Sunday",
+        10: "Monday",
+        11: "Tuesday",
+        12: "Wednesday",
+        13: "Thursday",
+        14: "Friday",
+        15: "Saturday",
+    }.get(number, "Day that doesnt exist")
+
 class Events(models.Model):
     """
     Events: A database model (object) for Events (Availabiliy).
@@ -79,7 +92,8 @@ class Events(models.Model):
     # End time (Minutes)
     end_time_min = models.SmallIntegerField()
     def __str__(self):
-        event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
+        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+        #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
         return event_string
 
     class Meta:
@@ -98,6 +112,43 @@ class Events(models.Model):
         """
         super(Events, self).save(*args, **kwargs)
 
+
+class Alert(models.Model):
+    """
+    Alert: A notification directed to a specific user
+
+    Fields:
+        sender  - User: person sending alert, or None (if System)
+        to      - User: person receiving alert
+        date    - DateTime: time sent
+        msg     - str: alert body
+        read    - boolean: whether alert has been written/marked as read
+        url     - str: URL for related page, or None
+
+    Types:
+        'course_inv'    - invitation to a course
+    """
+
+    sender = models.ForeignKey(User, default=None, related_name="sender")
+    to = models.ForeignKey(User, related_name="to")
+    date = models.DateTimeField(auto_now_add=True)
+    # type = models.CharField(max_length=20, default="null")
+    msg = models.CharField(max_length=500)
+    read = models.BooleanField(default=False)
+    url = models.CharField(max_length=500,default="")
+
+    def __str__(self):
+        return str(self.sender) + " -> " + str(self.to) + " : " + str()
+
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Alert"
+        # Multiple Event objects are referred to as Projects.
+        verbose_name_plural = "Alerts"
+        ordering = ('date',)
+
+    def save(self, *args, **kwargs):
+        super(Alert, self).save(*args, **kwargs)
 
 
 class Profile(models.Model):
@@ -143,6 +194,14 @@ class Profile(models.Model):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
         return not(self == other)
+
+    # Alert functions, self explanitory
+    def alerts(self):
+        return Alert.objects.filter(to=self.user)
+    def unread_alerts(self):
+        return Alert.objects.filter(to=self.user,read=False)
+    def read_alerts(self):
+        return Alert.objects.filter(to=self.user,read=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

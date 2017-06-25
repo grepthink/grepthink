@@ -3,8 +3,10 @@
 # Create your tests here.
 
 
-from selenium import webdriver
 import unittest
+
+from selenium import webdriver
+
 
 class NewVisitorTest(unittest.TestCase):
     def setUp(self):

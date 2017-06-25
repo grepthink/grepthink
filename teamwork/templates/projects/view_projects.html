@@ -3,17 +3,14 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %} Projects {% endblock %}
-
-{% block head %}
-<link href="{% static 'css/projects.css' %}" rel="stylesheet">
-{% endblock head %}
-
-
 {% block content %}
-<div class="page-header">
-    <h1> Projects </h1>
-</div>
+
+
+{% include "projects/partial_project_box.html" with projects=projects %}
+
+
+{% comment %}
+
 <section class="projects">
     <div class="row">
       {% for project in projects %}
@@ -22,15 +19,19 @@
 
                     {% if project.avail_mem %}
                         {% if project.sponsor %}
-                            <div class="box box-solid box-warning">
+                            <div class="box box-solid box-warning"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% else %}
-                            <div class="box box-solid box-danger">
+                            <div class="box box-solid box-success"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% endif %}
                     {% else %}
                         {% if project.sponsor %}
-                            <div class="box box-solid box-success">
+                            <div class="box box-solid box-warning"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% else %}
-                            <div class="box box-solid box-primary">
+                            <div class="box box-solid box-danger"
+                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
                         {% endif %}
                     {% endif %}
                     <div class="box-header">
@@ -64,17 +65,17 @@
                             {% endif %}
                         </p>
                         <p>
-                            <strong> 
+                            <strong>Sponsored</strong>
                             {% if project.sponsor %}
-                                THIS PROJECT IS SPONSORED!
+                                Yes
                             {% else %}
-                                THIS PROJECT IS NOT SPONSORED!
+                                No
                             {% endif %}
-                            </strong>
+
                         </p>
                     </div>
                     <div class="box-footer clearfix">
-                      {% if request.user.username == project.creator or request.user in project.members.all %}
+                      {% if request.user.username == project.creator %}
                         <a href="{% url 'edit_project' project.slug %}">
                             <button class="btn btn-success">
                                 <i class="fa fa-edit"></i>
@@ -105,5 +106,5 @@
     </div>
 
 </section>
-
+{% endcomment %}
 {% endblock content %}

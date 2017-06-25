@@ -1,11 +1,12 @@
 # Django Imports
 from django import forms
 from django.contrib.auth.models import User
-from .models import *
 from django.core.exceptions import ValidationError
 
 # Used in forms
 from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
+
+from .models import *
 
 
 def SignupDomainValidator(value):
@@ -104,41 +105,42 @@ class SignUpForm(forms.ModelForm):
 
 class ProfileForm(forms.ModelForm):
 
-  def __init__(self, *args, **kwargs):
-    super(ProfileForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
 
-  name = forms.CharField(
+    name = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=50, required=False)
 
-  bio = forms.CharField(
-              widget=forms.Textarea(attrs={'rows': 6, 'cols': 75}),
+    bio = forms.CharField(
+              widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
               max_length=500, required=False)
 
-  institution = forms.CharField(
+    institution = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=50, required=False)
 
-  location = forms.CharField(
+    location = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=50, required=False)
 
-  known_skill = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=255, required=False)
+    # known_skill = forms.CharField(
+    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #           max_length=255, required=False)
+    #
+    #
+    # learn_skill = forms.CharField(
+    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #           max_length=255, required=False)
 
-  
-  learn_skill = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=255, required=False)
-
-  avatar = forms.ImageField(required=False)
+    avatar = forms.ImageField(required=False)
 
 # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
 
 
-  class Meta:
+    class Meta:
       # was model=Skills not sure why or why it was working. This works also
-      model = Profile
-      fields = ['name', 'bio', 'institution', 'location',
-                'known_skill', 'learn_skill']
+        model = Profile
+        # fields = ['name', 'bio', 'institution', 'location',
+        #         'known_skill', 'learn_skill']
+        fields = ['name', 'bio', 'institution', 'location']

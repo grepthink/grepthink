@@ -9,11 +9,11 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 
 import os
+
 import dj_database_url
 # Using python decouple (instead of os) for easier path management
 from decouple import config
 from unipath import Path
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     #'django_extensions',
 
     'django.contrib.admin',
+
+    'chartjs'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -160,17 +162,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-"""
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, 'static'),
-]
-"""
-# Define the static and media stuff, so Django won’t have problems finding your css/js files:
+# Define the static and media stuff, so Django won't have problems finding your css/js files:
 STATIC_ROOT = PROJECT_DIR.parent.child('static')
 STATIC_URL = '/static/'
 

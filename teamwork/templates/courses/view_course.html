@@ -3,25 +3,27 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
-<ol class="breadcrumb">
-    <li><a href="{% url 'index' %}">Home</a></li>
+{% block stylesheets %}
+
+  {{block.super}}
+
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+{% endblock stylesheets %}
+
+{% block crumb %}
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
         <a href="{% url 'view_one_course' course.slug %}">
             {{ course.name }}
         </a>
     </li>
-</ol>
+{% endblock crumb %}
 
-<h2 class="page-header">
-    {{ course.name }}
-    <i class="fa fa-graduation-cap"></i>
-    <i class="pull-right">
-        <b>{{ course.term }}</b>
-        {{ course.year }}
-    </i>
-</h2>
+
+
+{% block content %}
 
 <div>
     {% if user.username == course.creator %}
@@ -36,24 +38,24 @@
     {% endif %}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-            <li class="active">
+            <li class="">
                 <a href="#description" data-toggle="tab" aria-expanded="true">
                     Description
                     <i class="fa fa-info-circle"></i>
                 </a>
             </li>
-            <li class="">
+            <li class="active">
                 <a href="#projects" data-toggle="tab"aria-expanded="false">
                     Projects
                     <i class="fa fa-code-fork"></i>
                 </a>
-            </li>
             <li class="">
                 <a href="#members" data-toggle="tab" aria-expanded="false">
                     Members
                     <i class="fa fa-group"></i>
                 </a>
             </li>
+
             {% if user.username == course.creator %}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -62,10 +64,73 @@
             </li>
             {% endif %}
         </ul>
+
         <div class="tab-content" style="background-color: #ecf0f5">
-            <div class="tab-pane active" id="description">
-                <h3>Description</h3>
-                {{ course.info }}
+
+            <div class="tab-pane active" id="projects">
+                {% if user.username != course.creator %}
+                    {% if not course.limit_interest %}
+                    <div class="row">
+                        <div class="alert alert-info" role="alert">
+                            <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                                Show interest in these projects!
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                    {% include "projects/partial_project_box.html" with projects=projects %}
+
+            </div>
+
+            <div class="tab-pane" id="description">
+                <div>
+                <h3>Description: {{ course.info }}</h3>
+                </div>
+
+                {% comment %}
+
+                <div class="row">
+
+                  <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow" onclick="window.location ='{% url 'update_course' course.slug %}'">
+                      <div class="inner">
+                        <h3>{{course.students.all.count}}</h3>
+
+                        <p>Course Members</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                    <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                      <div class="inner">
+                        <h3>{{course.projects.all.count}}</h3>
+
+                        <p>Projects</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-briefcase"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                </div> <!-- ./row -->
+
+                {% endcomment %}
+
                 <h3>Updates</h3>
                 <ul class="timeline">
                     {% if user.username == course.creator %}
@@ -138,105 +203,100 @@
                     </li>
                 </ul>
             </div>
-            <div class="tab-pane" id="projects">
-                <div class="row">
+            <div class="tab-pane" id="members">
 
-                  <div class="row">
-                    <div class="alert alert-info" role="alert">
-                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                            Show interest in these projects!
-                        </a>
+            <div class="row">
+
+                <div class="col-md-3">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Instructors</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-info">1</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-
-                    {% for project in projects %}
-                    <div class="col-sm-6 col-md-4">
-
-                        {% if project.avail_mem %}
-                            <div class="box box-solid box-success"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% else %}
-                            <div class="box box-solid box-danger"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% endif %}
-                            <div class="box-header">
-                                <h3 class="box-title">{{ project.title }}</h3>
-                            </div>
-                            <div class="box-body">
-                                <p class="lead">
-                                    {{ project.tagline }}
-                                </p>
-                                <p>
-                                    <strong>Owner</strong>
-                                    <span class="label label-success"
-                                        onclick="window.location =
-                                        '{% url 'profile' project.creator %}'">
-                                        {{ project.creator }}
-                                    </span>
-                                </p>
-                                <p><strong>Members</strong>
-                                    {% for mem in project.members.all %}
-                                    {% if mem.username != null %}
-                                    <span class="label label-primary"
-                                        onclick="window.location =
-                                        '{% url 'profile' mem.username %}'">
-                                        {{ mem.username }}
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        <div class="box-footer clearfix">
-                            {% if request.user.username == project.creator or request.user in project.members.all %}
-                            <a href="{% url 'edit_project' project.slug %}">
-                                <button class="btn btn-success">
-                                    <i class="fa fa-edit"></i>
-                                    Edit
-                                </button>
-                            </a>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                        <li style="list-style-type: none;">
+                          {% if creator.profile.avatar %}
+                            <img src="{{ creator.profile.avatar.url }}" class="img-circle" alt="User Image">
+                          {% else %}
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                                class="img-circle" alt="User Image">
+                                <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
                           {% endif %}
-                            <a href="{% url 'view_one_project' project.slug %}"
-                                class="pull-right">
-                                <button class="btn btn-info">
-                                    <i class="fa fa-eye"></i>
-                                    View
-                                </button>
-                            </a>
-                        </div>
-                        </div>
+                          <a class="users-list-name" href="{% url 'profile' course.creator %}">{{ course.creator }}</a>
+                          <span class="users-list-date"><a href="mailto:{{ course.creator.email }}" target="_top">{{ course.creator.email }}</a></span>
+                        </li>
+                      </ul>
+                      <!-- /.users-list -->
                     </div>
-                    {% empty %}
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fa fa-warning"></i>
-                        There are no projects yet. Go ahead and
-                        <a href="{% url 'create_project' %}" class="alert-link">
-                            create one now!
-                        </a>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
+
+                <div class="col-md-9">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Students</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-danger">{{ students|length }}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
                     </div>
-                    {% endfor %}
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding largeScrollStyle">
+                      <ul class="users-list clearfix">
+
+                        {% for studs in students %}
+                        {% if studs.username != null %}
+                        <a href="{% url 'profile' studs.username %}">
+                        <li style="list-style-type: none;">
+                          {% if studs.avatar %}
+                            <img src="{{ studs.avatar.url }}" class="img-circle" alt="User Image">
+                          {% else %}
+                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
+                                class="img-circle" alt="User Image">
+                                <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
+                          {% endif %}
+                          </a>
+                          <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
+                          <span class="users-list-date"><a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
+                        </li>
+                        {% endif %}
+                        {% empty %}
+                        <p>There are no students enrolled in this course</p>
+                        {% endfor %}
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
                 </div>
             </div>
-            <div class="tab-pane" id="members">
-                <h3>Instructor</h3>
-                <span class="label label-success"
-                    onclick="window.location =
-                    '{% url 'profile' course.creator %}'">
-                    {{ course.creator }}
-                </span>
-                <h3>Students</h3>
-                {% for studs in course.students.all %}
-                {% if studs.username != null %}
-                <span class="label label-primary"
-                    onclick="window.location =
-                    '{% url 'profile' studs.username %}'">
-                    {{ studs.username }}
-                </span>
-                <span> </span>
-                {% endif %}
-                {% empty %}
-                <p>There are no students enrolled in this course</p>
-                {% endfor %}
-            </div>
+
+
             {% if user.username == course.creator %}
             <div class="tab-pane" id="admin">
                 <h3>Edit Course Info</h3>
@@ -252,11 +312,47 @@
                 <p>
                     <a href="{% url 'view_statistics' course.slug %}">
                         <button class="btn btn-info">
-                        <i class="fa fa-stats"></i>
+                        <i class="fa fa-line-chart"></i>
                         Stats
                         </button>
                     </a>
                 </p>
+                <h3>Email Roster</h3>
+                <p>
+                    <button class="btn btn-info" name="send_emails" value="send_emails">
+                        <i class="fa fa-envelope-o"></i>
+                        Email Roster
+                    </button>
+                </p>
+                <h3>Lock Interest</h3>
+                <p>
+                    {% if not course.limit_interest %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                            <button class="btn btn-danger" name="lock">
+                                <i class="fa fa-lock"></i>
+                                Lock
+                            </button>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                            <button class="btn btn-info" name="lock">
+                                <i class="fa fa-unlock"></i>
+                                Unlock
+                            </button>
+                        </a>
+                    {% endif %}
+
+                </p>
+                <h3>Auto Generate Teams</h3>
+                <p>
+                    <a href="{% url 'auto_gen' course.slug %}">
+                        <button class="btn btn-info">
+                            <i class="fa fa-users"></i>
+                            Generate
+                        </button>
+                    </a>
+                </p>
+
                 <h3>Invite Students</h3>
                 <p>
                     You can add students yourself in the <b>Edit Course</b> form
@@ -269,7 +365,7 @@
             </div>
             {% endif %}
         </div>
-        
+
     </div>
 </div>
 

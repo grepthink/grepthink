@@ -1,0 +1,35 @@
+
+
+
+
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">{{box_title|default:_('Projects')}}</h3>
+
+
+    {% block main_label %}
+    <div class="box-tools pull-right">
+      <!-- Buttons, labels, and many other things can be placed here! -->
+      <!-- Here is a label for example -->
+      <span class="label label-primary">{{box_label|default:_('main_label')}}</span>
+    </div><!-- /.box-tools -->
+
+    {% endblock main_label %}
+
+  </div><!-- /.box-header -->
+
+  <div class="box-body">
+    {% include "projects/partial_search_project.html" with projects=projects %}
+  </div><!-- /.box-body -->
+
+  {% block main_footer%}
+  <div class="box-footer text-center">
+    {% if course %}
+    <a href="{% url 'view_course' course.slug %}">View {{course.name}}</a>
+    {% else %}
+
+    {% endif %}
+  </div><!-- box-footer -->
+  {% endblock main_footer %}
+
+</div><!-- /.box -->

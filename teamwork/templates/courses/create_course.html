@@ -13,16 +13,24 @@
     <li><a href="{% url 'create_course' %}">Create a new course</a></li>
 </ol>
 
-<div class="page-header">
-    <h1> Create Course </h1>
-</div>
-
 <form action="{% url 'create_course' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Weight of user interest in project' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of interest when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
+        {% if field.label == 'Weight of skills users already know' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of knowing a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
+        {% if field.label == 'Weight of skills users want to learn' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
+        {% if field.label == 'Limit projects to only use specified weights for matches' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Have students match based on the overwrited weights from above  "><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
         {{ field }}
         {% for error in field.errors %}
         <label class="control-label">{{ error }}</label>

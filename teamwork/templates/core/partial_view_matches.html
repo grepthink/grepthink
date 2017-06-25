@@ -1,0 +1,26 @@
+
+{% for project in projects %}
+
+    {% if forloop.first %}<div class="row">{% endif %}
+    <div class="col-md-4">
+    <a href="{% url 'view_one_project' project.slug %}" style="none">
+      <div class="box box-widget widget-user-2">
+
+
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
+          <div class="widget-user-image">
+            <img class="img-circle" src="http://www.ucsc.edu/images/thought-provoking/art-conversation-non-traditional.jpg" alt="User Avatar">
+          </div>
+          <!-- /.widget-user-image -->
+          <h3 class="widget-user-username">{{project.title}}</h3>
+          <h5 class="widget-user-desc">{{project.tagline}}</h5>
+        </div><!-- /.box-header -->
+
+    </div><!-- /.box -->
+    </a>
+  </div>
+  {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+  {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+
+{% endfor %}
