@@ -18,6 +18,8 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.views.generic.base import RedirectView
 
 from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
@@ -108,6 +110,10 @@ urlpatterns = [
         # see why this user matches
         url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
 
+        # favicon
+        url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
+
+        # alerts
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
         url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
