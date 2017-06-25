@@ -26,7 +26,7 @@ Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (3
                    (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
 def ForbiddenNamesValidator(value):
-    forbidden_names = ['create', 'all']
+    forbidden_names = ['create', 'all', 'delete']
 
     if value.lower() in forbidden_names:
         raise ValidationError('This is a reserved word.')
@@ -105,10 +105,10 @@ class CreateProjectForm(forms.ModelForm):
     sponsor = forms.BooleanField(
         initial=False, label='Sponsored?', required=False)
 
-    desired_skills = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=255,
-        required=False)
+    # desired_skills = forms.CharField(
+    #     widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #     max_length=255,
+    #     required=False)
 
     course = forms.ModelChoiceField(
         widget=forms.RadioSelect,
@@ -140,25 +140,25 @@ class CreateProjectForm(forms.ModelForm):
         min_value=0, max_value=10, label="Max Team Size",
         required=False)
 
-    lower_time_bound = forms.ChoiceField(
-            label="Custom Lower Time Boundary for Scheduling",
-            #Choices from Lower_Boundary_Choice
-            choices=Lower_Boundary_Choice,
-            #Field Required
-            required=False)
-    upper_time_bound = forms.ChoiceField(
-            label="Custom Upper Time Boundary for Scheduling",
-            #Choices from Upper_Boundary_Choice
-            choices=Upper_Boundary_Choice,
-            #Field Required
-            required=False)
+    # lower_time_bound = forms.ChoiceField(
+    #         label="Custom Lower Time Boundary for Scheduling",
+    #         #Choices from Lower_Boundary_Choice
+    #         choices=Lower_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    # upper_time_bound = forms.ChoiceField(
+    #         label="Custom Upper Time Boundary for Scheduling",
+    #         #Choices from Upper_Boundary_Choice
+    #         choices=Upper_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
 
 
     class Meta:
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor',
-            'desired_skills', 'course', 'content', 'slug',
+            'course', 'content', 'slug',
             'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize',
         ]
 
@@ -239,18 +239,18 @@ class EditProjectForm(forms.ModelForm):
         min_value=0, max_value=10, label="Max Team Size",
         required=False)
 
-    lower_time_bound = forms.ChoiceField(
-            label="Custom Lower Time Boundary for Scheduling",
-            #Choices from Lower_Boundary_Choice
-            choices=Lower_Boundary_Choice,
-            #Field Required
-            required=False)
-    upper_time_bound = forms.ChoiceField(
-            label="Custom Upper Time Boundary for Scheduling",
-            #Choices from Upper_Boundary_Choice
-            choices=Upper_Boundary_Choice,
-            #Field Required
-            required=False)
+    # lower_time_bound = forms.ChoiceField(
+    #         label="Custom Lower Time Boundary for Scheduling",
+    #         #Choices from Lower_Boundary_Choice
+    #         choices=Lower_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
+    # upper_time_bound = forms.ChoiceField(
+    #         label="Custom Upper Time Boundary for Scheduling",
+    #         #Choices from Upper_Boundary_Choice
+    #         choices=Upper_Boundary_Choice,
+    #         #Field Required
+    #         required=False)
 
     class Meta:
         model = Project

@@ -28,6 +28,9 @@
         {% if field.label == 'Weight of skills users want to learn' %}
           <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
         {% endif %}
+        {% if field.label == 'Limit projects to only use specified weights for matches' %}
+          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Have students match based on the overwrited weights from above  "><i class='glyphicon glyphicon-info-sign'></i></a>
+        {% endif %}
         {{ field }}
         {% for error in field.errors %}
         <label class="control-label">{{ error }}</label>

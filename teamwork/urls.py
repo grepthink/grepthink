@@ -33,6 +33,9 @@ urlpatterns = [
         # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
 
+        url(r'^search/$', core_views.search, name='search'),
+
+
         # /create_project/
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/
@@ -41,8 +44,6 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
         # Edit individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/edit/$', project_views.edit_project, name='edit_project'),
-        # Delete individual course (based on slug)
-         url(r'^project/(?P<slug>[^/]+)/delete/$', project_views.delete_project, name='delete_project'),
         # Post update for individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
@@ -55,6 +56,8 @@ urlpatterns = [
         # for select2
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+
 
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
@@ -100,11 +103,12 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
         # save event for scehdule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
 
         # link to view matches for your projects
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
-            url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),

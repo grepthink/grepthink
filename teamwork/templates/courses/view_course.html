@@ -9,7 +9,7 @@
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
 
 {% block crumb %}
@@ -69,15 +69,16 @@
 
             <div class="tab-pane active" id="projects">
                 {% if user.username != course.creator %}
-                  <div class="row">
-
-                    <div class="alert alert-info" role="alert">
-                        <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                            Show interest in these projects!
-                        </a>
+                    {% if not course.limit_interest %}
+                    <div class="row">
+                        <div class="alert alert-info" role="alert">
+                            <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                                Show interest in these projects!
+                            </a>
+                        </div>
                     </div>
-                  </div>
-                  {% endif %}
+                    {% endif %}
+                {% endif %}
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
@@ -216,8 +217,6 @@
                         <span class="label label-info">1</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
-                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
-                        </button>
                       </div>
                     </div>
                     <!-- /.box-header -->
@@ -238,9 +237,9 @@
                       <!-- /.users-list -->
                     </div>
                     <!-- /.box-body -->
-                    <div class="box-footer text-center">
+                    <!-- <div class="box-footer text-center">
                       <a href="javascript:void(0)" class="uppercase">View All Users</a>
-                    </div>
+                    </div> -->
                     <!-- /.box-footer -->
                   </div>
                   <!--/.box -->
@@ -254,17 +253,16 @@
                       <h3 class="box-title">Students</h3>
 
                       <div class="box-tools pull-right">
-                        <span class="label label-danger">{{course.students.all.count}}</span>
+                        <span class="label label-danger">{{ students|length }}</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
                         </button>
                       </div>
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body no-padding">
+                    <div class="box-body no-padding largeScrollStyle">
                       <ul class="users-list clearfix">
-                        {% for studs in course.students.all %}
+
+                        {% for studs in students %}
                         {% if studs.username != null %}
                         <a href="{% url 'profile' studs.username %}">
                         <li style="list-style-type: none;">
@@ -287,9 +285,9 @@
                       <!-- /.users-list -->
                     </div>
                     <!-- /.box-body -->
-                    <div class="box-footer text-center">
+                    <!-- <div class="box-footer text-center">
                       <a href="javascript:void(0)" class="uppercase">View All Users</a>
-                    </div>
+                    </div> -->
                     <!-- /.box-footer -->
                   </div>
                   <!--/.box -->

@@ -51,6 +51,41 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
+
+  $(".s2_desired_skills").select2({
+    ajax: {
+      url: "ajax/add_desired_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
 });
 
 </script>
@@ -68,82 +103,186 @@ $(document).ready(function() {
 
 {% block content %}
 
-{# Working on new forms and select2 #}
+<div class = "row">
 
-<section>
-<div class="box box-primary">
-  <div class="box-header with-border">
-    <h3 class="box-title">New Project</h3>
-  </div>
-  <!-- /.box-header -->
-  <!-- form start -->
-  <form role="form" action="{% url 'create_project' %}" method="post">
-    {% csrf_token %}
-    <div class="box-body">
+<form action="{% url 'create_project' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+
+  <div class="col-md-6">
+    <div class="box box-success">
+      <div class="box-header with-border">
+        <h3 class="box-title">Create Project</h3>
+      </div>
+      <div class="box-body">
+
+        {% csrf_token %}
+        {{ form.status }}
+
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            {{ form.title.errors }}
+            <label for="{{ form.title.id_for_label }}" class="control-label">
+            Project Title:
+            </label>
+            {{ form.title }}
+        </div>
+
+        <div class="form-group">
+            {{ form.tagline.errors }}
+            <label for="{{ form.tagline.id_for_label }}" class="control-label">
+            Project Tagline:
+            </label>
+            {{ form.tagline }}
+        </div>
+
+        <div class="form-group">
+            {{ form.course.errors }}
+            <a class='course-tooltip' data-toggle="tooltip" data-placement="right" title="Select a course to post this project in.">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            <label for="{{ form.course.id_for_label }}" class="control-label">
+            Course
+            </label>
+            {{ form.course }}
+        </div>
+
+        <div class="form-group">
+            {{ form.content.errors }}
+            <label for="{{ form.content.id_for_label }}" class="control-label">
+            Project description <a href="https://daringfireball.net/projects/markdown/syntax">[Markdown supported]</a>:
+            </label>
+            {{ form.content }}
+        </div>
+
+        <div class="form-group">
+            {{ form.accepting.errors }}
+            <label for="{{ form.accepting.id_for_label }}" class="control-label">
+            Is this project currently <b>accepting new members</b>?:
+            </label>
+            {{ form.accepting }}
+        </div>
+
+      </div> <!-- Box 1 Body -->
+
+    </div> <!-- Box 1 -->
+
+  </div> <!-- Col 1 -->
 
 
-    {{ form.status }}
-    {% for field in form.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-        {% if field.label == 'Content' %}
-          {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
-        {% endif %}
-        {% if field.label == 'Weight of user interest in project' %}
-          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of interest when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
-        {% endif %}
-        {% if field.label == 'Weight of skills users already know' %}
-          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of knowing a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
-        {% endif %}
-        {% if field.label == 'Weight of skills users want to learn' %}
-          <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching"><i class='glyphicon glyphicon-info-sign'></i></a>
-        {% endif %}
-        {{ field }}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
+  <div class="col-md-6">
+    <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">Add Desired Skills</h3>
+      </div>
+      <div class="box-body">
 
+        <div class="form-group">
+          <label>Search and Add Desired Skills</label>
+          <a class='desired-skills-tooltip' data-toggle="tooltip" data-placement="right" title="List the skills that a potential team member should have. These will be used to recommend team members to you.">
+          <i class='glyphicon glyphicon-info-sign'></i></a>
+          <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label>Add Members</label>
-        <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
-        </select>
+      </div> <!-- Box 2 Body -->
+
+      <div class="box-footer">
+
       </div>
 
-    <!-- /.box-body -->
+    </div> <!-- Box 2 -->
 
-    <div class="box-footer">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </form>
-</div>
-</section>
+  </div> <!-- Col 2 -->
 
-{# Old form below #}
-<br><br><br>
 
-{% comment %}
+  <div class="col-md-6">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Optional Settings</h3>
+      </div>
+      <div class="box-body">
 
-<form action="{% url 'create_project' %}" method="post" role="form">
-    {% csrf_token %}
-    {{ form.status }}
-    {% for field in form.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-        {% if field.label == 'Content' %}
-          {# {% include 'markdown_editor.html' with textarea='id_content' %} #}
+        <div class="form-group">
+            {{ form.slug.errors }}
+            <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="This will be the URL of your project. Leave blank for a randomly generated URL. You will not be able to edit this after project creation.">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            <label for="{{ form.slug.id_for_label }}" class="control-label">
+            Custom URL Slug:
+            </label>
+            {{ form.slug }}
+        </div>
+
+        <div class="form-group">
+            {{ form.teamSize.errors }}
+            <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Set the maximum amount of team members for this project.">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            <label for="{{ form.teamSize.id_for_label }}" class="control-label">
+            Max Team Size:
+            </label>
+            {{ form.teamSize }}
+        </div>
+
+        {% if request.user.profile.isProf %}
+
+        <div class="form-group">
+            {{ form.sponsor.errors }}
+            <label for="{{ form.sponsor.id_for_label }}" class="control-label">
+            Is this project <b>sponsored</b> by a company?:
+            </label>
+            {{ form.sponsor }}
+        </div>
+
         {% endif %}
-        {{ field }}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
-    <input type="submit" value="Post Project">
+
+        <div class="form-group">
+            {{ form.weigh_interest.errors }}
+            <label for="{{ form.weigh_interest.id_for_label }}" class="control-label">
+            <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of interest when matching">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            Weight of user interest in project:
+            </label>
+            {{ form.weigh_interest }}
+        </div>
+
+        <div class="form-group">
+            {{ form.weigh_know.errors }}
+            <label for="{{ form.weigh_know.id_for_label }}" class="control-label">
+            <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of knowing a skill when matching">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            Weight of skills users already know
+            </label>
+            {{ form.weigh_know }}
+        </div>
+
+
+        <div class="form-group">
+            {{ form.weigh_learn.errors }}
+            <label for="{{ form.weigh_learn.id_for_label }}" class="control-label">
+            <a class='my-tool-tip' data-toggle="tooltip" data-placement="left" title="Overwrite weight of wanting to learn a skill when matching">
+            <i class='glyphicon glyphicon-info-sign'></i></a>
+            Weight of skills users want to learn
+            </label>
+            {{ form.weigh_learn }}
+        </div>
+
+      </div> <!-- Box 3 Body -->
+
+      <div class="box-footer">
+          <div class="pull-right">
+              <button class="btn btn-success" type="submit" name="SUBMIT">
+                  Create Project
+              </button>
+          </div>
+      </div>
+
+    </div> <!-- Box 3 -->
+
+    </form>
+
+  </div> <!-- Col 3 -->
+
+
 </form>
 
-{% endcomment %}
+</div> <!-- Row -->
 
 {% endblock content %}

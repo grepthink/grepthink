@@ -59,12 +59,25 @@ def view_one_course(request, slug):
     page_name = "View Course"
     page_description = "View Course Information"
     title = "%s"%(slug)
+
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
 
+    students = Enrollment.objects.filter(course = course, role = "student")
+    # professor = Enrollment.objects.filter(course = course, role = "professor")
+    # can add TA or w/e in the future
+    
+    student_users = []
+    for stud in students:
+        temp_user = get_object_or_404(User, username=stud)
+        student_users.append(temp_user)
+
+    # prof = get_object_or_404(User, username=professor)
+
     return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'date_updates': date_updates, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
+        'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 
 @login_required
@@ -166,7 +179,7 @@ def join_course(request):
                         Alert.objects.create(
                                 sender=request.user,
                                 to=User.objects.filter(username=i.creator).get(),
-                                msg=request.user.username + " used the addcode to enroll in " + i.name,
+                                msg=" used the addcode to enroll in " + i.name,
                                 url=reverse('profile',args=[request.user.username])
                                 )
                     return redirect(view_one_course, i.slug)

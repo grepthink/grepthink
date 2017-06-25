@@ -14,9 +14,9 @@
 
 {% if not user.profile.isProf%}
 <section class="matches">
-    <div class="row">
     {% for p_match_tup in project_match_list %}
-        <div class="col-md-3">
+    {% if forloop.first %}<div class="row">{% endif %}
+        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
@@ -85,6 +85,8 @@
                 </div>
             </div>
         </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+        {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
     {% empty %}
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-warning"></i>

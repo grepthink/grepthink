@@ -34,6 +34,8 @@
 
         <!-- search form -->
         <div class="sidebar-form">
+          <form action="{% url 'search' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+          {% csrf_token %}
             <div class="input-group">
                 <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
                        autocomplete="off">
@@ -42,6 +44,7 @@
             </button>
           </span>
             </div>
+          </form>
         </div>
 
         <!-- sidebar menu: : style can be found in sidebar.less -->
