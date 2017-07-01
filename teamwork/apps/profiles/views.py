@@ -26,6 +26,7 @@ def signup(request):
     page_description = "Sign up for Groupthink!"
     title = "Signup"
 
+    GT =  False
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -37,17 +38,27 @@ def signup(request):
         else:
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
+            if 'grepthink' in email:
+                GT = True
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
 
-            user1 = User.objects.create_user(username=username, password=password,
-                                     email=email)
+            if GT:
+                user1 = User.objects.create_superuser(username=username, password=password,
+                                         email=email)
+            else:
+                user1 = User.objects.create_user(username=username, password=password,
+                                         email=email)
+
             user = authenticate(username=username, password=password)
             login(request, user)
 
             # saves current user, which creates a link from user to profile
             user1.save()
+
+            if GT:
+                user1.profile.isGT = True
 
             # edits profile to add professor
             user1.profile.isProf = prof
@@ -199,6 +210,7 @@ def edit_profile(request, username):
         #request.FILES is passed for File storing
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
+
             # grab each form element from the clean form
             # known = form.cleaned_data.get('known_skill')
             # learn = form.cleaned_data.get('learn_skill')

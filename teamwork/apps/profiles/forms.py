@@ -46,7 +46,8 @@ def ForbiddenUsernamesValidator(value):
                            'explore', 'rss', 'support', 'status', 'static',
                            'media', 'setting', 'css', 'js', 'follow',
                            'activity', 'questions', 'articles', 'network',
-                           'grepthink']
+                           'grepthink', 'gt', 'groupthink', 'alphanumeric'
+                           'teamwork']
 
     if value.lower() in forbidden_usernames:
         raise ValidationError('This is a reserved word.')
@@ -55,6 +56,9 @@ def ForbiddenUsernamesValidator(value):
 def InvalidUsernameValidator(value):
     if '@' in value or '+' in value or '-' in value:
         raise ValidationError('Enter a valid username.')
+    # Check for Grepthink or past project Association
+    elif 'grepthink' in value or 'groupthink' in value or 'teamwork' in value or 'think' in value:
+        raise ValidationError('Invalid GrepThink Association')
 
 
 def UniqueEmailValidator(value):
