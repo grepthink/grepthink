@@ -39,8 +39,11 @@ def view_courses(request):
     then calls _projects to render the request to template view_projects.html
     """
 
+    # Show all courses to a GT account
+    if request.user.profile.isGT:
+        all_courses = get_all_courses(request)
     # If user is a professor, they can see all courses they have created
-    if request.user.profile.isProf:
+    elif request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
     # else returns a list of courses the user is enrolled in
     else:
@@ -67,7 +70,7 @@ def view_one_course(request, slug):
     students = Enrollment.objects.filter(course = course, role = "student")
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
-    
+
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
@@ -87,7 +90,9 @@ def view_stats(request, slug):
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
 
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         return redirect(view_one_course, cur_course.slug)
 
     students_num = Enrollment.objects.filter(course = cur_course)
@@ -303,7 +308,9 @@ def create_course(request):
     page_description = "Create a Course!"
     title = "Create Course"
 
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         #redirect them to the /course directory
         messages.info(request,'Only Professor can create course!')
         return HttpResponseRedirect('/course')
@@ -365,8 +372,10 @@ def edit_course(request, slug):
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
 
+    if request.user.profile.isGT:
+        pass
     #if user is not a professor or they did not create course
-    if not request.user.profile.isProf or not course.creator == request.user.username:
+    elif not request.user.profile.isProf or not course.creator == request.user.username:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
@@ -463,11 +472,13 @@ def delete_course(request, slug):
     Delete course method
     """
     course = get_object_or_404(Course, slug=slug)
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         return redirect(view_one_course, course.slug)
-    else:
-        course.delete()
-        return redirect(view_courses)
+
+    course.delete()
+    return redirect(view_courses)
 
 @login_required
 def update_course(request, slug):
@@ -478,6 +489,14 @@ def update_course(request, slug):
     page_name = "Update Course"
     page_description = "Update %s"%(course.name) or "Post a new update"
     title = "Update Course"
+
+    if request.user.profile.isGT:
+        pass
+    #if user is not a professor or they did not create course
+    elif not course.creator == request.user.username:
+        #redirect them to the /course directory with message
+        messages.info(request,'Only Professor can post and update')
+        return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
@@ -506,15 +525,19 @@ def update_course_update(request, slug, id):
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 
-    if update.creator != request.user:
+    if request.user.profile.isGT:
+        pass
+    elif update.creator != request.user:
         return redirect(view_one_course, course.slug)
-    elif request.method == 'POST':
+
+    if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
             update.course = course;
             update.title = form.cleaned_data.get('title')
             update.content = form.cleaned_data.get('content')
-            update.creator = request.user
+            if not request.user.profile.isGT:
+                update.creator = request.user
             update.save()
             return redirect(view_one_course, course.slug)
     else:
@@ -534,7 +557,7 @@ def delete_course_update(request, slug, id):
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 
-    if update.creator == request.user:
+    if update.creator == request.user or request.user.prfile.isGT:
         update.delete()
 
     return redirect(view_one_course, course.slug)
