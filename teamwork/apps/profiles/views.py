@@ -26,8 +26,10 @@ def signup(request):
     page_description = "Sign up for Groupthink!"
     title = "Signup"
 
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
+
         if not form.is_valid():
             return render(request, 'profiles/signup.html',
                           {'form': form})
