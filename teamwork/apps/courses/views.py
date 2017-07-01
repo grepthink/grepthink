@@ -406,7 +406,6 @@ def edit_course(request, slug):
 
 
     if request.method == 'POST':
-
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
         if form.is_valid():
@@ -497,7 +496,6 @@ def update_course(request, slug):
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can post and update')
         return HttpResponseRedirect('/course')
-
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
