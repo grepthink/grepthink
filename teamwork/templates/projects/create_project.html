@@ -221,7 +221,7 @@ $(document).ready(function() {
             {{ form.teamSize }}
         </div>
 
-        {% if request.user.profile.isProf %}
+        {% if request.user.profile.isProf or request.user.profile.isGT %}
 
         <div class="form-group">
             {{ form.sponsor.errors }}
