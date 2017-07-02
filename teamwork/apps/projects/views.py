@@ -110,6 +110,10 @@ def view_one_project(request, slug):
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
 
+    # Get the project owner for color coding stuff
+    tempPO = User.objects.get(username=project.creator)
+    project_owner = Profile.objects.get(user=tempPO)
+
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -121,8 +125,7 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates, 'course' : course,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
+        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 
 def select_members(request):
