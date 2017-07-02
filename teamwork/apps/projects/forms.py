@@ -72,14 +72,19 @@ class CreateProjectForm(forms.ModelForm):
         # get courses created by current user
         created_courses = Course.objects.filter(creator=user)
 
+        # get all courses for GT postings
+        GT_courses = Course.objects.all()
+
         # Query for only students, without superuser or professors
         # We use Profile because isProf is stored in the Profile model.
         # TODO: only students in this course
         # only_students = Profile.objects.exclude(
         #     Q(user__in=superuser) | Q(isProf=True) | Q(id=uid))
 
+        if user.profile.isGT:
+            self.fields['course'].queryset = GT_courses
         # If user is professor
-        if user.profile.isProf:
+        elif user.profile.isProf:
             # can post projects to any course they created
             self.fields['course'].queryset = created_courses
         else:
@@ -88,7 +93,9 @@ class CreateProjectForm(forms.ModelForm):
 
         # Do not display Sponsor field if user is not a professor
         # Model Profile, isProf set on user creation
-        if not user.profile.isProf:
+        if user.profile.isGT:
+            pass
+        elif not user.profile.isProf:
             self.fields['sponsor'].widget = forms.HiddenInput()
 
         self.fields['title'].validators.append(ForbiddenNamesValidator)
@@ -198,7 +205,9 @@ class EditProjectForm(forms.ModelForm):
         user = User.objects.get(id=uid)
         # Do not display Sponsor field if user is not a professor
         # Model Profile, isProf set on user creation
-        if not user.profile.isProf:
+        if user.profile.isGT:
+            pass
+        elif not user.profile.isProf:
             self.fields['sponsor'].widget = forms.HiddenInput()
 
     title = forms.CharField(
