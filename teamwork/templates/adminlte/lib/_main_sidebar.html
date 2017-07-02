@@ -78,7 +78,7 @@
                             <span>My Projects</span>
                         </a>
                     </li>
-                    {% if not user.profile.isProf %}
+                    {% if not user.profile.isProf%}
                         <li>
                             <a href="{% url 'view_matches' %}">
                                 <i class="fa fa-handshake-o"></i>
@@ -87,7 +87,7 @@
                         </li>
                     {% endif%}
 
-                    {% if user.profile.isProf %}
+                    {% if user.profile.isProf or user.profile.isGT%}
                       <li>
                           <a href="{% url 'create_course' %}">
                               <i class="fa fa-plus"></i>
@@ -95,14 +95,15 @@
                           </a>
                       </li>
                     {% endif %}
-
                     {% if not user.profile.isProf %}
-                      <li>
-                          <a href="{% url 'join_course' %}">
-                              <i class="fa fa-plus"></i>
-                              <span>Join Course</span>
-                          </a>
-                      </li>
+                        {% if not user.profile.isGT %}
+                            <li>
+                                <a href="{% url 'join_course' %}">
+                                  <i class="fa fa-plus"></i>
+                                  <span>Join Course</span>
+                                </a>
+                            </li>
+                        {% endif %}
                     {% endif %}
 
                     {# Hard coded to active. Haven't found a good way to dynamically set active class #}
@@ -135,10 +136,12 @@
                     </li>
 
                     <li>
+                        {% if not user.profile.isGT %}
                         <a href="{% url 'edit_schedule' user.username %}">
                             <i class="fa fa-calendar-plus-o"></i>
                             <span>Edit Schedule</span>
                         </a>
+                        {% endif %}
                     </li>
 
                 {% endif %}
