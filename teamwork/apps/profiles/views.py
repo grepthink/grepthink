@@ -133,10 +133,17 @@ def edit_profile(request, username):
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
-    #grab profile for the current user
-    profile = Profile.objects.get(user=request.user)
+    if request.user.profile.isGT:
+        tempProfile = User.objects.get(username=username)
+        profile = Profile.objects.get(user=tempProfile)
+        print(profile)
+    else:
+        #grab profile for the current user
+        profile = Profile.objects.get(user=request.user)
 
-    if request.user.username != username:
+    if request.user.profile.isGT:
+        pass
+    elif request.user.username != username:
         messages.info(request, 'You cannot access the user profile specified!')
         return redirect(view_profile, request.user.username)
 
@@ -200,10 +207,12 @@ def edit_profile(request, username):
         form = ProfileForm(instance=profile)
     #handle deleting profile
     if request.POST.get('delete_profile'):
-        print ("we here")
         page_user = get_object_or_404(User, username=username)
         page_user.delete()
-        return redirect('about')
+        if request.user.profile.isGT:
+            return redirect('view_course')
+        else:
+            return redirect('about')
 
     #original form
     elif request.method == 'POST':
@@ -246,8 +255,8 @@ def edit_profile(request, username):
 
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
-    page_user = get_object_or_404(User, username=username)
 
+    page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
