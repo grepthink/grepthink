@@ -78,15 +78,12 @@
                             <span>My Projects</span>
                         </a>
                     </li>
-                    {% if not user.profile.isProf%}
                         <li>
                             <a href="{% url 'view_matches' %}">
                                 <i class="fa fa-handshake-o"></i>
                                 <span>My Matches</span>
                             </a>
                         </li>
-                    {% endif%}
-
                     {% if user.profile.isProf or user.profile.isGT%}
                       <li>
                           <a href="{% url 'create_course' %}">
