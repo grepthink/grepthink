@@ -351,15 +351,16 @@ class TSRUpdateForm(forms.ModelForm):
     form_type = forms.ChoiceField(
         choices=MY_CHOICES)
 
-    user_input = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=100,
+    non_scrum_user_input = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
         label='% contribution',
-        required=False)
+        max_digits=2, 
+        decimal_places=0,
+        required=True)
 
     class Meta:
         model = Project
-        fields = ['user_input', 'form_type']
+        fields = ['non_scrum_user_input', 'form_type']
 
 def validate_url(url):
     url_form_field = URLField()
