@@ -276,8 +276,10 @@
             </div>
             
             <div class="tab-pane" id="tab_5">
-                <h3 class="box-title">TSR fields go somewhere here</h3>
-                <input type="submit" value="Submit TSR">
+                <form action="{% url 'tsr_update' project.slug %}" method="post" role="form">
+                    <h3 class="box-title">TSR fields go somewhere here</h3>
+                    <input type="submit" value="Submit TSR">
+                </form>
             </div>            <!-- /.tab-pane meeting -->
 
 

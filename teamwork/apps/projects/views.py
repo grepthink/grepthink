@@ -480,6 +480,102 @@ def resource_update(request, slug):
 
     return render(request, 'projects/add_resource.html',{'form': form, 'project': project})
 
+@login_required
+def tsr_update(request, slug):
+    print("in tsr update")
+    print(request)
+
+    """
+    public method that takes in a slug and generates a form for the user
+    to show interest in all projects in a given course
+    """
+    user = request.user
+    # current course
+    cur_course = get_object_or_404(Course, slug=slug)
+    # projects in current course
+    projects = projects_in_course(slug)
+    # enrollment objects containing current user
+    enroll = Enrollment.objects.filter(user=request.user)
+    # current courses user is in
+    user_courses = Course.objects.filter(enrollment__in=enroll)
+    # Gets current project
+    project = get_object_or_404(Project, slug=slug)
+
+
+    page_name = "Update TSR"
+    page_description = "Update TSR for %s"%(cur_course.name)
+    title = "Update TSR"
+
+
+    #if not enough projects or user is not professor
+    if user.profile.isProf:
+        #redirect them with a message
+        messages.info(request,'Professor cannot update TSR')
+        return HttpResponseRedirect('/course')
+    #if not enough projects or user is not professor
+    if len(project.members.all) <= 1:
+        #redirect them with a message
+        messages.info(request,'No members on team to fill out TSR for!')
+        return HttpResponseRedirect('/course')
+
+
+    if request.method == 'POST':
+        form = TSRForm(request.user.id, request.POST, slug = slug)
+        if form.is_valid():
+            data=form.cleaned_data
+            #Gets first choice, creates interest object for it
+
+            # Clear all interest objects where user is current user and for this course, avoid duplicates
+            all_interests = Interest.objects.filter(project__in=projects)
+            interests = all_interests.filter(user=user)
+            if interests is not None: interests.delete()
+
+            if len(projects) >= 1:
+                choice_1 = data.get('projects')
+                r1 = data.get('p1r')
+                choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=r1))
+                choice_1.save()
+
+            #Gets second choice, creates interest object for it
+            if len(projects) >= 2:
+                choice_2 = data.get('projects2')
+                r2 = data.get('p2r')
+                choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=r2))
+                choice_2.save()
+
+            #Gets third choice, creates interest object for it
+            if len(projects) >= 3:
+                choice_3 = data.get('projects3')
+                r3 = data.get('p3r')
+                choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=r3))
+                choice_3.save()
+
+            #Gets fourth choice, creates interest object for it
+            if len(projects) >= 4:
+                choice_4 = data.get('projects4')
+                r4 = data.get('p4r')
+                choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=r4))
+                choice_4.save()
+
+            #Gets fifth choice, creates interest object for it
+            if len(projects) >= 5:
+                choice_5 = data.get('projects5')
+                r5 = data.get('p5r')
+                choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=r5))
+                choice_5.save()
+
+
+            return redirect(view_one_course, slug)
+
+    else:
+        form = TSRForm(request.user.id, instance=project)
+
+
+    return render(
+            request, 'courses/show_interest.html',
+            {'form': form,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            )
+
 def find_meeting(slug):
     """
     Find and store possible meeting time for a given project

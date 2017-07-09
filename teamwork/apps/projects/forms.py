@@ -337,6 +337,21 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
+class TSRForm(forms.ModelForm):
+
+    def __init__(self, uid, *args, **kwargs):
+        super(TSRForm, self).__init__(*args, **kwargs)
+        self.fields['user_input'].append("")
+    
+    user_input = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=500,
+        required=True)
+
+    class Meta:
+        model = Project
+        fields = ['user_input']
+
 def validate_url(url):
     url_form_field = URLField()
     try:
