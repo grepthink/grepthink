@@ -505,7 +505,7 @@ def tsr_update(request, slug):
         if form.is_valid():
             data=form.cleaned_data
 
-            return redirect(view_one_course, slug)
+            return redirect(view_projects)
 
     else:
         form = TSRUpdateForm(request.user.id, request.POST)
