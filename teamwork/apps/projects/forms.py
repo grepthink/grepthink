@@ -343,6 +343,14 @@ class TSRUpdateForm(forms.ModelForm):
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
         #self.fields['user_input'] = "abc"
     
+    MY_CHOICES = (
+        ('1', 'non-scrum master'),
+        ('2', 'scrum master'),
+    )
+
+    form_type = forms.ChoiceField(
+        choices=MY_CHOICES)
+
     user_input = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=100,
@@ -351,7 +359,7 @@ class TSRUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['user_input']
+        fields = ['user_input', 'form_type']
 
 def validate_url(url):
     url_form_field = URLField()
