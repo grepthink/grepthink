@@ -64,6 +64,9 @@
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
             <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
+            {% if user in project.members.all %}
+            <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
+            {% endif %}
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Project Tools <span class="caret"></span>
@@ -271,7 +274,11 @@
                 <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
 
             </div>
-            <!-- /.tab-pane meeting -->
+            
+            <div class="tab-pane" id="tab_5">
+                <h3 class="box-title">TSR fields go somewhere here</h3>
+                <input type="submit" value="Submit TSR">
+            </div>            <!-- /.tab-pane meeting -->
 
 
         </div>
