@@ -49,7 +49,7 @@ urlpatterns = [
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
         # Update TSR information
-        url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.tsr_update, name='tsr_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
 
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),

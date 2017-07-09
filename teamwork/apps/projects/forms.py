@@ -337,15 +337,15 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
-class TSRForm(forms.ModelForm):
+class TSRUpdateForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
-        super(TSRForm, self).__init__(*args, **kwargs)
-        self.fields['user_input'].append("")
+        super(TSRUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['user_input'] = ""
     
     user_input = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=500,
+        max_length=250,
         required=True)
 
     class Meta:

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/project.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+  <form action="{% url 'tsr_update' cur_course.slug %}" method="post" role="form">
+
+    <input type="submit" value="Save TSR">
+  </form>
+
+{% endblock content %}
