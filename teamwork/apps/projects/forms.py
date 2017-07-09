@@ -341,12 +341,13 @@ class TSRUpdateForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['user_input'] = ""
+        #self.fields['user_input'] = "abc"
     
     user_input = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=250,
-        required=True)
+        max_length=100,
+        label='% contribution',
+        required=False)
 
     class Meta:
         model = Project

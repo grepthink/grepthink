@@ -8,7 +8,17 @@
 
 {% block content %}
   <form action="{% url 'tsr_update' cur_course.slug %}" method="post" role="form">
-
+    {% csrf_token %}
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+        {% endfor %}
+      </div>
+    {% endfor %}
     <input type="submit" value="Save TSR">
   </form>
 
