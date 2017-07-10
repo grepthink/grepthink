@@ -342,7 +342,7 @@ class TSRUpdateForm(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
         #self.fields['user_input'] = "abc"
-    
+
     MY_CHOICES = (
         ('1', 'non-scrum master'),
         ('2', 'scrum master'),
@@ -353,14 +353,44 @@ class TSRUpdateForm(forms.ModelForm):
 
     non_scrum_user_input = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
-        label='% contribution',
-        max_digits=2, 
+        label='% Contribution',
+        max_digits=2,
         decimal_places=0,
+        required=True)
+
+    pos_fb = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Positive Feedback',
+        max_length=255,
+        required=True)
+
+    neg_fb = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Improvement Suggestion',
+        max_length=255,
+        required=True)
+
+    tasks_comp = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Tasks Completed (SCRUM Master only)',
+        max_length=255,
+        required=True)
+
+    perf_assess = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Performance Assessment: Evidence (SCRUM Master Only)',
+        max_length=255,
+        required=True)
+
+    notes = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Notes/Comments (SCRUM Master Only)',
+        max_length=255,
         required=True)
 
     class Meta:
         model = Project
-        fields = ['non_scrum_user_input', 'form_type']
+        fields = ['form_type','non_scrum_user_input', 'pos_fb', 'neg_fb']
 
 def validate_url(url):
     url_form_field = URLField()

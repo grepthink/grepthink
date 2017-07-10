@@ -13,8 +13,8 @@
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        <!-- {{ field.choice }} -->
         {{ field }}
-        {{ field.choice }}
         <!--
         {% for error in field.errors %}
           <label class="control-label">{{ error }}</label>
