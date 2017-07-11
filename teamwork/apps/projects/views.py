@@ -489,7 +489,10 @@ def tsr_update(request, slug):
     user = request.user
     # current course
     cur_proj = get_object_or_404(Project, slug=slug)
+    print(cur_proj.__dict__)
+
     # projects in current course
+
     member_num=len(cur_proj.members.all())
     members=list()
     emails=list()
@@ -514,12 +517,17 @@ def tsr_update(request, slug):
         form = TSRUpdateForm(request.user.id, request.POST)
         if form.is_valid():
             data=form.cleaned_data
-
+            p1 = data.get('perc_contribution')
+            cur_proj.tsr.add(Tsr.objects.create(user=user, percent_contribution=p1))
+            cur_proj.save()
+            print(Tsr.objects.create(user=user, percent_contribution=p1).__dict__)
+            print(cur_proj.__dict__)
+            print("")
+            print(Project.tsr)
             return redirect(view_projects)
 
     else:
         form = TSRUpdateForm(request.user.id, request.POST)
-
 
     return render(request, 'projects/tsr_update.html', {'form': form,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 

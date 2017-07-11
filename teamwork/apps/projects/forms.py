@@ -356,37 +356,37 @@ class TSRUpdateForm(forms.ModelForm):
         label='% Contribution',
         max_digits=2,
         decimal_places=0,
-        required=True)
+        required=False)
 
     pos_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Positive Feedback',
         max_length=255,
-        required=True)
+        required=False)
 
     neg_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Improvement Suggestion',
         max_length=255,
-        required=True)
+        required=False)
 
     tasks_comp = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Tasks Completed (SCRUM Master only)',
         max_length=255,
-        required=True)
+        required=False)
 
     perf_assess = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Performance Assessment: Evidence (SCRUM Master Only)',
         max_length=255,
-        required=True)
+        required=False)
 
     notes = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Notes/Comments (SCRUM Master Only)',
         max_length=255,
-        required=True)
+        required=False)
 
     class Meta:
         model = Project

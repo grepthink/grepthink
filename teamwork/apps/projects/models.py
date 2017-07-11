@@ -167,6 +167,15 @@ class Interest(models.Model):
     def __str__(self):
         return("%d"%(self.interest))
 
+class Tsr(models.Model):
+    """
+    TSR objects relate a user and percent contribution info.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    percent_contribution = models.DecimalField(max_digits=2,decimal_places=0)
+
+    def __str__(self):
+        return("%d"%(self.percent_contribution)) 
 
 class Project(models.Model):
     """
@@ -218,6 +227,10 @@ class Project(models.Model):
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
+
+
+    tsr = models.ManyToManyField(Tsr, default=None)
+
 
     # Store the teamSize for team generation and auto switch accepting members
     teamSize = models.IntegerField(default=4)
