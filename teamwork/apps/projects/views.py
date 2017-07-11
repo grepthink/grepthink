@@ -488,14 +488,15 @@ def tsr_update(request, slug):
     """
     user = request.user
     # current course
-    cur_course = get_object_or_404(Project, slug=slug)
+    cur_proj = get_object_or_404(Project, slug=slug)
     # projects in current course
-    member_num=len(cur_course.members.all())
+    member_num=len(cur_proj.members.all())
     members=list()
     emails=list()
     for i in range(member_num):
-        members.append(cur_course.members.all()[i])
-        emails.append(cur_course.members.all()[i].email)
+        members.append(cur_proj.members.all()[i])
+        if(cur_proj.members.all()[i]!=user):
+            emails.append(cur_proj.members.all()[i].email)
     print(members)
     print(emails)
 
@@ -520,7 +521,7 @@ def tsr_update(request, slug):
         form = TSRUpdateForm(request.user.id, request.POST)
 
 
-    return render(request, 'projects/tsr_update.html', {'form': form,'emails':emails,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+    return render(request, 'projects/tsr_update.html', {'form': form,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 def find_meeting(slug):
     """
