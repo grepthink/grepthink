@@ -7,7 +7,7 @@
 {% endblock head %}
 
 {% block content %}
-  <form action="{% url 'tsr_update' cur_course.slug %}" method="post" role="form">
+  <form action="{% url 'tsr_update' cur_proj.slug %}" method="post" role="form">
     {% csrf_token %}
     {% for mail in emails %}
     {{mail}}
