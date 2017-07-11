@@ -488,13 +488,22 @@ def tsr_update(request, slug):
     """
     user = request.user
     # current course
-    cur_course = get_object_or_404(Course, slug=slug)
+    cur_course = get_object_or_404(Project, slug=slug)
     # projects in current course
-    #projects = projects_in_course(slug)
+    member_num=len(cur_course.members.all())
+    members=list()
+    emails=list()
+    for i in range(member_num):
+        members.append(cur_course.members.all()[i])
+        emails.append(cur_course.members.all()[i].email)
+    print(members)
+    print(emails)
+
+
     # enrollment objects containing current user
-    enroll = Enrollment.objects.filter(user=request.user)
+    #enroll = Enrollment.objects.filter(user=request.user)
     # current courses user is in
-    user_courses = Course.objects.filter(enrollment__in=enroll)
+    #user_courses = Course.objects.filter(enrollment__in=enroll)
 
     page_name = "TSR Update"
     page_description = "Update TSR form"
