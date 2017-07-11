@@ -515,13 +515,13 @@ def tsr_update(request, slug):
     title = "TSR Update"
 
     if request.method == 'POST':
-        form = TSRUpdateForm(request.user.id, request.POST)
+        form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails)
         if form.is_valid():
             data=form.cleaned_data
             
-            p1 = data.get('perc_contribution')
-            pf1 = data.get('pos_fb')
-            nf1 = data.get('neg_fb')
+            p1 = data.get('perc_contribution1')
+            pf1 = data.get('pos_fb1')
+            nf1 = data.get('neg_fb1')
 
             
             print("cur_proj.tsr")
@@ -542,7 +542,7 @@ def tsr_update(request, slug):
             return redirect(view_projects)
 
     else:
-        form = TSRUpdateForm(request.user.id, request.POST)
+        form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails)
 
     return render(request, 'projects/tsr_update.html', {'form': form,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 

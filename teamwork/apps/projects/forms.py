@@ -340,8 +340,13 @@ class ResourceForm(forms.ModelForm):
 class TSRUpdateForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
+        print("init")
+        members = kwargs.pop('members')
+        print(members)
+        emails = kwargs.pop('emails')
+        print(emails)
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
-        #self.fields['user_input'] = "abc"
+
 
     MY_CHOICES = (
         ('1', 'non-scrum master'),
