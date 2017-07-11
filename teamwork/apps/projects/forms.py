@@ -351,7 +351,7 @@ class TSRUpdateForm(forms.ModelForm):
     form_type = forms.ChoiceField(
         choices=MY_CHOICES)
 
-    non_scrum_user_input = forms.DecimalField(
+    perc_contribution = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
         label='% Contribution',
         max_digits=2,
@@ -390,7 +390,7 @@ class TSRUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['form_type','non_scrum_user_input', 'pos_fb', 'neg_fb']
+        fields = ['form_type','perc_contribution', 'pos_fb', 'neg_fb']
 
 def validate_url(url):
     url_form_field = URLField()
