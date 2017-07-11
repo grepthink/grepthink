@@ -11,6 +11,7 @@ import random
 import string
 from math import floor
 from datetime import datetime
+from decimal import Decimal
 
 # Third-party Modules
 import markdown
@@ -172,10 +173,13 @@ class Tsr(models.Model):
     TSR objects relate a user and percent contribution info.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    percent_contribution = models.DecimalField(max_digits=2,decimal_places=0)
+    percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
+    positive_feedback = models.CharField(max_length=255, default='')
+    negative_feedback = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return("%d"%(self.percent_contribution)) 
+        return(("%s: %d, %s, %s"%(self.user, self.percent_contribution, 
+            self.positive_feedback, self.negative_feedback)))
 
 class Project(models.Model):
     """

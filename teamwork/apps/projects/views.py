@@ -491,6 +491,7 @@ def tsr_update(request, slug):
     cur_proj = get_object_or_404(Project, slug=slug)
     print(cur_proj.__dict__)
 
+
     # projects in current course
 
     member_num=len(cur_proj.members.all())
@@ -517,13 +518,27 @@ def tsr_update(request, slug):
         form = TSRUpdateForm(request.user.id, request.POST)
         if form.is_valid():
             data=form.cleaned_data
+            
             p1 = data.get('perc_contribution')
-            cur_proj.tsr.add(Tsr.objects.create(user=user, percent_contribution=p1))
+            pf1 = data.get('pos_fb')
+            nf1 = data.get('neg_fb')
+
+            
+            print("cur_proj.tsr")
+            print(list(cur_proj.tsr.all()))
+
+            cur_proj.tsr.add(Tsr.objects.create(user=user, 
+                percent_contribution=p1, 
+                positive_feedback=pf1,
+                negative_feedback=nf1))
+            
             cur_proj.save()
-            print(Tsr.objects.create(user=user, percent_contribution=p1).__dict__)
-            print(cur_proj.__dict__)
-            print("")
-            print(Project.tsr)
+            
+            print("saved")
+            print("cur_proj.tsr")
+            print(list(cur_proj.tsr.all()))
+
+
             return redirect(view_projects)
 
     else:

@@ -356,19 +356,19 @@ class TSRUpdateForm(forms.ModelForm):
         label='% Contribution',
         max_digits=2,
         decimal_places=0,
-        required=False)
+        required=True)
 
     pos_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Positive Feedback',
         max_length=255,
-        required=False)
+        required=True)
 
     neg_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Improvement Suggestion',
         max_length=255,
-        required=False)
+        required=True)
 
     tasks_comp = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
