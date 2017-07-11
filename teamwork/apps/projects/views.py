@@ -520,7 +520,7 @@ def tsr_update(request, slug):
         form = TSRUpdateForm(request.user.id, request.POST)
 
 
-    return render(request, 'projects/tsr_update.html', {'form': form,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+    return render(request, 'projects/tsr_update.html', {'form': form,'emails':emails,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 def find_meeting(slug):
     """
