@@ -19,7 +19,7 @@ from django.urls import reverse
 
 def signup(request):
     """
-    public method that generates a form a user uses to sign up for an account
+    public method that generates a form a user uses to sign up for an account (push test)
     """
 
     page_name = "Signup"
