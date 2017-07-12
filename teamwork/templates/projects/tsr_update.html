@@ -9,8 +9,8 @@
 {% block content %}
   <form action="{% url 'tsr_update' cur_proj.slug %}" method="post" role="form">
     {% csrf_token %}
-    {% for mail in emails %}
-    {{mail}}
+    {% for email in emails %}
+    {{email}}
     {{ form.status }}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
