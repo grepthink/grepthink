@@ -519,9 +519,9 @@ def tsr_update(request, slug):
         if form.is_valid():
             data=form.cleaned_data
             
-            p1 = data.get('perc_contribution')
-            pf1 = data.get('pos_fb')
-            nf1 = data.get('neg_fb')
+            p1 = data.get('perc_contribution1')
+            pf1 = data.get('pos_fb1')
+            nf1 = data.get('neg_fb1')
 
             
             print("cur_proj.tsr")
