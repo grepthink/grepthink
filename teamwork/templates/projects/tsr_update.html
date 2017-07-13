@@ -9,25 +9,15 @@
 {% block content %}
   <form action="{% url 'tsr_update' cur_proj.slug %}" method="post" role="form">
     {% csrf_token %}
+    {% for email in emails %}
+    {{ email }}
     {{ form.status }}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
         <!-- {{ field.choice }} -->
-        {% if "Contribution" in field.label %}
-        {% if forloop.counter0 == 1%}
-        {{emails.0}}
-        {%endif%}
-        {% if forloop.counter0 == 7%}
-        {{emails.1}}
-        {%endif%}
-        {% if forloop.counter0 == 13%}
-        {{emails.2}}
-        {%endif%}
-        {% if forloop.counter0 == 19%}
-        {{emails.3}}
-        {%endif%}
-        {%endif%}
+
+
         {{ field }}
         <!--
         {% for error in field.errors %}
@@ -35,6 +25,7 @@
         {% endfor %}
         -->
       </div>
+    {% endfor %}
     {% endfor %}
 
     <input type="submit" value="Save TSR">

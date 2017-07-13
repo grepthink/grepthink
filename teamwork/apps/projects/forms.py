@@ -347,28 +347,6 @@ class TSRUpdateForm(forms.ModelForm):
         print(emails)
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
 
-        
-        if(len(emails))< 4:
-            self.fields['perc_contribution4'].widget = forms.HiddenInput()
-            self.fields['pos_fb4'].widget = forms.HiddenInput()
-            self.fields['neg_fb4'].widget = forms.HiddenInput()
-            self.fields['tasks_comp4'].widget = forms.HiddenInput()
-            self.fields['perf_assess4'].widget = forms.HiddenInput()
-            self.fields['notes4'].widget = forms.HiddenInput()
-            if(len(emails)) < 3:
-                self.fields['perc_contribution3'].widget = forms.HiddenInput()
-                self.fields['pos_fb3'].widget = forms.HiddenInput()
-                self.fields['neg_fb3'].widget = forms.HiddenInput()
-                self.fields['tasks_comp3'].widget = forms.HiddenInput()
-                self.fields['perf_assess3'].widget = forms.HiddenInput()
-                self.fields['notes3'].widget = forms.HiddenInput()
-                if(len(emails)) < 2:
-                    self.fields['perc_contribution2'].widget = forms.HiddenInput()
-                    self.fields['pos_fb2'].widget = forms.HiddenInput()
-                    self.fields['neg_fb2'].widget = forms.HiddenInput()
-                    self.fields['tasks_comp2'].widget = forms.HiddenInput()
-                    self.fields['perf_assess2'].widget = forms.HiddenInput()
-                    self.fields['notes2'].widget = forms.HiddenInput()
 
 
     MY_CHOICES = (
@@ -380,153 +358,38 @@ class TSRUpdateForm(forms.ModelForm):
     form_type = forms.ChoiceField(
         choices=MY_CHOICES)
 
-    perc_contribution1 = forms.DecimalField(
+    perc_contribution = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
         label='% Contribution',
         max_digits=2,
         decimal_places=0,
         required=True)
 
-    pos_fb1 = forms.CharField(
+    pos_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Positive Feedback',
         max_length=255,
         required=True)
 
-    neg_fb1 = forms.CharField(
+    neg_fb = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Improvement Suggestion',
         max_length=255,
         required=True)
 
-    tasks_comp1 = forms.CharField(
+    tasks_comp = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Tasks Completed (SCRUM Master only)',
         max_length=255,
         required=False)
 
-    perf_assess1 = forms.CharField(
+    perf_assess = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Performance Assessment: Evidence (SCRUM Master Only)',
         max_length=255,
         required=False)
 
-    notes1 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Notes/Comments (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-
-    perc_contribution2 = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}),
-        label='% Contribution',
-        max_digits=2,
-        decimal_places=0,
-        required=True)
-
-    pos_fb2 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Positive Feedback',
-        max_length=255,
-        required=True)
-
-    neg_fb2 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Improvement Suggestion',
-        max_length=255,
-        required=True)
-
-    tasks_comp2 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Tasks Completed (SCRUM Master only)',
-        max_length=255,
-        required=False)
-
-    perf_assess2 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Performance Assessment: Evidence (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-    notes2 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Notes/Comments (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-
-
-    perc_contribution3 = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}),
-        label='% Contribution',
-        max_digits=2,
-        decimal_places=0,
-        required=True)
-
-    pos_fb3 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Positive Feedback',
-        max_length=255,
-        required=True)
-
-    neg_fb3 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Improvement Suggestion',
-        max_length=255,
-        required=True)
-
-    tasks_comp3 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Tasks Completed (SCRUM Master only)',
-        max_length=255,
-        required=False)
-
-    perf_assess3 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Performance Assessment: Evidence (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-    notes3 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Notes/Comments (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-
-    perc_contribution4 = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}),
-        label='% Contribution',
-        max_digits=2,
-        decimal_places=0,
-        required=True)
-
-    pos_fb4 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Positive Feedback',
-        max_length=255,
-        required=True)
-
-    neg_fb4 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Improvement Suggestion',
-        max_length=255,
-        required=True)
-
-    tasks_comp4 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Tasks Completed (SCRUM Master only)',
-        max_length=255,
-        required=False)
-
-    perf_assess4 = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Performance Assessment: Evidence (SCRUM Master Only)',
-        max_length=255,
-        required=False)
-
-    notes4 = forms.CharField(
+    notes = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Notes/Comments (SCRUM Master Only)',
         max_length=255,
@@ -535,7 +398,7 @@ class TSRUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['form_type','perc_contribution1', 'pos_fb1', 'neg_fb1']
+        fields = ['form_type','perc_contribution', 'pos_fb', 'neg_fb']
 
 def validate_url(url):
     url_form_field = URLField()
