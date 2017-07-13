@@ -9,15 +9,14 @@
 {% block content %}
   <form action="{% url 'tsr_update' cur_proj.slug %}" method="post" role="form">
     {% csrf_token %}
-    {% for email in emails %}
-    {{ email }}
-    {{ form.status }}
+    {% for form in forms %}
+
+    For   {{ form.status }}
+    {{form.prefix}}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
         <!-- {{ field.choice }} -->
-
-
         {{ field }}
         <!--
         {% for error in field.errors %}
