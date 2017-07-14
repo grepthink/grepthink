@@ -26,8 +26,11 @@ def signup(request):
     page_description = "Sign up for Groupthink!"
     title = "Signup"
 
+    GT =  False
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
+
         if not form.is_valid():
             return render(request, 'profiles/signup.html',
                           {'form': form})
@@ -35,17 +38,27 @@ def signup(request):
         else:
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
+            if 'grepthink' in email:
+                GT = True
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
 
-            user1 = User.objects.create_user(username=username, password=password,
-                                     email=email)
+            if GT:
+                user1 = User.objects.create_superuser(username=username, password=password,
+                                         email=email)
+            else:
+                user1 = User.objects.create_user(username=username, password=password,
+                                         email=email)
+
             user = authenticate(username=username, password=password)
             login(request, user)
 
             # saves current user, which creates a link from user to profile
             user1.save()
+
+            if GT:
+                user1.profile.isGT = True
 
             # edits profile to add professor
             user1.profile.isProf = prof
@@ -120,10 +133,17 @@ def edit_profile(request, username):
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
 
-    #grab profile for the current user
-    profile = Profile.objects.get(user=request.user)
+    if request.user.profile.isGT:
+        tempProfile = User.objects.get(username=username)
+        profile = Profile.objects.get(user=tempProfile)
+        print(profile)
+    else:
+        #grab profile for the current user
+        profile = Profile.objects.get(user=request.user)
 
-    if request.user.username != username:
+    if request.user.profile.isGT:
+        pass
+    elif request.user.username != username:
         messages.info(request, 'You cannot access the user profile specified!')
         return redirect(view_profile, request.user.username)
 
@@ -187,16 +207,19 @@ def edit_profile(request, username):
         form = ProfileForm(instance=profile)
     #handle deleting profile
     if request.POST.get('delete_profile'):
-        print ("we here")
         page_user = get_object_or_404(User, username=username)
         page_user.delete()
-        return redirect('about')
+        if request.user.profile.isGT:
+            return redirect('view_course')
+        else:
+            return redirect('about')
 
     #original form
     elif request.method == 'POST':
         #request.FILES is passed for File storing
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
+
             # grab each form element from the clean form
             # known = form.cleaned_data.get('known_skill')
             # learn = form.cleaned_data.get('learn_skill')
@@ -232,8 +255,8 @@ def edit_profile(request, username):
 
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
-    page_user = get_object_or_404(User, username=username)
 
+    page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/edit_profile.html', {
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,

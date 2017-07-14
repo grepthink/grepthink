@@ -13,10 +13,17 @@ def SignupDomainValidator(value):
     """
     public method that takes a value
     """
-    if '*' not in ALLOWED_SIGNUP_DOMAINS:
+    grepthinkers = ['rmonroe@grepthink.com', 'mgates@grepthink.com',
+                   'sdougher@grepthink.com', 'kpannell@grepthink.com']
+
+    # Block any @grepthink email
+    if 'grepthink' in value and (value not in grepthinkers):
+        raise ValidationError('@grepthink is reserved for employees only. Please use a valid email')
+    elif ('*' not in ALLOWED_SIGNUP_DOMAINS):
         try:
             domain = value[value.index("@"):]
-            if domain not in ALLOWED_SIGNUP_DOMAINS:
+            #GrepThink accounts only
+            if (domain not in ALLOWED_SIGNUP_DOMAINS):
                 raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
 
         except Exception:
@@ -38,7 +45,9 @@ def ForbiddenUsernamesValidator(value):
                            'faq', 'intranet', 'log', 'registration', 'search',
                            'explore', 'rss', 'support', 'status', 'static',
                            'media', 'setting', 'css', 'js', 'follow',
-                           'activity', 'questions', 'articles', 'network', ]
+                           'activity', 'questions', 'articles', 'network',
+                           'grepthink', 'gt', 'groupthink', 'alphanumeric'
+                           'teamwork']
 
     if value.lower() in forbidden_usernames:
         raise ValidationError('This is a reserved word.')
@@ -47,6 +56,9 @@ def ForbiddenUsernamesValidator(value):
 def InvalidUsernameValidator(value):
     if '@' in value or '+' in value or '-' in value:
         raise ValidationError('Enter a valid username.')
+    # Check for Grepthink or past project Association
+    elif 'grepthink' in value or 'groupthink' in value or 'teamwork' in value or 'think' in value:
+        raise ValidationError('Invalid GrepThink Association')
 
 
 def UniqueEmailValidator(value):

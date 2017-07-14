@@ -210,7 +210,7 @@ class EditCourseForm(forms.ModelForm):
         #Choices from Term_Choice
         choices=Term_Choice,
         #Field Required
-        required=True)
+        required=False)
 
     #Slug Field
     slug = forms.CharField(

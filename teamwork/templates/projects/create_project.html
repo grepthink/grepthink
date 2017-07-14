@@ -142,7 +142,9 @@ $(document).ready(function() {
             <label for="{{ form.course.id_for_label }}" class="control-label">
             Course
             </label>
-            {{ form.course }}
+            <div style="max-height: 200px; overflow-y: scroll;">
+                {{ form.course }}
+            </div>
         </div>
 
         <div class="form-group">
@@ -221,7 +223,7 @@ $(document).ready(function() {
             {{ form.teamSize }}
         </div>
 
-        {% if request.user.profile.isProf %}
+        {% if request.user.profile.isProf or request.user.profile.isGT %}
 
         <div class="form-group">
             {{ form.sponsor.errors }}

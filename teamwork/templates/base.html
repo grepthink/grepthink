@@ -26,6 +26,11 @@
 
 {# Contains the page_name, page_description, and breadcrumbs #}
 {% block content_header %}
+{% if user.profile.isGT %}
+    <div class="alert alert-error" role="alert">
+        <strong>GT OVERRIDE IN EFFECT</strong>
+    </div>
+{% endif %}
   <section class="content-header">
     <h1>
         {% block page_name %}

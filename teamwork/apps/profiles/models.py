@@ -183,6 +183,7 @@ class Profile(models.Model):
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     isProf = models.BooleanField(default=False)
+    isGT = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username

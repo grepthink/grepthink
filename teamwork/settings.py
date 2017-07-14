@@ -177,6 +177,7 @@ MEDIA_URL = '/media/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
 ALLOWED_SIGNUP_DOMAINS = ['*']
 
 LOGIN_URL = '/'

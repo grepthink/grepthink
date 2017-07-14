@@ -129,8 +129,11 @@ $(document).ready(function() {
 
 {% block content %}
 
+{% if user.profile.isGT %}
+<form action="{% url 'edit_profile' profile %}" method="post" role="form" enctype="multipart/form-data">
+{% else %}
 <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
-
+{% endif %}
  <div class="row">
     <div class="col-md-6 clearfix">
         <div class="box box-primary">
@@ -163,7 +166,11 @@ $(document).ready(function() {
                   </div>
                   <div class="box-footer">
                       <div class="pull-left">
-                          <a href="{% url 'profile' user.username %}">
+                          {% if user.profile.isGT %}
+                           <a href="{% url 'profile' profile.user.username %}">
+                          {% else %}
+                           <a href="{% url 'profile' user.username %}">
+                          {% endif %}
                               <button class="btn btn-danger" type="button">
                                   Cancel
                               </button>
@@ -199,7 +206,11 @@ $(document).ready(function() {
             <h3 class="box-title">Add Skills</h3>
           </div>
 
+          {% if user.profile.isGT %}
+          <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+          {% else %}
           <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+          {% endif %}
             {% csrf_token %}
               <div class="box-body">
                 <div class="form-group">
@@ -217,7 +228,11 @@ $(document).ready(function() {
               <div class="box-footer">
 
                   <div class="pull-left">
-                  <a href="{% url 'profile' user.username %}">
+                  {% if user.profile.isGT %}
+                   <a href="{% url 'profile' profile.user.username %}">
+                  {% else %}
+                   <a href="{% url 'profile' user.username %}">
+                  {% endif %}
                       <button class="btn btn-danger" type="button">
                           Cancel
                       </button>
@@ -241,7 +256,11 @@ $(document).ready(function() {
           {# Need to fix button grouping #}
             <div class="box-header with-border">
             <label>Known Skills</label>
+            {% if user.profile.isGT %}
+            <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% else %}
             <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% endif %}
                 {% csrf_token %}
                 {% for skill in known_skills_list %}
                     <button class="btn btn-danger btn-sm" name="known_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
@@ -253,7 +272,11 @@ $(document).ready(function() {
             </div>
             <div class="box-header with-border">
             <label>Skills you want to Learn</label>
+            {% if user.profile.isGT %}
+            <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% else %}
             <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {% endif %}
                 {% csrf_token %}
                 {% for skill in learn_skills_list %}
                     <button class="btn btn-danger btn-sm" name="learn_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
