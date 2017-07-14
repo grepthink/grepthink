@@ -519,18 +519,21 @@ def tsr_update(request, slug):
             form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=mail)
             if form.is_valid():
                 data=form.cleaned_data
-                p1 = data.get('perc_contribution')
-                pf1 = data.get('pos_fb')
-                nf1 = data.get('neg_fb')
+                percent_contribution = data.get('perc_contribution')
+                positive_feedback = data.get('pos_fb')
+                negative_feedback = data.get('neg_fb')
 
 
                 print("cur_proj.tsr")
                 print(list(cur_proj.tsr.all()))
 
                 cur_proj.tsr.add(Tsr.objects.create(user=user,
-                    percent_contribution=p1,
-                    positive_feedback=pf1,
-                    negative_feedback=nf1))
+                    percent_contribution=percent_contribution,
+                    positive_feedback=positive_feedback,
+                    negative_feedback=negative_feedback,
+                    tasks_completed="",
+                    performance_assessment="",
+                    notes=""))
 
                 cur_proj.save()
 
@@ -547,6 +550,80 @@ def tsr_update(request, slug):
             forms.append(form_i)
         form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails)
     return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+
+@login_required
+def tsr_scrum_update(request, slug):
+    """
+    public method that takes in a slug and generates a form for the user
+    to show interest in all projects in a given course
+    """
+    user = request.user
+    # current course
+    cur_proj = get_object_or_404(Project, slug=slug)
+    print(cur_proj.__dict__)
+
+
+    # projects in current course
+
+    member_num=len(cur_proj.members.all())
+    members=list()
+    emails=list()
+    for i in range(member_num):
+        members.append(cur_proj.members.all()[i])
+        if(cur_proj.members.all()[i]!=user):
+            emails.append(cur_proj.members.all()[i].email)
+    print(members)
+    print(emails)
+
+
+    # enrollment objects containing current user
+    #enroll = Enrollment.objects.filter(user=request.user)
+    # current courses user is in
+    #user_courses = Course.objects.filter(enrollment__in=enroll)
+
+    page_name = "TSR Scrum Update"
+    page_description = "Update Scrum TSR form"
+    title = "TSR Scrum Update"
+    forms=list()
+    if request.method == 'POST':
+        for mail in emails:
+            form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=mail)
+            if form.is_valid():
+                data=form.cleaned_data
+                percent_contribution = data.get('perc_contribution')
+                positive_feedback = data.get('pos_fb')
+                negative_feedback = data.get('neg_fb')
+                tasks_completed = data.get('tasks_comp')
+                performance_assessment = data.get('perf_assess')
+                notes = data.get('notes')
+
+
+                print("cur_proj.tsr")
+                print(list(cur_proj.tsr.all()))
+
+                cur_proj.tsr.add(Tsr.objects.create(user=user,
+                    percent_contribution=percent_contribution,
+                    positive_feedback=positive_feedback,
+                    negative_feedback=negative_feedback,
+                    tasks_completed=tasks_completed,
+                    performance_assessment=performance_assessment,
+                    notes=notes))
+
+                cur_proj.save()
+
+                print("saved")
+                print("cur_proj.tsr")
+                print(list(cur_proj.tsr.all()))
+
+
+        return redirect(view_projects)
+
+    else:
+        for m in emails:
+            form_i=TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, prefix=m)
+            forms.append(form_i)
+        form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails)
+    return render(request, 'projects/tsr_scrum_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 def find_meeting(slug):
     """

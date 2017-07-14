@@ -276,7 +276,10 @@
             </div>
 
             <div class="tab-pane" id="tab_5">
-                <a href="{% url 'tsr_update' project.slug %}" class="alert-link">View TSR</a>
+                <a href="{% url 'tsr_update' project.slug %}" class="alert-link">normal TSR form</a>
+                <br>
+                <br>
+                <a href="{% url 'tsr_scrum_update' project.slug %}" class="alert-link">scrum master TSR form</a>
             </div>            <!-- /.tab-pane meeting -->
 
 

@@ -176,10 +176,14 @@ class Tsr(models.Model):
     percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
     positive_feedback = models.CharField(max_length=255, default='')
     negative_feedback = models.CharField(max_length=255, default='')
+    tasks_completed = models.CharField(max_length=255, default='')
+    performance_assessment = models.CharField(max_length=255, default='')
+    notes = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return(("%s: %d, %s, %s"%(self.user, self.percent_contribution, 
-            self.positive_feedback, self.negative_feedback)))
+        return(("%s: %d, %s, %s, %s, %s, %s"%(self.user, self.percent_contribution, 
+            self.positive_feedback, self.negative_feedback,
+            self.tasks_completed, self.performance_assessment, self.notes)))
 
 class Project(models.Model):
     """
