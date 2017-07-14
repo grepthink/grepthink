@@ -11,8 +11,8 @@
     {% csrf_token %}
     {% for form in forms %}
 
-    For   {{ form.status }}
-    {{form.prefix}}
+    <h3>For   {{ form.status }}
+    {{form.prefix}}</h3>
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
