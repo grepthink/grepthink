@@ -10,7 +10,8 @@
   <form action="{% url 'tsr_scrum_update' cur_proj.slug %}" method="post" role="form">
     {% csrf_token %}
     {% for form in forms %}
-
+    <br>
+    <br>
     <h3>For   {{ form.status }}
     {{form.prefix}}</h3>
     {% for field in form.visible_fields %}

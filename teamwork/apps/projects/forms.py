@@ -344,8 +344,14 @@ class TSRUpdateForm(forms.ModelForm):
         members = kwargs.pop('members')
         print(members)
         emails = kwargs.pop('emails')
+        scrum_master = kwargs.pop('scrum_master')
         print(emails)
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
+
+        if not scrum_master:
+            self.fields['tasks_comp'].widget = forms.HiddenInput()
+            self.fields['perf_assess'].widget = forms.HiddenInput()
+            self.fields['notes'].widget = forms.HiddenInput()
 
     perc_contribution = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
