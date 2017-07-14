@@ -347,17 +347,6 @@ class TSRUpdateForm(forms.ModelForm):
         print(emails)
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
 
-
-
-    MY_CHOICES = (
-        ('1', 'non-scrum master'),
-        ('2', 'scrum master')
-    )
-
-
-    form_type = forms.ChoiceField(
-        choices=MY_CHOICES)
-
     perc_contribution = forms.DecimalField(
         widget=forms.NumberInput(attrs={'class': 'form-control'}),
         label='% Contribution',
@@ -398,7 +387,7 @@ class TSRUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['form_type','perc_contribution', 'pos_fb', 'neg_fb']
+        fields = ['perc_contribution', 'pos_fb', 'neg_fb']
 
 def validate_url(url):
     url_form_field = URLField()
