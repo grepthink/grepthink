@@ -349,6 +349,9 @@ class TSRUpdateForm(forms.ModelForm):
         super(TSRUpdateForm, self).__init__(*args, **kwargs)
 
         if not scrum_master:
+            self.fields['tasks_comp'].required = False
+            self.fields['perf_assess'].required = False
+            self.fields['notes'].required = False
             self.fields['tasks_comp'].widget = forms.HiddenInput()
             self.fields['perf_assess'].widget = forms.HiddenInput()
             self.fields['notes'].widget = forms.HiddenInput()
@@ -376,19 +379,19 @@ class TSRUpdateForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Tasks Completed (SCRUM Master only)',
         max_length=255,
-        required=False)
+        required=True)
 
     perf_assess = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Performance Assessment: Evidence (SCRUM Master Only)',
         max_length=255,
-        required=False)
+        required=True)
 
     notes = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label='Notes/Comments (SCRUM Master Only)',
         max_length=255,
-        required=False)
+        required=True)
 
 
     class Meta:

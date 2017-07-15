@@ -97,6 +97,8 @@ def view_one_project(request, slug):
     """
 
     project = get_object_or_404(Project, slug=slug)
+    user = request.user
+    profile = Profile.objects.get(user=user)
     updates = project.get_updates()
     resources = project.get_resources()
 
@@ -120,7 +122,7 @@ def view_one_project(request, slug):
     print(updates)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
+        'page_description': page_description, 'title' : title, 'profile' : profile,
         'project': project, 'updates': updates, 'course' : course,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
@@ -624,6 +626,24 @@ def tsr_scrum_update(request, slug):
             forms.append(form_i)
         form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, scrum_master=True)
     return render(request, 'projects/tsr_scrum_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+
+@login_required
+def prof_tsr_view(request, slug):
+    """
+    public method that takes in a slug and generates a view for
+    submitted TSRs
+    """
+
+    page_name = "Professor TSR View"
+    page_description = "View project TSR"
+    title = "Professor TSR View"
+    if request.method == 'POST':
+
+        return redirect(view_projects)
+
+    #else:
+
+    return render(request, 'projects/prof_tsr_view.html', {'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 def find_meeting(slug):
     """
