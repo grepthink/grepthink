@@ -53,7 +53,7 @@ urlpatterns = [
         # Update TSR information for scrum master tsr
         url(r'^project/(?P<slug>[^/]+)/scrum_tsr/$', project_views.tsr_scrum_update, name='tsr_scrum_update'),
         # View TSRs
-        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.prof_tsr_view, name='prof_tsr_view'),
+        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
 
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),

@@ -8,5 +8,8 @@
 
 {% block content %}
 <h3>Professor TSR View Test</h3>
+{% for tsr in tsrs %}
+	<li>{{tsr}}</li>
+{% endfor %}
 
 {% endblock content %}

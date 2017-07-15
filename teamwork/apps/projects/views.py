@@ -628,11 +628,15 @@ def tsr_scrum_update(request, slug):
     return render(request, 'projects/tsr_scrum_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
-def prof_tsr_view(request, slug):
+def view_tsr(request, slug):
     """
     public method that takes in a slug and generates a view for
     submitted TSRs
     """
+    project = get_object_or_404(Project, slug=slug)
+    print(project.__dict__)
+    tsrs = list(project.tsr.all())
+
 
     page_name = "Professor TSR View"
     page_description = "View project TSR"
@@ -643,7 +647,7 @@ def prof_tsr_view(request, slug):
 
     #else:
 
-    return render(request, 'projects/prof_tsr_view.html', {'page_name' : page_name, 'page_description': page_description, 'title': title})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsrs})
 
 def find_meeting(slug):
     """
