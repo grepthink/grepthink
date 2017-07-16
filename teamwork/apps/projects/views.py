@@ -589,8 +589,8 @@ def tsr_scrum_update(request, slug):
     title = "TSR Scrum Update"
     forms=list()
     if request.method == 'POST':
-        for email in emails:
-            form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=True)
+        for mail in emails:
+            form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=mail, scrum_master=True)
             if form.is_valid():
                 data=form.cleaned_data
                 percent_contribution = data.get('perc_contribution')
@@ -605,7 +605,8 @@ def tsr_scrum_update(request, slug):
                 print(list(cur_proj.tsr.all()))
 
                 cur_proj.tsr.add(Tsr.objects.create(evaluator=user.email,
-                    evaluatee=email,
+                    evaluatee=mail,
+                    positive_feedback=positive_feedback,
                     percent_contribution=percent_contribution,
                     negative_feedback=negative_feedback,
                     tasks_completed=tasks_completed,
