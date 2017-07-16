@@ -38,6 +38,7 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
+            ta = form.cleaned_data.get('ta')
 
             user1 = User.objects.create_user(username=username, password=password,
                                      email=email)
@@ -49,6 +50,9 @@ def signup(request):
 
             # edits profile to add professor
             user1.profile.isProf = prof
+
+            # edits profile to add ta
+            user1.profile.isTa = ta
 
             # saves profile
             user1.save()

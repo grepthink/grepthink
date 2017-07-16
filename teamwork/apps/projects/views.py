@@ -634,9 +634,9 @@ def view_tsr(request, slug):
     print("last_tsrs")
     print(last_tsrs)
 
-    page_name = "Professor TSR View"
+    page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
-    title = "Professor TSR View"
+    title = "Professor/TA TSR View"
     if request.method == 'POST':
 
         return redirect(view_projects)

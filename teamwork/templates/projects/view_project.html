@@ -67,7 +67,7 @@
             {% if user in project.members.all %}
             <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
             {% endif %}
-            {% if profile.isProf %}
+            {% if profile.isProf or profile.isTa %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
             <li class="dropdown">

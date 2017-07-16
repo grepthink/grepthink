@@ -160,7 +160,8 @@ class Profile(models.Model):
         bio: bio of user
         known_skills: stores known skills
         interest: stores interest for projects in profile
-        isProf: boolean that dictates if the user is a professors
+        isProf: boolean that dictates if the user is a professor
+        isTa: boolean that indicates if the user is a teaching assistant
 
     Methods:
         __str__(self):                  Human readeable representation of the profile object.
@@ -183,6 +184,7 @@ class Profile(models.Model):
     # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     isProf = models.BooleanField(default=False)
+    isTa = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
