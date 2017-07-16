@@ -8,7 +8,8 @@
 
 {% block content %}
 <h3>Professor TSR View Test</h3>
-{% for tsr in tsrs %}
+
+{% for tsr in last_tsrs %}
 	<h4>{{tsr.evaluator}} evaluated {{tsr.evaluatee}} 
 	{{tsr.percent_contribution}} 
 	{{tsr.positive_feedback}} {{tsr.negative_feedback}} 

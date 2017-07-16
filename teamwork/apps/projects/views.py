@@ -491,8 +491,6 @@ def tsr_update(request, slug):
     user = request.user
     # current course
     cur_proj = get_object_or_404(Project, slug=slug)
-    print(cur_proj.__dict__)
-
 
     # projects in current course
 
@@ -503,9 +501,6 @@ def tsr_update(request, slug):
         members.append(cur_proj.members.all()[i])
         if(cur_proj.members.all()[i]!=user):
             emails.append(cur_proj.members.all()[i].email)
-    print(members)
-    print(emails)
-
 
     # enrollment objects containing current user
     #enroll = Enrollment.objects.filter(user=request.user)
@@ -526,9 +521,6 @@ def tsr_update(request, slug):
                 negative_feedback = data.get('neg_fb')
 
 
-                print("cur_proj.tsr")
-                print(list(cur_proj.tsr.all()))
-
                 cur_proj.tsr.add(Tsr.objects.create(evaluator=user.email,
                     evaluatee=email,
                     percent_contribution=percent_contribution,
@@ -539,10 +531,6 @@ def tsr_update(request, slug):
                     notes=""))
 
                 cur_proj.save()
-
-                print("saved")
-                print("cur_proj.tsr")
-                print(list(cur_proj.tsr.all()))
 
 
         return redirect(view_projects)
@@ -563,8 +551,6 @@ def tsr_scrum_update(request, slug):
     user = request.user
     # current course
     cur_proj = get_object_or_404(Project, slug=slug)
-    print(cur_proj.__dict__)
-
 
     # projects in current course
 
@@ -575,9 +561,6 @@ def tsr_scrum_update(request, slug):
         members.append(cur_proj.members.all()[i])
         if(cur_proj.members.all()[i]!=user):
             emails.append(cur_proj.members.all()[i].email)
-    print(members)
-    print(emails)
-
 
     # enrollment objects containing current user
     #enroll = Enrollment.objects.filter(user=request.user)
@@ -600,10 +583,6 @@ def tsr_scrum_update(request, slug):
                 performance_assessment = data.get('perf_assess')
                 notes = data.get('notes')
 
-
-                print("cur_proj.tsr")
-                print(list(cur_proj.tsr.all()))
-
                 cur_proj.tsr.add(Tsr.objects.create(evaluator=user.email,
                     evaluatee=mail,
                     positive_feedback=positive_feedback,
@@ -614,10 +593,6 @@ def tsr_scrum_update(request, slug):
                     notes=notes))
 
                 cur_proj.save()
-
-                print("saved")
-                print("cur_proj.tsr")
-                print(list(cur_proj.tsr.all()))
 
 
         return redirect(view_projects)
@@ -636,9 +611,28 @@ def view_tsr(request, slug):
     submitted TSRs
     """
     project = get_object_or_404(Project, slug=slug)
-    print(project.__dict__)
     tsrs = list(project.tsr.all())
+    member_num=len(project.members.all())
+    members=list()
+    emails=list()
+    for i in range(member_num):
+        members.append(project.members.all()[i])
+        emails.append(project.members.all()[i].email)
+    print(emails)
 
+    last_tsrs = []
+    for email in emails:
+        append_count = 0
+        for tsr in reversed(tsrs):
+            if tsr.evaluator == email:
+                if append_count == len(members)-1:
+                    break
+                else:
+                    last_tsrs.append(tsr)
+                    append_count+=1
+
+    print("last_tsrs")
+    print(last_tsrs)
 
     page_name = "Professor TSR View"
     page_description = "View project TSR"
@@ -649,7 +643,7 @@ def view_tsr(request, slug):
 
     #else:
 
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsrs})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'last_tsrs' : last_tsrs})
 
 def find_meeting(slug):
     """
