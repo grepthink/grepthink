@@ -652,6 +652,47 @@ def view_tsr(request, slug):
 
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'last_tsrs' : last_tsrs})
 
+@login_required
+def tsr_assign(request, slug):
+    """
+    public method that takes in a slug and generates a view for
+    assigning TSRs for professors
+    """
+    project = get_object_or_404(Project, slug=slug)
+    # tsrs = list(project.tsr.all())
+    member_num=len(project.members.all())
+    members=list()
+    emails=list()
+    for i in range(member_num):
+        members.append(project.members.all()[i])
+        emails.append(project.members.all()[i].email)
+    print(emails)
+
+    # last_tsrs = []
+    # for email in emails:
+    #     append_count = 0
+    #     for tsr in reversed(tsrs):
+    #         if tsr.evaluator == email:
+    #             if append_count == len(members)-1:
+    #                 break
+    #             else:
+    #                 last_tsrs.append(tsr)
+    #                 append_count+=1
+
+    # print("last_tsrs")
+    # print(last_tsrs)
+
+    page_name = "Professor/TA TSR Assign View"
+    page_description = "Assign a TSR for Project"
+    title = "Professor/TA TSR Assign View"
+    if request.method == 'POST':
+
+        return redirect(view_projects)
+
+    #else:
+
+    return render(request, 'projects/tsr_assign.html', {'page_name' : page_name, 'page_description': page_description, 'title': title})
+
 def find_meeting(slug):
     """
     Find and store possible meeting time for a given project

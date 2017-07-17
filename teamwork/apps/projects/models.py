@@ -172,6 +172,9 @@ class Tsr(models.Model):
     """
     TSR objects relate a user and percent contribution info.
     """
+    start_date = models.DateTimeField(default=datetime.now)
+    end_date = models.DateTimeField(default=datetime.now)
+
     evaluator = models.CharField(max_length=255, default='')
     evaluatee = models.CharField(max_length=255, default='')
     percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
@@ -182,9 +185,9 @@ class Tsr(models.Model):
     notes = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return(("%s, %s, %d, %s, %s, %s, %s, %s"%(self.evaluator, self.evaluatee, self.percent_contribution, 
+        return(("%s, %s, %d, %s, %s, %s, %s, %s, %s, %s"%(self.evaluator, self.evaluatee, self.percent_contribution,
             self.positive_feedback, self.negative_feedback,
-            self.tasks_completed, self.performance_assessment, self.notes)))
+            self.tasks_completed, self.performance_assessment, self.notes, self.start_date, self.end_date)))
 
 class Project(models.Model):
     """

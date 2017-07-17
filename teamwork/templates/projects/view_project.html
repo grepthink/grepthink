@@ -69,6 +69,7 @@
             {% endif %}
             {% if profile.isProf or profile.isTa %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
+            <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Assign TSR</a></li>
             {% endif %}
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -293,7 +294,13 @@
                 <form action="{% url 'view_tsr' project.slug %}">
                     <input type="submit" value="View TSR" />
                 </form>
-            </div>           <!-- /.tab-pane meeting -->
+            </div>
+
+            <div class="tab-pane" id="tab_7">
+                <form action="{% url 'tsr_assign' project.slug %}">
+                    <input type="submit" value="TSR Assign" />
+                </form>
+            </div>        <!-- /.tab-pane meeting -->
 
 
         </div>
