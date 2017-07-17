@@ -23,6 +23,11 @@ from django.utils import timezone
 # import of project models
 from teamwork.apps.projects.models import Project
 
+class Assignment(models.Model):
+    due_date = models.CharField(max_length=255, default="20991231")
+    ass_date=models.CharField(max_length=255, default="20000101")
+    ass_type=models.CharField(max_length=255, default='TSR')
+    ass_name=models.CharField(max_length=255, default="TSR for Sprint X")
 
 def get_user_courses(self):
     """
@@ -134,6 +139,9 @@ class Course(models.Model):
     projects = models.ManyToManyField(
         # to project model
         Project)
+    assignments=models.ManyToManyField(
+        Assignment
+    )
 
     # RYAN
     # creator needs to be a foreign key for a simpler linking

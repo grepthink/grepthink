@@ -10,10 +10,13 @@
 <h3>Professor TSR View Test</h3>
 
 {% for tsr in last_tsrs %}
-	<h4>{{tsr.evaluator}} evaluated {{tsr.evaluatee}} 
-	{{tsr.percent_contribution}} 
-	{{tsr.positive_feedback}} {{tsr.negative_feedback}} 
-	{{tsr.tasks_completed}} {{tsr.performance_assessment}} 
+	<h4>
+  <a href="mailto:{{tsr.evaluator}}">{{tsr.evaluator}}</a>
+  evaluated
+  <a href="mailto:{{tsr.evaluatee}}">{{tsr.evaluatee}}</a>
+	{{tsr.percent_contribution}}
+	{{tsr.positive_feedback}} {{tsr.negative_feedback}}
+	{{tsr.tasks_completed}} {{tsr.performance_assessment}}
 	{{tsr.notes}}</h4>
 	<br>
 {% endfor %}

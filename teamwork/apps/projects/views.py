@@ -501,7 +501,13 @@ def tsr_update(request, slug):
         members.append(cur_proj.members.all()[i])
         if(cur_proj.members.all()[i]!=user):
             emails.append(cur_proj.members.all()[i].email)
-
+    course = Course.objects.get(projects=cur_proj)
+    print(course)
+    asss=course.assignments.filter(due_date__gte='20180716').filter(ass_date__lte='20180716').all()
+    if not asss:
+        print("no tst available")
+    else:
+        print(asss[len(asss)-1].ass_name)
     # enrollment objects containing current user
     #enroll = Enrollment.objects.filter(user=request.user)
     # current courses user is in
@@ -551,7 +557,8 @@ def tsr_scrum_update(request, slug):
     user = request.user
     # current course
     cur_proj = get_object_or_404(Project, slug=slug)
-
+    course = Course.objects.get(projects=cur_proj)
+    print(course)
     # projects in current course
 
     member_num=len(cur_proj.members.all())

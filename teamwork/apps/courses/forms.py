@@ -467,3 +467,29 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseUpdate
         fields = ['title', 'content']
+class AssignmentForm(forms.ModelForm):
+    """
+    Form used for making a new assignment
+    """
+    def __init__(self, uid, *args, **kwargs):
+        super(AssignmentForm, self).__init__(*args, **kwargs)
+        creator = User.objects.get(id=uid)
+    ass_date = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    due_date = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    ass_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    ass_type = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+    class Meta:
+        model= Assignment
+        fields = ['ass_date', 'due_date','ass_name','ass_type']

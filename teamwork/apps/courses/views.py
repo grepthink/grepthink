@@ -63,21 +63,38 @@ def view_one_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     date_updates = course.get_updates_by_date()
-
+    profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
-    
+    for a in course.assignments.all():
+        print(a.due_date + a.ass_name)
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
     # prof = get_object_or_404(User, username=professor)
-
+    if(request.method=='POST'):
+        form=AssignmentForm(request.user.id,request.POST)
+        if form.is_valid():
+            data=form.cleaned_data
+            ass_date=data.get('ass_date')
+            due_date=data.get('due_date')
+            ass_type=data.get('ass_type')
+            ass_name=data.get('ass_name')
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name, ass_type=ass_type, ass_date=ass_date, due_date=due_date))
+            course.save()
+            print(course.assignments.all())
+        return redirect(view_one_course,course.slug)
+    if(profile.isProf or profile.isTa):
+        form=AssignmentForm(request.user.id,request.POST)
+    else:
+        form=AssignmentForm(request.user.id,request.POST)
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'page_name' : page_name, 'page_description': page_description, 'title': title, 'profile':profile,'form':form})
+
 
 
 @login_required

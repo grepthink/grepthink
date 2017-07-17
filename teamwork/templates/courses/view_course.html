@@ -55,7 +55,14 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-
+            {% if profile.isProf or profile.isTa %}
+            <li class="">
+                <a href="#assignments" data-toggle="tab" aria-expanded="false">
+                    Assignments
+                    <i class="fa fa-code-fork"></i>
+                </a>
+            </li>
+            {% endif %}
             {% if user.username == course.creator %}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -83,7 +90,20 @@
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
-
+            <div class="tab-pane" id="assignments">
+            {% if profile.isProf or profile.isTa %}
+            {% for field in form.visible_fields %}
+            <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
+            {% csrf_token %}
+              <div class="form-group{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                {{ field }}
+              </div>
+            {% endfor %}
+            <input type="submit" value="Save Assignment">
+            </form>
+            {% endif %}
+            </div>
             <div class="tab-pane" id="description">
                 <div>
                 <h3>Description: {{ course.info }}</h3>
