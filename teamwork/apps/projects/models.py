@@ -172,8 +172,6 @@ class Tsr(models.Model):
     """
     TSR objects relate a user and percent contribution info.
     """
-    start_date = models.DateTimeField(default=datetime.now)
-    end_date = models.DateTimeField(default=datetime.now)
 
     evaluator = models.CharField(max_length=255, default='')
     evaluatee = models.CharField(max_length=255, default='')

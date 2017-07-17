@@ -54,8 +54,6 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/scrum_tsr/$', project_views.tsr_scrum_update, name='tsr_scrum_update'),
         # View TSRs
         url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
-        # Assign TSR
-        url(r'^project/(?P<slug>[^/]+)/tsr_assign/$', project_views.tsr_assign, name='tsr_assign'),
 
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),

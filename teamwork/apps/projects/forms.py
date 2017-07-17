@@ -337,30 +337,6 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
-class TSRAssignForm(forms.ModelForm):
-
-    def __init__(self, uid, *args, **kwargs):
-        members = kwargs.pop('members')
-        emails = kwargs.pop('emails')
-        # scrum_master = kwargs.pop('scrum_master')
-        super(TSRAssignForm, self).__init__(*args, **kwargs)
-
-    # assined_on = forms.DateTimeField(
-    #     label='TSR Start Date',
-    #     required=True)
-    #
-    # due_date = forms.DateTimeField(
-    #     label='TSR Due Date',
-    #     required=True)
-    test_case = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Test_case',
-        max_length=255,
-        required=True)
-    class Meta:
-        model = Project
-        fields = ['test_case']
-
 class TSRUpdateForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
