@@ -183,9 +183,9 @@ class Tsr(models.Model):
     notes = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return(("%s, %s, %d, %s, %s, %s, %s, %s, %s, %s"%(self.evaluator, self.evaluatee, self.percent_contribution,
+        return(("%s, %s, %d, %s, %s, %s, %s, %s"%(self.evaluator, self.evaluatee, self.percent_contribution,
             self.positive_feedback, self.negative_feedback,
-            self.tasks_completed, self.performance_assessment, self.notes, self.start_date, self.end_date)))
+            self.tasks_completed, self.performance_assessment, self.notes)))
 
 class Project(models.Model):
     """

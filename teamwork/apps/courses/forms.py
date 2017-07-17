@@ -2,6 +2,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from datetime import datetime
+from django.contrib.admin.widgets import AdminDateWidget
 
 from teamwork.apps.profiles.models import *
 
@@ -474,13 +476,9 @@ class AssignmentForm(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
-    ass_date = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=255,
-        required=True)
-    due_date = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=255,
+
+    ass_date = forms.widgets.DateInput()
+    due_date = forms.DateTimeField(
         required=True)
     ass_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
