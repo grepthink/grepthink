@@ -519,7 +519,7 @@ def tsr_update(request, slug):
     forms=list()
     if request.method == 'POST':
         for email in emails:
-            form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=False)
+            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=False)
             if form.is_valid():
                 data=form.cleaned_data
                 percent_contribution = data.get('perc_contribution')
@@ -543,9 +543,9 @@ def tsr_update(request, slug):
 
     else:
         for m in emails:
-            form_i=TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=False)
+            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=False)
             forms.append(form_i)
-        form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, scrum_master=False)
+        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=False)
     return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
@@ -580,7 +580,7 @@ def tsr_scrum_update(request, slug):
     forms=list()
     if request.method == 'POST':
         for mail in emails:
-            form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails,prefix=mail, scrum_master=True)
+            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=mail, scrum_master=True)
             if form.is_valid():
                 data=form.cleaned_data
                 percent_contribution = data.get('perc_contribution')
@@ -606,9 +606,9 @@ def tsr_scrum_update(request, slug):
 
     else:
         for m in emails:
-            form_i=TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=True)
+            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=True)
             forms.append(form_i)
-        form = TSRUpdateForm(request.user.id, request.POST, members=members, emails=emails, scrum_master=True)
+        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=True)
     return render(request, 'projects/tsr_scrum_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
