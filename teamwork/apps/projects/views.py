@@ -517,6 +517,7 @@ def tsr_update(request, slug):
     page_description = "Update TSR form"
     title = "TSR Update"
     forms=list()
+
     if request.method == 'POST':
         for email in emails:
             form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=False)
@@ -525,10 +526,11 @@ def tsr_update(request, slug):
                 percent_contribution = data.get('perc_contribution')
                 positive_feedback = data.get('pos_fb')
                 negative_feedback = data.get('neg_fb')
+                evaluatee_query = User.objects.filter(email__iexact=email)
+                evaluatee = evaluatee_query.first()
 
-
-                cur_proj.tsr.add(Tsr.objects.create(evaluator=user.email,
-                    evaluatee=email,
+                cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
+                    evaluatee=evaluatee,
                     percent_contribution=percent_contribution,
                     positive_feedback=positive_feedback,
                     negative_feedback=negative_feedback,
@@ -589,9 +591,11 @@ def tsr_scrum_update(request, slug):
                 tasks_completed = data.get('tasks_comp')
                 performance_assessment = data.get('perf_assess')
                 notes = data.get('notes')
+                evaluatee_query = User.objects.filter(email__iexact=mail)
+                evaluatee = evaluatee_query.first()
 
-                cur_proj.tsr.add(Tsr.objects.create(evaluator=user.email,
-                    evaluatee=mail,
+                cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
+                    evaluatee=evaluatee,
                     positive_feedback=positive_feedback,
                     percent_contribution=percent_contribution,
                     negative_feedback=negative_feedback,
@@ -620,6 +624,8 @@ def view_tsr(request, slug):
     project = get_object_or_404(Project, slug=slug)
     tsrs = list(project.tsr.all())
     member_num=len(project.members.all())
+
+
     members=list()
     emails=list()
     for i in range(member_num):
@@ -631,15 +637,16 @@ def view_tsr(request, slug):
     for email in emails:
         append_count = 0
         for tsr in reversed(tsrs):
-            if tsr.evaluator == email:
+            if tsr.evaluator.email == email:
                 if append_count == len(members)-1:
                     break
                 else:
                     last_tsrs.append(tsr)
                     append_count+=1
 
-    print("last_tsrs")
-    print(last_tsrs)
+    print("lasttsrs")
+    for tsr in last_tsrs:
+        print(tsr.evaluatee.email)
 
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"

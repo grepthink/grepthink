@@ -7,13 +7,12 @@
 {% endblock head %}
 
 {% block content %}
-<h3>Professor TSR View Test</h3>
 
 {% for tsr in last_tsrs %}
 	<h4>
-  <a href="mailto:{{tsr.evaluator}}">{{tsr.evaluator}}</a>
+  <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
   evaluated
-  <a href="mailto:{{tsr.evaluatee}}">{{tsr.evaluatee}}</a>
+  <a href="mailto:{{tsr.evaluatee.email}}">{{tsr.evaluatee.email}}</a>
 	{{tsr.percent_contribution}}
 	{{tsr.positive_feedback}} {{tsr.negative_feedback}}
 	{{tsr.tasks_completed}} {{tsr.performance_assessment}}
