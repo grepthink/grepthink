@@ -49,9 +49,7 @@ urlpatterns = [
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
         # Update TSR information for normal tsr
-        url(r'^project/(?P<slug>[^/]+)/normal_tsr/$', project_views.tsr_update, name='tsr_update'),
-        # Update TSR information for scrum master tsr
-        url(r'^project/(?P<slug>[^/]+)/scrum_tsr/$', project_views.tsr_scrum_update, name='tsr_scrum_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
         # View TSRs
         url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
 

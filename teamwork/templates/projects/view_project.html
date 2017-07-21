@@ -279,14 +279,18 @@
             </div>
 
             <div class="tab-pane" id="tab_5">
+                <!--{% with "False" as scrum %}-->
                 <form action="{% url 'tsr_update' project.slug %}">
-                    <input type="submit" value="Normal TSR form" />
+                    <input type="submit" value="Normal TSR form" name="normal_form" />
                 </form>
+                <!--{% endwith %}-->
                 <br>
                 <br>
-                <form action="{% url 'tsr_scrum_update' project.slug %}">
-                    <input type="submit" value="Scrum master TSR form" />
+                <!--{% with "True" as scrum %}-->
+                <form action="{% url 'tsr_update' project.slug %}">
+                    <input type="submit" value="Scrum master TSR form" name="scrum_master_form" />
                 </form>
+                <!--{% endwith %}-->
             </div>
 
             <div class="tab-pane" id="tab_6">

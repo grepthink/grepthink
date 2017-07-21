@@ -485,8 +485,9 @@ def resource_update(request, slug):
 @login_required
 def tsr_update(request, slug):
     """
-    public method that takes in a slug and generates a form for the user
-    to show interest in all projects in a given course
+    public method that takes in a slug and generates a TSR
+    form for user. Different form generated based on which
+    button was pressed (scrum/normal)
     """
     user = request.user
     # current course
@@ -508,10 +509,13 @@ def tsr_update(request, slug):
         print("no tst available")
     else:
         print(asss[len(asss)-1].ass_name)
-    # enrollment objects containing current user
-    #enroll = Enrollment.objects.filter(user=request.user)
-    # current courses user is in
-    #user_courses = Course.objects.filter(enrollment__in=enroll)
+
+    params = str(request)
+
+    if "scrum_master_form" in params:
+        scrum_master = True
+    else:
+        scrum_master = False
 
     page_name = "TSR Update"
     page_description = "Update TSR form"
@@ -519,70 +523,9 @@ def tsr_update(request, slug):
     forms=list()
 
     if request.method == 'POST':
+
         for email in emails:
-            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=False)
-            if form.is_valid():
-                data=form.cleaned_data
-                percent_contribution = data.get('perc_contribution')
-                positive_feedback = data.get('pos_fb')
-                negative_feedback = data.get('neg_fb')
-                evaluatee_query = User.objects.filter(email__iexact=email)
-                evaluatee = evaluatee_query.first()
-
-                cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
-                    evaluatee=evaluatee,
-                    percent_contribution=percent_contribution,
-                    positive_feedback=positive_feedback,
-                    negative_feedback=negative_feedback,
-                    tasks_completed="",
-                    performance_assessment="",
-                    notes=""))
-
-                cur_proj.save()
-
-
-        return redirect(view_projects)
-
-    else:
-        for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=False)
-            forms.append(form_i)
-        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=False)
-    return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
-
-@login_required
-def tsr_scrum_update(request, slug):
-    """
-    public method that takes in a slug and generates a form for the user
-    to show interest in all projects in a given course
-    """
-    user = request.user
-    # current course
-    cur_proj = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=cur_proj)
-    print(course)
-    # projects in current course
-
-    member_num=len(cur_proj.members.all())
-    members=list()
-    emails=list()
-    for i in range(member_num):
-        members.append(cur_proj.members.all()[i])
-        if(cur_proj.members.all()[i]!=user):
-            emails.append(cur_proj.members.all()[i].email)
-
-    # enrollment objects containing current user
-    #enroll = Enrollment.objects.filter(user=request.user)
-    # current courses user is in
-    #user_courses = Course.objects.filter(enrollment__in=enroll)
-
-    page_name = "TSR Scrum Update"
-    page_description = "Update Scrum TSR form"
-    title = "TSR Scrum Update"
-    forms=list()
-    if request.method == 'POST':
-        for mail in emails:
-            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=mail, scrum_master=True)
+            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=scrum_master)
             if form.is_valid():
                 data=form.cleaned_data
                 percent_contribution = data.get('perc_contribution')
@@ -591,13 +534,13 @@ def tsr_scrum_update(request, slug):
                 tasks_completed = data.get('tasks_comp')
                 performance_assessment = data.get('perf_assess')
                 notes = data.get('notes')
-                evaluatee_query = User.objects.filter(email__iexact=mail)
+                evaluatee_query = User.objects.filter(email__iexact=email)
                 evaluatee = evaluatee_query.first()
 
                 cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
                     evaluatee=evaluatee,
-                    positive_feedback=positive_feedback,
                     percent_contribution=percent_contribution,
+                    positive_feedback=positive_feedback,
                     negative_feedback=negative_feedback,
                     tasks_completed=tasks_completed,
                     performance_assessment=performance_assessment,
@@ -609,11 +552,14 @@ def tsr_scrum_update(request, slug):
         return redirect(view_projects)
 
     else:
+        if request.POST.get("normal"):
+            print("normal")
         for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=True)
+            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=scrum_master)
             forms.append(form_i)
-        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=True)
-    return render(request, 'projects/tsr_scrum_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=scrum_master)
+    return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+
 
 @login_required
 def view_tsr(request, slug):
