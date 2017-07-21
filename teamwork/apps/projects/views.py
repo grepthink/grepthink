@@ -506,16 +506,33 @@ def tsr_update(request, slug):
     
 
     asgs = list(course.assignments.all())
+
+
     print(asgs)
+    asg_available = False
 
-    """
-    print(asg)
-    if not asg:
-        print("no tst available")
+    if not asgs:
+        print("No assignments")
     else:
-        print(asg[len(asg)-1].asg_name)
-    """
+        # date formatting
+        last_asg_ass_date = asgs[-1].ass_date
+        last_asg_ass_date = last_asg_ass_date[0:4]+"-"+last_asg_ass_date[4:6]+"-"+last_asg_ass_date[6:]
+        last_asg_ass_date = datetime.strptime(last_asg_ass_date,"%Y-%m-%d").date()
+        
+        last_asg_due_date = asgs[-1].due_date
+        last_asg_due_date = last_asg_due_date[0:4]+"-"+last_asg_due_date[4:6]+"-"+last_asg_due_date[6:]
+        last_asg_due_date = datetime.strptime(last_asg_due_date,"%Y-%m-%d").date()
+        
+        today = datetime.now().date()
+        print(last_asg_ass_date)
+        print(last_asg_due_date)
+        print(today)
+        if last_asg_ass_date < today < last_asg_due_date:
+            print("assignment in progress")
+            asg_available = True
 
+
+    # checking if button clicked was scrum or non scrum
     params = str(request)
 
     if "scrum_master_form" in params:
@@ -528,41 +545,44 @@ def tsr_update(request, slug):
     title = "TSR Update"
     forms=list()
 
-    if request.method == 'POST':
+    if(asg_available):
+        if request.method == 'POST':
 
-        for email in emails:
-            form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=scrum_master)
-            if form.is_valid():
-                data=form.cleaned_data
-                percent_contribution = data.get('perc_contribution')
-                positive_feedback = data.get('pos_fb')
-                negative_feedback = data.get('neg_fb')
-                tasks_completed = data.get('tasks_comp')
-                performance_assessment = data.get('perf_assess')
-                notes = data.get('notes')
-                evaluatee_query = User.objects.filter(email__iexact=email)
-                evaluatee = evaluatee_query.first()
+            for email in emails:
+                form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=scrum_master)
+                if form.is_valid():
+                    data=form.cleaned_data
+                    percent_contribution = data.get('perc_contribution')
+                    positive_feedback = data.get('pos_fb')
+                    negative_feedback = data.get('neg_fb')
+                    tasks_completed = data.get('tasks_comp')
+                    performance_assessment = data.get('perf_assess')
+                    notes = data.get('notes')
+                    evaluatee_query = User.objects.filter(email__iexact=email)
+                    evaluatee = evaluatee_query.first()
 
-                cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
-                    evaluatee=evaluatee,
-                    percent_contribution=percent_contribution,
-                    positive_feedback=positive_feedback,
-                    negative_feedback=negative_feedback,
-                    tasks_completed=tasks_completed,
-                    performance_assessment=performance_assessment,
-                    notes=notes))
+                    cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
+                        evaluatee=evaluatee,
+                        percent_contribution=percent_contribution,
+                        positive_feedback=positive_feedback,
+                        negative_feedback=negative_feedback,
+                        tasks_completed=tasks_completed,
+                        performance_assessment=performance_assessment,
+                        notes=notes))
 
-                cur_proj.save()
+                    cur_proj.save()
 
 
-        return redirect(view_projects)
+            return redirect(view_projects)
 
+        else:
+            for m in emails:
+                form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=scrum_master)
+                forms.append(form_i)
+            form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=scrum_master)
+        return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
     else:
-        for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=scrum_master)
-            forms.append(form_i)
-        form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=scrum_master)
-    return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+        return redirect(view_projects)
 
 
 @login_required
