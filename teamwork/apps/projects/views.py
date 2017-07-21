@@ -503,13 +503,18 @@ def tsr_update(request, slug):
         if(cur_proj.members.all()[i]!=user):
             emails.append(cur_proj.members.all()[i].email)
     course = Course.objects.get(projects=cur_proj)
-    print(course)
-    print(datetime.now().date())
-    asss=course.assignments.filter(due_date__gte='20180716').filter(ass_date__lte='20180716').all()
-    if not asss:
+    
+
+    asgs = list(course.assignments.all())
+    print(asgs)
+
+    """
+    print(asg)
+    if not asg:
         print("no tst available")
     else:
-        print(asss[len(asss)-1].ass_name)
+        print(asg[len(asg)-1].asg_name)
+    """
 
     params = str(request)
 
@@ -553,8 +558,6 @@ def tsr_update(request, slug):
         return redirect(view_projects)
 
     else:
-        if request.POST.get("normal"):
-            print("normal")
         for m in emails:
             form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=scrum_master)
             forms.append(form_i)

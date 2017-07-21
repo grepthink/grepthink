@@ -478,8 +478,7 @@ class AssignmentForm(forms.ModelForm):
         creator = User.objects.get(id=uid)
 
     ass_date = forms.widgets.DateInput()
-    due_date = forms.DateTimeField(
-        required=True)
+    due_date = forms.widgets.DateInput()
     ass_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=255,

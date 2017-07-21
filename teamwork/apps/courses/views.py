@@ -52,6 +52,7 @@ def view_courses(request):
 
 @login_required
 def view_one_course(request, slug):
+    print("inviewonecourse")
     """
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
@@ -67,8 +68,7 @@ def view_one_course(request, slug):
     students = Enrollment.objects.filter(course = course, role = "student")
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
-    for a in course.assignments.all():
-        print(a.due_date + a.ass_name)
+
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
