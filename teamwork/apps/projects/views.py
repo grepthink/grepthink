@@ -504,6 +504,7 @@ def tsr_update(request, slug):
             emails.append(cur_proj.members.all()[i].email)
     course = Course.objects.get(projects=cur_proj)
     print(course)
+    print(datetime.now().date())
     asss=course.assignments.filter(due_date__gte='20180716').filter(ass_date__lte='20180716').all()
     if not asss:
         print("no tst available")
