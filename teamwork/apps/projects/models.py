@@ -172,7 +172,7 @@ class Tsr(models.Model):
     """
     TSR objects relate a user and percent contribution info.
     """
-
+    ass_type = models.CharField(max_length=255, default='')
     evaluator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="evaluator", default=0)
     evaluatee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="evaluatee", default=0)
     percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
@@ -183,7 +183,7 @@ class Tsr(models.Model):
     notes = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return(("%s, %s, %d, %s, %s, %s, %s, %s"%(self.evaluator.email, self.evaluatee.email, self.percent_contribution,
+        return(("%s, %s, %s, %d, %s, %s, %s, %s, %s"%( self.ass_type, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
             self.positive_feedback, self.negative_feedback,
             self.tasks_completed, self.performance_assessment, self.notes)))
 

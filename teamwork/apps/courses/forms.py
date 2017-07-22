@@ -484,7 +484,7 @@ class AssignmentForm(forms.ModelForm):
         max_length=255,
         required=True)
 
-    choices=[('tsr','tsr'),('asg1','asg1'),('asg2','asg2')]
+    choices=[('tsr1','tsr1'),('tsr2','tsr2'),('tsr3','tsr3'),('etc','etc')]
 
     ass_type = forms.ChoiceField(choices=choices, widget=forms.RadioSelect(), required=True)
 

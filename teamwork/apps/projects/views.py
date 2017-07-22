@@ -529,7 +529,7 @@ def tsr_update(request, slug):
         print(last_asg_ass_date)
         print(last_asg_due_date)
         print(today)
-        if last_asg_type == 'tsr':
+        if "tsr" in last_asg_type:
             if last_asg_ass_date < today < last_asg_due_date:
                 print("assignment in progress")
                 asg_available = True
@@ -563,6 +563,7 @@ def tsr_update(request, slug):
                     notes = data.get('notes')
                     evaluatee_query = User.objects.filter(email__iexact=email)
                     evaluatee = evaluatee_query.first()
+                    ass_type = last_asg_type
 
                     cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
                         evaluatee=evaluatee,
@@ -571,11 +572,12 @@ def tsr_update(request, slug):
                         negative_feedback=negative_feedback,
                         tasks_completed=tasks_completed,
                         performance_assessment=performance_assessment,
-                        notes=notes))
+                        notes=notes,
+                        ass_type=ass_type))
 
                     cur_proj.save()
 
-
+            print(list(cur_proj.tsr.all()))
             return redirect(view_projects)
 
         else:
