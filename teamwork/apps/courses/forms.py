@@ -481,12 +481,16 @@ class AssignmentForm(forms.ModelForm):
     due_date = forms.widgets.DateInput()
     ass_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        max_length=255,
+        label="Assignment name",
+        required=True,
+        max_length=255)
+    ass_type = forms.CharField(max_length=255, label="Assignment Type",
         required=True)
-
-    choices=[('tsr1','tsr1'),('tsr2','tsr2'),('tsr3','tsr3'),('etc','etc')]
-
-    ass_type = forms.ChoiceField(choices=choices, widget=forms.RadioSelect(), required=True)
+    ass_number = forms.DecimalField(
+        widget=forms.NumberInput(),label='Assignment Number',
+        max_digits=2,
+        required=True,
+        decimal_places=0)
 
     class Meta:
         model= Assignment

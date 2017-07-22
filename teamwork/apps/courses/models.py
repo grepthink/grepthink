@@ -28,13 +28,15 @@ class Assignment(models.Model):
     ass_date=models.CharField(max_length=255, default="20000101")
     ass_type=models.CharField(max_length=255, default='tsr')
     ass_name=models.CharField(max_length=255, default="TSR for Sprint X")
+    ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
+
 
 
     def __str__(self):
         """
         Human readeable representation of the Assignment object. 
         """
-        return ("%s, %s, %s, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name))
+        return ("%s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name,self.ass_number))
 
 def get_user_courses(self):
     """

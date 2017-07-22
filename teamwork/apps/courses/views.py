@@ -83,7 +83,10 @@ def view_one_course(request, slug):
             due_date=data.get('due_date')
             ass_type=data.get('ass_type')
             ass_name=data.get('ass_name')
-            course.assignments.add(Assignment.objects.create(ass_name=ass_name, ass_type=ass_type, ass_date=ass_date, due_date=due_date))
+            ass_number=data.get('ass_number')
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date, 
+                ass_number=ass_number))
             course.save()
             print(course.assignments.all())
         return redirect(view_one_course,course.slug)
