@@ -522,14 +522,17 @@ def tsr_update(request, slug):
         last_asg_due_date = asgs[-1].due_date
         last_asg_due_date = last_asg_due_date[0:4]+"-"+last_asg_due_date[4:6]+"-"+last_asg_due_date[6:]
         last_asg_due_date = datetime.strptime(last_asg_due_date,"%Y-%m-%d").date()
+
+        last_asg_type = asgs[-1].ass_type
         
         today = datetime.now().date()
         print(last_asg_ass_date)
         print(last_asg_due_date)
         print(today)
-        if last_asg_ass_date < today < last_asg_due_date:
-            print("assignment in progress")
-            asg_available = True
+        if last_asg_type == 'tsr':
+            if last_asg_ass_date < today < last_asg_due_date:
+                print("assignment in progress")
+                asg_available = True
 
 
     # checking if button clicked was scrum or non scrum

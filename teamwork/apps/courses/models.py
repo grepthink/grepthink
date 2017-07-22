@@ -26,7 +26,7 @@ from teamwork.apps.projects.models import Project
 class Assignment(models.Model):
     due_date=models.CharField(max_length=255, default="20991231")
     ass_date=models.CharField(max_length=255, default="20000101")
-    ass_type=models.CharField(max_length=255, default='TSR')
+    ass_type=models.CharField(max_length=255, default='tsr')
     ass_name=models.CharField(max_length=255, default="TSR for Sprint X")
 
 
