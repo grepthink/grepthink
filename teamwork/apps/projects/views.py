@@ -564,7 +564,6 @@ def tsr_update(request, slug):
                     notes = data.get('notes')
                     evaluatee_query = User.objects.filter(email__iexact=email)
                     evaluatee = evaluatee_query.first()
-                    ass_type = last_asg_type
                     ass_number = last_asg_number
 
                     cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
@@ -575,7 +574,6 @@ def tsr_update(request, slug):
                         tasks_completed=tasks_completed,
                         performance_assessment=performance_assessment,
                         notes=notes,
-                        ass_type=ass_type,
                         ass_number=int(ass_number)))
 
                     cur_proj.save()
