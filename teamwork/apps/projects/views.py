@@ -308,7 +308,7 @@ def create_project(request):
             # we are doing behind the scenes stuff (waves hand)
             return redirect(view_projects)
         else:
-            messages.info(request,'Errors in form')
+            return redirect(view_projects)
     else:
         # Send form for initial project creation
         form = CreateProjectForm(request.user.id)
@@ -515,6 +515,7 @@ def tsr_update(request, slug):
         print("No assignments")
     else:
         # date formatting
+        """
         last_asg_ass_date = asgs[-1].ass_date
         last_asg_ass_date = last_asg_ass_date[0:4]+"-"+last_asg_ass_date[4:6]+"-"+last_asg_ass_date[6:]
         last_asg_ass_date = datetime.strptime(last_asg_ass_date,"%Y-%m-%d").date()
@@ -525,15 +526,25 @@ def tsr_update(request, slug):
 
         last_asg_type = asgs[-1].ass_type
         last_asg_number = asgs[-1].ass_number
+        """
         
         today = datetime.now().date()
-        print(last_asg_ass_date)
-        print(last_asg_due_date)
         print(today)
-        if "tsr" in last_asg_type:
-            if last_asg_ass_date < today < last_asg_due_date:
-                print("assignment in progress")
-                asg_available = True
+
+        for asg in asgs:
+            if "tsr" in asg.ass_type:
+                asg_ass_date = asg.ass_date
+                asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
+                asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
+
+                asg_due_date = asg.due_date
+                asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
+                asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
+
+                if asg_ass_date < today < asg_due_date:
+                    print("assignment in progress")
+                    asg_available = True
+                    asg_number = asg.ass_number
 
 
     # checking if button clicked was scrum or non scrum
@@ -564,7 +575,6 @@ def tsr_update(request, slug):
                     notes = data.get('notes')
                     evaluatee_query = User.objects.filter(email__iexact=email)
                     evaluatee = evaluatee_query.first()
-                    ass_number = last_asg_number
 
                     cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
                         evaluatee=evaluatee,
@@ -574,7 +584,7 @@ def tsr_update(request, slug):
                         tasks_completed=tasks_completed,
                         performance_assessment=performance_assessment,
                         notes=notes,
-                        ass_number=int(ass_number)))
+                        ass_number=int(asg_number)))
 
                     cur_proj.save()
 
@@ -601,7 +611,6 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     member_num=len(project.members.all())
 
-
     members=list()
     emails=list()
     for i in range(member_num):
@@ -609,7 +618,44 @@ def view_tsr(request, slug):
         emails.append(project.members.all()[i].email)
     print(emails)
 
+    '''
+    if tsrs:
+        max_asg_number = tsrs[0].ass_number
+        for i in range(0,len(tsrs)):
+            if max_asg_number < tsrs[i].ass_number:
+                max_asg_number = tsrs[i].ass_number
+        print(max_asg_number)
+    else:
+        max_asg_number=0
+    '''
+
+    tsr_dict = {}
+    for tsr in project.tsr.all():
+        asg_number = int(tsr.ass_number)
+        if not asg_number in tsr_dict:
+            tsr_dict[asg_number] = [tsr]
+        else:
+            tsr_dict[asg_number].append(tsr)
+
+    print(tsr_dict)
+    for key in tsr_dict:
+        print(tsr_dict[key][0].evaluator)
+
     last_tsrs = []
+    for key in tsr_dict:
+        for email in emails:
+            append_count = 0
+            for tsr in reversed(tsr_dict[key]):
+                if tsr.evaluator.email == email:
+                    if append_count == len(members)-1:
+                        break
+                    else:
+                        last_tsrs.append(tsr)
+                        append_count+=1
+        print('last')
+        print(last_tsrs)
+
+    """
     for email in emails:
         append_count = 0
         for tsr in reversed(tsrs):
@@ -620,10 +666,7 @@ def view_tsr(request, slug):
                     last_tsrs.append(tsr)
                     append_count+=1
 
-    print("lasttsrs")
-    for tsr in last_tsrs:
-        print(tsr.evaluatee.email)
-
+    """
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
     title = "Professor/TA TSR View"
