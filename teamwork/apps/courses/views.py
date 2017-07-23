@@ -14,6 +14,8 @@ from teamwork.apps.projects.models import *
 from .forms import *
 from .models import *
 
+from datetime import datetime
+
 import csv
 import codecs
 
@@ -52,7 +54,6 @@ def view_courses(request):
 
 @login_required
 def view_one_course(request, slug):
-    print("inviewonecourse")
     """
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
@@ -66,6 +67,8 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
     profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    asgs = list(course.assignments.all())
+
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
 
@@ -84,6 +87,29 @@ def view_one_course(request, slug):
             ass_type=data.get('ass_type')
             ass_name=data.get('ass_name')
             ass_number=data.get('ass_number')
+
+            # checking if there is an assignment of same type already in progress
+            split_type = ass_type.split(" ")
+            print(split_type)
+            for asg in asgs:
+                for word in split_type:
+                    if word in asg.ass_type:
+                        today = datetime.now().date()
+
+                        asg_ass_date = asg.ass_date
+                        asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
+                        asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
+
+                        asg_due_date = asg.due_date
+                        asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
+                        asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
+
+                        if asg_ass_date < today < asg_due_date:
+                            print("assignment already in progress")
+                            # need to change this redirect to display message
+                            # so that user is aware their info wasn't stored
+                            return redirect(view_one_course,course.slug)
+
             course.assignments.add(Assignment.objects.create(ass_name=ass_name,
                 ass_type=ass_type, ass_date=ass_date, due_date=due_date, 
                 ass_number=ass_number))

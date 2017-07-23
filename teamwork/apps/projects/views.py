@@ -493,8 +493,7 @@ def tsr_update(request, slug):
     # current course
     cur_proj = get_object_or_404(Project, slug=slug)
 
-    # projects in current course
-
+    # get list of emails of users in current project
     member_num=len(cur_proj.members.all())
     members=list()
     emails=list()
@@ -508,26 +507,17 @@ def tsr_update(request, slug):
     asgs = list(course.assignments.all())
 
 
-    print(asgs)
+    # if an assignment is not available, boolean is set to
+    # false and user is redirected to project view when they
+    # try to fill out a tsr
     asg_available = False
-
     if not asgs:
         print("No assignments")
     else:
-        # date formatting
-        """
-        last_asg_ass_date = asgs[-1].ass_date
-        last_asg_ass_date = last_asg_ass_date[0:4]+"-"+last_asg_ass_date[4:6]+"-"+last_asg_ass_date[6:]
-        last_asg_ass_date = datetime.strptime(last_asg_ass_date,"%Y-%m-%d").date()
-        
-        last_asg_due_date = asgs[-1].due_date
-        last_asg_due_date = last_asg_due_date[0:4]+"-"+last_asg_due_date[4:6]+"-"+last_asg_due_date[6:]
-        last_asg_due_date = datetime.strptime(last_asg_due_date,"%Y-%m-%d").date()
-
-        last_asg_type = asgs[-1].ass_type
-        last_asg_number = asgs[-1].ass_number
-        """
-        
+        # if an assignment is available, the lines below will check the date
+        # of the assignment, verify that todays date is in between the assigned
+        # date and the due date, and set the boolean for true as well as making
+        # the assignment number = the assignment number of the assignment object
         today = datetime.now().date()
         print(today)
 
@@ -547,9 +537,8 @@ def tsr_update(request, slug):
                     asg_number = asg.ass_number
 
 
-    # checking if button clicked was scrum or non scrum
+    # This checks if button clicked was scrum or non scrum
     params = str(request)
-
     if "scrum_master_form" in params:
         scrum_master = True
     else:
@@ -598,6 +587,8 @@ def tsr_update(request, slug):
             form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=scrum_master)
         return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
     else:
+        # need to change this redirect to display message
+        # so that user is aware why they were redirected
         return redirect(view_projects)
 
 
