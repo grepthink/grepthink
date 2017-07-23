@@ -611,6 +611,7 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     member_num=len(project.members.all())
 
+    # put emails into list
     members=list()
     emails=list()
     for i in range(member_num):
@@ -618,17 +619,8 @@ def view_tsr(request, slug):
         emails.append(project.members.all()[i].email)
     print(emails)
 
-    '''
-    if tsrs:
-        max_asg_number = tsrs[0].ass_number
-        for i in range(0,len(tsrs)):
-            if max_asg_number < tsrs[i].ass_number:
-                max_asg_number = tsrs[i].ass_number
-        print(max_asg_number)
-    else:
-        max_asg_number=0
-    '''
-
+    # put all TSRs into dictionary where key is tsr number
+    # and value is a list of TSRs
     tsr_dict = {}
     for tsr in project.tsr.all():
         asg_number = int(tsr.ass_number)
@@ -637,10 +629,9 @@ def view_tsr(request, slug):
         else:
             tsr_dict[asg_number].append(tsr)
 
-    print(tsr_dict)
-    for key in tsr_dict:
-        print(tsr_dict[key][0].evaluator)
-
+    # Using the TSR dictionary above, for each TSR assignment
+    # put the most up to date TSRs from each user into a list.
+    # This is the list that the professor/TA will be shown.
     last_tsrs = []
     for key in tsr_dict:
         for email in emails:
@@ -652,29 +643,14 @@ def view_tsr(request, slug):
                     else:
                         last_tsrs.append(tsr)
                         append_count+=1
-        print('last')
         print(last_tsrs)
 
-    """
-    for email in emails:
-        append_count = 0
-        for tsr in reversed(tsrs):
-            if tsr.evaluator.email == email:
-                if append_count == len(members)-1:
-                    break
-                else:
-                    last_tsrs.append(tsr)
-                    append_count+=1
-
-    """
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
     title = "Professor/TA TSR View"
     if request.method == 'POST':
 
         return redirect(view_projects)
-
-    #else:
 
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'last_tsrs' : last_tsrs})
 
