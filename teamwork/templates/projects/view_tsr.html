@@ -2,23 +2,70 @@
 {% load static %}
 {% load i18n %}
 
-{% block head %}
-  <script src="{% static 'js/projects.js' %}"></script>
-{% endblock head %}
 
 {% block content %}
+    <html>
+      <head>
+        <script src="{% static 'js/projects.js' %}"></script>
+        <style>
+          table {
+            border-collapse: collapse;
+            width: 100%;
+          }
 
-{% for tsr in last_tsrs %}
-	<h4>
-  <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
-  evaluated
-  <a href="mailto:{{tsr.evaluatee.email}}">{{tsr.evaluatee.email}}</a>
-	{{tsr.percent_contribution}}
-	{{tsr.positive_feedback}} {{tsr.negative_feedback}}
-	{{tsr.tasks_completed}} {{tsr.performance_assessment}}
-	{{tsr.notes}}
-	{{tsr.ass_number}}</h4>
-	<br>
-{% endfor %}
+          th, td {
+            text-align: left;
+            padding: 8px;
+          }
 
+          th {
+            background-color: #4CAF50;
+            color: black;
+          }
+        </style>
+      </head>
+    </html>
+
+    <h2>TSR Form Evaluations</h2>
+
+  <table>
+      <tr>
+        <th>Student</th>
+        <th>Evaluators</th>
+        <th>% Contributions</th>
+        <th>compliments</th>
+        <th>improvements</th>
+      </tr>
+
+    {% for tsr in last_tsrs %}
+      <tr>
+        <td>  <a href="mailto:{{tsr.evaluatee.email}}">{{tsr.evaluatee.email}}</a></td>
+
+        <td>
+          {% for tsr in last_tsrs %}
+            <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
+            <p>
+          {% endfor %}
+        </td>
+
+        <td>
+          {% for tsr in last_tsrs %}
+            {{tsr.percent_contribution}}
+            <p>
+          {% endfor %}
+        </td>
+
+        <td>
+    	     {{tsr.positive_feedback}}
+        </td>
+
+        <td>
+          {{tsr.negative_feedback}}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+<!-- {{tsr.tasks_completed}} {{tsr.performance_assessment}}
+{{tsr.notes}}
+{{tsr.ass_number}} -->
 {% endblock content %}
