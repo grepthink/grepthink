@@ -34,7 +34,7 @@ class Assignment(models.Model):
 
     def __str__(self):
         """
-        Human readeable representation of the Assignment object. 
+        Human readeable representation of the Assignment object.
         """
         return ("%s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name,self.ass_number))
 

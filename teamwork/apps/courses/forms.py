@@ -1,5 +1,6 @@
 #imports forms
 from django import forms
+from django.forms import extras
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from datetime import datetime
@@ -477,8 +478,16 @@ class AssignmentForm(forms.ModelForm):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
 
-    ass_date = forms.widgets.DateInput()
-    due_date = forms.widgets.DateInput()
+    ass_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d']
+    )
+    due_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d']
+    )
+    # ass_date = forms.widgets.DateInput()
+    # due_date = forms.widgets.DateInput()
     ass_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Assignment name",
@@ -492,6 +501,9 @@ class AssignmentForm(forms.ModelForm):
         required=True,
         decimal_places=0)
 
+
     class Meta:
         model= Assignment
+        widgets = {
+        }
         fields = ['ass_date', 'due_date','ass_name','ass_type']
