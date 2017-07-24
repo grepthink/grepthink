@@ -2,23 +2,83 @@
 {% load static %}
 {% load i18n %}
 
-{% block head %}
-  <script src="{% static 'js/projects.js' %}"></script>
-{% endblock head %}
 
 {% block content %}
+    <html>
+      <head>
+        <script src="{% static 'js/projects.js' %}"></script>
+        <style>
+          table {
+            border-collapse: collapse;
+            width: 100%;
+          }
+          th, td {
+            text-align: left;
+            padding: 8px;
+          }
+          th {
+            background-color: #4CAF50;
+            color: black;
+          }
+        </style>
+      </head>
+    </html>
 
-{% for tsr in last_tsrs %}
-	<h4>
-  <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
-  evaluated
-  <a href="mailto:{{tsr.evaluatee.email}}">{{tsr.evaluatee.email}}</a>
-	{{tsr.percent_contribution}}
-	{{tsr.positive_feedback}} {{tsr.negative_feedback}}
-	{{tsr.tasks_completed}} {{tsr.performance_assessment}}
-	{{tsr.notes}}
-	{{tsr.ass_number}}</h4>
-	<br>
-{% endfor %}
+    <h2>TSR Form Evaluations</h2>
+    {% for tsrset in tsrs%}
+    For Sprint {{tsrset.number}}
+  <table>
+      <tr>
+        <th>Student</th>
+        <th>Evaluators</th>
+        <th>%Contributions</th>
+        <th>Positive Feedbacks</th>
+        <th>Negative Feedbacks</th>
+        <th> Tasks Completed </th>
+        <th> Performance Assessment </th>
+        <th> Notes </th>
 
+      </tr>
+
+    {% for tsrdict in tsrset.dict %}
+      <tr>
+        <td>  <a href="mailto:{{tsr.evaluatee.email}}">{{tsrdict.email}}</a></td>
+        {% for tsr in tsrdict.tsr %}
+        <td>
+            <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
+            <p>
+        </td>
+
+        <td>
+            {{tsr.percent_contribution}}
+            <p>
+        </td>
+
+        <td>
+    	     {{tsr.positive_feedback}}
+        </td>
+
+        <td>
+          {{tsr.negative_feedback}}
+        </td>
+        <td>
+          {{tsr.tasks_completed}}
+        </td>
+        <td>
+          {{tsr.performance_assessment}}
+        </td>
+        <td>
+          {{tsr.notes}}
+        </td>
+      </tr>
+      <td>
+      {% endfor %}
+    </td>
+    {% endfor %}
+  </table>
+  <br>
+  {% endfor %}
+<!-- {{tsr.tasks_completed}} {{tsr.performance_assessment}}
+{{tsr.notes}}
+{{tsr.ass_number}} -->
 {% endblock content %}
