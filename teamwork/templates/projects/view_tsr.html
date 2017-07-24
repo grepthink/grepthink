@@ -17,7 +17,6 @@
             text-align: left;
             padding: 8px;
           }
-
           th {
             background-color: #4CAF50;
             color: black;
@@ -27,32 +26,33 @@
     </html>
 
     <h2>TSR Form Evaluations</h2>
-
+    {% for tsrset in tsrs%}
+    For Sprint {{tsrset.number}}
   <table>
       <tr>
         <th>Student</th>
         <th>Evaluators</th>
-        <th>% Contributions</th>
-        <th>compliments</th>
-        <th>improvements</th>
+        <th>%Contributions</th>
+        <th>Positive Feedbacks</th>
+        <th>Negative Feedbacks</th>
+        <th> Tasks Completed </th>
+        <th> Performance Assessment </th>
+        <th> Notes </th>
+
       </tr>
 
-    {% for tsr in last_tsrs %}
+    {% for tsrdict in tsrset.dict %}
       <tr>
-        <td>  <a href="mailto:{{tsr.evaluatee.email}}">{{tsr.evaluatee.email}}</a></td>
-
+        <td>  <a href="mailto:{{tsr.evaluatee.email}}">{{tsrdict.email}}</a></td>
+        {% for tsr in tsrdict.tsr %}
         <td>
-          {% for tsr in last_tsrs %}
             <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
             <p>
-          {% endfor %}
         </td>
 
         <td>
-          {% for tsr in last_tsrs %}
             {{tsr.percent_contribution}}
             <p>
-          {% endfor %}
         </td>
 
         <td>
@@ -62,9 +62,24 @@
         <td>
           {{tsr.negative_feedback}}
         </td>
+
+        <td>
+          {{tsr.tasks_completed}}
+        </td>
+        <td>
+          {{tsr.performance_assessment}}
+        </td>
+        <td>
+          {{tsr.notes}}
+        </td>
       </tr>
+      <td>
+      {% endfor %}
+    </td>
     {% endfor %}
   </table>
+  <br>
+  {% endfor %}
 <!-- {{tsr.tasks_completed}} {{tsr.performance_assessment}}
 {{tsr.notes}}
 {{tsr.ass_number}} -->

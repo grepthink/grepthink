@@ -502,7 +502,7 @@ def tsr_update(request, slug):
         if(cur_proj.members.all()[i]!=user):
             emails.append(cur_proj.members.all()[i].email)
     course = Course.objects.get(projects=cur_proj)
-    
+
 
     asgs = list(course.assignments.all())
 
@@ -522,7 +522,7 @@ def tsr_update(request, slug):
         print(today)
 
         for asg in asgs:
-            if "tsr" in asg.ass_type:
+            if "tsr" in asg.ass_type.lower():
                 asg_ass_date = asg.ass_date
                 asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
                 asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
@@ -530,8 +530,7 @@ def tsr_update(request, slug):
                 asg_due_date = asg.due_date
                 asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
                 asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
-
-                if asg_ass_date < today < asg_due_date:
+                if asg_ass_date < today <= asg_due_date:
                     print("assignment in progress")
                     asg_available = True
                     asg_number = asg.ass_number
@@ -608,42 +607,35 @@ def view_tsr(request, slug):
     for i in range(member_num):
         members.append(project.members.all()[i])
         emails.append(project.members.all()[i].email)
-    print(emails)
 
     # put all TSRs into dictionary where key is tsr number
     # and value is a list of TSRs
-    tsr_dict = {}
-    for tsr in project.tsr.all():
-        asg_number = int(tsr.ass_number)
-        if not asg_number in tsr_dict:
-            tsr_dict[asg_number] = [tsr]
-        else:
-            tsr_dict[asg_number].append(tsr)
+    tsr_dicts=list()
+    tsr_dict = list()
+    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
 
-    # Using the TSR dictionary above, for each TSR assignment
-    # put the most up to date TSRs from each user into a list.
-    # This is the list that the professor/TA will be shown.
-    last_tsrs = []
-    for key in tsr_dict:
-        for email in emails:
-            append_count = 0
-            for tsr in reversed(tsr_dict[key]):
-                if tsr.evaluator.email == email:
-                    if append_count == len(members)-1:
-                        break
-                    else:
-                        last_tsrs.append(tsr)
-                        append_count+=1
-        print(last_tsrs)
+    for i in sprint_numbers.all():
+        tsr_dict=list()
+        for member in members:
+            tsr_single=list()
+            for member_ in members:
+                if member == member_:
+                    continue
+                he=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
+                tsr_single.append(he[len(he)-1])
+            tsr_dict.append({'email':member.email, 'tsr' :tsr_single})
+        tsr_dicts.append({'number': i , 'dict':tsr_dict})
+
 
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
     title = "Professor/TA TSR View"
+
     if request.method == 'POST':
 
         return redirect(view_projects)
 
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'last_tsrs' : last_tsrs})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'member_num' : len(members)})
 
 def find_meeting(slug):
     """
