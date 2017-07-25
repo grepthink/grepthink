@@ -111,7 +111,7 @@ def view_one_course(request, slug):
                             return redirect(view_one_course,course.slug)
 
             course.assignments.add(Assignment.objects.create(ass_name=ass_name,
-                ass_type=ass_type, ass_date=ass_date, due_date=due_date, 
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date,
                 ass_number=ass_number))
             course.save()
             print(course.assignments.all())
