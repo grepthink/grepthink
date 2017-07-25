@@ -170,16 +170,27 @@ class Interest(models.Model):
 
 class Tsr(models.Model):
     """
-    TSR objects relate a user and percent contribution info.
+    TSR objects relate a user and tsr fields, along with assignment information
     """
+    # number of the TSR assignment form was submitted for
     ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
-    evaluator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="evaluator", default=0)
-    evaluatee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="evaluatee", default=0)
+    # person who is evaluating
+    evaluator = models.ForeignKey(User, on_delete=models.CASCADE, 
+        related_name="evaluator", default=0)
+    # person being evaluated
+    evaluatee = models.ForeignKey(User, on_delete=models.CASCADE,
+        related_name="evaluatee", default=0)
+    # sprint percent contribution
     percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
+    # evaluatee pros
     positive_feedback = models.CharField(max_length=255, default='')
+    # evaluatee cons
     negative_feedback = models.CharField(max_length=255, default='')
+    # scrum input only
     tasks_completed = models.CharField(max_length=255, default='')
+    # scrum input only
     performance_assessment = models.CharField(max_length=255, default='')
+    # scrum input only
     notes = models.CharField(max_length=255, default='')
 
     def __str__(self):

@@ -524,11 +524,9 @@ def tsr_update(request, slug):
         for asg in asgs:
             if "tsr" in asg.ass_type.lower():
                 asg_ass_date = asg.ass_date
-                # asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
                 asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
 
                 asg_due_date = asg.due_date
-                # asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
                 asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
                 if asg_ass_date < today <= asg_due_date:
                     print("assignment in progress")
@@ -552,8 +550,11 @@ def tsr_update(request, slug):
         if request.method == 'POST':
 
             for email in emails:
-                form = TSR(request.user.id, request.POST, members=members, emails=emails,prefix=email, scrum_master=scrum_master)
+                # grab form
+                form = TSR(request.user.id, request.POST, members=members,
+                    emails=emails,prefix=email, scrum_master=scrum_master)
                 if form.is_valid():
+                    # put form data in variables
                     data=form.cleaned_data
                     percent_contribution = data.get('perc_contribution')
                     positive_feedback = data.get('pos_fb')
@@ -564,6 +565,7 @@ def tsr_update(request, slug):
                     evaluatee_query = User.objects.filter(email__iexact=email)
                     evaluatee = evaluatee_query.first()
 
+                    # gets fields variables and saves them to project
                     cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
                         evaluatee=evaluatee,
                         percent_contribution=percent_contribution,
@@ -580,11 +582,17 @@ def tsr_update(request, slug):
             return redirect(view_projects)
 
         else:
+            # if request was not post then display forms
             for m in emails:
-                form_i=TSR(request.user.id, request.POST, members=members, emails=emails, prefix=m, scrum_master=scrum_master)
+                form_i=TSR(request.user.id, request.POST, members=members,
+                    emails=emails, prefix=m, scrum_master=scrum_master)
                 forms.append(form_i)
-            form = TSR(request.user.id, request.POST, members=members, emails=emails, scrum_master=scrum_master)
-        return render(request, 'projects/tsr_update.html', {'forms':forms,'emails':emails,'cur_proj': cur_proj, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+            form = TSR(request.user.id, request.POST, members=members,
+                emails=emails, scrum_master=scrum_master)
+        return render(request, 'projects/tsr_update.html', 
+            {'forms':forms,'emails':emails,'cur_proj': cur_proj,
+            'page_name' : page_name, 'page_description': page_description,
+            'title': title})
     else:
         # need to change this redirect to display message
         # so that user is aware why they were redirected
@@ -608,28 +616,7 @@ def view_tsr(request, slug):
         members.append(project.members.all()[i])
         emails.append(project.members.all()[i].email)
 
-    # put all TSRs into dictionary where key is tsr number
-    # and value is a list of TSRs
-    '''
-    For all sprints, for all members get tsrs evaluated from each of team members
-
-    Tsr_dicts =
-    [
-    {
-        'number': 1,                                    //sprint number
-        'dict':[                                        //dictionary for a student and tsr
-            {
-            'email': example@ucsc.edu,                  //email for the student being graded
-            'tsr' : [tsr_from_a, tsr_from_b, tsr_from_c]//tsrs that evaluated the student
-            },
-            ... ],
-        'averages' : AVERAGE_PERCENTAGE                 //a list of (email, average_score) to show
-    },
-
-    ...
-    ]
-
-    '''
+    # for every sprint, get the tsr's and calculate the average % contribution
     tsr_dicts=list()
     tsr_dict = list()
     sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
@@ -638,6 +625,8 @@ def view_tsr(request, slug):
         tsr_dict=list()
         for member in members:
             tsr_single=list()
+            # for every member in project, filter query using member.id 
+            # and assignment number
             for member_ in members:
                 if member == member_:
                     continue
@@ -650,9 +639,11 @@ def view_tsr(request, slug):
                 for tsr_obj in tsr_single:
                     avg=avg+tsr_obj.percent_contribution
                 avg=avg/len(tsr_single)
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single, 'avg' : avg})
+            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
+                'avg' : avg})
             averages.append({'email':member.email,'avg':avg})
-        tsr_dicts.append({'number': i , 'dict':tsr_dict, 'averages':averages})
+        tsr_dicts.append({'number': i , 'dict':tsr_dict,
+            'averages':averages})
 
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
@@ -661,7 +652,7 @@ def view_tsr(request, slug):
     if request.method == 'POST':
 
         return redirect(view_projects)
-
+    # send the dictionary to the html
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'member_num' : len(members), 'avg':averages})
 
 def find_meeting(slug):

@@ -69,15 +69,12 @@ def view_one_course(request, slug):
     students = Enrollment.objects.filter(course = course, role = "student")
     asgs = list(course.assignments.all())
 
-    # professor = Enrollment.objects.filter(course = course, role = "professor")
-    # can add TA or w/e in the future
 
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    # prof = get_object_or_404(User, username=professor)
     if(request.method=='POST'):
         form=AssignmentForm(request.user.id,request.POST)
         if form.is_valid():
@@ -88,23 +85,25 @@ def view_one_course(request, slug):
             ass_name=data.get('ass_name')
             ass_number=data.get('ass_number')
 
-            # checking if there is an assignment of same type already in progress
+            # checking if there is an assignment of same type already in
+            # progress based on assignment type and date
             split_type = ass_type.split(" ")
             print(split_type)
             for asg in asgs:
                 for word in split_type:
                     if word in asg.ass_type:
                         today = datetime.now().date()
-
+                        # date formatting
                         asg_ass_date = asg.ass_date
-                        # asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
-                        asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
-
+                        asg_ass_date = datetime.strptime(asg_ass_date,
+                            "%Y-%m-%d").date()
+                        # date formatting
                         asg_due_date = asg.due_date
-                        # asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
-                        asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
+                        asg_due_date = datetime.strptime(asg_due_date,
+                            "%Y-%m-%d").date()
 
-                        if asg_ass_date < today < asg_due_date:
+                        # verifies existing project doesnt exist within due date
+                        if asg_ass_date < today <= asg_due_date:
                             print("assignment already in progress")
                             # need to change this redirect to display message
                             # so that user is aware their info wasn't stored
@@ -121,8 +120,10 @@ def view_one_course(request, slug):
     else:
         form=AssignmentForm(request.user.id,request.POST)
     return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'page_name' : page_name, 'page_description': page_description, 'title': title, 'profile':profile,'form':form})
+        'course': course , 'projects': projects, 'date_updates': date_updates,
+            'students':student_users,
+        'page_name' : page_name, 'page_description': page_description,
+            'title': title, 'profile':profile,'form':form})
 
 
 
