@@ -95,7 +95,7 @@
             {% for field in form.visible_fields %}
             <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
             {% csrf_token %}
-              <div class="form-group{% if field.errors %} has-error{% endif %}">
+              <div class="form-group">
                 <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
                 {{ field }}
               </div>
