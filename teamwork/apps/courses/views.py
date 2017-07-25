@@ -97,11 +97,11 @@ def view_one_course(request, slug):
                         today = datetime.now().date()
 
                         asg_ass_date = asg.ass_date
-                        asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
+                        # asg_ass_date = asg_ass_date[0:4]+"-"+asg_ass_date[4:6]+"-"+asg_ass_date[6:]
                         asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
 
                         asg_due_date = asg.due_date
-                        asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
+                        # asg_due_date = asg_due_date[0:4]+"-"+asg_due_date[4:6]+"-"+asg_due_date[6:]
                         asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
 
                         if asg_ass_date < today < asg_due_date:
