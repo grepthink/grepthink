@@ -2,8 +2,6 @@ Setup and Installation
 =====
 
 
-# Setting up a development environment to contribute
-
 ## Step 1: Python Virtual Enviornment
 Note: Python 3.6 is assumed. Check your python version with `python --version`
 
@@ -31,23 +29,25 @@ alias tw="cd ~/Documents/my_venv && source bin/activate"
 You can always exit the venv with `deactivate`
 
 ## Step 2: Cloning the Repo
-Optionally fork the teamwork-project repo. Clone it into the venv folder you just created. That's it, have a cookie.
+Optionally fork the teamwork-project repo. Clone it into the venv folder you just created.
 
 ## Step 3: Make a .env file based on .env.example
-The .env file should be in the my_venv (or whatever you named your venv) folder. So above the teamwork-project folder.
+The .env file should be in the my_venv folder which will be above the teamwork-project folder.
 
 This is so we can keep the secret key hidden. 
 
-It also allows us to use sqlite locally and postgres in production, neat.
+It also allows us to use sqlite locally and postgres in production.
 
 For local develompent, your DATABASE_URL can be something like:
 `DATABASE_URL=sqlite:////Users/sammyslug/Documents/my_venv/teamwork-project/teamwork/db.sqlite3`
+
+Be sure your path is correct; it is easy to mess up.
 
 The .env file should be in /my_venv/teamwork-project
 
 
 ## Step 4: Install dependencies
-This part is fun because it's easy. Make sure you're in your venv then install everything in requirements.txt
+Make sure you're in your venv then install everything in requirements.txt
 ```bash
 $ pip install -r requirements.txt
 ```
