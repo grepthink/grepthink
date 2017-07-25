@@ -34,7 +34,7 @@ Optionally fork the teamwork-project repo. Clone it into the venv folder you jus
 ## Step 3: Make a .env file based on .env.example
 
 You can find the example for windows and linux/mac in my_venv/grepthink/etc.
-This can be copy pasted but you will want to change the DATABASE_URL value.
+This can be copy pasted but you will want to change the DATABASE_URL value and the name of the file to be ".env".
 
 The .env file should be in the my_venv folder which will be above the teamwork-project folder.
 
