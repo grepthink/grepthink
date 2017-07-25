@@ -589,7 +589,7 @@ def tsr_update(request, slug):
                 forms.append(form_i)
             form = TSR(request.user.id, request.POST, members=members,
                 emails=emails, scrum_master=scrum_master)
-        return render(request, 'projects/tsr_update.html', 
+        return render(request, 'projects/tsr_update.html',
             {'forms':forms,'emails':emails,'cur_proj': cur_proj,
             'page_name' : page_name, 'page_description': page_description,
             'title': title})
@@ -625,7 +625,7 @@ def view_tsr(request, slug):
         tsr_dict=list()
         for member in members:
             tsr_single=list()
-            # for every member in project, filter query using member.id 
+            # for every member in project, filter query using member.id
             # and assignment number
             for member_ in members:
                 if member == member_:
@@ -645,6 +645,9 @@ def view_tsr(request, slug):
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
+    med = int(100/len(members))
+    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
+    print (mid)
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
     title = "Professor/TA TSR View"
@@ -652,8 +655,7 @@ def view_tsr(request, slug):
     if request.method == 'POST':
 
         return redirect(view_projects)
-    # send the dictionary to the html
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'member_num' : len(members), 'avg':averages})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
 
 def find_meeting(slug):
     """

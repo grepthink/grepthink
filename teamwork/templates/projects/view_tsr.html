@@ -51,7 +51,15 @@
         </td>
 
         <td>
-            {{tsr.percent_contribution}}
+          {% if contribute_levels.high < tsr.percent_contribution%}
+            <div style="color:blue">{{tsr.percent_contribution}}</div>
+          {% else %}
+          {% if contribute_levels.low < tsr.percent_contribution %}
+            <div style="color:green">{{tsr.percent_contribution}}</div>
+          {%else%}
+            <div style="color:red">{{tsr.percent_contribution}}</div>
+          {% endif %}
+          {% endif %}
             <p>
         </td>
 
@@ -87,7 +95,18 @@
   {% for avgs in tsrset.averages %}
   <tr>
     <td>{{avgs.email}}</td>
-    <td>{{avgs.avg}}</td>
+    <td>
+      {% if contribute_levels.high < avgs.avg%}
+          <div style="color:blue">{{avgs.avg}}</div>
+      {% else %}
+      {% if contribute_levels.low < avgs.avg %}
+        <div style="color:green">{{avgs.avg}}</div>
+      {%else%}
+
+        <div style="color:red">{{avgs.avg}}</div>
+      {% endif %}
+      {% endif %}
+      </td>
   </tr>
   {% endfor %}
 </table>
