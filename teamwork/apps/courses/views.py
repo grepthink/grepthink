@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from django.urls import reverse
 
+from django.contrib import messages
+
 from teamwork.apps.projects.models import *
 
 from .forms import *
@@ -120,6 +122,7 @@ def view_one_course(request, slug):
         form=AssignmentForm(request.user.id,request.POST)
     else:
         form=AssignmentForm(request.user.id,request.POST)
+    messages.info(request, 'You have successfully created an assignment')
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'profile':profile,'form':form})
