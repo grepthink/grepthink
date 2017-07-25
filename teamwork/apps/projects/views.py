@@ -622,7 +622,9 @@ def view_tsr(request, slug):
                 if member == member_:
                     continue
                 he=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
-                tsr_single.append(he[len(he)-1])
+                if(len(he)==0):
+			continue
+		tsr_single.append(he[len(he)-1])
             tsr_dict.append({'email':member.email, 'tsr' :tsr_single})
         tsr_dicts.append({'number': i , 'dict':tsr_dict})
 
