@@ -614,6 +614,26 @@ def view_tsr(request, slug):
     tsr_dict = list()
     sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
 
+    '''
+    For all sprints, for all members get tsrs evaluated from each of team members
+
+    Tsr_dicts =
+    [
+    {
+        'number': 1,                                    //sprint number
+        'dict':[                                        //dictionary for a student and tsr
+            {
+            'email': example@ucsc.edu,                  //email for the student being graded
+            'tsr' : [tsr_from_a, tsr_from_b, tsr_from_c]//tsrs that evaluated the student
+            },
+            ... ],
+        'averages' : AVERAGE_PERCENTAGE                 //a list of (email, average_score) to show
+    },
+
+    ...
+    ]
+
+    '''
     for i in sprint_numbers.all():
         tsr_dict=list()
         for member in members:
@@ -625,9 +645,14 @@ def view_tsr(request, slug):
                 if(len(he)==0):
                     continue
                 tsr_single.append(he[len(he)-1])
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single})
-        tsr_dicts.append({'number': i , 'dict':tsr_dict})
-
+            avg=0
+            if(len(tsr_single)!=0):
+                for tsr_obj in tsr_single:
+                    avg=avg+tsr_obj.percent_contribution
+                avg=avg/len(tsr_single)
+            tsr_dict.append({'email':member.email, 'tsr' :tsr_single, 'avg' : avg})
+            averages.append({'email':member.email,'avg':avg})
+        tsr_dicts.append({'number': i , 'dict':tsr_dict, 'averages':averages})
 
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
