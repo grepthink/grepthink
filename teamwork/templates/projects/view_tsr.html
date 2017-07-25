@@ -27,7 +27,7 @@
 
     <h2>TSR Form Evaluations</h2>
     {% for tsrset in tsrs%}
-    For Sprint {{tsrset.number}}
+    <h2>For Sprint {{tsrset.number}}</h2>
   <table>
       <tr>
         <th>Student</th>
@@ -78,6 +78,19 @@
     {% endfor %}
   </table>
   <br>
+  <h3>Average Scores</h3><br>
+  <table>
+    <tr>
+      <th>student</th>
+      <th>average score</th>
+    </tr>
+  {% for avgs in tsrset.averages %}
+  <tr>
+    <td>{{avgs.email}}</td>
+    <td>{{avgs.avg}}</td>
+  </tr>
+  {% endfor %}
+</table>
   {% endfor %}
 <!-- {{tsr.tasks_completed}} {{tsr.performance_assessment}}
 {{tsr.notes}}

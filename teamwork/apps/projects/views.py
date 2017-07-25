@@ -610,10 +610,6 @@ def view_tsr(request, slug):
 
     # put all TSRs into dictionary where key is tsr number
     # and value is a list of TSRs
-    tsr_dicts=list()
-    tsr_dict = list()
-    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
-
     '''
     For all sprints, for all members get tsrs evaluated from each of team members
 
@@ -634,17 +630,21 @@ def view_tsr(request, slug):
     ]
 
     '''
+    tsr_dicts=list()
+    tsr_dict = list()
+    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
     for i in sprint_numbers.all():
+        averages=list()
         tsr_dict=list()
         for member in members:
             tsr_single=list()
             for member_ in members:
                 if member == member_:
                     continue
-                he=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
-                if(len(he)==0):
+                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
+                if(len(tsr_query_result)==0):
                     continue
-                tsr_single.append(he[len(he)-1])
+                tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
             avg=0
             if(len(tsr_single)!=0):
                 for tsr_obj in tsr_single:
@@ -662,7 +662,7 @@ def view_tsr(request, slug):
 
         return redirect(view_projects)
 
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'member_num' : len(members)})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'member_num' : len(members), 'avg':averages})
 
 def find_meeting(slug):
     """
