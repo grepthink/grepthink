@@ -116,12 +116,12 @@ def view_one_course(request, slug):
                 ass_number=ass_number))
             course.save()
             print(course.assignments.all())
+        messages.info(request, 'You have successfully created an assignment')
         return redirect(view_one_course,course.slug)
     if(profile.isProf or profile.isTa):
         form=AssignmentForm(request.user.id,request.POST)
     else:
         form=AssignmentForm(request.user.id,request.POST)
-    messages.info(request, 'You have successfully created an assignment')
     return render(request, 'courses/view_course.html', {
         'course': course , 'projects': projects, 'date_updates': date_updates,
             'students':student_users,
