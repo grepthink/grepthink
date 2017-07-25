@@ -647,7 +647,6 @@ def view_tsr(request, slug):
 
     med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-    print (mid)
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
     title = "Professor/TA TSR View"
