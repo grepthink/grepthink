@@ -333,13 +333,16 @@ def edit_project(request, slug):
     """
     project = get_object_or_404(Project, slug=slug)
 
+    course = project.course_set.first()
+    print(course)
+
     # Populate page info with edit project title/name
     page_name = "Edit Project"
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT:
+    if request.user.profile.isGT or request.user.username == course.creator:
         pass
     elif not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
@@ -374,8 +377,6 @@ def edit_project(request, slug):
             if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
                 Membership.objects.create(
                     user=mem_to_add, project=project, invite_reason='')
-                print("Winter is coming")
-                print(request.user.username + "\n" + mem_to_add.username + "\n was addedd to " + project.title + "\n" + (reverse('view_one_project',args=[project.slug])))
                 Alert.objects.create(
                     sender=request.user,
                     to=mem_to_add,
