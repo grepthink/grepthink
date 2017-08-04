@@ -109,7 +109,7 @@ def search(request):
     page_description = "Results"
     title = "Search Results"
 
-    context = {'page_name': page_name, 
+    context = {'page_name': page_name,
     'page_description': page_description, 'title' : title}
 
     if request.POST.get('q'):
@@ -134,7 +134,7 @@ def search(request):
                     Q( content__contains = q ) |
                     Q( tagline__contains = q ) ).order_by('title')
                 course_results = Course.objects.filter(
-                    Q( name__contains = q ) | 
+                    Q( name__contains = q ) |
                     Q( info__contains = q ) ).order_by('name')
 
             if user_results:
@@ -172,8 +172,10 @@ def view_matches(request):
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
+                print(p_match)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
+
     else:
         my_projects = Project.get_my_projects(request.user)
         my_created = Project.get_created_projects(request.user)
@@ -183,6 +185,7 @@ def view_matches(request):
             print("type(Project): ",type(project))
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
+
 
     return render(request, 'core/view_matches.html', {
         'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,

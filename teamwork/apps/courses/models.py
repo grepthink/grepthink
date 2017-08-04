@@ -23,6 +23,8 @@ from django.utils import timezone
 # import of project models
 from teamwork.apps.projects.models import Project
 
+def get_all_courses(self):
+    return Course.objects.all
 
 def get_user_courses(self):
     """

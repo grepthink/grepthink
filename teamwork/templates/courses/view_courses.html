@@ -42,12 +42,12 @@
                 <i class="fa fa-warning"></i>
                 There are no courses yet. Go ahead and
                 {% if user.profile.isProf %}
-                <a href="{% url 'create_course' %}" class="alert-link">
+                    <a href="{% url 'create_course' %}" class="alert-link">
                     create one now!
-                    {% else %}
+                {% else %}
                     <a href="{% url 'join_course' %}" class="alert-link">
                         join one now!
-                        {% endif %}
+                {% endif %}
                     </a>
                 </div>
                 {% endfor %}

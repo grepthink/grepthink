@@ -99,16 +99,25 @@
                 <div>
                     <p>
                         <strong>Owner</strong>
-                        <span class="label label-success">
+                        <a href="{% url 'profile' project_owner.user.username %}">
+                        {% if project_owner.isGT %}
+                            <span class="label label-success">
+                        {% elif project_owner.isProf %}
+                            <span class="label label-warning">
+                        {% else %}
+                            <span class="label label-info">
+                        {% endif %}
                             {{ project.creator }}
-                        </span>
+                        </span></a>
                     </p>
                     <p><strong>Members</strong>
                         {% for mem in project.members.all %}
                         {% if mem.username != null %}
+                        <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
                             {{ mem.username }}
                         </span>
+                        </a>
                         {% endif %}
                         {% endfor %}
                     </p>
@@ -126,7 +135,7 @@
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user.username == project.creator%}
+                    {% if user in project.members.all or user.username == project.creator or user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">

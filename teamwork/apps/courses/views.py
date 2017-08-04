@@ -16,6 +16,10 @@ from .models import *
 
 import csv
 import codecs
+# Required headers for sendgrid: (sendgrid, os)
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
 
 
 def _courses(request, courses):
@@ -39,8 +43,11 @@ def view_courses(request):
     then calls _projects to render the request to template view_projects.html
     """
 
+    # Show all courses to a GT account
+    if request.user.profile.isGT:
+        all_courses = get_all_courses(request)
     # If user is a professor, they can see all courses they have created
-    if request.user.profile.isProf:
+    elif request.user.profile.isProf:
         all_courses=Course.get_my_created_courses(request.user)
     # else returns a list of courses the user is enrolled in
     else:
@@ -67,7 +74,7 @@ def view_one_course(request, slug):
     students = Enrollment.objects.filter(course = course, role = "student")
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
-    
+
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
@@ -87,7 +94,9 @@ def view_stats(request, slug):
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
 
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         return redirect(view_one_course, cur_course.slug)
 
     students_num = Enrollment.objects.filter(course = cur_course)
@@ -303,7 +312,9 @@ def create_course(request):
     page_description = "Create a Course!"
     title = "Create Course"
 
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         #redirect them to the /course directory
         messages.info(request,'Only Professor can create course!')
         return HttpResponseRedirect('/course')
@@ -365,8 +376,10 @@ def edit_course(request, slug):
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
 
+    if request.user.profile.isGT:
+        pass
     #if user is not a professor or they did not create course
-    if not request.user.profile.isProf or not course.creator == request.user.username:
+    elif not request.user.profile.isProf or not course.creator == request.user.username:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
@@ -388,7 +401,8 @@ def edit_course(request, slug):
             reader = csv.reader(lines)
 
             # Name is stored in 4th value
-            # Email is stored in 13th value
+            # Email is stored in 13th value  -- this is specific to Jullig's CSV format
+                                            #   need to adjust for more general csv's
             for row in reader:
                 fullname = row[4] + row[5] + row[6]
                 email = row[13]
@@ -397,7 +411,6 @@ def edit_course(request, slug):
 
 
     if request.method == 'POST':
-
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
         if form.is_valid():
@@ -463,11 +476,13 @@ def delete_course(request, slug):
     Delete course method
     """
     course = get_object_or_404(Course, slug=slug)
-    if not request.user.profile.isProf:
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
         return redirect(view_one_course, course.slug)
-    else:
-        course.delete()
-        return redirect(view_courses)
+
+    course.delete()
+    return redirect(view_courses)
 
 @login_required
 def update_course(request, slug):
@@ -479,6 +494,15 @@ def update_course(request, slug):
     page_description = "Update %s"%(course.name) or "Post a new update"
     title = "Update Course"
 
+    if request.user.profile.isGT:
+        pass
+    #if user is not a professor or they did not create course
+    elif not course.creator == request.user.username:
+        #redirect them to the /course directory with message
+        messages.info(request,'Only Professor can post and update')
+        return HttpResponseRedirect('/course')
+
+
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
@@ -488,6 +512,47 @@ def update_course(request, slug):
             new_update.content = form.cleaned_data.get('content')
             new_update.creator = request.user
             new_update.save()
+
+            # grab list of students in the course
+            students_in_course = Enrollment.objects.filter(course = course)
+            # build a list of emails of users in the course
+            student_email_list = []
+            for student in students_in_course:
+                student_email_list.append(Email(student.user.email))
+
+            # Handle email sending
+            sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+            # Name of email that is going to be sending these emails out, as of now doesnt support replys
+            from_email = Email("noreply@grepthink.com")
+
+            # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
+            # but I'm not sure how the Mail() constructor below works without it.
+            to_email = Email("initial_email@grepthink.com", "GrepThink")
+
+            # TODO: course variable contains (slug: blah blah) part and should be parsed out
+            subject = "{0} has posted an update to {1}".format(request.user, course)
+
+            # TODO: Content should be formatted in a professional way. I believe markup is supported.
+            content = Content("text/plain", "{0}\n www.grepthink.com ".format(new_update.content))
+            mail = Mail(from_email, subject, to_email, content)
+
+
+
+            # add multiple emails to the outgoing Mail object
+            # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
+            for email in student_email_list:
+                p = Personalization()
+                p.add_to(email)
+                mail.add_personalization(p)
+
+            # The following line was giving SSL Certificate errors.
+            # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
+            response = sg.client.mail.send.post(request_body=mail.get())
+
+            # print(response.status_code)
+            # print(response.body)
+            # print(response.headers)
+
             return redirect(view_one_course, course.slug)
     else:
         form = CourseUpdateForm(request.user.id)
@@ -506,15 +571,19 @@ def update_course_update(request, slug, id):
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 
-    if update.creator != request.user:
+    if request.user.profile.isGT:
+        pass
+    elif update.creator != request.user:
         return redirect(view_one_course, course.slug)
-    elif request.method == 'POST':
+
+    if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
             update.course = course;
             update.title = form.cleaned_data.get('title')
             update.content = form.cleaned_data.get('content')
-            update.creator = request.user
+            if not request.user.profile.isGT:
+                update.creator = request.user
             update.save()
             return redirect(view_one_course, course.slug)
     else:
@@ -534,7 +603,7 @@ def delete_course_update(request, slug, id):
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 
-    if update.creator == request.user:
+    if update.creator == request.user or request.user.prfile.isGT:
         update.delete()
 
     return redirect(view_one_course, course.slug)

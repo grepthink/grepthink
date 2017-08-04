@@ -33,6 +33,8 @@
   </div>
   <!-- /.box-body -->
 </div>
+
+
 <!-- /.box -->
 
 <div class="box box-primary">
@@ -59,26 +61,34 @@
     <strong><i class="fa fa-file-text-o margin-r-5"></i> Bio</strong>
 
     <p>{{ page_user.profile.bio }}</p>
-{% if not page_user.profile.isProf %}
-    <hr>
+{% if not page_user.profile.isGT %}
+    {% if not page_user.profile.isProf %}
+        <hr>
 
-    <strong><i class="fa fa-pencil margin-r-5"></i> Known Skills</strong>
+        <strong><i class="fa fa-pencil margin-r-5"></i> Known Skills</strong>
 
-{# p tag has different default padding -- using for now #}
-    <p>
-       {% for skill in page_user.profile.known_skills.all %}
-        <span class="label label-primary">{{ skill.skill }}</span>
-       {% endfor%}
-    </p>
+    {# p tag has different default padding -- using for now #}
+        <p>
+           {% for skill in page_user.profile.known_skills.all %}
+            <span class="label label-primary">{{ skill.skill }}</span>
+           {% endfor%}
+        </p>
 
-    <hr>
-    <strong><i class="fa fa-pencil margin-r-5"></i> Skills I Want to Learn</strong>
+        <hr>
+        <strong><i class="fa fa-pencil margin-r-5"></i> Skills I Want to Learn</strong>
 
-    <p>
-       {% for skill in page_user.profile.learn_skills.all %}
-        <span class="label label-warning">{{ skill.skill }}</span>
-       {% endfor%}
-    </p>
+        <p>
+           {% for skill in page_user.profile.learn_skills.all %}
+            <span class="label label-warning">{{ skill.skill }}</span>
+           {% endfor%}
+        </p>
+    {% endif %}
+{% endif %}
+{% if user.profile.isGT %}
+    <div class="pull-right">
+        <a href="{% url 'edit_profile' page_user.username %}"
+            class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
+    </div>
 {% endif %}
   </div>
   <!-- /.box-body -->

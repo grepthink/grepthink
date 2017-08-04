@@ -110,6 +110,10 @@ def view_one_project(request, slug):
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
 
+    # Get the project owner for color coding stuff
+    tempPO = User.objects.get(username=project.creator)
+    project_owner = Profile.objects.get(user=tempPO)
+
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -121,8 +125,7 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates, 'course' : course,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
+        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 
 def select_members(request):
@@ -226,8 +229,10 @@ def create_project(request):
 
     my_created_courses = Course.objects.filter(creator=user.username)
 
+    if user.profile.isGT:
+        pass
     # If user is in 0 courses
-    if len(enroll) == 0 and len(my_created_courses) == 0:
+    elif len(enroll) == 0 and len(my_created_courses) == 0:
         # Redirect them to homepage and tell them to join a course
         messages.info(request,
                       'You need to join a course before creating projects!')
@@ -236,7 +241,9 @@ def create_project(request):
     if len(cur_courses) == len(cur_courses.filter(limit_creation=True)):
         no_postable_classes = True
 
-    if len(enroll) >= 1 and no_postable_classes and not profile.isProf:
+    if user.profile.isGT:
+        pass
+    elif len(enroll) >= 1 and no_postable_classes and not profile.isProf:
         # Redirect them to homepage and tell them to join a course
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
@@ -298,7 +305,9 @@ def create_project(request):
                         user=i_user, project=project, invite_reason='')
 
             # Don't add the professor to the project (will still be owner)
-            if not profile.isProf:
+            if profile.isGT:
+                pass
+            elif not profile.isProf:
                 Membership.objects.create(
                     user=user, project=project, invite_reason='')
 
@@ -328,7 +337,9 @@ def edit_project(request, slug):
     title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
-    if not request.user.username == project.creator and request.user not in project.members.all():
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
         messages.info(request, 'Only Project Owner can edit project!')
         return HttpResponseRedirect('/project/all')
@@ -434,7 +445,9 @@ def post_update(request, slug):
     """
     project = get_object_or_404(Project, slug=slug)
 
-    if not request.user.username == project.creator and request.user not in project.members.all(
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.username == project.creator and request.user not in project.members.all(
     ):
         #redirect them with a message
         messages.info(request, 'Only current members can post an update for a project!')
@@ -460,7 +473,9 @@ def resource_update(request, slug):
 
     project = get_object_or_404(Project, slug=slug)
 
-    if not request.user.username == project.creator and request.user not in project.members.all(
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.username == project.creator and request.user not in project.members.all(
     ):
         #redirect them with a message
         messages.info(request, 'Only current members can post an update for a project!')
