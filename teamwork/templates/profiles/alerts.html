@@ -30,12 +30,9 @@
                 <tr>
                     <td style="width:100px">{{ alert.date }}</td>
                     <td>
-                        {% if alert.sender != profile.user %}
-                            <a href="{{ alert.url }}">
-                                <span class="label label-primary">{{ alert.sender.username }}</span>
-                            </a>
-                        {% endif %}
-                        {{ alert.msg }}
+                        <a href="{{ alert.url }}">
+                            {{ alert.msg }}
+                        </a>
                     </td>
                     <td class="pull-right">
                         <div class="btn btn-sm pull-right">

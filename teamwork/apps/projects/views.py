@@ -8,9 +8,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
+from teamwork.apps.profiles.models import Alert
 
 from .forms import *
 from .models import *
@@ -372,6 +374,15 @@ def edit_project(request, slug):
             if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
                 Membership.objects.create(
                     user=mem_to_add, project=project, invite_reason='')
+                print("Winter is coming")
+                print(request.user.username + "\n" + mem_to_add.username + "\n was addedd to " + project.title + "\n" + (reverse('view_one_project',args=[project.slug])))
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You were added to " + project.title,
+                    url=reverse('view_one_project',args=[project.slug]),
+                    )
+
         return redirect(edit_project, slug)
 
     # Remove a user from the project

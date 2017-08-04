@@ -188,8 +188,8 @@ def join_course(request):
                         Alert.objects.create(
                                 sender=request.user,
                                 to=User.objects.filter(username=i.creator).get(),
-                                msg=" used the addcode to enroll in " + i.name,
-                                url=reverse('profile',args=[request.user.username])
+                                msg=request.user + " used the addcode to enroll in " + i.name,
+                                url=reverse('profile',args=[request.user.username]),
                                 )
                     return redirect(view_one_course, i.slug)
 
@@ -345,15 +345,17 @@ def create_course(request):
             students = data.get('students')
             # save this object
             course.save()
-            # loop through the members in the object and make m2m rows for them
-            for i in students:
-                Enrollment.objects.create(user=i.user, course=course,role='student')
-                Alert.objects.create(
-                    sender=request.user,
-                    to=i.user,
-                    msg="You were enrolled in course " + course.name,
-                    url=reverse('view_one_course',args=[course.slug])
-                    )
+            # We hid this so we can only add members on edit, DB is too large to add students manually at start of course
+            # # loop through the members in the object and make m2m rows for them
+            # for i in students:
+            #     Enrollment.objects.create(user=i.user, course=course,role='student')
+            #     Alert.objects.create(
+            #         sender=request.user,
+            #         to=i.user,
+            #         msg="You were enrolled in course " + course.name,
+            #         url=reverse('view_one_course',args=[course.slug]),
+            #         alertType="enrollment"
+            #         )
             # add creator as a member of the course w/ specific role
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course,role='professor')
@@ -448,7 +450,7 @@ def edit_course(request, slug):
                         sender=request.user,
                         to=e.user,
                         msg="You were dropped from course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug])
+                        url=reverse('view_one_course',args=[course.slug]),
                     )
                     e.delete()
             for s in students:
@@ -457,7 +459,7 @@ def edit_course(request, slug):
                         sender=request.user,
                         to=s.user,
                         msg="You were enrolled in course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug])
+                        url=reverse('view_one_course',args=[course.slug]),
                     )
                     Enrollment.objects.create(user=s.user, course=course)
 
