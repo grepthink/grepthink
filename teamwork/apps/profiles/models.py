@@ -175,12 +175,9 @@ class Profile(models.Model):
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
 
-    avatar = models.ImageField(upload_to= 'avatars/', default="")
-
-    # TODO: Interest - ManyToOne, Past Classes,
+    avatar = models.ImageField(upload_to= 'avatars/', default="")    
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
-    # interest = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     isProf = models.BooleanField(default=False)
     isGT = models.BooleanField(default=False)

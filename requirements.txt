@@ -9,3 +9,4 @@ Markdown
 Pillow
 numpy
 django-chartjs
+sendgrid
