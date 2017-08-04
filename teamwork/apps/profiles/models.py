@@ -136,6 +136,8 @@ class Alert(models.Model):
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
     url = models.CharField(max_length=500,default="")
+    # could be handy but pain in the ass at the moment
+    # alertType = models.CharField(max_length=30, default="")
 
     def __str__(self):
         return str(self.sender) + " -> " + str(self.to) + " : " + str()
