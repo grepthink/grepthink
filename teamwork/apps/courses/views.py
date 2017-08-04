@@ -69,6 +69,8 @@ def view_one_course(request, slug):
 
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
+    # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
+    projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
 
     students = Enrollment.objects.filter(course = course, role = "student")
