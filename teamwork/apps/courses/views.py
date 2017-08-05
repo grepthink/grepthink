@@ -17,11 +17,6 @@ from .models import *
 
 import csv
 import codecs
-# # Required headers for sendgrid: (sendgrid, os)
-# import sendgrid
-# import os
-# from sendgrid.helpers.mail import *
-
 
 def _courses(request, courses):
     """
