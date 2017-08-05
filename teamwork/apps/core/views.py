@@ -172,7 +172,7 @@ def view_matches(request):
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
-                print(p_match)
+                # print(p_match)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
 
@@ -182,7 +182,7 @@ def view_matches(request):
         projects = my_projects | my_created
         projects = list(set(projects))
         for project in projects:
-            print("type(Project): ",type(project))
+            # print("type(Project): ",type(project))
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
 
@@ -251,18 +251,15 @@ def matchstats(request, slug, project_match_list):
 
         TODO: could combine the two dicts if wanted.
     """
-    # print("====================MATCHSTATS BITCHES =======================")
-    # print("slug:",slug, project_match_list)
 
-    # just some temp data
+    # Page Information
     page_name = "Matchstats"
     page_description = "Stats on your matches"
     title = "Matchstats"
 
-    skill_match = {}
     matched_students = []
+    skill_match = {}
     interest_match = {}
-    interest_reason_tuple = []
 
     cur_project = get_object_or_404(Project, slug=slug)
     cur_desiredSkills = cur_project.desired_skills.all()
@@ -272,7 +269,6 @@ def matchstats(request, slug, project_match_list):
     regex = r"<User: [^>]*>"
     reg_match = re.finditer(regex, project_match_list)
     for item in reg_match:
-        # print("reg_match:", item.group())
         username = item.group().split(": ")[1].replace(">","")
         matched_students.append(username)
 
@@ -291,8 +287,7 @@ def matchstats(request, slug, project_match_list):
 
         all_interests = cur_project.interest.all()
         interests = all_interests.filter(user=student)
-        # need to test with multiple interest entered
-        print(interests)
+
         for interest in interests:
             interest_match[stud] = ([interest, interest.interest_reason])
 
@@ -301,9 +296,7 @@ def matchstats(request, slug, project_match_list):
         else:
             skill_match[stud] = ["No similar skills"]
 
-    print(interest_match)
     user = request.user
-    # print("=========================END MATCHSTATS=========================")
 
     return render(request, 'core/matchstats.html',{
         'page_name':page_name,'page_description':page_description,
