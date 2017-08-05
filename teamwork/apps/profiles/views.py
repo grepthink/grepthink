@@ -73,7 +73,7 @@ def signup(request):
             #uinfo.isProf = prof
             #uinfo.save()
 
-            return redirect('/')
+            return redirect(edit_profile, username)
 
     else:
         return render(request, 'profiles/signup.html',
