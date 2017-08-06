@@ -70,21 +70,6 @@ def index(request):
             course_updates = course.get_updates_by_date()
             date_updates.extend(course.get_updates_by_date())
 
-    # if logged_in:
-    #     page_name = "Timeline"
-    #     if request.user.profile.isProf:
-    #         page_description = "Home"
-    #         title = "Home"
-    #         return view_courses(request)
-    #     else:
-    #         page_description = "Recent Updates from Courses and Projects"
-    #         title = "Timeline"
-    #         all_courses = Course.get_my_courses(request.user)
-    #         date_updates = []
-    #         for course in all_courses:
-    #             date_updates.extend(course.get_updates_by_date())
-
-
     return render(request, 'core/index.html', {'page_name' : page_name,
          'page_description' : page_description, 'title' : title,
          'date_updates' : date_updates, 'logged_in' : logged_in})
@@ -144,14 +129,6 @@ def search(request):
             if course_results:
                 context['course_results'] = course_results
 
-            # print("DEBUG 2:")
-            # print("User results: ")
-            # print(user_results)
-            # print("project results")
-            # print(project_results)
-            # print("course results")
-            # print(course_results)
-
     return render(request, 'core/search_results.html', context)
 
 @login_required
@@ -172,17 +149,14 @@ def view_matches(request):
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
-                # print(p_match)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
-
     else:
         my_projects = Project.get_my_projects(request.user)
         my_created = Project.get_created_projects(request.user)
         projects = my_projects | my_created
         projects = list(set(projects))
         for project in projects:
-            # print("type(Project): ",type(project))
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
 
@@ -211,8 +185,7 @@ def auto_gen(request, slug):
         if i[1]:
             flag = True
             break
-
-
+            
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]

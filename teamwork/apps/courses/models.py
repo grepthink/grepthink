@@ -142,7 +142,7 @@ class Course(models.Model):
         # to project model
         Project,
         # projects can access course through this relation
-        # project.course.all()
+        # project.course.first()
         related_name='course')
 
     # creator of a course with a FK to that User object
@@ -150,7 +150,7 @@ class Course(models.Model):
     creator = models.ForeignKey(
         User, 
         # students can access courses through this relation
-        # user.creator.all()
+        # user.course_creator.all()
         related_name='course_creator', 
         on_delete=models.CASCADE)
 
@@ -178,11 +178,21 @@ class Course(models.Model):
         #defaulted to false
         default=False)
 
-    limit_weights = models.BooleanField(default=False)
-    weigh_interest = models.IntegerField(default=1)
-    weigh_know = models.IntegerField(default=1)
-    weigh_learn = models.IntegerField(default=1)
-    csv_file = models.FileField(upload_to='csv_files/', default="")
+    limit_weights = models.BooleanField(
+        default=False)
+
+    weigh_interest = models.IntegerField(
+        default=1)
+
+    weigh_know = models.IntegerField(
+        default=1)
+
+    weigh_learn = models.IntegerField(
+        default=1)
+
+    csv_file = models.FileField(
+        upload_to='csv_files/',
+        default="")
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -241,7 +251,6 @@ class Course(models.Model):
         # my_courses = Course.objects.filter(enrollment__in=myEnrollment)
 
         my_courses = user.enrollment.all()
-
 
         return my_courses
 

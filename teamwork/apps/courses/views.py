@@ -70,6 +70,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
 
     students = Enrollment.objects.filter(course = course, role = "student")
+    
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
 
@@ -209,9 +210,9 @@ def show_interest(request, slug):
     # projects in current course
     projects = projects_in_course(slug)
     # enrollment objects containing current user
-    enroll = Enrollment.objects.filter(user=request.user)
+    user_courses = request.user.enrollment.all()
     # current courses user is in
-    user_courses = Course.objects.filter(enrollment__in=enroll)
+    # user_courses = Course.objects.filter(enrollment__in=enroll)
 
     page_name = "Show Interest"
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
@@ -249,8 +250,8 @@ def show_interest(request, slug):
             #Gets first choice, creates interest object for it
 
             # Clear all interest objects where user is current user and for this course, avoid duplicates
-            all_interests = Interest.objects.filter(project__in=projects)
-            interests = all_interests.filter(user=user)
+            all_interests = Interest.objects.filter(interested=projects)
+            interests = user.interest.all()
             if interests is not None: interests.delete()
 
             if len(projects) >= 1:
@@ -343,17 +344,6 @@ def create_course(request):
             students = data.get('students')
             # save this object
             course.save()
-            # We hid this so we can only add members on edit, DB is too large to add students manually at start of course
-            # # loop through the members in the object and make m2m rows for them
-            # for i in students:
-            #     Enrollment.objects.create(user=i.user, course=course,role='student')
-            #     Alert.objects.create(
-            #         sender=request.user,
-            #         to=i.user,
-            #         msg="You were enrolled in course " + course.name,
-            #         url=reverse('view_one_course',args=[course.slug]),
-            #         alertType="enrollment"
-            #         )
             # add creator as a member of the course w/ specific role
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course,role='professor')
