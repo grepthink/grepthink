@@ -401,7 +401,7 @@ def edit_project(request, slug):
         return redirect(edit_project, slug)
 
 
-    # Transfer ownership of a project 
+    # Transfer ownership of a project
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
         f_user = User.objects.get(username=f_username)
