@@ -24,26 +24,28 @@ from django.utils import timezone
 from teamwork.apps.projects.models import Project
 
 def get_all_courses(self):
-    return Course.objects.all
+    return Course.objects.all()
 
 def get_user_courses(self):
     """
     Added to auth so that a user object can easily retrieve enrolled courses
     Gets a list of course objects that the user is in
     """
-
-    if self.profile.isProf:
-        my_courses = Course.objects.filter(creator=self.username)
+    # Get all courses for a GT Admin
+    if self.profile.isGT:
+        my_courses = get_all_courses(self)
+    # Get only created courses through the creator relationship
+    elif self.profile.isProf:
+        # my_courses = Course.objects.filter(creator=self)
+        my_courses = self.course_creator.all()
+    # If none of the other flags triggered return enrolled classes
     else:
-        #Gets current user's enrollments, by looking for user in  Enrollment table
-        myEnrollment = Enrollment.objects.filter(user=self)
+        # #Gets current user's enrollments, by looking for user in  Enrollment table
+        # myEnrollment = Enrollment.objects.filter(user=self)
 
-        #print("myEnrollment:")
-        #print(myEnrollment)
-
-        #Filters for courses based on enrollment
-        my_courses = Course.objects.filter(enrollment__in=myEnrollment)
-
+        # #Filters for courses based on enrollment
+        # my_courses = Course.objects.filter(enrollment__in=myEnrollment)
+        my_courses = self.enrollment.all()
     return my_courses
 
 
@@ -129,27 +131,29 @@ class Course(models.Model):
     students = models.ManyToManyField(
         # to User model
         User,
+        # students can access courses through this relation
+        # user.enrollment.all()
+        related_name='enrollment',
         # through the enrollment table
         through='Enrollment')
 
     #projects in course, manytomany
     projects = models.ManyToManyField(
         # to project model
-        Project)
+        Project,
+        # projects can access course through this relation
+        # project.course.first()
+        related_name='course')
 
-    # RYAN
-    # creator needs to be a foreign key for a simpler linking
-    # but student and creator  both have backwards relations to user, so
-    # I need to go through our current code and setup a related name for all
-    # uses of either of these. Cant dedicate time to it now but needs to get done.
-    # creator = models.ForeignKey(User)
+    # creator of a course with a FK to that User object
+    # The Fk with generate a set of course object for that user
+    creator = models.ForeignKey(
+        User, 
+        # students can access courses through this relation
+        # user.course_creator.all()
+        related_name='course_creator', 
+        on_delete=models.CASCADE)
 
-    # Creator of course, string
-    creator = models.CharField(
-        # with max length 255
-        max_length=255,
-        # defaulted to "Default"
-        default="Default")
     # addCode for course, string
     addCode = models.CharField(
         # with length 10
@@ -174,11 +178,21 @@ class Course(models.Model):
         #defaulted to false
         default=False)
 
-    limit_weights = models.BooleanField(default=False)
-    weigh_interest = models.IntegerField(default=1)
-    weigh_know = models.IntegerField(default=1)
-    weigh_learn = models.IntegerField(default=1)
-    csv_file = models.FileField(upload_to='csv_files/', default="")
+    limit_weights = models.BooleanField(
+        default=False)
+
+    weigh_interest = models.IntegerField(
+        default=1)
+
+    weigh_know = models.IntegerField(
+        default=1)
+
+    weigh_learn = models.IntegerField(
+        default=1)
+
+    csv_file = models.FileField(
+        upload_to='csv_files/',
+        default="")
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -192,7 +206,7 @@ class Course(models.Model):
         Human readeable representation of the Course object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return self.name + "(slug: " + self.slug + ")"
+        return self.name + "(slug: " + self.slug + ") " + self.creator.username
 
     def save(self, *args, **kwargs):
         """
@@ -230,11 +244,13 @@ class Course(models.Model):
         """
         Gets a list of course objects that the user is in
         """
-        #Gets current user's enrollments
-        myEnrollment = Enrollment.objects.filter(user=user)
+        # #Gets current user's enrollments
+        # myEnrollment = Enrollment.objects.filter(user=user)
 
-        #Filters for courses based on enrollment
-        my_courses = Course.objects.filter(enrollment__in=myEnrollment)
+        # #Filters for courses based on enrollment
+        # my_courses = Course.objects.filter(enrollment__in=myEnrollment)
+
+        my_courses = user.enrollment.all()
 
         return my_courses
 
@@ -244,7 +260,8 @@ class Course(models.Model):
         Gets a list ofcourse objects the current user has created
         """
         #filters through courses the user has created
-        created_courses = Course.objects.filter(creator=user.username)
+        created_courses = user.course_creator.all()
+        # created_courses = Course.objects.filter(creator=user)
 
         return created_courses
 
@@ -279,6 +296,8 @@ class Enrollment(models.Model):
     user = models.ForeignKey(
         # the User model
         User,
+        related_name='enrollmentUser',
+        # related_name='enrollment'
         # on deletion, delete child objects
         on_delete=models.CASCADE,
         # with a default of 0
