@@ -142,8 +142,6 @@ class CreateCourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     #META CLASS
     class Meta:
         model = Course
@@ -437,6 +435,24 @@ class ShowInterestForm(forms.ModelForm):
 
         return data
 
+"""
+Form used to simulate sending an email
+
+"""
+class EmailRosterForm(forms.ModelForm):
+    def __init__(self, uid, *args, **kwargs):
+        super(EmailRosterForm, self).__init__(*args, **kwargs)
+
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
+
+    class Meta:
+        fields = ['subject', 'content']
 
 class CourseUpdateForm(forms.ModelForm):
     """

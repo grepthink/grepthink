@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+
+{% endblock stylesheets %}
+
+{% block head %}
+<script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-10">
+        <form action="{% url 'email_roster' slug %}" method="post"
+            role="form" class="clearfix">
+            {% csrf_token %}
+            {{ form.status }}
+
+            {% for field in form.visible_fields %}
+            <div class="form-group{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.label }}" class="control-label">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% for error in field.errors %}
+                <label class="control-label">{{ error }}</label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock content %}

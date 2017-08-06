@@ -84,6 +84,18 @@ def view_one_course(request, slug):
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
         'page_name' : page_name, 'page_description': page_description, 'title': title})
 
+@login_required
+def email_roster(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    page_name = "Email Roster"
+    page_description = "Emailing students in %s"%(cur_course.name)
+    title = "Email Student Roster"
+
+    print("emailing roster")
+
+    return render(request, 'courses/email_roster.html', {
+        'slug':slug
+    })
 
 @login_required
 def view_stats(request, slug):
@@ -320,7 +332,7 @@ def create_course(request):
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CreateCourseForm(request.user.id,request.POST)
+        form = CreateCourseForm(request.user.id,request.POST, request.FILES)
         if form.is_valid():
             # create an object for the input
             course = Course()
@@ -336,13 +348,14 @@ def create_course(request):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-
+            course.csv_file = data.get('csv_file')
 
             # creator is current user
             course.creator = request.user.username
             students = data.get('students')
             # save this object
             course.save()
+
             # We hid this so we can only add members on edit, DB is too large to add students manually at start of course
             # # loop through the members in the object and make m2m rows for them
             # for i in students:
@@ -389,6 +402,7 @@ def edit_course(request, slug):
     # First Name, Middle Name, Last Name, and email. Even then, not all csv headers will
     # have same label names
     if request.POST.get('send_emails'):
+        print("SENDING EMAILS?")
         # grab the csv
         csv_file = course.csv_file
         if csv_file:
@@ -425,12 +439,13 @@ def edit_course(request, slug):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
+            # TODO: check if csv_file still exists after edit if the file isn't changed
+            course.csv_file = data.get('csv_file')
 
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
             course.save()
-
 
             #handle csv upload
             if request.POST and request.FILES:

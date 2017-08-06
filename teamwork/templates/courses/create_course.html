@@ -13,7 +13,7 @@
     <li><a href="{% url 'create_course' %}">Create a new course</a></li>
 </ol>
 
-<form action="{% url 'create_course' %}" method="post" role="form">
+<form action="{% url 'create_course' %}" method="post" role="form" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
