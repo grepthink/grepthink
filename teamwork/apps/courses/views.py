@@ -10,17 +10,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from teamwork.apps.projects.models import *
+from teamwork.apps.core.helpers import send_email
 
 from .forms import *
 from .models import *
 
 import csv
 import codecs
-# Required headers for sendgrid: (sendgrid, os)
-import sendgrid
-import os
-from sendgrid.helpers.mail import *
-
 
 def _courses(request, courses):
     """
@@ -517,45 +513,14 @@ def update_course(request, slug):
             new_update.creator = request.user
             new_update.save()
 
-            # # grab list of students in the course
-            # students_in_course = Enrollment.objects.filter(course = course)
-            # # build a list of emails of users in the course
-            # student_email_list = []
-            # for student in students_in_course:
-            #     student_email_list.append(Email(student.user.email))
 
-            # # Handle email sending
-            # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
-            # # Name of email that is going to be sending these emails out, as of now doesnt support replys
-            # from_email = Email("noreply@grepthink.com")
-
-            # # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
-            # # but I'm not sure how the Mail() constructor below works without it.
-            # to_email = Email("initial_email@grepthink.com", "GrepThink")
-
-            # # TODO: course variable contains (slug: blah blah) part and should be parsed out
-            # subject = "{0} has posted an update to {1}".format(request.user, course)
-
-            # # TODO: Content should be formatted in a professional way. I believe markup is supported.
-            # content = Content("text/plain", "{0}\n www.grepthink.com ".format(new_update.content))
-            # mail = Mail(from_email, subject, to_email, content)
-
-
-
-            # # add multiple emails to the outgoing Mail object
-            # # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
-            # for email in student_email_list:
-            #     p = Personalization()
-            #     p.add_to(email)
-            #     mail.add_personalization(p)
-
-            # # The following line was giving SSL Certificate errors.
-            # # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
-            # response = sg.client.mail.send.post(request_body=mail.get())
-
-            # # print(response.status_code)
-            # # print(response.body)
-            # # print(response.headers)
+        # Next 4 lines handle sending an email to class roster
+            # grab list of students in the course
+            students_in_course = Enrollment.objects.filter(course = course)
+            # TODO: course variables contains (slug: blah blah)
+            subject = "{0} has posted an update to {1}".format(request.user, course)
+            content = "{0}\n\n www.grepthink.com".format(new_update.content)
+            send_email(students_in_course, "noreply@grepthink.com", subject, content)
 
             return redirect(view_one_course, course.slug)
     else:
