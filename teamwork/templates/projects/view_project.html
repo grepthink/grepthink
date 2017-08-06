@@ -121,6 +121,15 @@
                         {% endif %}
                         {% endfor %}
                     </p>
+                     <p><strong>Desired Skills</strong>
+                        {% if project.desired_skills != none %}
+                        {% for skill in project.desired_skills.all %}
+                        <span class="label label-warning">
+                            {{ skill.skill }}
+                        </span>
+                        {% endfor %}
+                        {% endif %}
+                    </p>
                 </div>
             </div>
             <!-- /.tab-pane Updates -->
