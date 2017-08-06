@@ -189,8 +189,8 @@ def join_course(request):
                         Enrollment.objects.create(user=request.user, course=i, role=role)
                         Alert.objects.create(
                                 sender=request.user,
-                                to=User.objects.filter(username=i.creator).get(),
-                                msg=request.user + " used the addcode to enroll in " + i.name,
+                                to=i.creator,
+                                msg=request.user.username + " used the addcode to enroll in " + i.name,
                                 url=reverse('profile',args=[request.user.username]),
                                 )
                     return redirect(view_one_course, i.slug)
@@ -239,7 +239,7 @@ def show_interest(request, slug):
 
 
     # if current course not in users enrolled courses
-    if not cur_course in user_courses and course.creator != user.username:
+    if not cur_course in user_courses and course.creator != user:
         messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
 
@@ -343,7 +343,7 @@ def create_course(request):
 
 
             # creator is current user
-            course.creator = request.user.username
+            course.creator = request.user
             students = data.get('students')
             # save this object
             course.save()
@@ -383,7 +383,7 @@ def edit_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user.username:
+    elif not request.user.profile.isProf or not course.creator == request.user:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
@@ -501,7 +501,7 @@ def update_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not course.creator == request.user.username:
+    elif not course.creator == request.user:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can post and update')
         return HttpResponseRedirect('/course')
@@ -517,45 +517,45 @@ def update_course(request, slug):
             new_update.creator = request.user
             new_update.save()
 
-            # grab list of students in the course
-            students_in_course = Enrollment.objects.filter(course = course)
-            # build a list of emails of users in the course
-            student_email_list = []
-            for student in students_in_course:
-                student_email_list.append(Email(student.user.email))
+            # # grab list of students in the course
+            # students_in_course = Enrollment.objects.filter(course = course)
+            # # build a list of emails of users in the course
+            # student_email_list = []
+            # for student in students_in_course:
+            #     student_email_list.append(Email(student.user.email))
 
-            # Handle email sending
-            sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
-            # Name of email that is going to be sending these emails out, as of now doesnt support replys
-            from_email = Email("noreply@grepthink.com")
+            # # Handle email sending
+            # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+            # # Name of email that is going to be sending these emails out, as of now doesnt support replys
+            # from_email = Email("noreply@grepthink.com")
 
-            # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
-            # but I'm not sure how the Mail() constructor below works without it.
-            to_email = Email("initial_email@grepthink.com", "GrepThink")
+            # # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
+            # # but I'm not sure how the Mail() constructor below works without it.
+            # to_email = Email("initial_email@grepthink.com", "GrepThink")
 
-            # TODO: course variable contains (slug: blah blah) part and should be parsed out
-            subject = "{0} has posted an update to {1}".format(request.user, course)
+            # # TODO: course variable contains (slug: blah blah) part and should be parsed out
+            # subject = "{0} has posted an update to {1}".format(request.user, course)
 
-            # TODO: Content should be formatted in a professional way. I believe markup is supported.
-            content = Content("text/plain", "{0}\n www.grepthink.com ".format(new_update.content))
-            mail = Mail(from_email, subject, to_email, content)
+            # # TODO: Content should be formatted in a professional way. I believe markup is supported.
+            # content = Content("text/plain", "{0}\n www.grepthink.com ".format(new_update.content))
+            # mail = Mail(from_email, subject, to_email, content)
 
 
 
-            # add multiple emails to the outgoing Mail object
-            # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
-            for email in student_email_list:
-                p = Personalization()
-                p.add_to(email)
-                mail.add_personalization(p)
+            # # add multiple emails to the outgoing Mail object
+            # # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
+            # for email in student_email_list:
+            #     p = Personalization()
+            #     p.add_to(email)
+            #     mail.add_personalization(p)
 
-            # The following line was giving SSL Certificate errors.
-            # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
-            response = sg.client.mail.send.post(request_body=mail.get())
+            # # The following line was giving SSL Certificate errors.
+            # # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
+            # response = sg.client.mail.send.post(request_body=mail.get())
 
-            # print(response.status_code)
-            # print(response.body)
-            # print(response.headers)
+            # # print(response.status_code)
+            # # print(response.body)
+            # # print(response.headers)
 
             return redirect(view_one_course, course.slug)
     else:

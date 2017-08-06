@@ -99,6 +99,8 @@ def view_one_project(request, slug):
     """
 
     project = get_object_or_404(Project, slug=slug)
+
+    print(project.course.all())
     updates = project.get_updates()
     resources = project.get_resources()
 
@@ -229,7 +231,7 @@ def create_project(request):
     cur_courses = Course.objects.filter(enrollment__in=enroll)
     no_postable_classes = False
 
-    my_created_courses = Course.objects.filter(creator=user.username)
+    my_created_courses = Course.objects.filter(creator=user)
 
     if user.profile.isGT:
         pass
@@ -342,7 +344,7 @@ def edit_project(request, slug):
     title = "Edit Project"
 
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user.username == course.creator:
+    if request.user.profile.isGT or request.user == course.creator:
         pass
     elif not request.user.username == project.creator and request.user not in project.members.all():
         #redirect them with a message
