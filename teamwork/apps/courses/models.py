@@ -37,7 +37,7 @@ def get_user_courses(self):
     # Get only created courses through the creator relationship
     elif self.profile.isProf:
         # my_courses = Course.objects.filter(creator=self)
-        my_courses = self.creator.all()
+        my_courses = self.course_creator.all()
     # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
@@ -151,7 +151,7 @@ class Course(models.Model):
         User, 
         # students can access courses through this relation
         # user.creator.all()
-        related_name='creator', 
+        related_name='course_creator', 
         on_delete=models.CASCADE)
 
     # addCode for course, string
@@ -251,7 +251,7 @@ class Course(models.Model):
         Gets a list ofcourse objects the current user has created
         """
         #filters through courses the user has created
-        created_courses = user.creator.all()
+        created_courses = user.course_creator.all()
         # created_courses = Course.objects.filter(creator=user)
 
         return created_courses

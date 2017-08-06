@@ -107,7 +107,7 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator }}
+                            {{ project.creator.username }}
                         </span></a>
                     </p>
                     <p><strong>Members</strong>
@@ -135,7 +135,7 @@
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user.username == project.creator or user.profile.isGT%}
+                    {% if user in project.members.all or user == project.creator or user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">
