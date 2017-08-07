@@ -44,7 +44,7 @@
                         <p>
                             <strong>Owner</strong>
                             <span class="label label-success">
-                                {{ project.creator }}
+                                {{ project.creator.username }}
                             </span>
                         </p>
                         <p><strong>Members</strong>
@@ -75,7 +75,7 @@
                         </p>
                     </div>
                     <div class="box-footer clearfix">
-                      {% if request.user.username == project.creator or request.user.profile.isGT %}
+                      {% if request.user == project.creator or request.user.profile.isGT %}
                         <a href="{% url 'edit_project' project.slug %}">
                             <button class="btn btn-success">
                                 <i class="fa fa-edit"></i>

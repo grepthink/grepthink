@@ -70,7 +70,7 @@ class CreateProjectForm(forms.ModelForm):
             enrollment__in=user_courses).filter(limit_creation=False)
 
         # get courses created by current user
-        created_courses = Course.objects.filter(creator=user)
+        created_courses = user.course_creator.all()
 
         # get all courses for GT postings
         GT_courses = Course.objects.all()

@@ -107,7 +107,7 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator }}
+                            {{ project.creator.username }}
                         </span></a>
                     </p>
                     <p><strong>Members</strong>
@@ -120,6 +120,15 @@
                         </a>
                         {% endif %}
                         {% endfor %}
+                    </p>
+                     <p><strong>Desired Skills</strong>
+                        {% if project.desired_skills != none %}
+                        {% for skill in project.desired_skills.all %}
+                        <span class="label label-warning">
+                            {{ skill.skill }}
+                        </span>
+                        {% endfor %}
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -135,7 +144,7 @@
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user.username == project.creator or user.profile.isGT%}
+                    {% if user in project.members.all or user == project.creator or user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">
@@ -266,6 +275,13 @@
                                 </tbody>
                             </table>
                         </div>
+                        <a href="{% url 'resource_update' project.slug %}"
+                            class="pull-right" style="padding-top: 10px">
+                            <button class="btn btn-success">
+                                <i class="fa fa-book"></i>
+                                Post Resource
+                            </button>
+                        </a>
                     </div>
                 </div>
             </div>

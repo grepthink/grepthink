@@ -27,7 +27,7 @@
 
 <div>
 
-    {% if user.username == course.creator %}
+    {% if user == course.creator %}
     <div class="alert alert-success" role="alert">
         You are an instructor of this course.
     </div>
@@ -59,7 +59,7 @@
                 </a>
             </li>
 
-            {% if user.username == course.creator or user.profile.isGT%}
+            {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
                     <i class="fa fa-gear"></i>
@@ -71,7 +71,7 @@
         <div class="tab-content" style="background-color: #ecf0f5">
 
             <div class="tab-pane active" id="projects">
-                {% if user.username != course.creator %}
+                {% if user != course.creator %}
                     {% if not user.profile.isGT %}
                         {% if not course.limit_interest %}
                             <div class="row">
@@ -138,7 +138,7 @@
 
                 <h3>Updates</h3>
                 <ul class="timeline">
-                    {% if user.username == course.creator or user.profile.isGT%}
+                    {% if user == course.creator or user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'update_course' course.slug %}'">
@@ -302,7 +302,7 @@
             </div>
 
 
-            {% if user.username == course.creator  or user.profile.isGT%}
+            {% if user == course.creator  or user.profile.isGT%}
             <div class="tab-pane" id="admin">
                 <h3>Edit Course Info</h3>
                 <p>

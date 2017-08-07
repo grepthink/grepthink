@@ -160,7 +160,8 @@ class Interest(models.Model):
     """
     Interest object relates a user to a interest (may be changed in the future)
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # can access interest from the user through user.interest.all()
+    user = models.ForeignKey(User, related_name='interest', on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
     interest_reason = models.CharField(max_length=100)
 
@@ -193,50 +194,99 @@ class Project(models.Model):
 
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
-        max_length=255, default="No Project Title Provided")
-    creator = models.CharField(max_length=255, default="No Creator Specified")
+        max_length=255, 
+        default="No Project Title Provided")
+
+    # creator of a course with a FK to that User object
+    # The Fk with generate a set of course object for that user
+    creator = models.ForeignKey(
+        User, 
+        # students can access courses through this relation
+        # user.creator.all()
+        related_name='project_creator', 
+        on_delete=models.CASCADE)
+
     # Short project description
-    tagline = models.TextField(max_length=38, default="Default Project Tagline")
+    tagline = models.TextField(
+        max_length=38, 
+        default="Default Project Tagline")
+
     # Verbose project description.
-    content = models.TextField(max_length=4000, default="Content")
+    content = models.TextField(
+        max_length=4000, 
+        default="Content")
+
     # Members associated with a project (Membership objects)
-    members = models.ManyToManyField(User, through='Membership')
+    members = models.ManyToManyField(
+        User, 
+        related_name='membership',
+        through='Membership')
+
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
-        Skills, related_name="desired", default="")
+        Skills, 
+        related_name="desired",
+        default="")
+
     # True when the proejct is accepting new members. False when project is full.
-    avail_mem = models.BooleanField(default=True)
+    avail_mem = models.BooleanField(
+        default=True)
+
     # True when project is sponsered. False when project is not sponsered. Field hidden to students.
-    sponsor = models.BooleanField(default=False)
+    sponsor = models.BooleanField(
+        default=False)
+
     # Unique URL slug for project
-    slug = models.CharField(max_length=20, unique=True)
+    slug = models.CharField(
+        max_length=20,
+        unique=True)
+
+
+
+    # NEED TO SETUP M2M not proper
     # Resource list that the project members can update
     resource = models.TextField(
-        max_length=4000, default="*No resources provided*")
+        max_length=4000, 
+        default="*No resources provided*")
 
-    interest = models.ManyToManyField(Interest, default=None)
+    # NEED UPDATES M2M for proper link not query
+
+
+
+
+    # the interest in a project can be access through back realtionship 
+    # project.interested.all()
+    interest = models.ManyToManyField(
+        Interest,
+        related_name='interested',
+        default=None)
+
+
+    # NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
+
+
+
     # Store the teamSize for team generation and auto switch accepting members
-    teamSize = models.IntegerField(default=4)
+    teamSize = models.IntegerField(
+        default=4)
 
     # meetings - Availabiliy as an ajax string
-    meetings = models.TextField(default='')
-    readable_meetings = models.TextField(null=True)
+    meetings = models.TextField(
+        default='')
+    readable_meetings = models.TextField(
+        null=True)
 
-    weigh_interest = models.IntegerField(default=1)
-    weigh_know = models.IntegerField(default=1)
-    weigh_learn = models.IntegerField(default=1)
-
-    # lower_time_bound = models.IntegerField(
-    #     choices=Lower_Boundary_Choice,
-    #     default=16)
-    #
-    # upper_time_bound = models.IntegerField(
-    #     choices=Upper_Boundary_Choice,
-    #     default=42)
+    # Project weight for matching unless inputed
+    weigh_interest = models.IntegerField(
+        default=1)
+    weigh_know = models.IntegerField(
+        default=1)
+    weigh_learn = models.IntegerField(
+        default=1)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
@@ -250,11 +300,11 @@ class Project(models.Model):
         Human readeable representation of the Project object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        mem = ""
-        for m in self.members.all():
-            mem += "\t%s\n"%(m.username)
+        # mem = ""
+        # for m in self.members.all():
+        #     mem += "\t%s\n"%(m.username)
 
-        info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator, mem, self.avail_mem, self.sponsor, self.slug)
+        # info = "Title: %s\nCreator: %s\nMembers: \n%sAccepting? %s\nSponsor: %s\nSlug: %s\n"%(self.title, self.creator.username, mem, self.avail_mem, self.sponsor, self.slug)
         return self.title
 
     def save(self, *args, **kwargs):
@@ -483,10 +533,14 @@ class Project(models.Model):
         """
         Gets a list of project objects. Used in views then passed to the template.
         """
-        #Gets membership object of current user
-        myProjects = Membership.objects.filter(user=user)
-        #Gets project queryset of only projects user is in OR the user created
-        proj = Project.objects.filter(membership__in=myProjects)
+        # #Gets membership object of current user
+        # myProjects = Membership.objects.filter(user=user)
+        # #Gets project queryset of only projects user is in OR the user created
+        # proj = Project.objects.filter(membership__in=myProjects)
+
+        proj = user.membership.all()
+        print(proj)
+
 
         return proj
 
@@ -495,7 +549,7 @@ class Project(models.Model):
         """
         Gets a list of project objects. Used in views then passed to the template.
         """
-        projects = Project.objects.filter()
+        projects = Project.objects.all()
         return projects
 
     @staticmethod
@@ -503,7 +557,11 @@ class Project(models.Model):
         """
         Gets a list of porject objects that the user created. Used in views then passed to the template
         """
-        proj = Project.objects.filter(creator=user.username)
+        # proj = Project.objects.filter(creator=user.username)
+
+        proj = user.project_creator.all()
+        print(proj)
+
         return proj
 
     def get_content_as_markdown(self):
@@ -528,9 +586,17 @@ class Membership(models.Model):
     """
     Membership objects relate a user and a project.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, default=0)
-    invite_reason = models.CharField(max_length=64)
+    user = models.ForeignKey(
+        User, 
+        related_name='membershipUser',
+        on_delete=models.CASCADE, 
+        default=0)
+    project = models.ForeignKey(
+        Project, 
+        on_delete=models.CASCADE, 
+        default=0)
+    invite_reason = models.CharField(
+        max_length=64)
 
     def __str__(self):
         return("%s: %s"%(self.user.username, self.project.title))

@@ -70,6 +70,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
 
     students = Enrollment.objects.filter(course = course, role = "student")
+
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
 
@@ -197,8 +198,8 @@ def join_course(request):
                         Enrollment.objects.create(user=request.user, course=i, role=role)
                         Alert.objects.create(
                                 sender=request.user,
-                                to=User.objects.filter(username=i.creator).get(),
-                                msg=request.user + " used the addcode to enroll in " + i.name,
+                                to=i.creator,
+                                msg=request.user.username + " used the addcode to enroll in " + i.name,
                                 url=reverse('profile',args=[request.user.username]),
                                 )
                     return redirect(view_one_course, i.slug)
@@ -221,9 +222,9 @@ def show_interest(request, slug):
     # projects in current course
     projects = projects_in_course(slug)
     # enrollment objects containing current user
-    enroll = Enrollment.objects.filter(user=request.user)
+    user_courses = request.user.enrollment.all()
     # current courses user is in
-    user_courses = Course.objects.filter(enrollment__in=enroll)
+    # user_courses = Course.objects.filter(enrollment__in=enroll)
 
     page_name = "Show Interest"
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
@@ -247,7 +248,7 @@ def show_interest(request, slug):
 
 
     # if current course not in users enrolled courses
-    if not cur_course in user_courses and course.creator != user.username:
+    if not cur_course in user_courses and course.creator != user:
         messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
 
@@ -261,8 +262,8 @@ def show_interest(request, slug):
             #Gets first choice, creates interest object for it
 
             # Clear all interest objects where user is current user and for this course, avoid duplicates
-            all_interests = Interest.objects.filter(project__in=projects)
-            interests = all_interests.filter(user=user)
+            all_interests = Interest.objects.filter(interested=projects)
+            interests = user.interest.all()
             if interests is not None: interests.delete()
 
             if len(projects) >= 1:
@@ -351,22 +352,10 @@ def create_course(request):
             course.csv_file = data.get('csv_file')
 
             # creator is current user
-            course.creator = request.user.username
+            course.creator = request.user
             students = data.get('students')
             # save this object
             course.save()
-
-            # We hid this so we can only add members on edit, DB is too large to add students manually at start of course
-            # # loop through the members in the object and make m2m rows for them
-            # for i in students:
-            #     Enrollment.objects.create(user=i.user, course=course,role='student')
-            #     Alert.objects.create(
-            #         sender=request.user,
-            #         to=i.user,
-            #         msg="You were enrolled in course " + course.name,
-            #         url=reverse('view_one_course',args=[course.slug]),
-            #         alertType="enrollment"
-            #         )
             # add creator as a member of the course w/ specific role
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course,role='professor')
@@ -392,7 +381,7 @@ def edit_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user.username:
+    elif not request.user.profile.isProf or not course.creator == request.user:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
@@ -512,7 +501,7 @@ def update_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not course.creator == request.user.username:
+    elif not course.creator == request.user:
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can post and update')
         return HttpResponseRedirect('/course')
@@ -527,6 +516,7 @@ def update_course(request, slug):
             new_update.content = form.cleaned_data.get('content')
             new_update.creator = request.user
             new_update.save()
+
 
         # Next 4 lines handle sending an email to class roster
             # grab list of students in the course
