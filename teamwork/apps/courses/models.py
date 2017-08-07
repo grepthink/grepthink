@@ -318,7 +318,7 @@ class Enrollment(models.Model):
     def __str__(self):
         """
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
-        Maybe something like, return u'%s %s' % (self.course, self.title)
+        Maybe something like,  return u'%s %s' % (self.course, self.title)
         """
         return ("%s"%(self.user.username))
 

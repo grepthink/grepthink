@@ -107,7 +107,7 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator.username }}
+                            {{ project.creator.email }}
                         </span></a>
                     </p>
                     <p><strong>Members</strong>
@@ -115,7 +115,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                            {{ mem.username }}
+                            {{ mem.email }}
                         </span>
                         </a>
                         {% endif %}

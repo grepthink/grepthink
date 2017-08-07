@@ -39,7 +39,7 @@
                     {{ project.members.all.count }}
                   </span>
             </a></li>
-            <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator }}</span></a></li>
+            <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator.email }}</span></a></li>
           </ul>
         </div>
 

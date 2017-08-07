@@ -185,7 +185,7 @@ def auto_gen(request, slug):
         if i[1]:
             flag = True
             break
-            
+
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]

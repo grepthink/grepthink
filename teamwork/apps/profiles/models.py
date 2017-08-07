@@ -185,7 +185,8 @@ class Profile(models.Model):
     isGT = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username
+        string = "%s (%s)"%(self.user.email, self.name)
+        return string
     def __hash__(self):
         return hash(self.user)
     def __eq__(self, other):
@@ -202,6 +203,7 @@ class Profile(models.Model):
         return Alert.objects.filter(to=self.user,read=False)
     def read_alerts(self):
         return Alert.objects.filter(to=self.user,read=True)
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
