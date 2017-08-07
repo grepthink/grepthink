@@ -124,19 +124,15 @@ def edit_profile(request, username):
     """
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
-
-    TODO: screen flashes when deleting skills? Maybe pc just blows
-    TODO: test different uses of profile.save(), i.e not so many god damn times
-    TODO: Avatar doesn't show current file.url
-
     """
+    # TODO: screen flashes when deleting skills? Maybe pc just blows
+    # TODO: Avatar doesn't show current file.url
+
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
-
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)
-        profile = Profile.objects.get(user=tempProfile)
-        print(profile)
+        profile = Profile.objects.get(user=tempProfile)        
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)

@@ -2,22 +2,15 @@
 {% load static %}
 {% load i18n %}
 
-{% block stylesheets %}
-  <!-- Select2 -->
-    {{block.super}}
-  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
-
-{% endblock stylesheets %}
 
 {% block head %}
 <script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
-
 <div class="row">
     <div class="col-md-10">
-        <form action="{% url 'email_roster' slug %}" method="post"
+        <form action="{% url 'email_roster' slug %}" method="POST"
             role="form" class="clearfix">
             {% csrf_token %}
             {{ form.status }}
@@ -33,6 +26,18 @@
                 {% endfor %}
             </div>
             {% endfor %}
+            <div class="pull-left">
+                <a href="{% url 'view_one_course' slug %}">
+                    <button class="btn btn-danger" type="button">
+                        Cancel
+                    </button>
+                </a>
+            </div>
+            <div class="pull-right">
+                <button class="btn btn-success" type="submit" name="SUBMIT">
+                    <i class="fa fa-envelope-o"> </i> Send Email
+                </button>
+            </div>
         </form>
     </div>
 </div>

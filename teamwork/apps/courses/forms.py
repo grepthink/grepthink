@@ -415,8 +415,8 @@ class ShowInterestForm(forms.ModelForm):
 Form used to simulate sending an email
 
 """
-class EmailRosterForm(forms.ModelForm):
-    def __init__(self, uid, *args, **kwargs):
+class EmailRosterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
         super(EmailRosterForm, self).__init__(*args, **kwargs)
 
     subject = forms.CharField(
@@ -427,8 +427,8 @@ class EmailRosterForm(forms.ModelForm):
     content = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
 
-    class Meta:
-        fields = ['subject', 'content']
+    # class Meta:
+    #     fields = ['subject', 'content']
 
 class CourseUpdateForm(forms.ModelForm):
     """

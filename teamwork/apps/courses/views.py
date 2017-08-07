@@ -89,14 +89,36 @@ def view_one_course(request, slug):
 def email_roster(request, slug):
     cur_course = get_object_or_404(Course, slug=slug)
     page_name = "Email Roster"
-    page_description = "Emailing students in %s"%(cur_course.name)
+    page_description = "Emailing students in course: %s"%(cur_course.name)
     title = "Email Student Roster"
 
-    print("emailing roster")
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = EmailRosterForm(request.POST)
+        #if form is accepted
+        if form.is_valid():
+            #the courseID will be gotten from the form
+            data = form.cleaned_data
+
+            subject = data.get('subject')
+            content = data.get('content')
+
+            students_in_course = cur_course.students.all()
+            send_email(students_in_course, request.user.email, subject, content)
+
+            return redirect('view_one_course', slug)
+        else:
+            # redirect to error
+            print("EmailRosterForm not valid")
+    else:
+        print("Request.method is: " , request.method)
 
     return render(request, 'courses/email_roster.html', {
-        'slug':slug
+        'slug':slug, 'form':form, 'page_name':page_name, 'page_description':page_description,
+        'title':title
     })
+
 
 @login_required
 def view_stats(request, slug):
@@ -391,7 +413,7 @@ def edit_course(request, slug):
     # First Name, Middle Name, Last Name, and email. Even then, not all csv headers will
     # have same label names
     if request.POST.get('send_emails'):
-        print("SENDING EMAILS?")
+
         # grab the csv
         csv_file = course.csv_file
         if csv_file:
@@ -520,7 +542,7 @@ def update_course(request, slug):
 
         # Next 4 lines handle sending an email to class roster
             # grab list of students in the course
-            students_in_course = Enrollment.objects.filter(course = course)
+            students_in_course = course.students.all().filter()
             # TODO: course variables contains (slug: blah blah)
             subject = "{0} has posted an update to {1}".format(request.user, course)
             content = "{0}\n\n www.grepthink.com".format(new_update.content)
