@@ -177,7 +177,7 @@ class Profile(models.Model):
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
 
-    avatar = models.ImageField(upload_to= 'avatars/', default="")    
+    avatar = models.ImageField(upload_to= 'avatars/', default="")
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 

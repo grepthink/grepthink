@@ -70,7 +70,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
 
     students = Enrollment.objects.filter(course = course, role = "student")
-    
+
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
 

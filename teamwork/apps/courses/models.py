@@ -148,10 +148,10 @@ class Course(models.Model):
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
     creator = models.ForeignKey(
-        User, 
+        User,
         # students can access courses through this relation
         # user.course_creator.all()
-        related_name='course_creator', 
+        related_name='course_creator',
         on_delete=models.CASCADE)
 
     # addCode for course, string
@@ -320,7 +320,7 @@ class Enrollment(models.Model):
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like, return u'%s %s' % (self.course, self.title)
         """
-        return ("%s"%(self.user.username))
+        return ("%s (%s)"%(self.user.email, self.user.username))
 
 
 class CourseUpdate(models.Model):

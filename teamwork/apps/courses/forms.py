@@ -214,7 +214,7 @@ class EditCourseForm(forms.ModelForm):
         #Multiple Choice Selection
         widget=forms.CheckboxSelectMultiple,
         #From all user objects
-        queryset=User.objects.all(),
+        queryset=User.objects.all().values('email'),
         #Field NOT Required
         required=False)
 
