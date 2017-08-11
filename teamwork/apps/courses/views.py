@@ -111,9 +111,7 @@ def email_roster(request, slug):
         else:
             # redirect to error
             print("EmailRosterForm not valid")
-    else:
-        print("Request.method is: " , request.method)
-
+    
     return render(request, 'courses/email_roster.html', {
         'slug':slug, 'form':form, 'page_name':page_name, 'page_description':page_description,
         'title':title
