@@ -8,40 +8,81 @@
 {% endblock head %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10">
-        <form action="{% url 'email_roster' slug %}" method="POST"
-            role="form" class="clearfix">
-            {% csrf_token %}
-            {{ form.status }}
 
-            {% for field in form.visible_fields %}
-            <div class="form-group{% if field.errors %} has-error{% endif %}">
-                <label for="{{ field.label }}" class="control-label">
-                    {{ field.label }}
-                </label>
-                {{ field }}
-                {% for error in field.errors %}
-                <label class="control-label">{{ error }}</label>
-                {% endfor %}
-            </div>
-            {% endfor %}
-            <div class="pull-left">
-                <a href="{% url 'view_one_course' slug %}">
-                    <button class="btn btn-danger" type="button">
-                        Cancel
-                    </button>
-                </a>
-            </div>
-            <div class="pull-right">
-                <button class="btn btn-success" type="submit" name="SUBMIT">
-                    <i class="fa fa-envelope-o"> </i> Send Email
+<div class="col-md-3">
+          <a href="{% url 'view_one_course' slug %}" class="btn btn-primary btn-block margin-bottom">Back to Course</a>
+
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">Recipients</h3>
+
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
+              </div>
+
             </div>
-        </form>
-    </div>
+
+            <div class="box-body no-padding">
+             <ul class="nav nav-pills nav-stacked">
+                    <li><a href="#"> Kevin Pannell </a></li>
+                    <li><a href="#"> Ryan McGee </a></li>
+             </ul>
+           </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
 </div>
 
 
+<div class="col-md-9">
+<div class="box box-primary">
+
+    <div class="box-header with-border">
+      <h3 class="box-title">Compose New Message</h3>
+    </div>
+
+<form action="{% url 'email_roster' slug %}" method="POST">
+    {% csrf_token %}
+    {{ form.status }}
+    <!-- /.box-header -->
+    <div class="box-body">
+
+        <div class="form-group">
+            <strong>Sending to:</strong>
+            {{form.count}} recipients <a>View..</a>
+        </div>
+
+        <div class="form-group">
+            <strong>Subject</strong>
+            {{form.subject}}
+        </div>
+
+        <div class="form-group">
+            <strong>Body</strong>
+            {{form.content}}
+        </div>
+
+        <div class="form-group">
+            <div class="btn btn-default btn-file">
+              <i class="fa fa-paperclip"></i> Attachment
+              <input type="file" name="attachment">
+            </div>
+            <p class="help-block">Max. 32MB</p>
+        </div>
+
+    </div>
+
+    <!-- /.box-body -->
+    <div class="box-footer">
+      <div class="pull-right">
+        <button class="btn btn-primary" type="submit" name="SUBMIT"><i class="fa fa-envelope-o"></i> Send</button>
+      </div>
+      <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Discard</button>
+    </div>
+</form>
+    <!-- /.box-footer -->
+</div>
+</div>
 
 {% endblock content %}

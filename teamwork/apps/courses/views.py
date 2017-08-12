@@ -553,7 +553,7 @@ def update_course(request, slug):
 
     return render(
             request, 'courses/update_course.html',
-            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title }
             )
 
 
