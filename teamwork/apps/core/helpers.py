@@ -10,15 +10,15 @@ from sendgrid.helpers.mail import *
             content    -- content of the email
 
     IF Authorization error occurs its because:
-        1. you dont have sendgrid.env file in root. Get from Discord (8/4)
+        1. you dont have sendgrid.env file in root. Get from Discord (8/11)
         2. need to run 'source ./sendgrid.env'
 """
 def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
     # build list of emails of recipients
-    for student in recipients:
-        student_email_list.append(Email(student.user.email))
+    for student in recipients:            
+        student_email_list.append(Email(student.email))
 
     # Handle email sending
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))

@@ -73,6 +73,8 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
         # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
+        # Email Roster link
+        url(r'^course/(?P<slug>[^/]+)/email_roster/$', course_views.email_roster, name='email_roster'),
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
         # Setup link to assign students

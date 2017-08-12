@@ -148,10 +148,10 @@ class Course(models.Model):
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
     creator = models.ForeignKey(
-        User, 
+        User,
         # students can access courses through this relation
         # user.course_creator.all()
-        related_name='course_creator', 
+        related_name='course_creator',
         on_delete=models.CASCADE)
 
     # addCode for course, string
@@ -288,6 +288,22 @@ class Course(models.Model):
                 'updates': [u for u in updates if u.date_post.date() == d]
             })
         return updates_by_date
+        
+    """
+    Gets all students in a course excluding professors
+    """
+    def get_students(self):
+        students_and_prof = self.students.all()
+
+        students = []
+
+        for stud in students_and_prof:
+            if not stud.profile.isProf:
+                students.append(stud)
+
+        return students
+
+
 
 
 # Enrollment class that manytomanys between User and Course
