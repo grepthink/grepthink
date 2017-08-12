@@ -3,6 +3,11 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import *
 
+# csv
+import csv
+import codecs
+
+
 """
     Params: recipients -- QuerySet of students
             from_email -- The address that the email will come from (can be anything we want)
@@ -68,3 +73,55 @@ def handle_file(uploaded_file):
 
     encoded = base64.b64encode(data)
     return encoded
+
+
+"""
+parse csv file
+
+return dict. Key (string) = FirstName, Lastname
+             Value (string)= Email
+"""
+def parse_csv(csv_file):
+    print(csv_file)
+    data = {}
+
+    contents = csv_file.read().decode("utf-8")
+    # split contents of csv on new line, iterable is needed for csv.reader
+    lines = contents.splitlines()
+    # does all the backend splitting of csv, from 'csv' module
+    reader = csv.reader(lines)
+    header = ""
+
+    # search first line for keywords
+    for line in reader:
+        print(line)
+        header = line
+        break
+
+    firstNameIndex = -1
+    lastNameIndex = -1
+    emailIndex = -1
+    i = 0
+
+    for column in header:
+        search = column.lower()
+        if not search.find("name") == -1:
+            # found name in column
+            if not search.find("first") == -1:
+                # found first name
+                firstNameIndex = i
+            if not search.find("last") == -1:
+                # found last name
+                lastNameIndex = i
+        elif not search.find("email") == -1:
+            # found email in column
+            emailIndex = i
+        i = i + 1
+
+    for row in reader:
+        fullname = row[firstNameIndex] + row[lastNameIndex]
+        email = row[emailIndex]
+        # Save student in dict, key=fullname & value=email
+        data[fullname] = email
+
+    return data

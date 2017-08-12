@@ -10,8 +10,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from teamwork.apps.projects.models import *
-from teamwork.apps.core.helpers import send_email
-
+from teamwork.apps.core.helpers import *
+from teamwork.apps.core.forms import *
 from .forms import *
 from .models import *
 
@@ -594,8 +594,6 @@ def email_roster(request, slug):
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
 
-    print("REQUEST:",request)
-
     form = EmailRosterForm()
     if request.method == 'POST':
         # send the current user.id to filter out
@@ -624,4 +622,60 @@ def email_roster(request, slug):
         'addcode':addcode,
         'page_name':page_name, 'page_description':page_description,
         'title':title
+    })
+
+@login_required
+def email_csv(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    page_name = "Invite Students"
+    page_description = "Invite Students via CSV Upload"
+    title = "Invite Students"
+
+    addcode = cur_course.addCode
+
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        form = EmailRosterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            subject = data.get('subject')
+            content = data.get('content')
+
+        else:
+            print("Form not valid!")
+
+    return render(request, 'courses/email_roster.html', {
+        'slug':slug, 'form':form, 'addcode':addcode,
+        'page_name':page_name, 'page_description':page_description,'title':title
+        })
+
+@login_required
+def upload_csv(request, slug):
+    page_name = "Upload CSV File"
+    page_description = "CSV Upload"
+    title = "Upload CSV"
+
+    recipients = []
+
+    form = UploadCSVForm()
+    if request.method == 'POST':
+        form = UploadCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            csv_file = data.get('csv_file')
+
+            csv_dict = parse_csv(csv_file)
+
+            for student in csv_dict:
+                recipients.append(csv_dict[student])
+
+            return redirect(email_csv, slug)
+        else:
+            print("form is invalid")
+
+    return render(request, 'core/upload_csv.html', {
+        'slug':slug, 'form':form,
+        'page_name':page_name, 'page_description':page_description,'title':title
     })
