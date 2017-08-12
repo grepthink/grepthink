@@ -104,14 +104,15 @@ def email_roster(request, slug):
             subject = data.get('subject')
             content = data.get('content')
 
-            students_in_course = cur_course.students.all()
+            # students_in_course = cur_course.students.all()
+            students_in_course = cur_course.get_students()
             send_email(students_in_course, request.user.email, subject, content)
 
             return redirect('view_one_course', slug)
         else:
             # redirect to error
             print("EmailRosterForm not valid")
-    
+
     return render(request, 'courses/email_roster.html', {
         'slug':slug, 'form':form, 'page_name':page_name, 'page_description':page_description,
         'title':title

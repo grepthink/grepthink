@@ -17,9 +17,8 @@ def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
     # build list of emails of recipients
-    for student in recipients:
-            if not student.profile.isProf:
-                student_email_list.append(Email(student.email))
+    for student in recipients:            
+        student_email_list.append(Email(student.email))
 
     # Handle email sending
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
