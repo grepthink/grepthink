@@ -92,6 +92,10 @@ def email_roster(request, slug):
     page_description = "Emailing students in course: %s"%(cur_course.name)
     title = "Email Student Roster"
 
+    students_in_course = cur_course.get_students()
+    count = len(students_in_course) or 0
+    addcode = cur_course.addCode
+
     form = EmailRosterForm()
     if request.method == 'POST':
         # send the current user.id to filter out
@@ -104,9 +108,7 @@ def email_roster(request, slug):
             subject = data.get('subject')
             content = data.get('content')
 
-            # students_in_course = cur_course.students.all()
-            students_in_course = cur_course.get_students()
-            send_email(students_in_course, request.user.email, subject, content)
+            # send_email(students_in_course, request.user.email, subject, content)
 
             return redirect('view_one_course', slug)
         else:
@@ -114,7 +116,9 @@ def email_roster(request, slug):
             print("EmailRosterForm not valid")
 
     return render(request, 'courses/email_roster.html', {
-        'slug':slug, 'form':form, 'page_name':page_name, 'page_description':page_description,
+        'slug':slug, 'form':form, 'count':count, 'students':students_in_course,
+        'addcode':addcode,
+        'page_name':page_name, 'page_description':page_description,
         'title':title
     })
 

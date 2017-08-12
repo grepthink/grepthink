@@ -10,11 +10,25 @@
 {% block content %}
 
 <div class="col-md-3">
-          <a href="{% url 'view_one_course' slug %}" class="btn btn-primary btn-block margin-bottom">Back to Course</a>
+    
+          <a href="{% url 'view_one_course' slug %}">
+            <button type="button" class="btn btn-primary btn-block margin-bottom">Back to Course</button>
+          </a>
 
           <div class="box box-solid">
+              <div class="box-header with-border">
+              <h3 class="box-title">Course Addcode</h3>
+
+              </div>
+              <div class="box-body no-padding">
+               <ul class="nav nav-pills nav-stacked">
+                      <li><a>{{ addcode }}</a></li>
+               </ul>
+             </div>
+          </div>
+          <div class="box box-solid">
             <div class="box-header with-border">
-              <h3 class="box-title">Recipients</h3>
+              <h3 class="box-title">Recipients ( {{ count }} )</h3>
 
               <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -25,8 +39,12 @@
 
             <div class="box-body no-padding">
              <ul class="nav nav-pills nav-stacked">
-                    <li><a href="#"> Kevin Pannell </a></li>
-                    <li><a href="#"> Ryan McGee </a></li>
+                    <li><a href="#"> hardcoded@grepthink.com </a></li>
+                    <li><a href="#"> kp@yahoo.com </a></li>
+
+                     {% for stud in students %}
+                        <li><a href="#"> {{ stud.email }} </a></li>
+                     {% endfor %}
              </ul>
            </div>
             <!-- /.box-body -->
@@ -47,11 +65,6 @@
     {{ form.status }}
     <!-- /.box-header -->
     <div class="box-body">
-
-        <div class="form-group">
-            <strong>Sending to:</strong>
-            {{form.count}} recipients <a>View..</a>
-        </div>
 
         <div class="form-group">
             <strong>Subject</strong>
@@ -78,7 +91,7 @@
       <div class="pull-right">
         <button class="btn btn-primary" type="submit" name="SUBMIT"><i class="fa fa-envelope-o"></i> Send</button>
       </div>
-      <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Discard</button>
+      <a href="{% url 'view_one_course' slug %}"><button type="button" class="btn btn-default"><i class="fa fa-times"></i> Discard</button></a>
     </div>
 </form>
     <!-- /.box-footer -->
