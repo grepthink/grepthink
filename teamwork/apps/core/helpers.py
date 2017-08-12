@@ -17,7 +17,7 @@ def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
     # build list of emails of recipients
-    for student in recipients:            
+    for student in recipients:
         student_email_list.append(Email(student.email))
 
     # Handle email sending
@@ -47,3 +47,24 @@ def send_email(recipients, gt_email, subject, content):
     # print(response.status_code)
     # print(response.body)
     # print(response.headers)
+
+
+"""
+    Not yet being used, attempted to use w/ Email attachments
+"""
+def handle_file(uploaded_file):
+
+    with open(uploaded_file, 'wbr+') as f:
+        print("Name:",f.name)
+
+        if f.multiple_chunks(chunk_size=none):
+            # then read chunk by chunk
+            for chunk in uploaded_file.chunks():
+                data.write(chunk)
+        # else safe to read all at once
+        else:
+            data = f.read()
+
+
+    encoded = base64.b64encode(data)
+    return encoded

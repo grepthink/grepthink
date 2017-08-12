@@ -10,7 +10,7 @@
 {% block content %}
 
 <div class="col-md-3">
-    
+
           <a href="{% url 'view_one_course' slug %}">
             <button type="button" class="btn btn-primary btn-block margin-bottom">Back to Course</button>
           </a>
@@ -22,7 +22,7 @@
               </div>
               <div class="box-body no-padding">
                <ul class="nav nav-pills nav-stacked">
-                      <li><a>{{ addcode }}</a></li>
+                      <li><a> {{ addcode }}</a></li>
                </ul>
              </div>
           </div>
@@ -39,9 +39,6 @@
 
             <div class="box-body no-padding">
              <ul class="nav nav-pills nav-stacked">
-                    <li><a href="#"> hardcoded@grepthink.com </a></li>
-                    <li><a href="#"> kp@yahoo.com </a></li>
-
                      {% for stud in students %}
                         <li><a href="#"> {{ stud.email }} </a></li>
                      {% endfor %}
@@ -60,7 +57,7 @@
       <h3 class="box-title">Compose New Message</h3>
     </div>
 
-<form action="{% url 'email_roster' slug %}" method="POST">
+<form action="{% url 'email_roster' slug %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.status }}
     <!-- /.box-header -->
@@ -76,6 +73,7 @@
             {{form.content}}
         </div>
 
+{% comment %}
         <div class="form-group">
             <div class="btn btn-default btn-file">
               <i class="fa fa-paperclip"></i> Attachment
@@ -83,6 +81,7 @@
             </div>
             <p class="help-block">Max. 32MB</p>
         </div>
+{% endcomment %}
 
     </div>
 

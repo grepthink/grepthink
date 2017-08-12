@@ -426,9 +426,7 @@ class EmailRosterForm(forms.Form):
 
     content = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
-
-    # class Meta:
-    #     fields = ['subject', 'content']
+    
 
 class CourseUpdateForm(forms.ModelForm):
     """
