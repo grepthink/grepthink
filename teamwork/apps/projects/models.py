@@ -258,7 +258,7 @@ class Project(models.Model):
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
-        related_name='interested',
+        related_name='project',
         default=None)
 
 
@@ -539,7 +539,6 @@ class Project(models.Model):
         # proj = Project.objects.filter(membership__in=myProjects)
 
         proj = user.membership.all()
-        print(proj)
 
 
         return proj
@@ -560,7 +559,6 @@ class Project(models.Model):
         # proj = Project.objects.filter(creator=user.username)
 
         proj = user.project_creator.all()
-        print(proj)
 
         return proj
 

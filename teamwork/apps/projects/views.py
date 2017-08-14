@@ -47,7 +47,6 @@ def view_projects(request):
     my_projects = Project.get_my_projects(request.user)
     my_created = Project.get_created_projects(request.user)
     projects = my_projects | my_created
-    print (projects)
     # projects = list(set(projects))
 
     return _projects(request, projects)
@@ -72,8 +71,6 @@ def view_meetings(request, slug):
 
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
-
-    print(project.meetings)
 
     #meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
 
@@ -125,8 +122,6 @@ def view_one_project(request, slug):
     page_description = project.tagline or "Tagline"
     title = project.title or "Project"
 
-
-    print(updates)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
