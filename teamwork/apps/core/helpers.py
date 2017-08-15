@@ -21,9 +21,14 @@ import codecs
 def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
-    # build list of emails of recipients
-    for student in recipients:
-        student_email_list.append(Email(student.email))
+
+    if type(recipients[0]) is str:
+        for student in recipients:
+            student_email_list.append(Email(student))
+    else:
+        # build list of emails of recipients
+        for student in recipients:
+            student_email_list.append(Email(student.email))
 
     # Handle email sending
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -94,7 +99,6 @@ def parse_csv(csv_file):
 
     # search first line for keywords
     for line in reader:
-        print(line)
         header = line
         break
 

@@ -591,6 +591,7 @@ def email_roster(request, slug):
     title = "Email Student Roster"
 
     students_in_course = cur_course.get_students()
+
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
 
@@ -632,6 +633,11 @@ def email_csv(request, slug):
     title = "Invite Students"
 
     addcode = cur_course.addCode
+    recipients = []
+    if 'recipients' in request.session:
+        recipients = request.session['recipients']
+
+    print("in email_csv: ",recipients, "request.method:", request.method)
 
     form = EmailRosterForm()
     if request.method == 'POST':
@@ -642,11 +648,16 @@ def email_csv(request, slug):
             subject = data.get('subject')
             content = data.get('content')
 
+            print("recipients in email_csv",recipients)
+            send_email(recipients, request.user.email, subject, content)
+
+            return redirect('view_one_course', slug)
+
         else:
             print("Form not valid!")
 
-    return render(request, 'courses/email_roster.html', {
-        'slug':slug, 'form':form, 'addcode':addcode,
+    return render(request, 'courses/email_roster_with_csv.html', { 'count':len(recipients),
+        'slug':slug, 'form':form, 'addcode':addcode, 'students':recipients,
         'page_name':page_name, 'page_description':page_description,'title':title
         })
 
@@ -670,6 +681,8 @@ def upload_csv(request, slug):
 
             for student in csv_dict:
                 recipients.append(csv_dict[student])
+
+            request.session['recipients'] = recipients
 
             return redirect(email_csv, slug)
         else:

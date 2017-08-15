@@ -37,15 +37,14 @@
 
             </div>
 
-
             <div class="box-body no-padding">
              <ul class="nav nav-pills nav-stacked">
-                     {% for stud in students %}
-                        <li><a href="#"> {{ stud.email }} </a></li>
-                     {% endfor %}
+                 {% for stud in students %}
+                    <li> <a href="#">{{ stud }} </a></li>
+                 {% endfor %}
              </ul>
-           </div>
-           
+            </div>
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -59,7 +58,7 @@
       <h3 class="box-title">Compose New Message</h3>
     </div>
 
-<form action="{% url 'email_roster' slug %}" method="POST" enctype="multipart/form-data">
+<form action="{% url 'email_csv' slug %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.status }}
     <!-- /.box-header -->
