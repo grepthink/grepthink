@@ -57,7 +57,12 @@
 
 
               {% if user.is_authenticated %}
-
+                  <li>
+                      <a href="{% url 'profile' user.username %}">
+                          <i class="fa fa-user"></i>
+                          <span>Profile</span>
+                      </a>
+                  </li>
                     <li>
                         <a href="{% url 'index' %}">
                             <i class="fa fa-dashboard"></i>
@@ -125,13 +130,7 @@
                             </ul>
                     </li>
 
-                    <li>
-                        <a href="{% url 'profile' user.username %}">
-                            <i class="fa fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </li>
-
+{% comment %} Removed 'Edit Schedule' from sidebar and put it in the top-right dropdown
                     <li>
                         {% if not user.profile.isGT %}
                         <a href="{% url 'edit_schedule' user.username %}">
@@ -140,7 +139,7 @@
                         </a>
                         {% endif %}
                     </li>
-
+{% endcomment %}
                 {% endif %}
 
 
