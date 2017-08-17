@@ -35,8 +35,7 @@ def signup(request):
             return render(request, 'profiles/signup.html',
                           {'form': form})
 
-        else:
-            username = form.cleaned_data.get('username')
+        else:            
             email = form.cleaned_data.get('email')
             if 'grepthink' in email:
                 GT = True
@@ -48,6 +47,10 @@ def signup(request):
                 user1 = User.objects.create_superuser(username=username, password=password,
                                          email=email)
             else:
+                # parse email for 'username'
+                split = email.split("@")
+                username = split[0]
+
                 user1 = User.objects.create_user(username=username, password=password,
                                          email=email)
 
@@ -132,7 +135,7 @@ def edit_profile(request, username):
         return redirect('profiles/profile.html')
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)
-        profile = Profile.objects.get(user=tempProfile)        
+        profile = Profile.objects.get(user=tempProfile)
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
