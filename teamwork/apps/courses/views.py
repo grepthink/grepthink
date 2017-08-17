@@ -337,7 +337,6 @@ def create_course(request):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-            course.csv_file = data.get('csv_file')
 
             # creator is current user
             course.creator = request.user
@@ -374,33 +373,6 @@ def edit_course(request, slug):
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
 
-    # Builds csv_dict[students full name] = email address
-    # TODO:For a more general approach would parse the header and check which columns are
-    # First Name, Middle Name, Last Name, and email. Even then, not all csv headers will
-    # have same label names
-    if request.POST.get('send_emails'):
-
-        # grab the csv
-        csv_file = course.csv_file
-        if csv_file:
-            csv_dict = {}
-            # django stores File as bytes array, need to decode to string as we read
-            contents = csv_file.read().decode("utf-8")
-            # split contents of csv on new line, iterable is needed for csv.reader
-            lines = contents.splitlines()
-            # does all the backend splitting of csv, from 'csv' module
-            reader = csv.reader(lines)
-
-            # Name is stored in 4th value
-            # Email is stored in 13th value  -- this is specific to Jullig's CSV format
-                                            #   need to adjust for more general csv's
-            for row in reader:
-                fullname = row[4] + row[5] + row[6]
-                email = row[13]
-                # Save student in dict, key=fullname & value=email
-                csv_dict[fullname] = email
-
-
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
@@ -416,20 +388,11 @@ def edit_course(request, slug):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-            # TODO: check if csv_file still exists after edit if the file isn't changed
-            course.csv_file = data.get('csv_file')
 
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
             course.save()
-
-            #handle csv upload
-            if request.POST and request.FILES:
-                csv_upload = request.FILES['csv_file']
-                if csv_upload:
-                    course.csv_file = csv_upload
-                    course.save()
 
             # clear all enrollments
             enrollments = Enrollment.objects.filter(course=course)
@@ -494,7 +457,6 @@ def update_course(request, slug):
         messages.info(request,'Only Professor can post and update')
         return HttpResponseRedirect('/course')
 
-
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
@@ -504,7 +466,6 @@ def update_course(request, slug):
             new_update.content = form.cleaned_data.get('content')
             new_update.creator = request.user
             new_update.save()
-
 
         # Next 4 lines handle sending an email to class roster
             # grab list of students in the course
@@ -522,7 +483,6 @@ def update_course(request, slug):
             request, 'courses/update_course.html',
             {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title }
             )
-
 
 @login_required
 def update_course_update(request, slug, id):
@@ -554,7 +514,6 @@ def update_course_update(request, slug, id):
             request, 'courses/update_course_update.html',
             {'form': form, 'course': course, 'update': update}
             )
-
 
 @login_required
 def delete_course_update(request, slug, id):

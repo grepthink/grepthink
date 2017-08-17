@@ -241,13 +241,9 @@ class EditCourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
-        required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+        required=False)    
 
     #META CLASS
     class Meta:
@@ -426,7 +422,7 @@ class EmailRosterForm(forms.Form):
 
     content = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
-    
+
 
 class CourseUpdateForm(forms.ModelForm):
     """
