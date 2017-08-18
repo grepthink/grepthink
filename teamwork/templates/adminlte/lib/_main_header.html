@@ -83,17 +83,17 @@
                         <div class="box-body no-padding">
                          <ul class="nav nav-pills nav-stacked">
                                 <li><a href="{% url 'profile' user.username %}"
-                                    class="btn btn-success btn-flat"><i class="fa fa-user"></i>Profile</a></li>
+                                    class="btn btn-primary btn-flat"><i class="fa fa-user"></i>Profile</a></li>
                          </ul>
-                         <ul class="nav nav-pills nav-stacked">
+                         <ul class="nav nav-stacked">
                                 <li><a href="{% url 'edit_profile' user.username %}"
-                                    class="btn btn-success btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a></li>
+                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a></li>
                          </ul>
                          <ul class="nav nav-pills nav-stacked">
                              {% if user.profile.isProf %}
                              <li>
                                  <a href="{% url 'edit_schedule' user.username %}"
-                                    class="btn btn-success btn-flat"><i class="fa fa-wrench"></i> Set Availability</a></li>
+                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Set Availability</a></li>
                              {% endif %}
                          </ul>
                          <ul class="nav nav-pills nav-stacked">
