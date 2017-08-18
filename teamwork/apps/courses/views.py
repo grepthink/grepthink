@@ -9,11 +9,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from django.urls import reverse
 
+from django.contrib import messages
+
 from teamwork.apps.projects.models import *
 from teamwork.apps.core.helpers import *
 from teamwork.apps.core.forms import *
 from .forms import *
 from .models import *
+
+from datetime import datetime
 
 import csv
 import codecs
@@ -68,22 +72,67 @@ def view_one_course(request, slug):
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-
+    profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    asgs = list(course.assignments.all())
 
-    # professor = Enrollment.objects.filter(course = course, role = "professor")
-    # can add TA or w/e in the future
 
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    # prof = get_object_or_404(User, username=professor)
+    if(request.method=='POST'):
+        form=AssignmentForm(request.user.id,request.POST)
+        if form.is_valid():
+            data=form.cleaned_data
+            ass_date=data.get('ass_date')
+            due_date=data.get('due_date')
+            ass_type=data.get('ass_type')
+            ass_name=data.get('ass_name')
+            ass_number=data.get('ass_number')
 
+            # checking if there is an assignment of same type already in
+            # progress based on assignment type and date
+            split_type = ass_type.split(" ")
+            print(split_type)
+            for asg in asgs:
+                for word in split_type:
+                    if word in asg.ass_type:
+                        today = datetime.now().date()
+                        # date formatting
+                        asg_ass_date = asg.ass_date
+                        asg_ass_date = datetime.strptime(asg_ass_date,
+                            "%Y-%m-%d").date()
+                        # date formatting
+                        asg_due_date = asg.due_date
+                        asg_due_date = datetime.strptime(asg_due_date,
+                            "%Y-%m-%d").date()
+
+                        # verifies existing project doesnt exist within due date
+                        if asg_ass_date < today <= asg_due_date:
+                            print("assignment already in progress")
+                            # need to change this redirect to display message
+                            # so that user is aware their info wasn't stored
+                            return redirect(view_one_course,course.slug)
+
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date,
+                ass_number=ass_number))
+            course.save()
+            print(course.assignments.all())
+        messages.info(request, 'You have successfully created an assignment')
+        return redirect(view_one_course,course.slug)
+    if(profile.isProf or profile.isTa):
+        form=AssignmentForm(request.user.id,request.POST)
+    else:
+        form=AssignmentForm(request.user.id,request.POST)
     return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'course': course , 'projects': projects, 'date_updates': date_updates,
+            'students':student_users,
+        'page_name' : page_name, 'page_description': page_description,
+            'title': title, 'profile':profile,'form':form})
+
 
 
 @login_required

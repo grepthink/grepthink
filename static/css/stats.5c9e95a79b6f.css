@@ -1,0 +1,37 @@
+.container {
+  width: 1280px;
+  margin: 0 auto;
+  overflow: auto;
+
+  .title {
+    text-align: center;
+    color: #FFA500;
+  }
+
+  .title__link {
+    display: inline-block;
+    color: white;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.chart-demo {
+  width: 640px;
+}
+statistics
+.legend ul { list-style-type: none; }
+.legend li { float: left; margin-right: 20px; list-style-type: none; word-spacing: 10px;}
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+/* your colors */
+.legend .in { background-color: #1789D4; }
+.legend .out { background-color: #CB4B16; }
+.legend .count { float: right; margin-right: 20px; }
+
+.ScrollStyle
+{
+    max-height: 600px;
+    overflow-y: scroll;
+}
