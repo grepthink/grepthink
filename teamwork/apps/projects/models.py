@@ -194,37 +194,37 @@ class Project(models.Model):
 
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
-        max_length=255, 
+        max_length=255,
         default="No Project Title Provided")
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
     creator = models.ForeignKey(
-        User, 
+        User,
         # students can access courses through this relation
         # user.creator.all()
-        related_name='project_creator', 
+        related_name='project_creator',
         on_delete=models.CASCADE)
 
     # Short project description
     tagline = models.TextField(
-        max_length=38, 
+        max_length=38,
         default="Default Project Tagline")
 
     # Verbose project description.
     content = models.TextField(
-        max_length=4000, 
+        max_length=4000,
         default="Content")
 
     # Members associated with a project (Membership objects)
     members = models.ManyToManyField(
-        User, 
+        User,
         related_name='membership',
         through='Membership')
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
-        Skills, 
+        Skills,
         related_name="desired",
         default="")
 
@@ -246,7 +246,7 @@ class Project(models.Model):
     # NEED TO SETUP M2M not proper
     # Resource list that the project members can update
     resource = models.TextField(
-        max_length=4000, 
+        max_length=4000,
         default="*No resources provided*")
 
     # NEED UPDATES M2M for proper link not query
@@ -254,7 +254,7 @@ class Project(models.Model):
 
 
 
-    # the interest in a project can be access through back realtionship 
+    # the interest in a project can be access through back realtionship
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
@@ -267,7 +267,8 @@ class Project(models.Model):
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
-
+    # projects tsr
+    tsr = models.ManyToManyField(Tsr, default=None)
 
 
     # Store the teamSize for team generation and auto switch accepting members
@@ -587,13 +588,13 @@ class Membership(models.Model):
     Membership objects relate a user and a project.
     """
     user = models.ForeignKey(
-        User, 
+        User,
         related_name='membershipUser',
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         default=0)
     project = models.ForeignKey(
-        Project, 
-        on_delete=models.CASCADE, 
+        Project,
+        on_delete=models.CASCADE,
         default=0)
     invite_reason = models.CharField(
         max_length=64)
