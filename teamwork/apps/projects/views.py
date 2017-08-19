@@ -731,7 +731,10 @@ def view_tsr(request, slug):
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
-    med = int(100/len(members))
+    med = 1
+    if len(members):
+        med = int(100/len(members))
+
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
