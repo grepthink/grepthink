@@ -49,9 +49,9 @@ urlpatterns = [
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
         # Update TSR information for normal tsr
-        url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/$', core_views.tsr_update, name='tsr_update'),
         # View TSRs
-        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
+        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', core_views.view_tsr, name='view_tsr'),
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
 

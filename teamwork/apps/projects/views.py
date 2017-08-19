@@ -100,6 +100,9 @@ def view_one_project(request, slug):
     """
 
     project = get_object_or_404(Project, slug=slug)
+    isProf = 0
+    if request.user.profile.isProf:
+        isProf = 1
     updates = project.get_updates()
     resources = project.get_resources()
 
@@ -129,8 +132,9 @@ def view_one_project(request, slug):
     print(updates)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
+        'page_description': page_description, 'title' : title, 'isProf':isProf,
+        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 
 def select_members(request):
