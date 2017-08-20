@@ -130,8 +130,6 @@ class CreateCourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     #META CLASS
     class Meta:
         model = Course
@@ -243,13 +241,9 @@ class EditCourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
-        required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+        required=False)    
 
     #META CLASS
     class Meta:
@@ -412,6 +406,22 @@ class ShowInterestForm(forms.ModelForm):
             #raise forms.ValidationError("Choices must be unique.")
 
         return data
+
+"""
+Form used to simulate sending an email
+
+"""
+class EmailRosterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(EmailRosterForm, self).__init__(*args, **kwargs)
+
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
 
 
 class CourseUpdateForm(forms.ModelForm):

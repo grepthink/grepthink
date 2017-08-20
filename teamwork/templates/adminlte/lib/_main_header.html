@@ -58,7 +58,8 @@
                         class="user-image" alt="User Image">
                             <!-- <img class="user-image" src="/media/avatars/Greppy.jpg" alt="User Image"> -->
                         {% endif %}
-                        <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
+                        {# <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span> #}
+                        <span class="hidden-xs">Account</span>
                     </a>
                     <ul class="dropdown-menu">
                         {% block user_header %}
@@ -79,15 +80,41 @@
 
                         <!-- Menu Footer-->
                         {% block menu_footer %}
+                        <div class="box-body no-padding">
+                         <ul class="nav nav-pills nav-stacked">
+                                <li><a href="{% url 'profile' user.username %}"
+                                    class="btn btn-primary btn-flat"><i class="fa fa-user"></i>Profile</a></li>
+                         </ul>
+                         <ul class="nav nav-stacked">
+                                <li><a href="{% url 'edit_profile' user.username %}"
+                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a></li>
+                         </ul>
+                         <ul class="nav nav-pills nav-stacked">
+                             {% if user.profile.isProf %}
+                             <li>
+                                 <a href="{% url 'edit_schedule' user.username %}"
+                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Set Availability</a></li>
+                             {% endif %}
+                         </ul>
+                         <ul class="nav nav-pills nav-stacked">
+                                <li><a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
+                         </ul>
+                       </div>
+                       {% comment %}
                         <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="{% url 'profile' user.username %}"
+                                    class="btn btn-default btn-flat"><i class="fa fa-user"></i> Profile</a>
+                            </div>
                             <div class="pull-left">
                                 <a href="{% url 'edit_profile' user.username %}"
                                     class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
                             </div>
                             <div class="pull-right">
-                                <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a>
+                                {# <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a> #}
                             </div>
                         </li>
+                        {% endcomment %}
                         {% endblock %}
                     </ul>
                 </li>

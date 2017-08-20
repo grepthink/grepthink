@@ -10,8 +10,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from teamwork.apps.projects.models import *
-from teamwork.apps.core.helpers import send_email
-
+from teamwork.apps.core.helpers import *
+from teamwork.apps.core.forms import *
 from .forms import *
 from .models import *
 
@@ -70,7 +70,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
 
     students = Enrollment.objects.filter(course = course, role = "student")
-    
+
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
 
@@ -321,7 +321,7 @@ def create_course(request):
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CreateCourseForm(request.user.id,request.POST)
+        form = CreateCourseForm(request.user.id,request.POST, request.FILES)
         if form.is_valid():
             # create an object for the input
             course = Course()
@@ -337,7 +337,6 @@ def create_course(request):
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-
 
             # creator is current user
             course.creator = request.user
@@ -374,32 +373,6 @@ def edit_course(request, slug):
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
 
-    # Builds csv_dict[students full name] = email address
-    # TODO:For a more general approach would parse the header and check which columns are
-    # First Name, Middle Name, Last Name, and email. Even then, not all csv headers will
-    # have same label names
-    if request.POST.get('send_emails'):
-        # grab the csv
-        csv_file = course.csv_file
-        if csv_file:
-            csv_dict = {}
-            # django stores File as bytes array, need to decode to string as we read
-            contents = csv_file.read().decode("utf-8")
-            # split contents of csv on new line, iterable is needed for csv.reader
-            lines = contents.splitlines()
-            # does all the backend splitting of csv, from 'csv' module
-            reader = csv.reader(lines)
-
-            # Name is stored in 4th value
-            # Email is stored in 13th value  -- this is specific to Jullig's CSV format
-                                            #   need to adjust for more general csv's
-            for row in reader:
-                fullname = row[4] + row[5] + row[6]
-                email = row[13]
-                # Save student in dict, key=fullname & value=email
-                csv_dict[fullname] = email
-
-
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
@@ -420,14 +393,6 @@ def edit_course(request, slug):
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
             course.save()
-
-
-            #handle csv upload
-            if request.POST and request.FILES:
-                csv_upload = request.FILES['csv_file']
-                if csv_upload:
-                    course.csv_file = csv_upload
-                    course.save()
 
             # clear all enrollments
             enrollments = Enrollment.objects.filter(course=course)
@@ -492,7 +457,6 @@ def update_course(request, slug):
         messages.info(request,'Only Professor can post and update')
         return HttpResponseRedirect('/course')
 
-
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
@@ -503,10 +467,9 @@ def update_course(request, slug):
             new_update.creator = request.user
             new_update.save()
 
-
         # Next 4 lines handle sending an email to class roster
             # grab list of students in the course
-            students_in_course = Enrollment.objects.filter(course = course)
+            students_in_course = course.students.all().filter()
             # TODO: course variables contains (slug: blah blah)
             subject = "{0} has posted an update to {1}".format(request.user, course)
             content = "{0}\n\n www.grepthink.com".format(new_update.content)
@@ -518,9 +481,8 @@ def update_course(request, slug):
 
     return render(
             request, 'courses/update_course.html',
-            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title }
             )
-
 
 @login_required
 def update_course_update(request, slug, id):
@@ -553,7 +515,6 @@ def update_course_update(request, slug, id):
             {'form': form, 'course': course, 'update': update}
             )
 
-
 @login_required
 def delete_course_update(request, slug, id):
     """
@@ -579,3 +540,114 @@ def lock_interest(request, slug):
 
     course.save()
     return redirect(view_one_course, course.slug)
+
+
+@login_required
+def email_roster(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    page_name = "Email Roster"
+    page_description = "Emailing members of Course: %s"%(cur_course.name)
+    title = "Email Student Roster"
+
+    students_in_course = cur_course.get_students()
+
+    count = len(students_in_course) or 0
+    addcode = cur_course.addCode
+
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = EmailRosterForm(request.POST, request.FILES)
+        #if form is accepted
+        if form.is_valid():
+            #the courseID will be gotten from the form
+            data = form.cleaned_data
+
+            subject = data.get('subject')
+            content = data.get('content')
+
+            # attachment = request.FILES['attachment']
+            # if attachment:
+            #     handle_file(attachment)
+
+            send_email(students_in_course, request.user.email, subject, content)
+
+            return redirect('view_one_course', slug)
+        else:
+            # redirect to error
+            print("EmailRosterForm not valid")
+
+    return render(request, 'courses/email_roster.html', {
+        'slug':slug, 'form':form, 'count':count, 'students':students_in_course,
+        'addcode':addcode,
+        'page_name':page_name, 'page_description':page_description,
+        'title':title
+    })
+
+@login_required
+def email_csv(request, slug):
+    cur_course = get_object_or_404(Course, slug=slug)
+    page_name = "Invite Students"
+    page_description = "Invite Students via CSV Upload"
+    title = "Invite Students"
+
+    addcode = cur_course.addCode
+    recipients = []
+    if 'recipients' in request.session:
+        recipients = request.session['recipients']
+
+    print("in email_csv: ",recipients, "request.method:", request.method)
+
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        form = EmailRosterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            subject = data.get('subject')
+            content = data.get('content')
+
+            print("recipients in email_csv",recipients)
+            send_email(recipients, request.user.email, subject, content)
+
+            return redirect('view_one_course', slug)
+
+        else:
+            print("Form not valid!")
+
+    return render(request, 'courses/email_roster_with_csv.html', { 'count':len(recipients),
+        'slug':slug, 'form':form, 'addcode':addcode, 'students':recipients,
+        'page_name':page_name, 'page_description':page_description,'title':title
+        })
+
+@login_required
+def upload_csv(request, slug):
+    page_name = "Upload CSV File"
+    page_description = "CSV Upload"
+    title = "Upload CSV"
+
+    recipients = []
+
+    form = UploadCSVForm()
+    if request.method == 'POST':
+        form = UploadCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            csv_file = data.get('csv_file')
+
+            csv_dict = parse_csv(csv_file)
+
+            for student in csv_dict:
+                recipients.append(csv_dict[student])
+
+            request.session['recipients'] = recipients
+
+            return redirect(email_csv, slug)
+        else:
+            print("form is invalid")
+
+    return render(request, 'core/upload_csv.html', {
+        'slug':slug, 'form':form,
+        'page_name':page_name, 'page_description':page_description,'title':title
+    })

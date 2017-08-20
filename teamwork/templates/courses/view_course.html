@@ -324,10 +324,12 @@
                 </p>
                 <h3>Email Roster</h3>
                 <p>
-                    <button class="btn btn-info" name="send_emails" value="send_emails">
-                        <i class="fa fa-envelope-o"></i>
-                        Email Roster
-                    </button>
+                    <a href="{% url 'email_roster' course.slug %}">
+                        <button class="btn btn-info">
+                            <i class="fa fa-envelope-o"></i>
+                            Email Roster
+                        </button>
+                    </a>
                 </p>
                 <h3>Lock Interest</h3>
                 <p>
@@ -359,6 +361,14 @@
                 </p>
 
                 <h3>Invite Students</h3>
+                <p>
+                    <a href="{% url 'upload_csv' course.slug %}">
+                        <button class="btn btn-info">
+                            <i class="fa fa-envelope-o"></i>
+                            Email Roster w/ CSV Upload
+                        </button>
+                    </a>
+                </p>
                 <p>
                     You can add students yourself in the <b>Edit Course</b> form
                     above, or have them add themselves using the addcode
