@@ -16,13 +16,13 @@ from teamwork.apps.projects.views import to_bits, from_bits
        match: the list of matched students
     returns: a sorted list of students from best score to worst
 """
-def sort(match):
-    topScores = sorted(set(match.values()))
+def sort(matchList):
     matches = []
+    topScores = sorted(matchList.values())
     for j in reversed(topScores):
-        for u, i in match.items():
+        for u, i in matchList.items():
             if j == i:
-                matches.append(u)
+                matches.append((u,i))
     return matches
 
 
@@ -44,8 +44,8 @@ def po_match(project):
 
     # set weights based on criteria
     # locate project course
-    course = next(course for course in Course.objects.all() if project in
-            course.projects.all())
+    course = project.course.first()
+
     if course.limit_weights:
         # print("po_match values overridden by course instructor")
         interestWeight = course.weigh_interest or 1
@@ -57,12 +57,13 @@ def po_match(project):
         knowWeight = project.weigh_know or course.weigh_know or 1
         learnWeight = project.weigh_learn or course.weigh_learn or 1
 
+    # Interest Matching
     interested = project.interest.all()
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
         if i.user not in project.members.all() and project not in Project.get_created_projects(i.user):
-            initial[i.user] = (i.interest * interestWeight)
+            initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
 
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
@@ -75,33 +76,30 @@ def po_match(project):
             # if is to allow for updating the score of users already counted
             if j.user not in project.members.all() and project not in Project.get_created_projects(j.user):
                 if j.user in initial:
-                    temp = initial[j.user]
-                    temp += (2 * knowWeight)
-                    initial[j.user] = temp
+                    initial[j.user][0] += (2 * knowWeight)
+                    initial[j.user][2] += (2 * knowWeight)
                 # otherwise we add them to a backup list
                 elif course in cur_course:
                     if j.user in backup:
-                        temp = backup[j.user]
-                        temp += (2 * knowWeight)
-                        backup[j.user] = temp
+                        # temp += (2 * knowWeight)
+                        backup[j.user][0] += (2 * knowWeight)
+                        backup[j.user][2] += (2 * knowWeight)
                     else:
-                        backup[j.user] = 2
+                        backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
+
         learn = i.learn.all()
         for k in learn:
             cur_course = Course.get_my_courses(k.user)
             if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
                 if k.user in initial:
-                    temp = initial[k.user]
-                    temp += (1 * learnWeight)
-                    initial[k.user] = temp
-                # elif course in cur_course:
+                    initial[k.user][0] += (1 * learnWeight)
+                    initial[k.user][3] += (1 * learnWeight)
+                elif course in cur_course:
                     if k.user in backup:
-                        temp = backup[k.user]
-                        temp += (1 * learnWeight)
-                        backup[k.user] = temp
+                        backup[k.user][0] += (1 * learnWeight)
+                        backup[k.user][3] += (1 * learnWeight)
                     else:
-                        backup[k.user] = 1
-
+                        backup[k.user] = [(1 * learnWeight), 0, 0, (1 * learnWeight), 0]
 
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
@@ -113,13 +111,12 @@ def po_match(project):
     # Look through the currently selected students and reward those with the best schedule for
     # meeting with the current members
     for l in initial.keys():
-        temp = initial[l]
-        temp += by_schedule(l, project)
-        initial[l] = temp
+        temp = by_schedule(l, project)
+        initial[l][0] += temp
+        initial[l][4] += temp 
 
     return sort(initial)
     # past classes match
-    # scheduling match
 
 def auto_ros(course):
     match_list = []
