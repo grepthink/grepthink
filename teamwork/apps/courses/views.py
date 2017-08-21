@@ -73,8 +73,9 @@ def view_one_course(request, slug):
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-
+    profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    asgs = list(course.assignments.all())    
 
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
