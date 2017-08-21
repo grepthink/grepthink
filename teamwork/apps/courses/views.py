@@ -63,6 +63,11 @@ def view_one_course(request, slug):
     page_description = "View Course Information"
     title = "%s"%(slug)
 
+    if request.user.profile.isProf:
+        isProf = 1
+    else:
+        isProf = 0
+
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
@@ -81,7 +86,7 @@ def view_one_course(request, slug):
 
     # prof = get_object_or_404(User, username=professor)
 
-    return render(request, 'courses/view_course.html', {
+    return render(request, 'courses/view_course.html', { 'isProf':isProf,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
         'page_name' : page_name, 'page_description': page_description, 'title': title})
 
