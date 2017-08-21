@@ -58,7 +58,13 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-
+            {% if profile.isProf or profile.isTa %}
+            <li class="">
+                <a href="#assignments" data-toggle="tab" aria-expanded="false">
+                    Assignments
+                    <i class="fa fa-code-fork"></i>
+                </a>
+            </li>
             {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
