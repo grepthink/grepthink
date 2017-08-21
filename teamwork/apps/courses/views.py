@@ -399,7 +399,7 @@ def create_course(request):
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect(view_one_course, course.slug)
+            return redirect(upload_csv, course.slug)
     else:
         form = CreateCourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
