@@ -90,7 +90,7 @@
                                     class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a></li>
                          </ul>
                          <ul class="nav nav-pills nav-stacked">
-                             {% if user.profile.isProf %}
+                             {% if not user.profile.isProf %}
                              <li>
                                  <a href="{% url 'edit_schedule' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Set Availability</a></li>

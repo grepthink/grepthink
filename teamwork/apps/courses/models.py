@@ -26,6 +26,19 @@ from teamwork.apps.projects.models import Project
 def get_all_courses(self):
     return Course.objects.all()
 
+class Assignment(models.Model):
+    due_date=models.CharField(max_length=255, default="20991231")
+    ass_date=models.CharField(max_length=255, default="20000101")
+    ass_type=models.CharField(max_length=255, default='tsr')
+    ass_name=models.CharField(max_length=255, default="TSR for Sprint X")
+    ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
+
+    def __str__(self):
+        """
+        Human readeable representation of the Assignment object.
+        """
+        return ("%s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name,self.ass_number))
+
 def get_user_courses(self):
     """
     Added to auth so that a user object can easily retrieve enrolled courses
@@ -149,7 +162,7 @@ class Course(models.Model):
     assignments=models.ManyToManyField(
         # to Assignment model
         Assignment,
-        related_name='asses') # :D hehe -kp    
+        related_name='asses') # :D hehe -kp
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
