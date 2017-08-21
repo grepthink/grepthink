@@ -216,7 +216,7 @@ class EditProjectForm(forms.ModelForm):
     tagline = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=38)
 
-    accepting = forms.BooleanField(label='accepting members', required=False)
+    accepting = forms.BooleanField(label='Accepting Members?', required=False)
 
     sponsor = forms.BooleanField(label='Sponsored?', required=False)
 
