@@ -84,9 +84,50 @@ def view_one_course(request, slug):
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    # prof = get_object_or_404(User, username=professor)
+    form = AssignmentForm()
+    if(request.method == 'POST'):
+        form = AssignmentForm(request.user.id,request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            ass_date = data.get('ass_date')
+            due_date = data.get('due_date')
+            ass_type = data.get('ass_type')
+            ass_name = data.get('ass_name')
+            ass_number = data.get('ass_number')
 
-    return render(request, 'courses/view_course.html', { 'isProf':isProf,
+            # checking if there is an assignment of same type already in
+            # progress based on assignment type and date
+            split_type = ass_type.split(" ")
+            print(split_type)
+            for asg in asgs:
+                for word in split_type:
+                    if word in asg.ass_type:
+                        today = datetime.now().date()
+                        # date formatting
+                        asg_ass_date = asg.ass_date
+                        asg_ass_date = datetime.strptime(asg_ass_date,
+                            "%Y-%m-%d").date()
+                        # date formatting
+                        asg_due_date = asg.due_date
+                        asg_due_date = datetime.strptime(asg_due_date,
+                            "%Y-%m-%d").date()
+
+                        # verifies existing project doesnt exist within due date
+                        if asg_ass_date < today <= asg_due_date:
+                            print("assignment already in progress")
+                            # need to change this redirect to display message
+                            # so that user is aware their info wasn't stored
+                            return redirect(view_one_course,course.slug)
+
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date,
+                ass_number=ass_number))
+            course.save()
+            print(course.assignments.all())
+        messages.info(request, 'You have successfully created an assignment')
+        return redirect(view_one_course,course.slug)
+
+    return render(request, 'courses/view_course.html', { 'isProf':isProf, 'form':form,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
         'page_name' : page_name, 'page_description': page_description, 'title': title})
 
