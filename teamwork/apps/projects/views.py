@@ -580,13 +580,15 @@ def tsr_update(request, slug):
     cur_proj = get_object_or_404(Project, slug=slug)
 
     # get list of emails of users in current project
-    member_num=len(cur_proj.members.all())
-    members=list()
-    emails=list()
-    for i in range(member_num):
-        members.append(cur_proj.members.all()[i])
-        if(cur_proj.members.all()[i]!=user):
-            emails.append(cur_proj.members.all()[i].email)
+    member_num = len(cur_proj.members.all())
+    members = cur_proj.members.all()
+    emails = list()
+    print("member_num", member_num)
+    for member in members:
+        print("in loop")
+        emails.append(member.email)
+
+    print("emails:", emails)
     course = Course.objects.get(projects=cur_proj)
 
 
@@ -632,8 +634,12 @@ def tsr_update(request, slug):
     forms=list()
 
     if(asg_available):
+        print("asg_available")
+
+        # if 'Save TSR' was clicked
         if request.method == 'POST':
 
+            print("POST")
             for email in emails:
                 # grab form
                 form = TsrForm(request.user.id, request.POST, members=members,
@@ -667,7 +673,7 @@ def tsr_update(request, slug):
             return redirect(view_projects)
 
         else:
-            # if request was not post then display forms
+            # if request was not post then display forms for filling out a TSR
             for m in emails:
                 form_i = TsrForm(request.user.id, request.POST, members=members,
                     emails=emails, prefix=m, scrum_master=scrum_master)
