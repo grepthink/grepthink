@@ -84,7 +84,7 @@ def view_one_course(request, slug):
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    form = AssignmentForm()
+    form = AssignmentForm(request.user.id)
     if(request.method == 'POST'):
         form = AssignmentForm(request.user.id,request.POST)
         if form.is_valid():
