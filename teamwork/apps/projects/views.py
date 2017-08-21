@@ -45,12 +45,12 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
+    # print("my_projects:", my_projects)
     my_created = Project.get_created_projects(request.user)
+    # print("my_created:", my_created)
     projects = my_projects | my_created
-    # projects = list(set(projects))
 
     return _projects(request, projects)
-
 
 def view_meetings(request, slug):
     """

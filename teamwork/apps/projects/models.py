@@ -295,7 +295,6 @@ class Project(models.Model):
         related_name='project',
         default=None)
 
-
     # NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush

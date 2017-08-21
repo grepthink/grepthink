@@ -126,9 +126,7 @@ class CreateCourseForm(forms.ModelForm):
 
     weigh_learn = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of skills users want to learn",
-        required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+        required=False)    
 
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
@@ -468,7 +466,8 @@ class AssignmentForm(forms.ModelForm):
     # date assignment will start
     ass_date = forms.DateField(
         widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d']
+        input_formats = ['%Y-%m-%d'],
+        label="Open Date"
     )
     # date assignment will end (users can no longer submit)
     due_date = forms.DateField(
@@ -481,9 +480,18 @@ class AssignmentForm(forms.ModelForm):
         label="Assignment name",
         required=True,
         max_length=255)
+
+    # assignment description
+    description = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment Description",
+        required=True,
+        max_length=255)
+
     # type of assignment, i.e. tsr
     ass_type = forms.CharField(max_length=255, label="Assignment Type",
         required=True)
+
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
         widget=forms.NumberInput(),label='Assignment Number',
@@ -491,9 +499,8 @@ class AssignmentForm(forms.ModelForm):
         required=True,
         decimal_places=0)
 
-
     class Meta:
         model= Assignment
         widgets = {
         }
-        fields = ['ass_date', 'due_date','ass_name','ass_type']
+        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']

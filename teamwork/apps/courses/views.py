@@ -97,6 +97,7 @@ def view_one_course(request, slug):
             ass_type = data.get('ass_type')
             ass_name = data.get('ass_name')
             ass_number = data.get('ass_number')
+            description = data.get('description')
 
             # checking if there is an assignment of same type already in
             # progress based on assignment type and date
@@ -123,7 +124,7 @@ def view_one_course(request, slug):
                             return redirect(view_one_course,course.slug)
 
             course.assignments.add(Assignment.objects.create(ass_name=ass_name,
-                ass_type=ass_type, ass_date=ass_date, due_date=due_date,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
                 ass_number=ass_number))
             course.save()
             print(course.assignments.all())
