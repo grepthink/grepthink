@@ -97,25 +97,28 @@
 
             <div class="tab-pane" id="assignments">
             {% if isProf %}
+            <div class="col-md-6">
+                <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Create Assignment</h3>
+                        </div>
 
-                <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
-                {% for field in form.visible_fields %}
-                {% csrf_token %}
-                  <div class="form-group">
-                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                    {{ field }}
-                  </div>
-                {% endfor %}
-            <input type="submit" value="Save Assignment">
-            </form>
-              <!-- {% if messages %}
-                <ul class="messages">
-                  {% for message in messages %} -->
-                    <!-- <li{% if message.tags %} class="{{ message.tags }}"{% endif %}></li> -->
-                  <!-- {% endfor %}
-                </ul>
-              {% endif %} -->
-            {% endif %}
+                        <div class="box-body">
+                            <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
+                            {% for field in assignmentForm.visible_fields %}
+                            {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <input type="submit" value="Save Assignment">
+                            {% endif %}
+                            </form>
+                        </div>
+                </div>
+            </div>
+
             </div>
 
             <div class="tab-pane" id="description">
