@@ -706,8 +706,9 @@ def view_tsr(request, slug):
     tsr_dicts=list()
     tsr_dict = list()
     sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
+    averages = list()
     for i in sprint_numbers.all():
-        averages=list()
+        # averages=list()
         tsr_dict=list()
         for member in members:
             tsr_single=list()
@@ -720,14 +721,17 @@ def view_tsr(request, slug):
                 if(len(tsr_query_result)==0):
                     continue
                 tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
+
             avg=0
             if(len(tsr_single)!=0):
                 for tsr_obj in tsr_single:
-                    avg=avg+tsr_obj.percent_contribution
-                avg=avg/len(tsr_single)
+                    avg = avg + tsr_obj.percent_contribution
+                avg = avg / len(tsr_single)
+
             tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
                 'avg' : avg})
             averages.append({'email':member.email,'avg':avg})
+
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
@@ -743,4 +747,5 @@ def view_tsr(request, slug):
     if request.method == 'POST':
 
         return redirect(view_projects)
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title,
+                        'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
