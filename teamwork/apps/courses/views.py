@@ -18,6 +18,8 @@ from .models import *
 import csv
 import codecs
 
+from datetime import datetime
+
 def _courses(request, courses):
     """
     Private method that will be used for paginator once I figure out how to get it working.
@@ -75,7 +77,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
     profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
-    asgs = list(course.assignments.all())    
+    asgs = list(course.assignments.all())
 
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future

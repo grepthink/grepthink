@@ -592,7 +592,6 @@ def tsr_update(request, slug):
 
     asgs = list(course.assignments.all())
 
-
     # if an assignment is not available, boolean is set to
     # false and user is redirected to project view when they
     # try to fill out a tsr
@@ -605,7 +604,7 @@ def tsr_update(request, slug):
         # date and the due date, and set the boolean for true as well as making
         # the assignment number = the assignment number of the assignment object
         today = datetime.now().date()
-        print(today)
+        print("TODAY IS: ", today)
 
         for asg in asgs:
             if "tsr" in asg.ass_type.lower():
