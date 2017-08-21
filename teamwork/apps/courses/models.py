@@ -145,6 +145,12 @@ class Course(models.Model):
         # project.course.first()
         related_name='course')
 
+    # assignments in course, manytomany
+    assignments=models.ManyToManyField(
+        # to Assignment model
+        Assignment,
+        related_name='asses') # :D hehe -kp    
+
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
     creator = models.ForeignKey(
@@ -288,7 +294,7 @@ class Course(models.Model):
                 'updates': [u for u in updates if u.date_post.date() == d]
             })
         return updates_by_date
-        
+
     """
     Gets all students in a course excluding professors
     """
