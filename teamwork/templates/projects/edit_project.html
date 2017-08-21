@@ -145,7 +145,7 @@ $(document).ready(function() {
                 </div>
             </div>
 
-            </form>
+            {# </form>#}
     </div>
 </div>
 </div>
@@ -157,7 +157,7 @@ $(document).ready(function() {
     <h3 class="box-title">Add members to {{project.title}}</h3>
   </div>
 
-    <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+    {# <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
       {% csrf_token %}
         <div class="box-body">
           <div class="form-group">
@@ -167,22 +167,7 @@ $(document).ready(function() {
           </div>
         </div>
 
-        <div class="box-footer">
-
-            <div class="pull-left">
-            <a href="{% url 'view_one_project' project.slug %}">
-                <button class="btn btn-danger" type="button">
-                    Cancel
-                </button>
-            </a>
-            </div>
-            <div class="pull-right">
-                <button class="btn btn-success" type="submit" name="SUBMIT">
-                    Add member(s)
-                </button>
-            </div>
-        </div>
-    </form>
+{#     </form>#}
 </div>
 </div>
 
@@ -193,13 +178,13 @@ $(document).ready(function() {
   </div>
         <div class="box-body">
         <div class="btn-grid">
-        <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+    {#     <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
             {% csrf_token %}
             {% for mem in project.members.all %}
                 <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
                 </button>
             {% endfor %}
-        </form>
+    {#     </form>#}
         </div>
         </div>
 </div>
@@ -211,7 +196,7 @@ $(document).ready(function() {
     <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
   </div>
 
-  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+ {#  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
     {% csrf_token %}
       <div class="box-body">
         <div class="form-group">
@@ -221,22 +206,7 @@ $(document).ready(function() {
         </div>
       </div>
 
-      <div class="box-footer">
-
-          <div class="pull-left">
-          <a href="{% url 'view_one_project' project.slug %}">
-              <button class="btn btn-danger" type="button">
-                  Cancel
-              </button>
-          </a>
-          </div>
-          <div class="pull-right">
-              <button class="btn btn-success" type="submit" name="SUBMIT">
-                  Add Desired Skill(s)
-              </button>
-          </div>
-      </div>
-    </form>
+{#     </form>#}
 </div>
 </div>
 
@@ -247,7 +217,7 @@ $(document).ready(function() {
   </div>
   <div class="box-body">
   {# Need to fix button grouping #}
-    <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+{#     <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
         {% csrf_token %}
         {% for skill in project.desired_skills.all %}
             <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
@@ -255,7 +225,7 @@ $(document).ready(function() {
         {% empty %}
         <lead>No desired skills to remove</lead>
         {% endfor %}
-    </form>
+{#     </form>#}
   </div>
 </div>
 </div>
@@ -271,13 +241,13 @@ $(document).ready(function() {
                       sure you know what you are doing before pressing this button.
                   </p>
 
-                  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+                {#   <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
                   {% csrf_token %}
                       <button class="btn btn-danger" name="delete_project" value="delete_project">
                           <i class="fa fa-trash"></i>
                           Delete project
                       </button>
-                  </form>
+                   </form>
               </div>
           </div>
   </div>
