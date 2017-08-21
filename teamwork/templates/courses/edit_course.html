@@ -31,27 +31,105 @@
 
 
 <div class="row">
-    <div class="col-md-10">
-        <form action="{% url 'edit_course' course.slug %}" method="post" role="form"
-            class="clearfix" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.status }}
-            {% for field in form.visible_fields %}
-            <div class="form-group{% if field.errors %} has-error{% endif %}">
-                <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                {% if field.label == 'Students' %}
-                    <div style="max-height: 200px; overflow-y: scroll;">
-                        {{ field }}
-                    </div>
-                {% else %}
-                    {{ field }}
-                {% endif %}
-                {% for error in field.errors %}
-                <label class="control-label">{{ error }}</label>
-                {% endfor %}
-            </div>
-            {% endfor %}
+    <form action="{% url 'edit_course' course.slug %}" method="post" role="form"
+        class="clearfix" enctype="multipart/form-data">
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Edit Course</h3>
+                </div>
 
+            <div class="box-body">
+                    {% csrf_token %}
+                    {{ form.status }}
+                <div class="form-group">
+                    {{ form.name.errors }}
+                    <label for="{{ form.name.id_for_label }}" class="control-label">
+                    Course Name:
+                    </label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.info.errors }}
+                    <label for="{{ form.info.id_for_label }}" class="control-label">
+                    Course Information:
+                    </label>
+                    {{ form.info }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.students.errors }}
+                    <label for="{{ form.students.id_for_label }}" class="control-label">
+                    Students In Course:
+                    </label>
+                    {{ form.students }}
+                </div>
+
+            </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Optional Settings</h3>
+                </div>
+
+                <div class="box-body">
+                    <div class="form-group">
+                        {{ form.limit_creation.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Only allow professors to create projects?">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_creation.id_for_label }}" class="control-label">
+                        Only Allow Professors to Create Projects?
+                        </label>
+                        {{ form.limit_creation }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.limit_weights.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Enables the next three options">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_weights.id_for_label }}" class="control-label">
+                        Limit Weights?
+                        </label>
+                        {{ form.limit_weights }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_interest.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of interest when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_interest.id_for_label }}" class="control-label">
+                        Weight of User Interest in Projects:
+                        </label>
+                        {{ form.weigh_interest }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_know.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of known skills when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_know.id_for_label }}" class="control-label">
+                        Weight of Skills users already know:
+                        </label>
+                        {{ form.weigh_know }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_learn.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of skills a user wants to learn when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_learn.id_for_label }}" class="control-label">
+                        Weight of Skills users want to learn:
+                        </label>
+                        {{ form.weigh_learn }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 clearfix">
             <div class="pull-left">
             <a href="{% url 'view_one_course' course.slug %}">
                 <button class="btn btn-danger" type="button">
@@ -64,22 +142,24 @@
                     Save changes
                 </button>
             </div>
+        </div>
         </form>
-    </div>
-    <div class="col-md-10 clearfix">
-        <h2>Delete course</h2>
 
-        <p>
-            Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
-            sure you know what you are doing before pressing this button.
-        </p>
+        <div class="col-md-10 clearfix">
+            <h2>Delete course</h2>
 
-        <a href="{% url 'delete_course' course.slug %}">
-            <button class="btn btn-danger" name="DELETE">
-                <i class="fa fa-trash"></i>
-                Delete course
-            </button>
-        </a>
+            <p>
+                Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
+                sure you know what you are doing before pressing this button.
+            </p>
+
+            <a href="{% url 'delete_course' course.slug %}">
+                <button class="btn btn-danger" name="DELETE">
+                    <i class="fa fa-trash"></i>
+                    Delete course
+                </button>
+            </a>
+        </div>
     </div>
 </div>
 

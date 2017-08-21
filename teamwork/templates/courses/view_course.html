@@ -345,56 +345,56 @@
                     </div>
                     <div class="box-body">
 
+                        <a href="{% url 'edit_course' course.slug %}">
                         <button type="button" class="btn btn-default btn-block">
-                            <a href="{% url 'edit_course' course.slug %}">
                                     <i class="fa fa-edit"></i>
                                     Edit Course Info
-                            </a>
-                        </button>
 
+                        </button>
+                        </a>
+
+                        <a href="{% url 'view_statistics' course.slug %}">
                         <button type="button" class="btn btn-default btn-block">
-                            <a href="{% url 'view_statistics' course.slug %}">
                                     <i class="fa fa-line-chart"></i>
                                     View Course Statistics
-                            </a>
                         </button>
+                        </a>
 
+                        <a href="{% url 'email_roster' course.slug %}">
                         <button type="button" class="btn btn-default btn-block">
-                            <a href="{% url 'email_roster' course.slug %}">
                                     <i class="fa fa-envelope-o"></i>
                                     Email Roster
-                            </a>
                         </button>
+                        </a>
 
+                        <a href="{% url 'upload_csv' course.slug %}">
                         <button type="button" class="btn btn-default btn-block">
-                            <a href="{% url 'upload_csv' course.slug %}">
                                     <i class="fa fa-envelope-o"></i>
                                     Email Roster w/ CSV Upload
-                            </a>
                         </button>
+                        </a>
 
                         {% if not course.limit_interest %}
+                        <a href="{% url 'lock_interest' course.slug %}">
                         <button type="button" class="btn btn-default btn-block" name="lock">
-                            <a href="{% url 'lock_interest' course.slug %}">
                                     <i class="fa fa-lock"></i>
                                     Lock Interest
-                            </a>
                         </button>
+                        </a>
                         {% else %}
+                        <a href="{% url 'lock_interest' course.slug %}">
                         <button type="button" class="btn btn-default btn-block" name="lock">
-                            <a href="{% url 'lock_interest' course.slug %}">
                                     <i class="fa fa-unlock"></i>
                                     Unlock Interest
-                            </a>
                         </button>
+                        </a>
                         {% endif %}
-
-                        <button type="button" class="btn btn-default btn-block">
-                            <a href="{% url 'auto_gen' course.slug %}">
+                        <a href="{% url 'auto_gen' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">                            
                                     <i class="fa fa-users"></i>
                                     Auto-Generate Teams
-                            </a>
                         </button>
+                        </a>
 
                     </div>
                 </div>
