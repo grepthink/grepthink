@@ -428,6 +428,7 @@ def edit_course(request, slug):
         # Get the members to add, as a list
         members = request.POST.getlist('members')
         enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
 
         # Create membership objects for the newly added members
         for uname in members:
@@ -438,20 +439,21 @@ def edit_course(request, slug):
             # Confirm that the member is a part of the course
             # List comprehenshion: loops through this courses memberships in order
             #   to check if mem_to_add is in the user field of a current membership.
-            if course in mem_courses and mem_to_add not in [mem.user for mem in enrollments]:
-                Enrollment.objects.create(user=request.user, course=course)
-                Alert.objects.create(
-                    sender=request.user,
-                    to=mem_to_add,
-                    msg="You were added to " + course.name,
-                    url=reverse('view_one_course',args=[course.slug]),
-                    )
+            if not course in mem_courses:
+                if not mem_to_add in students:
+                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=mem_to_add,
+                        msg="You were added to " + course.name,
+                        url=reverse('view_one_course',args=[course.slug]),
+                        )
 
         return redirect(edit_course, slug)
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
-        f_username = request.POST.get('remove_user')
+        f_username = request.POST.get('remove_user')        
         f_user = User.objects.get(username=f_username)
         to_delete = Enrollment.objects.filter(user=f_user, course=course)
         # to_delete = Membership.objects.filter(user=f_user, project=project)

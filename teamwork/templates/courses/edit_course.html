@@ -45,51 +45,17 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
-
-  $(".s2_desired_skills").select2({
-    ajax: {
-      url: "ajax/add_desired_skills/",
-      dataType: 'json',
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term, // search term
-          page: params.page
-        };
-      },
-      processResults: function (data, params) {
-        // parse the results into the format expected by Select2
-        // since we are using custom formatting functions we do not need to
-        // alter the remote JSON data, except to indicate that infinite
-        // scrolling can be used
-        params.page = params.page || 1;
-        return {
-          results: data.items,
-          pagination: {
-            more: (params.page * 30) < data.total_count
-          }
-        };
-      },
-      cache: true
-    },
-    tags: true,
-    placeholder: "Search skills",
-    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-    minimumInputLength: 1,
-    //templateResult: formatRepo, // omitted for brevity, see the source of this page
-    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-  });
-
 });
-
 </script>
 
 {% endblock javascript %}
 
 {% block stylesheets %}
   <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     {{block.super}}
   <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+
 
 {% endblock stylesheets %}
 
@@ -141,21 +107,24 @@ $(document).ready(function() {
                     </label>
                     {{ form.info }}
                 </div>
+            </div>
 
-                <div class="form-group">
-                    {{ form.students.errors }}
-                    <label for="{{ form.students.id_for_label }}" class="control-label">
-                    Students In Course:
-                    </label>
-                    {{ form.students }}
-                </div>
+            <div class="box-body">
+            <div class="form-group">
+              <label>Add Members</label>
+              <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+              </select>
+            </div>
+            </div>
 
-                <div class="form-group">
-                  <label>Add Members</label>
-                  <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
-                  </select>
-                </div>
-            </div>            
+            <div class="box-body">
+            <div class="btn-grid">
+                {% for mem in course.students.all %}
+                    <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
+                    </button>
+                {% endfor %}
+            </div>
+            </div>
 
             </div>
         </div>
