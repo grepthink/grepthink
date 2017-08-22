@@ -73,7 +73,7 @@
             </li>
             {% endif %}
         </ul>
-        
+
         <div class="tab-content" style="background-color: #ecf0f5">
 
             <div class="tab-pane active" id="projects">
@@ -96,7 +96,6 @@
             </div>
 
             <div class="tab-pane" id="assignments">
-            {% if isProf %}
             <div class="col-md-6">
                 <div class="box box-success">
                         <div class="box-header with-border">
@@ -113,12 +112,10 @@
                                 </div>
                             {% endfor %}
                             <input type="submit" value="Save Assignment">
-                            {% endif %}
                             </form>
                         </div>
                 </div>
             </div>
-
             </div>
 
             <div class="tab-pane" id="description">
