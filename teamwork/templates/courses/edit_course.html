@@ -107,14 +107,6 @@ $(document).ready(function() {
                     </label>
                     {{ form.info }}
                 </div>
-
-                <div class="form-group">
-                    {{ form.students.errors }}
-                    <label for="{{ form.students.id_for_label }}" class="control-label">
-                    Students In Course:
-                    </label>
-                    {{ form.students }}
-                </div>
             </div>
 
             <div class="box-body">
@@ -127,7 +119,7 @@ $(document).ready(function() {
 
             <div class="box-body">
             <div class="btn-grid">
-                {% for mem in course.members.all %}
+                {% for mem in course.students.all %}
                     <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
                     </button>
                 {% endfor %}
