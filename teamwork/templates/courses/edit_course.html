@@ -2,6 +2,90 @@
 {% load static %}
 {% load i18n %}
 
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/edit_select_members/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for members to add",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
+  $(".s2_desired_skills").select2({
+    ajax: {
+      url: "ajax/add_desired_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
+});
+
+</script>
+
+{% endblock javascript %}
+
 {% block stylesheets %}
   <!-- Select2 -->
     {{block.super}}
@@ -66,7 +150,13 @@
                     {{ form.students }}
                 </div>
 
-            </div>
+                <div class="form-group">
+                  <label>Add Members</label>
+                  <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+            </div>            
+
             </div>
         </div>
         <div class="col-md-6">

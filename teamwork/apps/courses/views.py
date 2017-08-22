@@ -423,6 +423,42 @@ def edit_course(request, slug):
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
 
+    # Add a member to the project - IMPLEMENTING
+    if request.POST.get('members'):
+        # Get the members to add, as a list
+        members = request.POST.getlist('members')
+        enrollments = Enrollment.objects.filter(course=course)
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+
+            # Don't add a member if they already have membership in course
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this courses memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if course in mem_courses and mem_to_add not in [mem.user for mem in enrollments]:
+                Enrollment.objects.create(user=request.user, course=course)
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You were added to " + course.name,
+                    url=reverse('view_one_course',args=[course.slug]),
+                    )
+
+        return redirect(edit_course, slug)
+
+    # Remove a user from the project
+    if request.POST.get('remove_user'):
+        f_username = request.POST.get('remove_user')
+        f_user = User.objects.get(username=f_username)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course)
+        # to_delete = Membership.objects.filter(user=f_user, project=project)
+        for mem_obj in to_delete:
+            mem_obj.delete()
+        return redirect(edit_course, slug)
+
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
