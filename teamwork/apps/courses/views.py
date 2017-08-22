@@ -427,18 +427,38 @@ def edit_course(request, slug):
     if request.POST.get('members'):
         # Get the members to add, as a list
         members = request.POST.getlist('members')
+        print("adding members:", members)
         enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
+        print("students", students)
+        print("students enrolled:", enrollments)
 
         # Create membership objects for the newly added members
         for uname in members:
             mem_to_add = User.objects.get(username=uname)
             mem_courses = Course.get_my_courses(mem_to_add)
+            print("mem_courses", mem_courses)
 
             # Don't add a member if they already have membership in course
             # Confirm that the member is a part of the course
             # List comprehenshion: loops through this courses memberships in order
             #   to check if mem_to_add is in the user field of a current membership.
+            if course in mem_courses:
+                for stud in students:
+                    print(stud)
+                    print("already enrolled in this course")
+                else:
+                    print("enrolling")
+                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=mem_to_add,
+                        msg="You were added to " + course.name,
+                        url=reverse('view_one_course',args=[course.slug]),
+                        )
+
             if course in mem_courses and mem_to_add not in [mem.user for mem in enrollments]:
+                print("enrolling")
                 Enrollment.objects.create(user=request.user, course=course)
                 Alert.objects.create(
                     sender=request.user,

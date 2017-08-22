@@ -151,9 +151,9 @@ def select_members(request):
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
 
+# used for querying members in EditProject, EditCourse
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
         return HttpResponse("Form Submitted")
@@ -172,7 +172,6 @@ def edit_select_members(request, slug):
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
-
 
     return HttpResponse("Failure")
 
