@@ -35,7 +35,7 @@ def signup(request):
             return render(request, 'profiles/signup.html',
                           {'form': form})
 
-        else:            
+        else:
             email = form.cleaned_data.get('email')
             if 'grepthink' in email:
                 GT = True
@@ -128,9 +128,6 @@ def edit_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
     """
-    # TODO: screen flashes when deleting skills? Maybe pc just blows
-    # TODO: Avatar doesn't show current file.url
-
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
     if request.user.profile.isGT:
@@ -150,71 +147,143 @@ def edit_profile(request, username):
     page_description = "Edit %s's Profile"%(profile.user.username)
     title = "Edit Profile"
 
-    # Add skills to the project learn_skills
-    if request.POST.get('known_skills') or request.POST.get('learn_skills'):
-        known = request.POST.getlist('known_skills')
-        learn = request.POST.getlist('learn_skills')
-        if known:
-            for s in known:
-                s_lower = s.lower()
-                # Check if lowercase version of skill is in db
-                if Skills.objects.filter(skill=s_lower):
-                    # Skill already exists, then pull it up
-                    known_skill = Skills.objects.get(skill=s_lower)
-                else:
-                    # Add the new skill to the Skills table
-                    known_skill = Skills.objects.create(skill=s_lower)
-                    # Save the new object
-                    known_skill.save()
-                # Add the skill to the project (as a desired_skill)
-                profile.known_skills.add(known_skill)
-                profile.save()
-
-        if learn:
-            for s in learn:
-                s_lower = s.lower()
-                # Check if lowercase version of skill is in db
-                if Skills.objects.filter(skill=s_lower):
-                    # Skill already exists, then pull it up
-                    learn_skill = Skills.objects.get(skill=s_lower)
-                else:
-                    # Add the new skill to the Skills table
-                    learn_skill = Skills.objects.create(skill=s_lower)
-                    # Save the new object
-                    learn_skill.save()
-                # Add the skill to the project (as a desired_skill)
-                profile.learn_skills.add(learn_skill)
-                profile.save()
-
-        return redirect(edit_profile, username)
-
-    if request.POST.get('known_remove'):
-        skillname = request.POST.get('known_remove')
-        to_delete = Skills.objects.get(skill=skillname)
-        profile.known_skills.remove(to_delete)
-        return redirect(edit_profile, username)
-    if request.POST.get('learn_remove'):
-        skillname = request.POST.get('learn_remove')
-        to_delete = Skills.objects.get(skill=skillname)
-        profile.learn_skills.remove(to_delete)
-        return redirect(edit_profile, username)
-
-    #handle deleting avatar
-    if request.POST.get('delete_avatar'):
-        avatar = request.POST.get('delete_avatar')
-        profile.avatar.delete()
-        form = ProfileForm(instance=profile)
-    #handle deleting profile
-    if request.POST.get('delete_profile'):
-        page_user = get_object_or_404(User, username=username)
-        page_user.delete()
-        if request.user.profile.isGT:
-            return redirect('view_course')
-        else:
-            return redirect('about')
+    # # Add skills to the project learn_skills
+    # if request.POST.get('known_skills') or request.POST.get('learn_skills'):
+    #     known = request.POST.getlist('known_skills')
+    #     learn = request.POST.getlist('learn_skills')
+    #     if known:
+    #         for s in known:
+    #             s_lower = s.lower()
+    #             # Check if lowercase version of skill is in db
+    #             if Skills.objects.filter(skill=s_lower):
+    #                 # Skill already exists, then pull it up
+    #                 known_skill = Skills.objects.get(skill=s_lower)
+    #             else:
+    #                 # Add the new skill to the Skills table
+    #                 known_skill = Skills.objects.create(skill=s_lower)
+    #                 # Save the new object
+    #                 known_skill.save()
+    #             # Add the skill to the project (as a desired_skill)
+    #             profile.known_skills.add(known_skill)
+    #             profile.save()
+    #
+    #     if learn:
+    #         for s in learn:
+    #             s_lower = s.lower()
+    #             # Check if lowercase version of skill is in db
+    #             if Skills.objects.filter(skill=s_lower):
+    #                 # Skill already exists, then pull it up
+    #                 learn_skill = Skills.objects.get(skill=s_lower)
+    #             else:
+    #                 # Add the new skill to the Skills table
+    #                 learn_skill = Skills.objects.create(skill=s_lower)
+    #                 # Save the new object
+    #                 learn_skill.save()
+    #             # Add the skill to the project (as a desired_skill)
+    #             profile.learn_skills.add(learn_skill)
+    #             profile.save()
+    #
+    #     return redirect(edit_profile, username)
+    #
+    # # handle removing a known skill
+    # if request.POST.get('known_remove'):
+    #     skillname = request.POST.get('known_remove')
+    #     to_delete = Skills.objects.get(skill=skillname)
+    #     profile.known_skills.remove(to_delete)
+    #     return redirect(edit_profile, username)
+    #
+    # # handle removing a skill they wanted to learn
+    # if request.POST.get('learn_remove'):
+    #     skillname = request.POST.get('learn_remove')
+    #     to_delete = Skills.objects.get(skill=skillname)
+    #     profile.learn_skills.remove(to_delete)
+    #     return redirect(edit_profile, username)
+    #
+    # #handle deleting avatar
+    # if request.POST.get('delete_avatar'):
+    #     avatar = request.POST.get('delete_avatar')
+    #     profile.avatar.delete()
+    #     form = ProfileForm(instance=profile)
+    #
+    # #handle deleting profile
+    # if request.POST.get('delete_profile'):
+    #     page_user = get_object_or_404(User, username=username)
+    #     page_user.delete()
+    #     if request.user.profile.isGT:
+    #         return redirect('view_course')
+    #     else:
+    #         return redirect('about')
 
     #original form
-    elif request.method == 'POST':
+    if request.method == 'POST':
+
+        # Add skills to the project learn_skills
+        if request.POST.get('known_skills') or request.POST.get('learn_skills'):
+            known = request.POST.getlist('known_skills')
+            learn = request.POST.getlist('learn_skills')
+            if known:
+                for s in known:
+                    s_lower = s.lower()
+                    # Check if lowercase version of skill is in db
+                    if Skills.objects.filter(skill=s_lower):
+                        # Skill already exists, then pull it up
+                        known_skill = Skills.objects.get(skill=s_lower)
+                    else:
+                        # Add the new skill to the Skills table
+                        known_skill = Skills.objects.create(skill=s_lower)
+                        # Save the new object
+                        known_skill.save()
+                    # Add the skill to the project (as a desired_skill)
+                    profile.known_skills.add(known_skill)
+                    profile.save()
+
+            if learn:
+                for s in learn:
+                    s_lower = s.lower()
+                    # Check if lowercase version of skill is in db
+                    if Skills.objects.filter(skill=s_lower):
+                        # Skill already exists, then pull it up
+                        learn_skill = Skills.objects.get(skill=s_lower)
+                    else:
+                        # Add the new skill to the Skills table
+                        learn_skill = Skills.objects.create(skill=s_lower)
+                        # Save the new object
+                        learn_skill.save()
+                    # Add the skill to the project (as a desired_skill)
+                    profile.learn_skills.add(learn_skill)
+                    profile.save()
+
+            # return redirect(edit_profile, username)
+
+        # handle removing a known skill
+        if request.POST.get('known_remove'):
+            skillname = request.POST.get('known_remove')
+            to_delete = Skills.objects.get(skill=skillname)
+            profile.known_skills.remove(to_delete)
+            # return redirect(edit_profile, username)
+
+        # handle removing a skill they wanted to learn
+        if request.POST.get('learn_remove'):
+            skillname = request.POST.get('learn_remove')
+            to_delete = Skills.objects.get(skill=skillname)
+            profile.learn_skills.remove(to_delete)
+            # return redirect(edit_profile, username)
+
+        #handle deleting avatar
+        if request.POST.get('delete_avatar'):
+            avatar = request.POST.get('delete_avatar')
+            profile.avatar.delete()
+            form = ProfileForm(instance=profile)
+
+        #handle deleting profile
+        if request.POST.get('delete_profile'):
+            page_user = get_object_or_404(User, username=username)
+            page_user.delete()
+            if request.user.profile.isGT:
+                return redirect('view_course')
+            else:
+                return redirect('about')
+
         #request.FILES is passed for File storing
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
