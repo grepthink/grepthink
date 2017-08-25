@@ -44,15 +44,19 @@ def signup(request):
             prof = form.cleaned_data.get('prof')
 
             if GT:
-                user1 = User.objects.create_superuser(username=username, password=password,
-                                         email=email)
+                user1 = User.objects.create_superuser(
+                    username=username,
+                    password=password,
+                    email=email)
             else:
                 # parse email for 'username'
                 split = email.split("@")
                 username = split[0]
 
-                user1 = User.objects.create_user(username=username, password=password,
-                                         email=email)
+                user1 = User.objects.create_user(
+                            username=username,
+                            password=password,
+                            email=email)
 
             user = authenticate(username=username, password=password)
             login(request, user)
@@ -80,7 +84,8 @@ def signup(request):
 
     else:
         return render(request, 'profiles/signup.html',
-                      {'form': SignUpForm(), 'page_name' : page_name, 'page_description': page_description, 'title': title})
+                      {'form': SignUpForm(), 'page_name' : page_name,
+                      'page_description': page_description, 'title': title})
 
 @login_required
 def view_profile(request, username):
