@@ -43,6 +43,7 @@ def signup(request):
 
             prof = form.cleaned_data.get('prof')
 
+            # this does the same thing as the else no?
             if GT:
                 user1 = User.objects.create_superuser(
                     username=username,
@@ -253,6 +254,9 @@ def edit_profile(request, username):
         'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 def edit_profile_helper(request, username):
+    """
+        Helper function that saves profile information from the ProfileForm
+    """
 
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)
@@ -289,7 +293,6 @@ def edit_profile_helper(request, username):
         if ava:
             profile.avatar = ava
             profile.save()
-
 
 @login_required
 def edit_schedule(request, username):
