@@ -43,7 +43,7 @@ def signup(request):
 
             prof = form.cleaned_data.get('prof')
 
-            # this does the same thing as the else no?
+            # this does the same thing as the else no? damnit ryan
             if GT:
                 user1 = User.objects.create_superuser(
                     username=username,
