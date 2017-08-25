@@ -152,73 +152,6 @@ def edit_profile(request, username):
     page_description = "Edit %s's Profile"%(profile.user.username)
     title = "Edit Profile"
 
-    # # Add skills to the project learn_skills
-    # if request.POST.get('known_skills') or request.POST.get('learn_skills'):
-    #     known = request.POST.getlist('known_skills')
-    #     learn = request.POST.getlist('learn_skills')
-    #     if known:
-    #         for s in known:
-    #             s_lower = s.lower()
-    #             # Check if lowercase version of skill is in db
-    #             if Skills.objects.filter(skill=s_lower):
-    #                 # Skill already exists, then pull it up
-    #                 known_skill = Skills.objects.get(skill=s_lower)
-    #             else:
-    #                 # Add the new skill to the Skills table
-    #                 known_skill = Skills.objects.create(skill=s_lower)
-    #                 # Save the new object
-    #                 known_skill.save()
-    #             # Add the skill to the project (as a desired_skill)
-    #             profile.known_skills.add(known_skill)
-    #             profile.save()
-    #
-    #     if learn:
-    #         for s in learn:
-    #             s_lower = s.lower()
-    #             # Check if lowercase version of skill is in db
-    #             if Skills.objects.filter(skill=s_lower):
-    #                 # Skill already exists, then pull it up
-    #                 learn_skill = Skills.objects.get(skill=s_lower)
-    #             else:
-    #                 # Add the new skill to the Skills table
-    #                 learn_skill = Skills.objects.create(skill=s_lower)
-    #                 # Save the new object
-    #                 learn_skill.save()
-    #             # Add the skill to the project (as a desired_skill)
-    #             profile.learn_skills.add(learn_skill)
-    #             profile.save()
-    #
-    #     return redirect(edit_profile, username)
-    #
-    # # handle removing a known skill
-    # if request.POST.get('known_remove'):
-    #     skillname = request.POST.get('known_remove')
-    #     to_delete = Skills.objects.get(skill=skillname)
-    #     profile.known_skills.remove(to_delete)
-    #     return redirect(edit_profile, username)
-    #
-    # # handle removing a skill they wanted to learn
-    # if request.POST.get('learn_remove'):
-    #     skillname = request.POST.get('learn_remove')
-    #     to_delete = Skills.objects.get(skill=skillname)
-    #     profile.learn_skills.remove(to_delete)
-    #     return redirect(edit_profile, username)
-    #
-    # #handle deleting avatar
-    # if request.POST.get('delete_avatar'):
-    #     avatar = request.POST.get('delete_avatar')
-    #     profile.avatar.delete()
-    #     form = ProfileForm(instance=profile)
-    #
-    # #handle deleting profile
-    # if request.POST.get('delete_profile'):
-    #     page_user = get_object_or_404(User, username=username)
-    #     page_user.delete()
-    #     if request.user.profile.isGT:
-    #         return redirect('view_course')
-    #     else:
-    #         return redirect('about')
-
     #original form
     if request.method == 'POST':
 
@@ -241,7 +174,8 @@ def edit_profile(request, username):
                     # Add the skill to the project (as a desired_skill)
                     profile.known_skills.add(known_skill)
                     profile.save()
-
+                # handles saving bio information also
+                edit_profile_helper(request, username)
             if learn:
                 for s in learn:
                     s_lower = s.lower()
@@ -257,22 +191,32 @@ def edit_profile(request, username):
                     # Add the skill to the project (as a desired_skill)
                     profile.learn_skills.add(learn_skill)
                     profile.save()
-
-            # return redirect(edit_profile, username)
+                # handles saving bio information also
+                edit_profile_helper(request, username)
+            # stay on edit_profile page
+            return redirect(edit_profile, username)
 
         # handle removing a known skill
         if request.POST.get('known_remove'):
             skillname = request.POST.get('known_remove')
             to_delete = Skills.objects.get(skill=skillname)
             profile.known_skills.remove(to_delete)
-            # return redirect(edit_profile, username)
+
+            # handles saving bio information also
+            edit_profile_helper(request, username)
+            # stay on edit_profile page
+            return redirect(edit_profile, username)
 
         # handle removing a skill they wanted to learn
         if request.POST.get('learn_remove'):
             skillname = request.POST.get('learn_remove')
             to_delete = Skills.objects.get(skill=skillname)
             profile.learn_skills.remove(to_delete)
-            # return redirect(edit_profile, username)
+
+            # handles saving bio information also
+            edit_profile_helper(request, username)
+            # stay on edit_profile page
+            return redirect(edit_profile, username)
 
         #handle deleting avatar
         if request.POST.get('delete_avatar'):
@@ -289,35 +233,8 @@ def edit_profile(request, username):
             else:
                 return redirect('about')
 
-        #request.FILES is passed for File storing
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            # grab each form element from the clean form
-            # known = form.cleaned_data.get('known_skill')
-            # learn = form.cleaned_data.get('learn_skill')
-            bio = form.cleaned_data.get('bio')
-            name = form.cleaned_data.get('name')
-            institution = form.cleaned_data.get('institution')
-            location = form.cleaned_data.get('location')
-            ava = form.cleaned_data.get('avatar')
-            profile.save()
-            #if data is entered, save it to the profile for the following
-            if name:
-                profile.name = name
-                profile.save()
-            if bio:
-                profile.bio = bio
-                profile.save()
-            if institution:
-                profile.institution = institution
-                profile.save()
-            if location:
-                profile.location = location
-                profile.save()
-            if ava:
-                profile.avatar = ava
-                profile.save()
+        # handles saving bio info if none of the cases were taken
+        edit_profile_helper(request, username)
 
         #redirects to view_profile when submit button is clicked
         return redirect(view_profile, username)
@@ -334,9 +251,45 @@ def edit_profile(request, username):
         'page_user': page_user, 'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
         'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
-    # return render(request, 'profiles/edit_profile.html', {
-    #     'page_user': page_user, 'form':form, 'profile':profile,
-    #     'page_name' : page_name, 'page_description': page_description, 'title': title })
+
+def edit_profile_helper(request, username):
+
+    if request.user.profile.isGT:
+        tempProfile = User.objects.get(username=username)
+        profile = Profile.objects.get(user=tempProfile)
+    else:
+        #grab profile for the current user
+        profile = Profile.objects.get(user=request.user)
+
+    #request.FILES is passed for File storing
+    form = ProfileForm(request.POST, request.FILES)
+    if form.is_valid():
+
+        # grab each form element from the clean form
+        bio = form.cleaned_data.get('bio')
+        name = form.cleaned_data.get('name')
+        institution = form.cleaned_data.get('institution')
+        location = form.cleaned_data.get('location')
+        ava = form.cleaned_data.get('avatar')
+        # profile.save() <-- why is this here -kp
+
+        #if data is entered, save it to the profile for the following
+        if name:
+            profile.name = name
+            profile.save()
+        if bio:
+            profile.bio = bio
+            profile.save()
+        if institution:
+            profile.institution = institution
+            profile.save()
+        if location:
+            profile.location = location
+            profile.save()
+        if ava:
+            profile.avatar = ava
+            profile.save()
+
 
 @login_required
 def edit_schedule(request, username):
