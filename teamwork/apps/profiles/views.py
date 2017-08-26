@@ -301,25 +301,52 @@ def edit_schedule(request, username):
     Gets a list of 'events' from a calendar and stores the event as an array of tuples
     Redners profiles/edit_calendar.html
     """
+    from django.utils.safestring import mark_safe
+
     user = get_object_or_404(User, username=username)
     page_name = "Edit Schedule"
     page_description = "Edit %s's Schedule"%(user.username)
     title = "Edit Schedule"
+    profile = Profile.objects.get(user=user)
 
-    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title })
+    #gets current avaliability
+    readable = ""
+    if profile.jsonavail:
+        jsonDec = json.decoder.JSONDecoder()
+        readable = jsonDec.decode(profile.jsonavail)
+
+    meetings = mark_safe(profile.jsonavail)
+
+    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
 
 @csrf_exempt
 def save_event(request, username):
     #grab profile for the current user
     profile = Profile.objects.get(user=request.user)
 
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST':
+
+        if request.POST.get('Clear'):
+            profile.jsonavail = ""
+            profile.save()
+
+            # If user already has a schedule, delete it
+            if profile.avail.all() is not None: profile.avail.all().delete()
+
+            profile.save()
+
+            print("\n\nI CLEARED THE SCHEDULE\n")
+
+            return HttpResponse("Schedule Cleared")
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
 
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
+
+        profile.jsonavail = json.dumps(event_list)
+        profile.save()
 
         # If user already has a schedule, delete it
         if profile.avail.all() is not None: profile.avail.all().delete()

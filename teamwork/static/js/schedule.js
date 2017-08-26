@@ -31,7 +31,7 @@ $(document).ready(function() {
             url: 'ajax/save_event/',
             type: 'POST',
             data: {
-              // Need to stringfy cEvents (circular structure), but must first 
+              // Need to stringfy cEvents (circular structure), but must first
               // iterate through and create a simplier representation.
               jsonEvents: JSON.stringify(cEvents.map(function (e)
               {

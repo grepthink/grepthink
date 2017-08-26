@@ -184,6 +184,8 @@ class Profile(models.Model):
 
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
+    jsonavail = models.TextField(
+                default='')
 
     # Profile Image
     avatar = models.ImageField(
