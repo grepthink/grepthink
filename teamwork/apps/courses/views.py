@@ -77,10 +77,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
     profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
-<<<<<<< HEAD
-=======
     asgs = list(course.assignments.all())
->>>>>>> 298a2b9cc7438995c6bfd812221c6e249ff629c9
 
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
@@ -456,7 +453,7 @@ def edit_course(request, slug):
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
-        f_username = request.POST.get('remove_user')        
+        f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Enrollment.objects.filter(user=f_user, course=course)
         # to_delete = Membership.objects.filter(user=f_user, project=project)
