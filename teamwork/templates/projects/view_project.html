@@ -28,6 +28,7 @@
 
 <script src="{% static 'js/schedule.js' %}"></script>
 
+
 {% endblock javascript %}
 
 {% block stylesheets %}
@@ -37,6 +38,7 @@
   <!-- fullCalendar 2.2.5-->
   <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 
 {% endblock stylesheets %}
 
@@ -63,12 +65,16 @@
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
             <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
+<<<<<<< HEAD
+            {% if request.user in project.members.all %} <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Chat</a></li> {% endif %}
+=======
             {% if user in project.members.all %}
             <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
             {% endif %}
             {% if isProf %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
+>>>>>>> master
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Project Tools <span class="caret"></span>
@@ -280,13 +286,15 @@
                                 </tbody>
                             </table>
                         </div>
-                        <a href="{% url 'resource_update' project.slug %}"
-                            class="pull-right" style="padding-top: 10px">
-                            <button class="btn btn-success">
-                                <i class="fa fa-book"></i>
-                                Post Resource
-                            </button>
-                        </a>
+                        {% if request.user in project.members.all %}
+                            <a href="{% url 'resource_update' project.slug %}"
+                                class="pull-right" style="padding-top: 10px">
+                                <button class="btn btn-success">
+                                    <i class="fa fa-book"></i>
+                                    Post Resource
+                                </button>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -323,6 +331,149 @@
                 </form>
             </div>
                    <!-- /.tab-pane meeting -->
+
+            <!-- /.tab-pane chat --> 
+            <div class="tab-pane" id="tab_5">
+                  <!-- DIRECT CHAT SUCCESS -->
+                  <div class="box box-success direct-chat direct-chat-success" >
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Team Chat</h3>
+
+
+
+                      <div class="box-tools pull-right">
+                        <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="3 New Messages">3</span>
+                       
+                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-widget="chat-pane-toggle" data-original-title="Members">
+                          <i class="fa fa-comments"></i></button>
+                        
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+
+                    <div class="box-body">
+                      <!-- Conversations are loaded here -->
+                      <div class="direct-chat-messages">
+                        {% for msg in project_chat %}
+                            {% if msg.author == request.user %}
+                                <!-- Message  author pull to the right -->
+                                <div class="direct-chat-msg right">
+                                  <div class="direct-chat-info clearfix">
+                                    <span class="direct-chat-name pull-right">{{msg.author.username}}</span>
+                                    <span class="direct-chat-timestamp pull-left">{{msg.date}}</span>
+                                  </div>
+                                  <!-- /.direct-chat-info -->
+                                  {% if msg.author.profile.avatar %}
+                                    <img class="direct-chat-img pull-right" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                  {% else %}
+                                    <img class="direct-chat-img pull-right" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
+                                  {% endif %}
+                                  <div class="direct-chat-text">
+                                    {{msg.content}}
+                                  </div>
+                                  <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            {% else %}
+                                <!-- Message non-author Default to the left -->
+                                <div class="direct-chat-msg">
+                                  <div class="direct-chat-info clearfix">
+                                    <span class="direct-chat-name pull-left">{{msg.author.username}}</span>
+                                    <span class="direct-chat-timestamp pull-right">{{msg.date}}</span>
+                                  </div>
+                                  <!-- /S.direct-chat-info -->
+                                  {% if msg.author.profile.avatar %}
+                                    <img class="direct-chat-img"" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                  {% else %}
+                                    <img class="direct-chat-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
+                                  {% endif %}
+                                  <div class="direct-chat-text">
+                                    {{msg.content}}
+                                  </div>
+                                  <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            {% endif%}
+
+                        {% empty %}
+                            <div align="center"><font color="grey" size="3">No messages</font></div>
+                        {% endfor %}   
+                        
+                      </div>
+                      <!--/.direct-chat-messages-->
+
+
+
+
+
+
+                      <!-- Load Members -->
+                      <div class="direct-chat-contacts">
+                        <ul class="contacts-list">
+                            {% for mem in members %}
+                                <li>
+                                    <a href="{% url 'profile' mem.username %}">
+                                      {% if mem.profile.avatar %}
+                                        <img class="contacts-list-img" src="{{ mem.profile.avatar.url }}" alt="User Image">
+                                      {% else %}
+                                        <img class="contacts-list-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
+                                      {% endif %}
+
+                                      <div class="contacts-list-info">
+                                            <span class="contacts-list-name">
+                                              {{mem.username}}
+                                            </span>
+                                      </div>
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li>
+                                    <a href="#">
+                                      There are no current members on the team
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                      <!-- /.Members List -->
+
+                    </div>
+                    <!-- /.box-body -->
+
+<!--                     <form action="#tab_5" method="post" role="form">
+                    {% csrf_token %}
+                    {{ form.status }}
+                    {% for field in form.visible_fields %}
+                      <div class="form-group{% if field.errors %} has-error{% endif %}">
+                        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                          <label class="control-label">{{ error }}</label>
+                        {% endfor %}
+                      </div>
+                    {% endfor %}
+                    <input type="submit" value="Chat">
+                  </form> -->
+
+
+                    <div class="box-footer">
+                      <form action="#tab_5" method="POST">
+                      {% csrf_token %}
+                        <div class="input-group">
+                          <input type="text" name="content" placeholder="Type Message ..." class="form-control">
+                              <span class="input-group-btn">
+                                <button type="submit" class="btn btn-success btn-flat">Send</button>
+                              </span>
+                        </div>
+                      </form>
+                    </div>
+                    <!-- /.box-footer-->
+          <!--/.direct-chat -->
+        </div>
+            </div>
+            <!-- /.tab-pane chat -->
 
 
         </div>
