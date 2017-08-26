@@ -7,7 +7,7 @@
   <!-- Select2 -->
     {{block.super}}
   <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
-
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -46,7 +46,18 @@
                     {% if p_match_tup.1 %}
                     <a href="{% url 'matchstats' p_match_tup.0.slug p_match_tup.1 %}"><p> MatchStats </p> </a>
                     {% endif %}
-                    <p>The following students may work well with this project: </p>
+                    <p>The following students may work well with this project:
+                       <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+                            <span class="tooltiptext2">Color shows interest score. <br />
+                                <span class="label label-success">5</span>
+                                <span class="label label-info">4</span>
+                                <span class="label label-primary">3</span>
+                                <span class="label label-warning">2</span>
+                                <span class="label label-danger">1</span>
+                            </span>
+                        </span>
+                    </p>
+                   
                     <p>
                     <ol>
                         {% for match in p_match_tup.1 %}
@@ -148,6 +159,9 @@
 
                             <p>The following students may work well with this project: </p>
                             <p>
+                            <div class="tooltip">Hover over me
+                                <span class="tooltiptext">Tooltip text</span>
+                            </div>
                             <ol>
                                 {% for match in p_match_tup.2 %}
                                 <li>

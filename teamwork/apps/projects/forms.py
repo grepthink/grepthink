@@ -359,6 +359,7 @@ class ChatForm(forms.ModelForm):
     class Meta:
         model = ProjectChat
         fields = ['content']
+        
 class TsrForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
