@@ -316,7 +316,7 @@ class UpdateForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=4000)
 
     class Meta:
-        model = Project
+        model = ProjectUpdate
         fields = ['update_title', 'update']
 
 class ResourceForm(forms.ModelForm):
@@ -336,7 +336,7 @@ class ResourceForm(forms.ModelForm):
         required=True)
 
     class Meta:
-        model = Project
+        model = ResourceUpdate
         fields = ['src_title', 'src_link']
 
     def clean(self):
@@ -345,6 +345,21 @@ class ResourceForm(forms.ModelForm):
             self._errors['src_link'] = self.error_class(['Invalid URL'])
 
         return self.cleaned_data
+
+class ChatForm(forms.ModelForm):
+
+    def __init__(self, uid, slug, *args, **kwargs):
+        super(ChatForm, self).__init__(*args, **kwargs)
+
+    content = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=2000,
+        required=True)
+
+    class Meta:
+        model = ProjectChat
+        fields = ['content']
+
 
 def validate_url(url):
     url_form_field = URLField()

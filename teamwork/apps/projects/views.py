@@ -45,11 +45,15 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-    my_created = Project.get_created_projects(request.user)
-    projects = my_projects | my_created
+    # print(my_projects)
+    # my_created = Project.get_created_projects(request.user)
+    # print(my_created)
+    # projects = my_projects | my_created
     # projects = list(set(projects))
 
-    return _projects(request, projects)
+    # print(projects)
+
+    return _projects(request, my_projects)
 
 
 def view_meetings(request, slug):
@@ -100,6 +104,33 @@ def view_one_project(request, slug):
     updates = project.get_updates()
     resources = project.get_resources()
 
+
+
+    project_chat = project.get_chat()
+    print("\n\n")
+    print("CHAT:")
+    print(project_chat)
+    print("\n\n")
+    if request.method == 'POST':
+        print("Made it to form")
+        form = ChatForm(request.user.id, slug, request.POST)
+        if form.is_valid():
+            # Create a chat object
+            chat = ProjectChat(author=request.user, project=project)
+            chat.content = form.cleaned_data.get('content')
+            chat.save()
+            print(chat)
+        else:
+            messages.info(request,'Errors in form')
+            print("BROKE")
+    else:
+        # Send form for initial project creation
+        form = ChatForm(request.user.id, slug)
+
+
+
+
+
     find_meeting(slug)
 
     readable = ""
@@ -115,6 +146,7 @@ def view_one_project(request, slug):
     # tempPO = User.objects.get(username=project.creator)
     # project_owner = Profile.objects.get(user=tempPO)
     project_owner = project.creator.profile
+    members = project.members.all()
 
 
     # Populate with project name and tagline
@@ -124,8 +156,8 @@ def view_one_project(request, slug):
 
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
+        'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 
 def select_members(request):

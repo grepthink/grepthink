@@ -37,6 +37,9 @@ def signup(request):
 
         else:            
             email = form.cleaned_data.get('email')
+            split = email.split("@")
+            username = split[0]
+
             if 'grepthink' in email:
                 GT = True
             password = form.cleaned_data.get('password')
@@ -48,9 +51,6 @@ def signup(request):
                                          email=email)
             else:
                 # parse email for 'username'
-                split = email.split("@")
-                username = split[0]
-
                 user1 = User.objects.create_user(username=username, password=password,
                                          email=email)
 

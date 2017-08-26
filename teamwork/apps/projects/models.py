@@ -574,6 +574,9 @@ class Project(models.Model):
     def get_resources(self):
         return ResourceUpdate.objects.filter(project=self)
 
+    def get_chat(self):
+        return self.chat.all()
+
     """ Unfortunately not possible due to dependency loop
     def course(self):
         return next(course for course in Course.objects.all() if this in
@@ -644,6 +647,20 @@ class ResourceUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
+
+class ProjectChat(models.Model):
+
+    project = models.ForeignKey(Project, related_name='chat', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='author_chat', on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, editable=True)
+    content = models.CharField(max_length=2000, default="")
+
+    class Meta:
+        verbose_name = "Project Chat"
+        ordering = ("-date", )
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.author.username, self.content)
 
 
 # project status: open/closed and number available
