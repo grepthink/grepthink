@@ -21,8 +21,6 @@
     </li>
 {% endblock crumb %}
 
-
-
 {% block content %}
 
 <div>
@@ -58,10 +56,18 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-
+            {% if isProf %}
+            <li class="">
+                <a href="#assignments" data-toggle="tab" aria-expanded="false">
+                    Create New Assignment
+                    <i class="fa fa-plus"></i>
+                </a>
+            </li>
+            {% endif %}
             {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
+                    Admin Tools
                     <i class="fa fa-gear"></i>
                 </a>
             </li>
@@ -87,6 +93,29 @@
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
+            </div>
+
+            <div class="tab-pane" id="assignments">
+            <div class="col-md-6">
+                <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Create Assignment</h3>
+                        </div>
+
+                        <div class="box-body">
+                            <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
+                            {% for field in assignmentForm.visible_fields %}
+                            {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <input type="submit" value="Save Assignment">
+                            </form>
+                        </div>
+                </div>
+            </div>
             </div>
 
             <div class="tab-pane" id="description">
@@ -304,69 +333,90 @@
 
             {% if user == course.creator  or user.profile.isGT%}
             <div class="tab-pane" id="admin">
-                <h3>Edit Course Info</h3>
-                <p>
-                    <a href="{% url 'edit_course' course.slug %}">
-                        <button class="btn btn-success">
-                            <i class="fa fa-edit"></i>
-                            Edit
-                        </button>
-                    </a>
-                </p>
-                <h3>View Class Statistics</h3>
-                <p>
-                    <a href="{% url 'view_statistics' course.slug %}">
-                        <button class="btn btn-info">
-                        <i class="fa fa-line-chart"></i>
-                        Stats
-                        </button>
-                    </a>
-                </p>
-                <h3>Email Roster</h3>
-                <p>
-                    <button class="btn btn-info" name="send_emails" value="send_emails">
-                        <i class="fa fa-envelope-o"></i>
-                        Email Roster
-                    </button>
-                </p>
-                <h3>Lock Interest</h3>
-                <p>
-                    {% if not course.limit_interest %}
-                        <a href="{% url 'lock_interest' course.slug %}">
-                            <button class="btn btn-danger" name="lock">
-                                <i class="fa fa-lock"></i>
-                                Lock
-                            </button>
-                        </a>
-                    {% else %}
-                        <a href="{% url 'lock_interest' course.slug %}">
-                            <button class="btn btn-info" name="lock">
-                                <i class="fa fa-unlock"></i>
-                                Unlock
-                            </button>
-                        </a>
-                    {% endif %}
 
-                </p>
-                <h3>Auto Generate Teams</h3>
-                <p>
-                    <a href="{% url 'auto_gen' course.slug %}">
-                        <button class="btn btn-info">
-                            <i class="fa fa-users"></i>
-                            Generate
+
+
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Admin Tools</h3>
+                    </div>
+                    <div class="box-body">
+
+                        <a href="{% url 'edit_course' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-edit"></i>
+                                    Edit Course Info
+
                         </button>
-                    </a>
-                </p>
+                        </a>
+
+                        <a href="{% url 'view_statistics' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-line-chart"></i>
+                                    View Course Statistics
+                        </button>
+                        </a>
+
+                        <a href="{% url 'email_roster' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-envelope-o"></i>
+                                    Email Roster
+                        </button>
+                        </a>
+
+                        <a href="{% url 'upload_csv' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-envelope-o"></i>
+                                    Email Roster w/ CSV Upload
+                        </button>
+                        </a>
+
+                        {% if not course.limit_interest %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block" name="lock">
+                                    <i class="fa fa-lock"></i>
+                                    Lock Interest
+                        </button>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block" name="lock">
+                                    <i class="fa fa-unlock"></i>
+                                    Unlock Interest
+                        </button>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'auto_gen' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-users"></i>
+                                    Auto-Generate Teams
+                        </button>
+                        </a>
+
+                    </div>
+                </div>
 
                 <h3>Invite Students</h3>
                 <p>
-                    You can add students yourself in the <b>Edit Course</b> form
-                    above, or have them add themselves using the addcode
-                    provided below.
+                    Students can join your Course two ways:
                 </p>
-                <p>
-                    <b>Add Code:</b> <i>{{ course.addCode }}</i>
-                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Using the <a href="{% url 'upload_csv' course.slug %}">
+                                    Email Roster w/ CSV Upload
+                            </a> Button above and emailing the Course's AddCode (<i>{{ course.addCode }}</i>).
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Add Current GrepThink users using <a href="{% url 'edit_course' course.slug %}">
+                                    Edit Course Info
+                            </a>
+                        </p>
+                    </li>
+
+                </ol>
             </div>
             {% endif %}
         </div>

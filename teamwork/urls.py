@@ -48,7 +48,10 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
-
+        # Update TSR information for normal tsr
+        url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
+        # View TSRs
+        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
 
@@ -57,6 +60,9 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+
+        # kevin's addition select2
+        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
 
 
         # View all courses
@@ -73,6 +79,12 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
         # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
+        # Email Roster link
+        url(r'^course/(?P<slug>[^/]+)/email_roster/$', course_views.email_roster, name='email_roster'),
+        # Email w/ CSV
+        url(r'^course/(?P<slug>[^/]+)/email_csv/$', course_views.email_csv, name='email_csv'),
+        # upload csv
+        url(r'^course/(?P<slug>[^/]+)/upload_csv/$', course_views.upload_csv, name='upload_csv'),
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
         # Setup link to assign students

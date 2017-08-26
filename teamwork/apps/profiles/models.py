@@ -153,6 +153,14 @@ class Alert(models.Model):
         super(Alert, self).save(*args, **kwargs)
 
 
+def validate_image(fieldfile_obj):
+    filesize = fieldfile_obj.file.size
+    megabyte_limit = 5.0
+    if filesize > megabyte_limit*1024*1024:
+        raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+    else:
+        print("file size okay")
+
 class Profile(models.Model):
     """
     Profile: A database model (object) for the user profile.
@@ -177,7 +185,14 @@ class Profile(models.Model):
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
 
-    avatar = models.ImageField(upload_to= 'avatars/', default="")
+    # Profile Image
+    avatar = models.ImageField(
+                upload_to= 'avatars/%Y/%m/%d/',
+                validators=[validate_image],
+                default="",
+                null=True,
+                blank=True)
+
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 

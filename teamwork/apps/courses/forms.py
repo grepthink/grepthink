@@ -3,6 +3,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 
+from datetime import datetime
+from django.forms import extras
+from django.contrib.admin.widgets import AdminDateWidget
+
 from teamwork.apps.profiles.models import *
 
 from .models import *
@@ -122,15 +126,11 @@ class CreateCourseForm(forms.ModelForm):
 
     weigh_learn = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of skills users want to learn",
-        required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
+        required=False)    
 
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
         required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
     #META CLASS
     class Meta:
@@ -243,13 +243,9 @@ class EditCourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
         required=False)
-
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
 
     #META CLASS
     class Meta:
@@ -413,6 +409,22 @@ class ShowInterestForm(forms.ModelForm):
 
         return data
 
+"""
+Form used to simulate sending an email
+
+"""
+class EmailRosterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(EmailRosterForm, self).__init__(*args, **kwargs)
+
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255,
+        required=True)
+
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=2000)
+
 
 class CourseUpdateForm(forms.ModelForm):
     """
@@ -443,3 +455,52 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseUpdate
         fields = ['title', 'content']
+
+class AssignmentForm(forms.ModelForm):
+    """
+    Form used for making a new assignment
+    """
+    def __init__(self, uid, *args, **kwargs):
+        super(AssignmentForm, self).__init__(*args, **kwargs)
+        creator = User.objects.get(id=uid)
+    # date assignment will start
+    ass_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d'],
+        label="Open Date"
+    )
+    # date assignment will end (users can no longer submit)
+    due_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d']
+    )
+    # assignment name
+    ass_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment name",
+        required=True,
+        max_length=255)
+
+    # assignment description
+    description = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment Description",
+        required=True,
+        max_length=255)
+
+    # type of assignment, i.e. tsr
+    ass_type = forms.CharField(max_length=255, label="Assignment Type",
+        required=True)
+
+    # number of assignment, first starts at 1
+    ass_number = forms.DecimalField(
+        widget=forms.NumberInput(),label='Assignment Number',
+        max_digits=2,
+        required=True,
+        decimal_places=0)
+
+    class Meta:
+        model= Assignment
+        widgets = {
+        }
+        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
