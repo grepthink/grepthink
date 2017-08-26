@@ -18,6 +18,8 @@ from .models import *
 import csv
 import codecs
 
+from datetime import datetime
+
 def _courses(request, courses):
     """
     Private method that will be used for paginator once I figure out how to get it working.
@@ -63,13 +65,19 @@ def view_one_course(request, slug):
     page_description = "View Course Information"
     title = "%s"%(slug)
 
+    if request.user.profile.isProf:
+        isProf = 1
+    else:
+        isProf = 0
+
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-
+    profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    asgs = list(course.assignments.all())
 
     # professor = Enrollment.objects.filter(course = course, role = "professor")
     # can add TA or w/e in the future
@@ -79,9 +87,51 @@ def view_one_course(request, slug):
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    # prof = get_object_or_404(User, username=professor)
+    assignmentForm = AssignmentForm(request.user.id)
+    if(request.method == 'POST'):
+        assignmentForm = AssignmentForm(request.user.id,request.POST)
+        if assignmentForm.is_valid():
+            data = assignmentForm.cleaned_data
+            ass_date = data.get('ass_date')
+            due_date = data.get('due_date')
+            ass_type = data.get('ass_type')
+            ass_name = data.get('ass_name')
+            ass_number = data.get('ass_number')
+            description = data.get('description')
 
-    return render(request, 'courses/view_course.html', {
+            # checking if there is an assignment of same type already in
+            # progress based on assignment type and date
+            split_type = ass_type.split(" ")
+            print(split_type)
+            for asg in asgs:
+                for word in split_type:
+                    if word in asg.ass_type:
+                        today = datetime.now().date()
+                        # date formatting
+                        asg_ass_date = asg.ass_date
+                        asg_ass_date = datetime.strptime(asg_ass_date,
+                            "%Y-%m-%d").date()
+                        # date formatting
+                        asg_due_date = asg.due_date
+                        asg_due_date = datetime.strptime(asg_due_date,
+                            "%Y-%m-%d").date()
+
+                        # verifies existing project doesnt exist within due date
+                        if asg_ass_date < today <= asg_due_date:
+                            print("assignment already in progress")
+                            # need to change this redirect to display message
+                            # so that user is aware their info wasn't stored
+                            return redirect(view_one_course,course.slug)
+
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
+                ass_number=ass_number))
+            course.save()
+            print(course.assignments.all())
+        messages.info(request, 'You have successfully created an assignment')
+        return redirect(view_one_course,course.slug)
+
+    return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
         'page_name' : page_name, 'page_description': page_description, 'title': title})
 
@@ -349,7 +399,7 @@ def create_course(request):
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect(view_one_course, course.slug)
+            return redirect(upload_csv, course.slug)
     else:
         form = CreateCourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
@@ -372,6 +422,44 @@ def edit_course(request, slug):
         #redirect them to the /course directory with message
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
+
+    # Add a member to the project - IMPLEMENTING
+    if request.POST.get('members'):
+        # Get the members to add, as a list
+        members = request.POST.getlist('members')
+        enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+
+            # Don't add a member if they already have membership in course
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this courses memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if not course in mem_courses:
+                if not mem_to_add in students:
+                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=mem_to_add,
+                        msg="You were added to " + course.name,
+                        url=reverse('view_one_course',args=[course.slug]),
+                        )
+
+        return redirect(edit_course, slug)
+
+    # Remove a user from the project
+    if request.POST.get('remove_user'):
+        f_username = request.POST.get('remove_user')        
+        f_user = User.objects.get(username=f_username)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course)
+        # to_delete = Membership.objects.filter(user=f_user, project=project)
+        for mem_obj in to_delete:
+            mem_obj.delete()
+        return redirect(edit_course, slug)
 
     if request.method == 'POST':
         # send the current user.id to filter out

@@ -185,7 +185,7 @@ def auto_gen(request, slug):
         if i[1]:
             flag = True
             break
-            
+
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
     projects = [x[0] for x in auto]
@@ -206,10 +206,7 @@ def assign_auto(request, slug):
             Membership.objects.create(user=mem, project=p[0], invite_reason='')
 
     return redirect(auto_gen, course.slug)
-
-
-
-
+    
 
 def matchstats(request, slug, project_match_list):
     """
