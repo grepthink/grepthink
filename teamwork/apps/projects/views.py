@@ -45,18 +45,15 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-<<<<<<< HEAD
     # print(my_projects)
     # my_created = Project.get_created_projects(request.user)
     # print(my_created)
     # projects = my_projects | my_created
     # projects = list(set(projects))
-=======
     # print("my_projects:", my_projects)
     my_created = Project.get_created_projects(request.user)
     # print("my_created:", my_created)
     projects = my_projects | my_created
->>>>>>> master
 
     # print(projects)
 
@@ -165,14 +162,9 @@ def view_one_project(request, slug):
 
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-<<<<<<< HEAD
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
-        'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
-=======
-        'page_description': page_description, 'title' : title, 'isProf':isProf,
-        'project': project, 'updates': updates, 'course' : course, 'project_owner' : project_owner,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
+        'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
->>>>>>> master
 
 
 def select_members(request):

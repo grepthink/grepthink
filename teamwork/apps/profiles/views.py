@@ -54,18 +54,8 @@ def signup(request):
                     email=email)
             else:
                 # parse email for 'username'
-<<<<<<< HEAD
                 user1 = User.objects.create_user(username=username, password=password,
                                          email=email)
-=======
-                split = email.split("@")
-                username = split[0]
-
-                user1 = User.objects.create_user(
-                            username=username,
-                            password=password,
-                            email=email)
->>>>>>> master
 
             user = authenticate(username=username, password=password)
             login(request, user)

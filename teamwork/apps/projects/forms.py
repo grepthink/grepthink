@@ -346,7 +346,6 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
-<<<<<<< HEAD
 class ChatForm(forms.ModelForm):
 
     def __init__(self, uid, slug, *args, **kwargs):
@@ -360,7 +359,6 @@ class ChatForm(forms.ModelForm):
     class Meta:
         model = ProjectChat
         fields = ['content']
-=======
 class TsrForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
@@ -418,8 +416,6 @@ class TsrForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['perc_contribution', 'pos_fb', 'neg_fb']
->>>>>>> master
-
 
 def validate_url(url):
     url_form_field = URLField()
