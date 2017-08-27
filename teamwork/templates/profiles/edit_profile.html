@@ -146,22 +146,22 @@ $(document).ready(function() {
                   {% csrf_token %}
                   {{ form.status }}
                   <div class="form-group">
-                    <h5>Full Name</h5>
+                    <label>Full Name</label>
                     {{ form.name }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Institution</h5>
+                    <label>Institution</label>
                     {{ form.institution }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Location</h5>
+                    <label>Location</label>
                     {{ form.location }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Bio</h5>
+                    <label>Bio</label>
                     {{ form.bio }}
                   </div>
                   <div class="box-footer">
