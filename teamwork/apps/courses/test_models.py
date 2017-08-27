@@ -24,16 +24,13 @@ class CourseTestCase(TestCase):
         """
         Initialize course, user, and enrollment objects for use in test methods.
         """
-        # create a dummy course (with no M2M relationships) that will be associated with user1
-        course1 = Course.objects.create(name="Test Course", info="Testing course", slug="test1-slug",
-            creator="user_test1")
-
-        # A course associated with no one to ensure only eligible courses are returned
-        course2 = Course.objects.create()
-
         # Create a test user as an attribute of ProjectTestCase, for future use
         #   (we're not testing user or profile methods here)
         self.user1 = User.objects.create_user('user_test1', 'test1@test.com', 'groupthink')
+
+        # create a dummy course (with no M2M relationships) that will be associated with user1
+        course1 = Course.objects.create(name="Test Course", info="Testing course", slug="test1-slug",
+            creator=self.user1)        
 
         # Create a membership object between user1 and project1
         Enrollment.objects.create(user=self.user1, course=course1)
