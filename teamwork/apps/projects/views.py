@@ -13,6 +13,7 @@ from django.urls import reverse
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
+from teamwork.apps.core.helpers import *
 
 from .forms import *
 from .models import *
@@ -102,40 +103,28 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
-
     project = get_object_or_404(Project, slug=slug)
     isProf = 0
     if request.user.profile.isProf:
         isProf = 1
+
     updates = project.get_updates()
     resources = project.get_resources()
-
-
-
     project_chat = project.get_chat()
-    print("\n\n")
-    print("CHAT:")
-    print(project_chat)
-    print("\n\n")
+
     if request.method == 'POST':
-        print("Made it to form")
         form = ChatForm(request.user.id, slug, request.POST)
         if form.is_valid():
             # Create a chat object
             chat = ProjectChat(author=request.user, project=project)
             chat.content = form.cleaned_data.get('content')
             chat.save()
-            print(chat)
         else:
             messages.info(request,'Errors in form')
-            print("BROKE")
+
     else:
         # Send form for initial project creation
         form = ChatForm(request.user.id, slug)
-
-
-
-
 
     find_meeting(slug)
 
@@ -166,6 +155,29 @@ def view_one_project(request, slug):
         'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
+def request_join_project(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+    project_members = project.members.all()
+
+    if request.user in project_members:
+        # send an error
+        print("already in project")
+    else:
+        # user wants to join project
+        # send email to project owner
+        creator = project.creator
+
+        subject = "{0} has requested to join {1}".format(request.user, project.title)
+        # TODO: create link that goes directly to accept or deny
+        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
+        content = "{0}\n\n www.grepthink.com".format(content_text)
+        send_email(creator, "noreply@grepthink.com", subject, content)
+
+        # send alert to project members
+        print("requested to join, sent email")
+
+    return view_one_project(request, slug)
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():

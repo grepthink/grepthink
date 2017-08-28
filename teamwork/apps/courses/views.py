@@ -453,7 +453,7 @@ def edit_course(request, slug):
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
-        f_username = request.POST.get('remove_user')        
+        f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Enrollment.objects.filter(user=f_user, course=course)
         # to_delete = Membership.objects.filter(user=f_user, project=project)
@@ -643,14 +643,15 @@ def email_roster(request, slug):
     addcode = cur_course.addCode
 
     form = EmailRosterForm()
+    print("REQUEST METHOD:", request.method)
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
         #if form is accepted
         if form.is_valid():
+            print("form is valid")
             #the courseID will be gotten from the form
             data = form.cleaned_data
-
             subject = data.get('subject')
             content = data.get('content')
 
@@ -658,6 +659,7 @@ def email_roster(request, slug):
             # if attachment:
             #     handle_file(attachment)
 
+            print("send_email being called")
             send_email(students_in_course, request.user.email, subject, content)
 
             return redirect('view_one_course', slug)
