@@ -110,32 +110,20 @@ def view_one_project(request, slug):
     updates = project.get_updates()
     resources = project.get_resources()
 
-
-
-    project_chat = project.get_chat()
-    print("\n\n")
-    print("CHAT:")
-    print(project_chat)
-    print("\n\n")
+    project_chat = reversed(project.get_chat())
     if request.method == 'POST':
-        print("Made it to form")
         form = ChatForm(request.user.id, slug, request.POST)
         if form.is_valid():
-            # Create a chat object
+            # Create a chat object 
             chat = ProjectChat(author=request.user, project=project)
             chat.content = form.cleaned_data.get('content')
             chat.save()
-            print(chat)
+            return redirect(view_one_project, project.slug)
         else:
             messages.info(request,'Errors in form')
-            print("BROKE")
     else:
         # Send form for initial project creation
         form = ChatForm(request.user.id, slug)
-
-
-
-
 
     find_meeting(slug)
 
