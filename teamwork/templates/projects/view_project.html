@@ -105,6 +105,7 @@
 
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
             <li class="pull-right">
+                {% if not request.user.profile.isProf %}
                 {% if not user in project.members.all %}
                 <a href="{% url 'request_to_join' project.slug %}">
                 <button type="button" class="btn-xs btn-default btn-block" name="request">
@@ -119,6 +120,7 @@
                             Request Sent
                 </button>
                 </a>
+                {% endif %}
                 {% endif %}
             </li>
         </ul>

@@ -165,9 +165,12 @@ def request_join_project(request, slug):
         print("already in project")
     else:
         # user wants to join project
+        # add to pending members list of projects
+        project.pending_members.add(request.user)
+        project.save()
+
         # send email to project owner
         creator = project.creator
-
         subject = "{0} has requested to join {1}".format(request.user, project.title)
         # TODO: create link that goes directly to accept or deny
         content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)

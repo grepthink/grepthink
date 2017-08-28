@@ -255,9 +255,9 @@ class Project(models.Model):
         User,
         related_name='membership',
         through='Membership')
-        
+
     # Pending Members that have request to Join the project
-    pending_members = modesl.ManyToManyField(
+    pending_members = models.ManyToManyField(
         User,
         related_name='pending',
         default="")
