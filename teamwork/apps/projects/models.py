@@ -255,6 +255,12 @@ class Project(models.Model):
         User,
         related_name='membership',
         through='Membership')
+        
+    # Pending Members that have request to Join the project
+    pending_members = modesl.ManyToManyField(
+        User,
+        related_name='pending',
+        default="")
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
@@ -277,13 +283,13 @@ class Project(models.Model):
 
 
 
-    # NEED TO SETUP M2M not proper
+    # TODO:NEED TO SETUP M2M not proper
     # Resource list that the project members can update
     resource = models.TextField(
         max_length=4000,
         default="*No resources provided*")
 
-    # NEED UPDATES M2M for proper link not query
+    # TODO:NEED UPDATES M2M for proper link not query
 
 
 
@@ -295,7 +301,7 @@ class Project(models.Model):
         related_name='project',
         default=None)
 
-    # NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
+    # TODO:NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
