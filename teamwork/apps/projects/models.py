@@ -261,6 +261,14 @@ class Project(models.Model):
         User,
         related_name='pending',
         default="")
+    
+    # scrum_master
+    # meeting_location
+    # weekly_meeting_time with TA
+    # scrum meeting
+    # github_link
+    # assigned_ta
+
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
