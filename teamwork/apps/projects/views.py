@@ -818,7 +818,7 @@ def add_member(request, slug, uname):
     curr_members = Membership.objects.filter(project=project)
 
     # ensure user is a member of the course && not a member of the project
-    if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:        
+    if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
         Membership.objects.create(
             user=mem_to_add, project=project, invite_reason='')
         Alert.objects.create(
@@ -834,5 +834,29 @@ def add_member(request, slug, uname):
                 if mem == mem_to_add:
                     project.pending_members.remove(mem)
                     project.save()
+
+    return redirect(view_one_project, slug)
+
+def reject_member(request, slug, uname):
+    """
+    Reject Membership
+    """
+    project = get_object_or_404(Project, slug=slug)
+    mem_to_add = User.objects.get(username=uname)
+
+    # remove member from pending list if he/she was on it
+    pending_members = project.pending_members.all()
+    if mem_to_add in pending_members:
+        for mem in pending_members:
+            if mem == mem_to_add:
+                project.pending_members.remove(mem)
+                project.save()
+
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="Sorry, " + project.title + " has denied your request",
+            url=reverse('view_one_project',args=[project.slug]),
+            )
 
     return redirect(view_one_project, slug)

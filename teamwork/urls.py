@@ -58,6 +58,9 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/join/$', project_views.request_join_project, name='request_to_join'),
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', project_views.add_member, name='add_member'),
+        # Add member to project
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', project_views.reject_member, name='reject_member'),
+
         # select members
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
         # for select2
