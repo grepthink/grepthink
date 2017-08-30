@@ -82,6 +82,7 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'edit_project' project.slug %}">Edit</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
                     <li role="presentation" class="divider"></li>
                 </ul>
             </li>
@@ -121,7 +122,7 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator.username }}
+                            {{ project.creator.email }}
                         </span></a>
                     </p>
                     <p><strong>Members</strong>
@@ -129,7 +130,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                            {{ mem.username }}
+                            {{ mem.email }}
                         </span>
                         </a>
                         {% endif %}
@@ -305,12 +306,12 @@
             <!-- /.tab-pane End Resources -->
 
             <!-- /.tab-pane request meeting -->
-            <div class="tab-pane" id="tab_4">
+            <!-- <div class="tab-pane" id="tab_4">
                 {% for p in meetings %}
                   <br>{{p}}</br>
                 {% endfor %}
                 <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
-            </div>
+            </div> -->
 
             <!-- TSR Tab -->
             <div class="tab-pane" id="tab_5">
