@@ -64,15 +64,15 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
-            <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
-            {% if user in project.members.all %}
+            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
+            {% if user in project_members %}
                 <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
             {% endif %}
             {% if isProf %}
                 <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
-            {% if request.user in project.members.all %} 
-                <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li> 
+            {% if user in project_members %}
+                <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li>
             {% endif %}
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -84,25 +84,29 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
                     <li role="presentation" class="divider"></li>
-                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li> -->
                 </ul>
             </li>
-            <!-- <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    Show Interest <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">High Interest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Moderate Interest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Low Interest</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Interested</a></li>
-                </ul>
-            </li> -->
+
+            <!-- COGWHEEL -->
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
+
+            <!-- REQUEST TO JOIN PROJECT BUTTON -->
+            <li class="pull-right">
+                {% if not request.user.profile.isProf %}
+                {% if not user in project.members.all %}
+                <a href="{% url 'request_to_join' project.slug %}">
+                <button type="button" class="btn-xs btn-default btn-block" name="request">
+                            <i class="fa fa-plus"></i>
+                            Request To Join Project
+                </button>
+                </a>
+                {% endif %}
+                {% endif %}
+            </li>
         </ul>
+
         <div class="tab-content">
+            <!-- TAB 1 -->
             <div class="tab-pane active" id="tab_1">
                 <div class="content">
                     {{ project.get_content_as_markdown|safe }}
@@ -132,7 +136,7 @@
                         {% endif %}
                         {% endfor %}
                     </p>
-                     <p><strong>Desired Skills</strong>
+                    <p><strong>Desired Skills</strong>
                         {% if project.desired_skills != none %}
                         {% for skill in project.desired_skills.all %}
                         <span class="label label-warning">
@@ -143,7 +147,8 @@
                     </p>
                 </div>
             </div>
-            <!-- /.tab-pane Updates -->
+
+            <!-- TAB 2 - Updates -->
             <div class="tab-pane" id="tab_2">
 
                 <h3>Updates</h3>
@@ -305,13 +310,10 @@
                 {% for p in meetings %}
                   <br>{{p}}</br>
                 {% endfor %}
-
-                <a href="{% url 'view_meetings' project.slug %}">Meeting Times </a>
-
+                <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
             </div> -->
 
-            <!-- /.tab-pane meeting -->
-
+            <!-- TSR Tab -->
             <div class="tab-pane" id="tab_5">
                 <!--{% with "False" as scrum %}-->
                 <form action="{% url 'tsr_update' project.slug %}">
@@ -327,14 +329,14 @@
                 <!--{% endwith %}-->
             </div>
 
+            <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
                 <form action="{% url 'view_tsr' project.slug %}">
                     <input type="submit" value="View TSR" />
                 </form>
             </div>
 
-
-            <!-- /.tab-pane chat --> 
+            <!-- /.tab-pane chat -->
             <div class="tab-pane" id="tab_7">
                   <!-- DIRECT CHAT SUCCESS -->
                   <div class="box box-success direct-chat direct-chat-success" >
@@ -345,10 +347,10 @@
 
                       <div class="box-tools pull-right">
                         <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="3 New Messages">3</span>
-                       
+
                         <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-widget="chat-pane-toggle" data-original-title="Members">
                           <i class="fa fa-comments"></i></button>
-                        
+
                       </div>
                     </div>
                     <!-- /.box-header -->
@@ -384,8 +386,9 @@
                                     <span class="direct-chat-timestamp pull-right">{{msg.date}}</span>
                                   </div>
                                   <!-- /S.direct-chat-info -->
+
                                   {% if msg.author.profile.avatar %}
-                                    <img class="direct-chat-img"" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                    <img class="direct-chat-img" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
                                   {% else %}
                                     <img class="direct-chat-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
                                   {% endif %}
@@ -399,8 +402,8 @@
 
                         {% empty %}
                             <div align="center"><font color="grey" size="3">No messages</font></div>
-                        {% endfor %}   
-                        
+                        {% endfor %}
+
                       </div>
                       <!--/.direct-chat-messages-->
 
@@ -435,26 +438,10 @@
                         </ul>
                       </div>
                       <!-- /.Members List -->
-
                     </div>
                     <!-- /.box-body -->
 
-<!--                     <form action="#tab_5" method="post" role="form">
-                    {% csrf_token %}
-                    {{ form.status }}
-                    {% for field in form.visible_fields %}
-                      <div class="form-group{% if field.errors %} has-error{% endif %}">
-                        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% for error in field.errors %}
-                          <label class="control-label">{{ error }}</label>
-                        {% endfor %}
-                      </div>
-                    {% endfor %}
-                    <input type="submit" value="Chat">
-                  </form> -->
-
-
+                    <!-- box footer -->
                     <div class="box-footer">
                       <form action="#tab_7" method="POST">
                       {% csrf_token %}
@@ -467,17 +454,54 @@
                       </form>
                     </div>
                     <!-- /.box-footer-->
-          <!--/.direct-chat -->
-        </div>
+                </div>
+                <!--/.direct-chat -->
             </div>
             <!-- /.tab-pane chat -->
-
-
         </div>
         <!-- /.tab-content -->
     </div>
     <!-- nav-tabs-custom -->
 </div>
+
+<!-- Pending Members Box -->
+{% if user in project_members or user == project.creator%}
+<div class="box sm-box-solid">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body no-padding">
+        <ul class="nav nav-pills nav-stacked">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                  <th>Email Address</th>
+                  <th style="width:50%">Request Date</th>
+                  <th style="width: 40px"></th>
+                  <th style="width: 40px"></th>
+                </tr>
+                {% for stud in pending_members %}
+                    <tr>
+                        <td> <a href="{% url 'profile' stud.username %}"> {{ stud.email }} </a> </td>
+                        <td> Todo </td>
+                        <td> <a href="{% url 'add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
+                        <td> <a href="{% url 'reject_member' project.slug stud.username %}"><button type="button" class="btn btn-block btn-danger btn-xs">Reject</button> </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </ul>
+    </div>
+
+  <!-- /.box-body -->
+</div>
+
+{% endif %}
 
 
 {% endblock content %}

@@ -13,6 +13,7 @@ from django.urls import reverse
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
+from teamwork.apps.core.helpers import *
 
 from .forms import *
 from .models import *
@@ -102,11 +103,16 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
-
     project = get_object_or_404(Project, slug=slug)
+    # to reduce querys in templates
+    pending_members = project.pending_members.all()
+    pending_count = len(pending_members)
+    project_members = project.members.all()
+
     isProf = 0
     if request.user.profile.isProf:
         isProf = 1
+
     updates = project.get_updates()
     resources = project.get_resources()
 
@@ -114,7 +120,7 @@ def view_one_project(request, slug):
     if request.method == 'POST':
         form = ChatForm(request.user.id, slug, request.POST)
         if form.is_valid():
-            # Create a chat object 
+            # Create a chat object
             chat = ProjectChat(author=request.user, project=project)
             chat.content = form.cleaned_data.get('content')
             chat.save()
@@ -151,9 +157,38 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
-        'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'pending_count':pending_count,
+        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
+def request_join_project(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+    project_members = project.members.all()
+
+    if request.user in project_members:
+        # send an error
+        print("already in project")
+    else:
+        # user wants to join project
+        # add to pending members list of projects
+        project.pending_members.add(request.user)
+        print("added to pending members:", project.pending_members.all())
+        project.save()
+
+        # send email to project owner
+        creator = project.creator
+        subject = "{0} has requested to join {1}".format(request.user, project.title)
+        # TODO: create link that goes directly to accept or deny
+        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
+        content = "{0}\n\n www.grepthink.com".format(content_text)
+        send_email(creator, "noreply@grepthink.com", subject, content)
+
+        # send alert to project members
+        print("requested to join, sent email")
+
+    return view_one_project(request, slug)
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
@@ -296,6 +331,7 @@ def create_project(request):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
+            project.scrum_master = request.user
 
             project.save()
 
@@ -409,6 +445,14 @@ def edit_project(request, slug):
                     msg="You were added to " + project.title,
                     url=reverse('view_one_project',args=[project.slug]),
                     )
+                # remove member from pending list if he/she was on it
+                pending_members = project.pending_members.all()
+                if mem_to_add in pending_members:
+                    for mem in pending_members:
+                        if mem == mem_to_add:
+                            project.pending_members.remove(mem)
+                            project.save()
+
 
         return redirect(edit_project, slug)
 
@@ -770,3 +814,59 @@ def view_tsr(request, slug):
         return redirect(view_projects)
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title,
                         'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
+
+def add_member(request, slug, uname):
+    """
+    Add member to project if:
+        - They aren't a member already
+        - They are a member of the course
+    """
+    project = get_object_or_404(Project, slug=slug)
+    course = Course.objects.get(projects=project)
+    mem_to_add = User.objects.get(username=uname)
+    mem_courses = Course.get_my_courses(mem_to_add)
+    curr_members = Membership.objects.filter(project=project)
+
+    # ensure user is a member of the course && not a member of the project
+    if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+        Membership.objects.create(
+            user=mem_to_add, project=project, invite_reason='')
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="You were added to " + project.title,
+            url=reverse('view_one_project',args=[project.slug]),
+            )
+        # remove member from pending list if he/she was on it
+        pending_members = project.pending_members.all()
+        if mem_to_add in pending_members:
+            for mem in pending_members:
+                if mem == mem_to_add:
+                    project.pending_members.remove(mem)
+                    project.save()
+
+    return redirect(view_one_project, slug)
+
+def reject_member(request, slug, uname):
+    """
+    Reject Membership
+    """
+    project = get_object_or_404(Project, slug=slug)
+    mem_to_add = User.objects.get(username=uname)
+
+    # remove member from pending list if he/she was on it
+    pending_members = project.pending_members.all()
+    if mem_to_add in pending_members:
+        for mem in pending_members:
+            if mem == mem_to_add:
+                project.pending_members.remove(mem)
+                project.save()
+
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="Sorry, " + project.title + " has denied your request",
+            url=reverse('view_one_project',args=[project.slug]),
+            )
+
+    return redirect(view_one_project, slug)
