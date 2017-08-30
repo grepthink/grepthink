@@ -110,8 +110,8 @@ def view_one_project(request, slug):
 
     updates = project.get_updates()
     resources = project.get_resources()
-    project_chat = project.get_chat()
 
+    project_chat = reversed(project.get_chat())
     if request.method == 'POST':
         form = ChatForm(request.user.id, slug, request.POST)
         if form.is_valid():
@@ -119,9 +119,9 @@ def view_one_project(request, slug):
             chat = ProjectChat(author=request.user, project=project)
             chat.content = form.cleaned_data.get('content')
             chat.save()
+            return redirect(view_one_project, project.slug)
         else:
             messages.info(request,'Errors in form')
-
     else:
         # Send form for initial project creation
         form = ChatForm(request.user.id, slug)

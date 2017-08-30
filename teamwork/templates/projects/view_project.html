@@ -375,7 +375,7 @@
 
                     <div class="box-body">
                       <!-- Conversations are loaded here -->
-                      <div class="direct-chat-messages">
+                      <div class="direct-chat-messages" style="height: 400px">
                         {% for msg in project_chat %}
                             {% if msg.author == request.user %}
                                 <!-- Message  author pull to the right -->
@@ -390,7 +390,7 @@
                                   {% else %}
                                     <img class="direct-chat-img pull-right" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
                                   {% endif %}
-                                  <div class="direct-chat-text">
+                                  <div class="direct-chat-text" style="word-wrap: break-word;">
                                     {{msg.content}}
                                   </div>
                                   <!-- /.direct-chat-text -->
@@ -409,7 +409,7 @@
                                   {% else %}
                                     <img class="direct-chat-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
                                   {% endif %}
-                                  <div class="direct-chat-text">
+                                  <div class="direct-chat-text" style="word-wrap: break-word;">
                                     {{msg.content}}
                                   </div>
                                   <!-- /.direct-chat-text -->
@@ -423,11 +423,6 @@
 
                       </div>
                       <!--/.direct-chat-messages-->
-
-
-
-
-
 
                       <!-- Load Members -->
                       <div class="direct-chat-contacts">
