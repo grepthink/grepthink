@@ -83,22 +83,8 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation" class="divider"></li>
-                    <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li> -->
                 </ul>
             </li>
-            <!-- <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    Show Interest <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">High Interest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Moderate Interest</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Low Interest</a></li>
-                    <li role="presentation" class="divider"></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Not Interested</a></li>
-                </ul>
-            </li> -->
 
             <!-- COGWHEEL -->
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
@@ -117,7 +103,9 @@
                 {% endif %}
             </li>
         </ul>
+
         <div class="tab-content">
+            <!-- TAB 1 -->
             <div class="tab-pane active" id="tab_1">
                 <div class="content">
                     {{ project.get_content_as_markdown|safe }}
@@ -158,7 +146,8 @@
                     </p>
                 </div>
             </div>
-            <!-- /.tab-pane Updates -->
+
+            <!-- TAB 2 - Updates -->
             <div class="tab-pane" id="tab_2">
 
                 <h3>Updates</h3>
@@ -320,11 +309,10 @@
                 {% for p in meetings %}
                   <br>{{p}}</br>
                 {% endfor %}
-
                 <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
-
             </div>
 
+            <!-- TSR Tab -->
             <div class="tab-pane" id="tab_5">
                 <!--{% with "False" as scrum %}-->
                 <form action="{% url 'tsr_update' project.slug %}">
@@ -340,12 +328,12 @@
                 <!--{% endwith %}-->
             </div>
 
+            <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
                 <form action="{% url 'view_tsr' project.slug %}">
                     <input type="submit" value="View TSR" />
                 </form>
             </div>
-                   <!-- /.tab-pane meeting -->
 
             <!-- /.tab-pane chat -->
             <div class="tab-pane" id="tab_7">
@@ -397,8 +385,9 @@
                                     <span class="direct-chat-timestamp pull-right">{{msg.date}}</span>
                                   </div>
                                   <!-- /S.direct-chat-info -->
+
                                   {% if msg.author.profile.avatar %}
-                                    <img class="direct-chat-img"" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                    <img class="direct-chat-img" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
                                   {% else %}
                                     <img class="direct-chat-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
                                   {% endif %}
@@ -448,26 +437,10 @@
                         </ul>
                       </div>
                       <!-- /.Members List -->
-
                     </div>
                     <!-- /.box-body -->
 
-<!--                     <form action="#tab_5" method="post" role="form">
-                    {% csrf_token %}
-                    {{ form.status }}
-                    {% for field in form.visible_fields %}
-                      <div class="form-group{% if field.errors %} has-error{% endif %}">
-                        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                        {{ field }}
-                        {% for error in field.errors %}
-                          <label class="control-label">{{ error }}</label>
-                        {% endfor %}
-                      </div>
-                    {% endfor %}
-                    <input type="submit" value="Chat">
-                  </form> -->
-
-
+                    <!-- box footer -->
                     <div class="box-footer">
                       <form action="#tab_7" method="POST">
                       {% csrf_token %}
@@ -480,8 +453,8 @@
                       </form>
                     </div>
                     <!-- /.box-footer-->
-          <!--/.direct-chat -->
-        </div>
+                </div>
+                <!--/.direct-chat -->
             </div>
             <!-- /.tab-pane chat -->
         </div>
@@ -490,31 +463,43 @@
     <!-- nav-tabs-custom -->
 </div>
 
-{% if user in project_members %}
+<!-- Pending Members Box -->
+{% if user in project_members or user == project.creator%}
 <div class="box sm-box-solid">
-  <div class="box-header with-border">
-    <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
 
-    <div class="box-tools">
-      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-      </button>
+    <div class="box-header with-border">
+        <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
     </div>
 
-  </div>
-
-
-  <div class="box-body no-padding">
-   <ul class="nav nav-pills nav-stacked">
-           {% for stud in pending_members %}
-              <li><a href="#"> {{ stud.email }} </a></li>
-           {% endfor %}
-   </ul>
- </div>
+    <div class="box-body no-padding">
+        <ul class="nav nav-pills nav-stacked">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                  <th>Email Address</th>
+                  <th style="width:50%">Request Date</th>
+                  <th style="width: 40px"></th>
+                  <th style="width: 40px"></th>
+                </tr>
+                {% for stud in pending_members %}
+                    <tr>
+                        <td> <a href="{% url 'profile' stud.username %}"> {{ stud.email }} </a> </td>
+                        <td> Todo </td>
+                        <td> <a href="{% url 'add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
+                        <td> <button type="button" class="btn btn-block btn-danger btn-xs">Reject</button> </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </ul>
+    </div>
 
   <!-- /.box-body -->
 </div>
 
-<!-- /.box -->
 {% endif %}
 
 
