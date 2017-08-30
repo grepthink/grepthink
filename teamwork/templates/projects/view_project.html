@@ -65,13 +65,13 @@
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
             <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
-            {% if user in project.members.all %}
+            {% if user in project_members %}
                 <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
             {% endif %}
             {% if isProf %}
                 <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
-            {% if request.user in project.members.all %}
+            {% if user in project_members %}
                 <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li>
             {% endif %}
             <li class="dropdown">
@@ -111,13 +111,6 @@
                 <button type="button" class="btn-xs btn-default btn-block" name="request">
                             <i class="fa fa-plus"></i>
                             Request To Join Project
-                </button>
-                </a>
-                {% else %}
-                <a href="{% url 'request_to_join' project.slug %}">
-                <button type="button" class="btn-xs btn-default btn-block" name="unRequest">
-                            <i class="fa fa-remove"></i>
-                            Request Sent
                 </button>
                 </a>
                 {% endif %}
@@ -491,13 +484,38 @@
         </div>
             </div>
             <!-- /.tab-pane chat -->
-
-
         </div>
         <!-- /.tab-content -->
     </div>
     <!-- nav-tabs-custom -->
 </div>
+
+{% if user in project_members %}
+<div class="box sm-box-solid">
+  <div class="box-header with-border">
+    <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
+
+    <div class="box-tools">
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+      </button>
+    </div>
+
+  </div>
+
+
+  <div class="box-body no-padding">
+   <ul class="nav nav-pills nav-stacked">
+           {% for stud in pending_members %}
+              <li><a href="#"> {{ stud.email }} </a></li>
+           {% endfor %}
+   </ul>
+ </div>
+
+  <!-- /.box-body -->
+</div>
+
+<!-- /.box -->
+{% endif %}
 
 
 {% endblock content %}

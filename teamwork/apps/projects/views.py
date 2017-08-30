@@ -104,6 +104,11 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
     project = get_object_or_404(Project, slug=slug)
+    # to reduce querys in templates
+    pending_members = project.pending_members.all()
+    pending_count = len(pending_members)
+    project_members = project.members.all()
+
     isProf = 0
     if request.user.profile.isProf:
         isProf = 1
@@ -152,7 +157,9 @@ def view_one_project(request, slug):
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
-        'project': project, 'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'pending_count':pending_count,
+        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
 def request_join_project(request, slug):
@@ -167,6 +174,7 @@ def request_join_project(request, slug):
         # user wants to join project
         # add to pending members list of projects
         project.pending_members.add(request.user)
+        print("added to pending members:", project.pending_members.all())
         project.save()
 
         # send email to project owner
@@ -323,6 +331,7 @@ def create_project(request):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
+            project.scrum_master = request.user
 
             project.save()
 
@@ -436,6 +445,15 @@ def edit_project(request, slug):
                     msg="You were added to " + project.title,
                     url=reverse('view_one_project',args=[project.slug]),
                     )
+                # remove member from pending list if he/she was on it
+                pending_members = project.pending_members.all()
+                if mem_to_add in pending_members:
+                    print("removing member from pending list")
+                    for mem in pending_members:
+                        if mem == mem_to_add:
+                            project.pending_members.remove(mem)
+                            project.save()
+
 
         return redirect(edit_project, slug)
 

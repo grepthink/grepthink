@@ -240,6 +240,13 @@ class Project(models.Model):
         related_name='project_creator',
         on_delete=models.CASCADE)
 
+    # scrum master of the project with a FK to that User object
+    scrum_master = models.ForeignKey(
+        User,
+        related_name='scrum_master',
+        on_delete=models.CASCADE,
+        default="")
+
     # Short project description
     tagline = models.TextField(
         max_length=38,
@@ -261,8 +268,8 @@ class Project(models.Model):
         User,
         related_name='pending',
         default="")
-    
-    # scrum_master
+
+    # TODO:
     # meeting_location
     # weekly_meeting_time with TA
     # scrum meeting
