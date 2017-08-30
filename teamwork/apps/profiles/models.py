@@ -167,7 +167,7 @@ class Profile(models.Model):
 
     Fields:
         user: user object
-        bio: bio of user    
+        bio: bio of user
         known_skills: stores known skills
         interest: stores interest for projects in profile
         isProf: boolean that dictates if the user is a professors
@@ -184,6 +184,8 @@ class Profile(models.Model):
 
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
+    jsonavail = models.TextField(
+                default='')
 
     # Profile Image
     avatar = models.ImageField(
@@ -200,7 +202,8 @@ class Profile(models.Model):
     isGT = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username
+        string = "%s (%s)"%(self.user.email, self.name)
+        return string
     def __hash__(self):
         return hash(self.user)
     def __eq__(self, other):
@@ -217,6 +220,7 @@ class Profile(models.Model):
         return Alert.objects.filter(to=self.user,read=False)
     def read_alerts(self):
         return Alert.objects.filter(to=self.user,read=True)
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

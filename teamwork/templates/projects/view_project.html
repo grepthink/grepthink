@@ -64,7 +64,7 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
-            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li>
+            <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
             {% if user in project.members.all %}
                 <li class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">TSR</a></li>
             {% endif %}
@@ -82,6 +82,7 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'edit_project' project.slug %}">Edit</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
                     <li role="presentation" class="divider"></li>
                     <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Request Meeting</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Email Members</a></li> -->
@@ -117,7 +118,7 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator.username }}
+                            {{ project.creator.email }}
                         </span></a>
                     </p>
                     <p><strong>Members</strong>
@@ -125,7 +126,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                            {{ mem.username }}
+                            {{ mem.email }}
                         </span>
                         </a>
                         {% endif %}
@@ -300,14 +301,16 @@
             <!-- /.tab-pane End Resources -->
 
             <!-- /.tab-pane request meeting -->
-            <div class="tab-pane" id="tab_4">
+            <!-- <div class="tab-pane" id="tab_4">
                 {% for p in meetings %}
                   <br>{{p}}</br>
                 {% endfor %}
 
-                <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
+                <a href="{% url 'view_meetings' project.slug %}">Meeting Times </a>
 
-            </div>
+            </div> -->
+
+            <!-- /.tab-pane meeting -->
 
             <div class="tab-pane" id="tab_5">
                 <!--{% with "False" as scrum %}-->
@@ -329,7 +332,7 @@
                     <input type="submit" value="View TSR" />
                 </form>
             </div>
-                   <!-- /.tab-pane meeting -->
+
 
             <!-- /.tab-pane chat --> 
             <div class="tab-pane" id="tab_7">

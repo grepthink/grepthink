@@ -421,6 +421,16 @@ def edit_project(request, slug):
             mem_obj.delete()
         return redirect(edit_project, slug)
 
+
+    # Transfer ownership of a project
+    if request.POST.get('promote_user'):
+        f_username = request.POST.get('promote_user')
+        f_user = User.objects.get(username=f_username)
+        project.creator = f_user
+        project.save()
+        return redirect(edit_project, slug)
+
+
     # Add skills to the project
     if request.POST.get('desired_skills'):
         skills = request.POST.getlist('desired_skills')

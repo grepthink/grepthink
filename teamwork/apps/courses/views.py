@@ -453,7 +453,7 @@ def edit_course(request, slug):
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
-        f_username = request.POST.get('remove_user')        
+        f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Enrollment.objects.filter(user=f_user, course=course)
         # to_delete = Membership.objects.filter(user=f_user, project=project)
