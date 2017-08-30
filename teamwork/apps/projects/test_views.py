@@ -17,9 +17,10 @@ from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
 
 
-def create_project(title, creator, tagline, content, slug, resource, avail_mem=True, sponsor=False):
+def create_project(title, creator, scrum_master, tagline, content, slug, resource, avail_mem=True, sponsor=False):
     # Create a dummy project (with no M2M relationships) that will be associated with user1
     return Project.objects.create(title=title, creator=creator,
+        scrum_master=scrum_master,
         tagline=tagline, content=content,
         avail_mem=avail_mem, sponsor=sponsor, slug=slug,resource=resource)
 
