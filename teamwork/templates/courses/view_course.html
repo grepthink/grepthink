@@ -56,14 +56,14 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-            {% if profile.isProf or profile.isTa %}
+
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create New Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
-            {% endif %}
+
             {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -94,9 +94,7 @@
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
-<<<<<<< HEAD
             <div class="tab-pane" id="assignments">
-            {% if profile.isProf or profile.isTa %}
             <div class="col-md-6">
                 <div class="box box-success">
                         <div class="box-header with-border">
@@ -117,7 +115,6 @@
                             </div>
                 </div>
             </div>
-            {% endif %}
             </div>
 
             <div class="tab-pane" id="description">
