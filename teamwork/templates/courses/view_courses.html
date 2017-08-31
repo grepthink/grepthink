@@ -18,8 +18,23 @@
 <div class="row">
     <div class="col-md-10">
         <section class="courses" clearfix>
-
             {% for course in courses %}
+
+            <div class="small-box bg-aqua" style="border-radius: 10px">
+              <div class="inner">
+                <h3>{{course.name}}</h3>
+
+                <p>{{course.term}}  {{course.year}}</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-book"></i>
+              </div>
+              <a href="{% url 'view_one_course' course.slug %}" class="small-box-footer" style="border-radius: 10px">
+                More info <i class="fa fa-arrow-circle-right"></i>
+              </a>
+          </div>
+
+          {% comment %}
             <div class="box box-widget widget-user-2">
                 <a href="{% url 'view_one_course' course.slug %}" style="none">
 
@@ -37,6 +52,7 @@
                   </ul>
               </div>
           </div><!-- /.box -->
+          {% endcomment %}
             {% empty %}
             <div class="alert alert-warning" role="alert">
                 <i class="fa fa-warning"></i>
@@ -51,11 +67,13 @@
                     </a>
                 </div>
                 {% endfor %}
+
+
             </section>
         </div>
     </div>
 
-
+{% comment %}
       <div class="box box-widget widget-user-2">
 
 
@@ -71,6 +89,7 @@
           {{ course.info }}
         </div>
       </div><!-- /.box -->
+      {% endcomment %}
 
     <!--paginator-->
 

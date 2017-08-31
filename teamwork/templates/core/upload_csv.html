@@ -23,6 +23,13 @@
     </div>
     {% endfor %}
 
+    <div class="pull-left">
+        <a href="{% url 'view_one_course' slug %}">
+           <button class="btn btn-default" type="button">
+               Skip
+           </button>
+       </a>
+    </div>
     <div class="pull-right">
         <button class="btn btn-success" type="submit" name="SUBMIT">
             Continue

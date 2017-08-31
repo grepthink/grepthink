@@ -28,18 +28,18 @@ def get_all_courses(self):
     return Course.objects.all()
 
 class Assignment(models.Model):
-    due_date=models.CharField(max_length=255, default="20991231")
-    ass_date=models.CharField(max_length=255, default="20000101")
-    ass_type=models.CharField(max_length=255, default='tsr')
-    ass_name=models.CharField(max_length=255, default="TSR for Sprint X")
+    due_date = models.CharField(max_length=255, default="20991231")
+    ass_date = models.CharField(max_length=255, default="20000101")
+    ass_type = models.CharField(max_length=255, default='tsr')
+    ass_name = models.CharField(max_length=255, default="TSR for Sprint X")
+    description = models.CharField(max_length=255, default="")
     ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
 
     def __str__(self):
         """
         Human readeable representation of the Assignment object.
         """
-        return ("%s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name,self.ass_number))
-
+        return ("%s, %s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number))
 
 def get_user_courses(self):
     """
@@ -155,24 +155,26 @@ class Course(models.Model):
     #projects in course, manytomany
     projects = models.ManyToManyField(
         # to project model
-        Project)
+        Project,
+        # projects can access course through this relation
+        # project.course.first()
+        related_name='course')
+
+    # assignments in course, manytomany
     assignments=models.ManyToManyField(
-        Assignment
-    )
+        # to Assignment model
+        Assignment,
+        related_name='asses') # :D hehe -kp
 
-    # RYAN
-    # creator needs to be a foreign key for a simpler linking
-    # but student and creator  both have backwards relations to user, so
-    # I need to go through our current code and setup a related name for all
-    # uses of either of these. Cant dedicate time to it now but needs to get done.
-    # creator = models.ForeignKey(User)
+    # creator of a course with a FK to that User object
+    # The Fk with generate a set of course object for that user
+    creator = models.ForeignKey(
+        User,
+        # students can access courses through this relation
+        # user.course_creator.all()
+        related_name='course_creator',
+        on_delete=models.CASCADE)
 
-    # Creator of course, string
-    creator = models.CharField(
-        # with max length 255
-        max_length=255,
-        # defaulted to "Default"
-        default="Default")
     # addCode for course, string
     addCode = models.CharField(
         # with length 10
@@ -353,7 +355,7 @@ class Enrollment(models.Model):
     def __str__(self):
         """
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
-        Maybe something like, return u'%s %s' % (self.course, self.title)
+        Maybe something like,  return u'%s %s' % (self.course, self.title)
         """
         return ("%s"%(self.user.username))
 

@@ -216,7 +216,7 @@ class EditProjectForm(forms.ModelForm):
     tagline = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=38)
 
-    accepting = forms.BooleanField(label='accepting members', required=False)
+    accepting = forms.BooleanField(label='Accepting Members?', required=False)
 
     sponsor = forms.BooleanField(label='Sponsored?', required=False)
 
@@ -316,7 +316,7 @@ class UpdateForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control'}), max_length=4000)
 
     class Meta:
-        model = Project
+        model = ProjectUpdate
         fields = ['update_title', 'update']
 
 class ResourceForm(forms.ModelForm):
@@ -336,7 +336,7 @@ class ResourceForm(forms.ModelForm):
         required=True)
 
     class Meta:
-        model = Project
+        model = ResourceUpdate
         fields = ['src_title', 'src_link']
 
     def clean(self):
@@ -346,8 +346,21 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
-class TSR(forms.ModelForm):
+class ChatForm(forms.ModelForm):
 
+    def __init__(self, uid, slug, *args, **kwargs):
+        super(ChatForm, self).__init__(*args, **kwargs)
+
+    content = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=2000,
+        required=True)
+
+    class Meta:
+        model = ProjectChat
+        fields = ['content']
+
+class TSR(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         members = kwargs.pop('members')
         emails = kwargs.pop('emails')

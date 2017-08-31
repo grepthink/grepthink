@@ -52,15 +52,24 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
         # View TSRs
         url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
-
         # View meeting times
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
+        # Request to join Project
+        url(r'^project/(?P<slug>[^/]+)/join/$', project_views.request_join_project, name='request_to_join'),
+        # Add member to project
+        url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', project_views.add_member, name='add_member'),
+        # Add member to project
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', project_views.reject_member, name='reject_member'),
 
+        # select members
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
         # for select2
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+
+        # kevin's addition select2
+        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
 
 
         # View all courses

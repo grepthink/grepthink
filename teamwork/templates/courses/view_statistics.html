@@ -56,7 +56,7 @@
                      <div class="panel-body ScrollStyle">
                          <p>
                              {% for student in students_projects_not %}
-                                 <li>{{student}}</li>
+                                 <li>{{student.email}}</li>
                              {% endfor %}
                          </p></br>
                      </div>
@@ -78,7 +78,7 @@
                                 <li>{{project.title}}</li>
                                 <ul>
                                     {% for mem in project.members.all %}
-                                        <li>{{mem}}</li>
+                                        <li>{{mem.email}}</li>
 
                                     {% endfor %}
                                 </ul>

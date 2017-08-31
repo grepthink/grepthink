@@ -85,6 +85,7 @@ class SignUpForm(forms.ModelForm):
 
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         label="Confirm your password",

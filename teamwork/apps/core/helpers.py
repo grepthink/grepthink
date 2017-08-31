@@ -3,6 +3,10 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import *
 
+from django.contrib.auth.models import User
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
+
 # csv
 import csv
 import codecs
@@ -22,13 +26,20 @@ def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
 
-    if type(recipients[0]) is str:
-        for student in recipients:
-            student_email_list.append(Email(student))
+    if type(recipients) is User:
+        # only 1 member
+        student_email_list.append(Email(recipients.email))
+    elif type(recipients) is list:
+        if type(recipients[0]) is str:
+            for student in recipients:
+                student_email_list.append(Email(student))
+        else:
+            # build list of emails of recipients
+            for student in recipients:
+                student_email_list.append(Email(student.email))
     else:
-        # build list of emails of recipients
-        for student in recipients:
-            student_email_list.append(Email(student.email))
+        print("bad response")
+        return HttpResponseBadRequest()
 
     # Handle email sending
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -39,7 +50,7 @@ def send_email(recipients, gt_email, subject, content):
 
     from_email = Email(gt_email)
 
-    # TODO: Content should be formatted in a professional way. I believe markup is supported.
+    # TODO: Content should be formatted in a professional way. I believe markup is/can be supported.
     final_content = Content("text/plain", content)
     mail = Mail(from_email, subject, to_email, final_content)
 
@@ -54,9 +65,9 @@ def send_email(recipients, gt_email, subject, content):
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
     response = sg.client.mail.send.post(request_body=mail.get())
 
-    # print(response.status_code)
-    # print(response.body)
-    # print(response.headers)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
 
 
 """

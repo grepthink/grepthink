@@ -6,6 +6,10 @@ from django.db.models import Q
 from datetime import datetime
 from django.contrib.admin.widgets import AdminDateWidget
 
+from datetime import datetime
+from django.forms import extras
+from django.contrib.admin.widgets import AdminDateWidget
+
 from teamwork.apps.profiles.models import *
 
 from .models import *
@@ -127,8 +131,6 @@ class CreateCourseForm(forms.ModelForm):
         min_value=0, max_value=5, label="Weight of skills users want to learn",
         required=False)
 
-    csv_file = forms.FileField(required=False, label="Upload a CSV Roster")
-
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
         required=False)
@@ -210,14 +212,14 @@ class EditCourseForm(forms.ModelForm):
         #Field NOT Required
         required=False)
 
-    #Students field
-    students = forms.ModelMultipleChoiceField(
-        #Multiple Choice Selection
-        widget=forms.CheckboxSelectMultiple,
-        #From all user objects
-        queryset=User.objects.all(),
-        #Field NOT Required
-        required=False)
+    # #Students field
+    # students = forms.ModelMultipleChoiceField(
+    #     #Multiple Choice Selection
+    #     widget=forms.CheckboxSelectMultiple,
+    #     #From all user objects
+    #     queryset=User.objects.all().values('email'),
+    #     #Field NOT Required
+    #     required=False)
 
     #Field for only professor creating courses
     limit_creation = forms.BooleanField(
@@ -456,7 +458,7 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseUpdate
         fields = ['title', 'content']
-        
+
 class AssignmentForm(forms.ModelForm):
     """
     Form used for making a new assignment
@@ -467,7 +469,8 @@ class AssignmentForm(forms.ModelForm):
     # date assignment will start
     ass_date = forms.DateField(
         widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d']
+        input_formats = ['%Y-%m-%d'],
+        label="Open Date"
     )
     # date assignment will end (users can no longer submit)
     due_date = forms.DateField(
@@ -483,16 +486,21 @@ class AssignmentForm(forms.ModelForm):
     # type of assignment, i.e. tsr
     ass_type = forms.CharField(max_length=255, label="Assignment Type",
         required=True)
+    # assignment description
+    description = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment Description",
+        required=True,
+        max_length=255)
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
         widget=forms.NumberInput(),label='Assignment Number',
         max_digits=2,
         required=True,
         decimal_places=0)
-
-
     class Meta:
         model= Assignment
         widgets = {
         }
-        fields = ['ass_date', 'due_date','ass_name','ass_type']
+
+        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']

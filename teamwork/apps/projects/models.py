@@ -27,12 +27,46 @@ from django.core.validators import URLValidator
 
 from django.utils import timezone
 
-
+from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
 
 
 # from teamwork.apps.courses.models import Course
 # can't do this, would cause dependency loop :(
+
+
+"""
+TSR MODEL
+"""
+class Tsr(models.Model):
+    """
+    TSR objects relate a user and tsr fields, along with assignment information
+    """
+    # number of the TSR assignment form was submitted for
+    ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
+    # person who is evaluating
+    evaluator = models.ForeignKey(User, on_delete=models.CASCADE,
+        related_name="evaluator", default=0)
+    # person being evaluated
+    evaluatee = models.ForeignKey(User, on_delete=models.CASCADE,
+        related_name="evaluatee", default=0)
+    # sprint percent contribution
+    percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
+    # evaluatee pros
+    positive_feedback = models.CharField(max_length=255, default='')
+    # evaluatee cons
+    negative_feedback = models.CharField(max_length=255, default='')
+    # scrum input only
+    tasks_completed = models.CharField(max_length=255, default='')
+    # scrum input only
+    performance_assessment = models.CharField(max_length=255, default='')
+    # scrum input only
+    notes = models.CharField(max_length=255, default='')
+
+    def __str__(self):
+        return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
+            self.positive_feedback, self.negative_feedback,
+            self.tasks_completed, self.performance_assessment, self.notes)))
 
 
 # Generates add code
@@ -236,6 +270,13 @@ class Project(models.Model):
         related_name='project_creator',
         on_delete=models.CASCADE)
 
+    # scrum master of the project with a FK to that User object
+    scrum_master = models.ForeignKey(
+        User,
+        related_name='scrum_master',
+        on_delete=models.CASCADE,
+        default="")
+
     # Short project description
     tagline = models.TextField(
         max_length=38,
@@ -251,6 +292,20 @@ class Project(models.Model):
         User,
         related_name='membership',
         through='Membership')
+
+    # Pending Members that have request to Join the project
+    pending_members = models.ManyToManyField(
+        User,
+        related_name='pending',
+        default="")
+
+    # TODO:
+    # meeting_location
+    # weekly_meeting_time with TA
+    # scrum meeting
+    # github_link
+    # assigned_ta
+
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
@@ -273,13 +328,13 @@ class Project(models.Model):
 
 
 
-    # NEED TO SETUP M2M not proper
+    # TODO:NEED TO SETUP M2M not proper
     # Resource list that the project members can update
     resource = models.TextField(
         max_length=4000,
         default="*No resources provided*")
 
-    # NEED UPDATES M2M for proper link not query
+    # TODO:NEED UPDATES M2M for proper link not query
 
 
 
@@ -288,23 +343,16 @@ class Project(models.Model):
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
-        related_name='interested',
+        related_name='project',
         default=None)
 
-
-    # NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
+    # TODO:NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
     #create_date = models.DateTimeField(auto_now_add=True)
 
-
+    # projects tsr
     tsr = models.ManyToManyField(Tsr, default=None)
-
-
-    # Store the teamSize for team generation and auto switch accepting members
-    teamSize = models.IntegerField(default=4)
-
-
 
     # Store the teamSize for team generation and auto switch accepting members
     teamSize = models.IntegerField(
@@ -575,7 +623,6 @@ class Project(models.Model):
         # proj = Project.objects.filter(membership__in=myProjects)
 
         proj = user.membership.all()
-        print(proj)
 
 
         return proj
@@ -596,7 +643,6 @@ class Project(models.Model):
         # proj = Project.objects.filter(creator=user.username)
 
         proj = user.project_creator.all()
-        print(proj)
 
         return proj
 
@@ -611,6 +657,9 @@ class Project(models.Model):
 
     def get_resources(self):
         return ResourceUpdate.objects.filter(project=self)
+
+    def get_chat(self):
+        return self.chat.all()
 
     """ Unfortunately not possible due to dependency loop
     def course(self):
@@ -682,6 +731,20 @@ class ResourceUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
+
+class ProjectChat(models.Model):
+
+    project = models.ForeignKey(Project, related_name='chat', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='author_chat', on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, editable=True)
+    content = models.CharField(max_length=2000, default="")
+
+    class Meta:
+        verbose_name = "Project Chat"
+        ordering = ("-date", )
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.author.username, self.content)
 
 
 # project status: open/closed and number available

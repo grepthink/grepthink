@@ -13,6 +13,7 @@ from django.urls import reverse
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
+from teamwork.apps.core.helpers import *
 
 from .forms import *
 from .models import *
@@ -45,13 +46,19 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-    my_created = Project.get_created_projects(request.user)
-    projects = my_projects | my_created
-    print (projects)
+    # print(my_projects)
+    # my_created = Project.get_created_projects(request.user)
+    # print(my_created)
+    # projects = my_projects | my_created
     # projects = list(set(projects))
+    # print("my_projects:", my_projects)
+    my_created = Project.get_created_projects(request.user)
+    # print("my_created:", my_created)
+    projects = my_projects | my_created
 
-    return _projects(request, projects)
+    # print(projects)
 
+    return _projects(request, my_projects)
 
 def view_meetings(request, slug):
     """
@@ -72,8 +79,6 @@ def view_meetings(request, slug):
 
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
-
-    print(project.meetings)
 
     #meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
 
@@ -98,12 +103,38 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
-
     project = get_object_or_404(Project, slug=slug)
+
     user = request.user
     profile = Profile.objects.get(user=user)
+
+    # to reduce querys in templates
+    pending_members = project.pending_members.all()
+    pending_count = len(pending_members)
+    project_members = project.members.all()
+
+    isProf = 0
+    if request.user.profile.isProf:
+        isProf = 1
+
+
     updates = project.get_updates()
     resources = project.get_resources()
+
+    project_chat = reversed(project.get_chat())
+    if request.method == 'POST':
+        form = ChatForm(request.user.id, slug, request.POST)
+        if form.is_valid():
+            # Create a chat object
+            chat = ProjectChat(author=request.user, project=project)
+            chat.content = form.cleaned_data.get('content')
+            chat.save()
+            return redirect(view_one_project, project.slug)
+        else:
+            messages.info(request,'Errors in form')
+    else:
+        # Send form for initial project creation
+        form = ChatForm(request.user.id, slug)
 
     find_meeting(slug)
 
@@ -120,6 +151,7 @@ def view_one_project(request, slug):
     # tempPO = User.objects.get(username=project.creator)
     # project_owner = Profile.objects.get(user=tempPO)
     project_owner = project.creator.profile
+    members = project.members.all()
 
 
     # Populate with project name and tagline
@@ -128,13 +160,40 @@ def view_one_project(request, slug):
     title = project.title or "Project"
 
 
-    print(updates)
-
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'profile' : profile,
-        'project': project, 'updates': updates, 'course' : course,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'pending_count':pending_count,'profile' : profile,
+        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
+def request_join_project(request, slug):
+
+    project = get_object_or_404(Project, slug=slug)
+    project_members = project.members.all()
+
+    if request.user in project_members:
+        # send an error
+        print("already in project")
+    else:
+        # user wants to join project
+        # add to pending members list of projects
+        project.pending_members.add(request.user)
+        print("added to pending members:", project.pending_members.all())
+        project.save()
+
+        # send email to project owner
+        creator = project.creator
+        subject = "{0} has requested to join {1}".format(request.user, project.title)
+        # TODO: create link that goes directly to accept or deny
+        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
+        content = "{0}\n\n www.grepthink.com".format(content_text)
+        send_email(creator, "noreply@grepthink.com", subject, content)
+
+        # send alert to project members
+        print("requested to join, sent email")
+
+    return view_one_project(request, slug)
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
@@ -155,9 +214,9 @@ def select_members(request):
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
 
+# used for querying members in EditProject, EditCourse
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
         return HttpResponse("Form Submitted")
@@ -176,7 +235,6 @@ def edit_select_members(request, slug):
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
-
 
     return HttpResponse("Failure")
 
@@ -278,6 +336,7 @@ def create_project(request):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
+            project.scrum_master = request.user
 
             project.save()
 
@@ -391,6 +450,14 @@ def edit_project(request, slug):
                     msg="You were added to " + project.title,
                     url=reverse('view_one_project',args=[project.slug]),
                     )
+                # remove member from pending list if he/she was on it
+                pending_members = project.pending_members.all()
+                if mem_to_add in pending_members:
+                    for mem in pending_members:
+                        if mem == mem_to_add:
+                            project.pending_members.remove(mem)
+                            project.save()
+
 
         return redirect(edit_project, slug)
 
@@ -401,6 +468,23 @@ def edit_project(request, slug):
         to_delete = Membership.objects.filter(user=f_user, project=project)
         for mem_obj in to_delete:
             mem_obj.delete()
+        return redirect(edit_project, slug)
+
+
+    # Transfer ownership of a project
+    if request.POST.get('promote_user'):
+        f_username = request.POST.get('promote_user')
+        f_user = User.objects.get(username=f_username)
+        project.creator = f_user
+        project.save()
+        return redirect(edit_project, slug)
+
+    # Transfer Scrum Master
+    if request.POST.get('make_scrum'):
+        f_username = request.POST.get('make_scrum')
+        f_user = User.objects.get(username=f_username)
+        project.scrum_master = f_user
+        project.save()
         return redirect(edit_project, slug)
 
     # Add skills to the project
@@ -739,3 +823,236 @@ def find_meeting(slug):
     return "Something"
     #return render(request, 'projects/view_projects.html',
     #              {'projects': projects})
+
+
+@login_required
+def tsr_update(request, slug):
+    """
+    public method that takes in a slug and generates a TSR
+    form for user. Different form generated based on which
+    button was pressed (scrum/normal)
+    """
+    page_name = "TSR Update"
+    page_description = "Update TSR form"
+    title = "TSR Update"
+
+    user = request.user
+    cur_proj = get_object_or_404(Project, slug=slug)
+    course = Course.objects.get(projects=cur_proj)
+
+    # get list of emails of users in current project
+    members = cur_proj.members.all()
+    emails = list()
+    for member in members:
+        emails.append(member.email)
+
+    asgs = list(course.assignments.all())
+
+    # if an assignment is not available, boolean is set to
+    # false and user is redirected to project view when they
+    # try to fill out a tsr
+    asg_available = False
+    if not asgs:
+        print("No ASSIGNMENTS")
+    else:
+        # if an assignment is available, the lines below will check the date
+        # of the assignment, verify that todays date is in between the assigned
+        # date and the due date, and set the boolean for true as well as making
+        # the assignment number = the assignment number of the assignment object
+        today = datetime.now().date()
+
+        for asg in asgs:
+            if "tsr" in asg.ass_type.lower():
+                asg_ass_date = asg.ass_date
+                asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
+
+                asg_due_date = asg.due_date
+                asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
+                if asg_ass_date < today <= asg_due_date:
+                    print("assignment in progress")
+                    asg_available = True
+                    asg_number = asg.ass_number
+
+
+    # This checks if button clicked was scrum or non scrum
+    params = str(request)
+    if "scrum_master_form" in params:
+        scrum_master = True
+    else:
+        scrum_master = False
+
+    forms=list()
+
+    if(asg_available):
+        # if 'Save TSR' was clicked
+        if request.method == 'POST':
+            for email in emails:
+                # grab form
+                form = TsrForm(request.user.id, request.POST, members=members,
+                    emails=emails,prefix=email, scrum_master=scrum_master)
+                if form.is_valid():
+                    # put form data in variables
+                    data=form.cleaned_data
+                    percent_contribution = data.get('perc_contribution')
+                    positive_feedback = data.get('pos_fb')
+                    negative_feedback = data.get('neg_fb')
+                    tasks_completed = data.get('tasks_comp')
+                    performance_assessment = data.get('perf_assess')
+                    notes = data.get('notes')
+                    evaluatee_query = User.objects.filter(email__iexact=email)
+                    evaluatee = evaluatee_query.first()
+
+                    # gets fields variables and saves them to project
+                    cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
+                        evaluatee=evaluatee,
+                        percent_contribution=percent_contribution,
+                        positive_feedback=positive_feedback,
+                        negative_feedback=negative_feedback,
+                        tasks_completed=tasks_completed,
+                        performance_assessment=performance_assessment,
+                        notes=notes,
+                        ass_number=int(asg_number)))
+
+                    cur_proj.save()
+
+            print(list(cur_proj.tsr.all()))
+            return redirect(view_projects)
+
+        else:
+            # if request was not post then display forms for filling out a TSR
+            for m in emails:
+                form_i = TsrForm(request.user.id, request.POST, members=members,
+                    emails=emails, prefix=m, scrum_master=scrum_master)
+                forms.append(form_i)
+            form = TsrForm(request.user.id, request.POST, members=members,
+                emails=emails, scrum_master=scrum_master)
+        return render(request, 'projects/tsr_update.html',
+            {'forms':forms,'emails':emails,'cur_proj': cur_proj,
+            'page_name' : page_name, 'page_description': page_description,
+            'title': title})
+    else:
+        # need to change this redirect to display message
+        # so that user is aware why they were redirected
+        return redirect(view_projects)
+
+
+@login_required
+def view_tsr(request, slug):
+    """
+    public method that takes in a slug and generates a view for
+    submitted TSRs
+    """
+    page_name = "View TSR"
+    page_description = "Submissions"
+    title = "View TSR"
+
+    project = get_object_or_404(Project, slug=slug)
+    members = project.members.all()
+    tsrs = list(project.tsr.all())
+
+    # put emails into list
+    emails=list()
+    for member in members:
+        emails.append(member.email)
+
+    # for every sprint, get the tsr's and calculate the average % contribution
+    tsr_dicts=list()
+    tsr_dict = list()
+    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
+    averages = list()
+    for i in sprint_numbers.all():
+        # averages=list()
+        tsr_dict=list()
+        for member in members:
+            tsr_single=list()
+            # for every member in project, filter query using member.id
+            # and assignment number
+            for member_ in members:
+                if member == member_:
+                    continue
+                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
+                if(len(tsr_query_result)==0):
+                    continue
+                tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
+
+            avg=0
+            if(len(tsr_single)!=0):
+                for tsr_obj in tsr_single:
+                    avg = avg + tsr_obj.percent_contribution
+                avg = avg / len(tsr_single)
+
+            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
+                'avg' : avg})
+            averages.append({'email':member.email,'avg':avg})
+
+        tsr_dicts.append({'number': i , 'dict':tsr_dict,
+            'averages':averages})
+
+    med = 1
+    if len(members):
+        med = int(100/len(members))
+
+    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
+
+
+    if request.method == 'POST':
+
+        return redirect(view_projects)
+    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title,
+                        'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
+
+def add_member(request, slug, uname):
+    """
+    Add member to project if:
+        - They aren't a member already
+        - They are a member of the course
+    """
+    project = get_object_or_404(Project, slug=slug)
+    course = Course.objects.get(projects=project)
+    mem_to_add = User.objects.get(username=uname)
+    mem_courses = Course.get_my_courses(mem_to_add)
+    curr_members = Membership.objects.filter(project=project)
+
+    # ensure user is a member of the course && not a member of the project
+    if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+        Membership.objects.create(
+            user=mem_to_add, project=project, invite_reason='')
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="You were added to " + project.title,
+            url=reverse('view_one_project',args=[project.slug]),
+            )
+        # remove member from pending list if he/she was on it
+        pending_members = project.pending_members.all()
+        if mem_to_add in pending_members:
+            for mem in pending_members:
+                if mem == mem_to_add:
+                    project.pending_members.remove(mem)
+                    project.save()
+
+    return redirect(view_one_project, slug)
+
+def reject_member(request, slug, uname):
+    """
+    Reject Membership
+    """
+    project = get_object_or_404(Project, slug=slug)
+    mem_to_add = User.objects.get(username=uname)
+
+    # remove member from pending list if he/she was on it
+    pending_members = project.pending_members.all()
+    if mem_to_add in pending_members:
+        for mem in pending_members:
+            if mem == mem_to_add:
+                project.pending_members.remove(mem)
+                project.save()
+
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="Sorry, " + project.title + " has denied your request",
+            url=reverse('view_one_project',args=[project.slug]),
+            )
+
+    return redirect(view_one_project, slug)

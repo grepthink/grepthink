@@ -22,6 +22,8 @@ from datetime import datetime
 import csv
 import codecs
 
+from datetime import datetime
+
 def _courses(request, courses):
     """
     Private method that will be used for paginator once I figure out how to get it working.
@@ -67,6 +69,11 @@ def view_one_course(request, slug):
     page_description = "View Course Information"
     title = "%s"%(slug)
 
+    if request.user.profile.isProf:
+        isProf = 1
+    else:
+        isProf = 0
+
     course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
@@ -82,15 +89,19 @@ def view_one_course(request, slug):
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    if(request.method=='POST'):
-        form=AssignmentForm(request.user.id,request.POST)
-        if form.is_valid():
-            data=form.cleaned_data
-            ass_date=data.get('ass_date')
-            due_date=data.get('due_date')
-            ass_type=data.get('ass_type')
-            ass_name=data.get('ass_name')
-            ass_number=data.get('ass_number')
+
+    assignmentForm = AssignmentForm(request.user.id)
+    if(request.method == 'POST'):
+        assignmentForm = AssignmentForm(request.user.id,request.POST)
+        if assignmentForm.is_valid():
+            data = assignmentForm.cleaned_data
+            ass_date = data.get('ass_date')
+            due_date = data.get('due_date')
+            ass_type = data.get('ass_type')
+            ass_name = data.get('ass_name')
+            ass_number = data.get('ass_number')
+            description = data.get('description')
+
 
             # checking if there is an assignment of same type already in
             # progress based on assignment type and date
@@ -117,22 +128,17 @@ def view_one_course(request, slug):
                             return redirect(view_one_course,course.slug)
 
             course.assignments.add(Assignment.objects.create(ass_name=ass_name,
-                ass_type=ass_type, ass_date=ass_date, due_date=due_date,
+
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
                 ass_number=ass_number))
             course.save()
             print(course.assignments.all())
         messages.info(request, 'You have successfully created an assignment')
         return redirect(view_one_course,course.slug)
-    if(profile.isProf or profile.isTa):
-        form=AssignmentForm(request.user.id,request.POST)
-    else:
-        form=AssignmentForm(request.user.id,request.POST)
-    return render(request, 'courses/view_course.html', {
-        'course': course , 'projects': projects, 'date_updates': date_updates,
-            'students':student_users,
-        'page_name' : page_name, 'page_description': page_description,
-            'title': title, 'profile':profile,'form':form})
 
+    return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
+        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
+        'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 
 @login_required
@@ -299,7 +305,7 @@ def show_interest(request, slug):
             #Gets first choice, creates interest object for it
 
             # Clear all interest objects where user is current user and for this course, avoid duplicates
-            all_interests = Interest.objects.filter(interested=projects)
+            all_interests = Interest.objects.filter(project=projects)
             interests = user.interest.all()
             if interests is not None: interests.delete()
 
@@ -398,7 +404,7 @@ def create_course(request):
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
-            return redirect(view_one_course, course.slug)
+            return redirect(upload_csv, course.slug)
     else:
         form = CreateCourseForm(request.user.id)
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
@@ -422,6 +428,50 @@ def edit_course(request, slug):
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
 
+    # Add a member to the course
+    if request.POST.get('members'):
+        # Get the members to add, as a list
+        members = request.POST.getlist('members')
+        enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+
+            # Don't add a member if they already have membership in course
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this courses memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if not course in mem_courses:
+                if not mem_to_add in students:
+                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Alert.objects.create(
+                        sender=request.user,
+                        to=mem_to_add,
+                        msg="You were added to: " + course.name,
+                        url=reverse('view_one_course',args=[course.slug]),
+                        )
+
+        return redirect(edit_course, slug)
+
+    # Remove a user from the course
+    if request.POST.get('remove_user'):
+        f_username = request.POST.get('remove_user')
+        f_user = User.objects.get(username=f_username)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course)
+
+        for mem_obj in to_delete:
+            Alert.objects.create(
+                sender=request.user,
+                to=f_user,
+                msg="You were removed from: " + course.name,
+                url=reverse('view_one_course',args=[course.slug]),
+                )
+            mem_obj.delete()
+        return redirect(edit_course, slug)
+
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
@@ -432,7 +482,7 @@ def edit_course(request, slug):
             course.info = data.get('info')
             course.term = data.get('term')
             course.limit_creation = data.get('limit_creation')
-            students = data.get('students')
+            # students = data.get('students')
             course.limit_weights = data.get('limit_weights')
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
@@ -441,29 +491,7 @@ def edit_course(request, slug):
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
-            course.save()
-
-            # clear all enrollments
-            enrollments = Enrollment.objects.filter(course=course)
-            for e in enrollments:
-                s = students.filter(user=e.user)
-                if not s.exists():
-                    Alert.objects.create(
-                        sender=request.user,
-                        to=e.user,
-                        msg="You were dropped from course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                    )
-                    e.delete()
-            for s in students:
-                if not enrollments.filter(course=course,user=s.user).exists():
-                    Alert.objects.create(
-                        sender=request.user,
-                        to=s.user,
-                        msg="You were enrolled in course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                    )
-                    Enrollment.objects.create(user=s.user, course=course)
+            course.save()        
 
         return redirect(view_one_course, course.slug)
     else:
@@ -604,14 +632,15 @@ def email_roster(request, slug):
     addcode = cur_course.addCode
 
     form = EmailRosterForm()
+    print("REQUEST METHOD:", request.method)
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
         #if form is accepted
         if form.is_valid():
+            print("form is valid")
             #the courseID will be gotten from the form
             data = form.cleaned_data
-
             subject = data.get('subject')
             content = data.get('content')
 
@@ -619,6 +648,7 @@ def email_roster(request, slug):
             # if attachment:
             #     handle_file(attachment)
 
+            print("send_email being called")
             send_email(students_in_course, request.user.email, subject, content)
 
             return redirect('view_one_course', slug)

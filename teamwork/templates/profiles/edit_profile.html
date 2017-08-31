@@ -146,22 +146,22 @@ $(document).ready(function() {
                   {% csrf_token %}
                   {{ form.status }}
                   <div class="form-group">
-                    <h5>Full Name</h5>
+                    <label>Full Name</label>
                     {{ form.name }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Institution</h5>
+                    <label>Institution</label>
                     {{ form.institution }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Location</h5>
+                    <label>Location</label>
                     {{ form.location }}
                   </div>
 
                   <div class="form-group">
-                    <h5>Bio</h5>
+                    <label>Bio</label>
                     {{ form.bio }}
                   </div>
                   <div class="box-footer">
@@ -207,9 +207,9 @@ $(document).ready(function() {
           </div>
 
           {% if user.profile.isGT %}
-          <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+         {#  <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
           {% else %}
-          <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+        {#  <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
           {% endif %}
             {% csrf_token %}
               <div class="box-body">
@@ -225,26 +225,8 @@ $(document).ready(function() {
                 </div>
               </div>
 
-              <div class="box-footer">
 
-                  <div class="pull-left">
-                  {% if user.profile.isGT %}
-                   <a href="{% url 'profile' profile.user.username %}">
-                  {% else %}
-                   <a href="{% url 'profile' user.username %}">
-                  {% endif %}
-                      <button class="btn btn-danger" type="button">
-                          Cancel
-                      </button>
-                  </a>
-                  </div>
-                  <div class="pull-right">
-                      <button class="btn btn-success" type="submit" name="SUBMIT">
-                          Add Skill(s)
-                      </button>
-                  </div>
-              </div>
-            </form>
+        {#    </form> #}
         </div>
         </div>
         <div class="col-md-6 clearfix">
@@ -257,9 +239,9 @@ $(document).ready(function() {
             <div class="box-header with-border">
             <label>Known Skills</label>
             {% if user.profile.isGT %}
-            <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+        {#     <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
             {% else %}
-            <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {# <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
             {% endif %}
                 {% csrf_token %}
                 {% for skill in known_skills_list %}
@@ -268,14 +250,14 @@ $(document).ready(function() {
                 {% empty %}
                 <lead>No known skills to remove</lead>
                 {% endfor %}
-            </form>
+            {# </form> #}
             </div>
             <div class="box-header with-border">
             <label>Skills you want to Learn</label>
             {% if user.profile.isGT %}
-            <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {# <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
             {% else %}
-            <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+            {# <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
             {% endif %}
                 {% csrf_token %}
                 {% for skill in learn_skills_list %}
@@ -284,7 +266,7 @@ $(document).ready(function() {
                 {% empty %}
                 <lead>No skills you want to learn to remove</lead>
                 {% endfor %}
-            </form>
+            {# </form> #}
             </div>
           </div>
         </div>
