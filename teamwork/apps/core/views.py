@@ -206,7 +206,7 @@ def assign_auto(request, slug):
             Membership.objects.create(user=mem, project=p[0], invite_reason='')
 
     return redirect(auto_gen, course.slug)
-    
+
 
 def matchstats(request, slug, project_match_list):
     """
