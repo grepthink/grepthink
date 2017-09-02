@@ -239,8 +239,7 @@ class Project(models.Model):
     scrum_master = models.ForeignKey(
         User,
         related_name='scrum_master',
-        on_delete=models.CASCADE,
-        default="")
+        on_delete=models.CASCADE)
 
     # Short project description
     tagline = models.TextField(
