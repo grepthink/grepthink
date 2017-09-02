@@ -126,7 +126,7 @@ class CreateCourseForm(forms.ModelForm):
 
     weigh_learn = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of skills users want to learn",
-        required=False)    
+        required=False)
 
     limit_interest = forms.BooleanField(
         label="Disable ability for students to show interest in projects",
@@ -209,14 +209,14 @@ class EditCourseForm(forms.ModelForm):
         #Field NOT Required
         required=False)
 
-    #Students field
-    students = forms.ModelMultipleChoiceField(
-        #Multiple Choice Selection
-        widget=forms.CheckboxSelectMultiple,
-        #From all user objects
-        queryset=User.objects.all(),
-        #Field NOT Required
-        required=False)
+    # #Students field
+    # students = forms.ModelMultipleChoiceField(
+    #     #Multiple Choice Selection
+    #     widget=forms.CheckboxSelectMultiple,
+    #     #From all user objects
+    #     queryset=User.objects.all().values('email'),
+    #     #Field NOT Required
+    #     required=False)
 
     #Field for only professor creating courses
     limit_creation = forms.BooleanField(

@@ -144,8 +144,6 @@ $(document).ready(function() {
                     </button>
                 </div>
             </div>
-
-            {# </form>#}
     </div>
 </div>
 </div>
@@ -156,9 +154,6 @@ $(document).ready(function() {
   <div class="box-header with-border">
     <h3 class="box-title">Add members to {{project.title}}</h3>
   </div>
-
-    {# <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
-      {% csrf_token %}
         <div class="box-body">
           <div class="form-group">
             <label>Add Members</label>
@@ -166,8 +161,6 @@ $(document).ready(function() {
             </select>
           </div>
         </div>
-
-{#     </form>#}
 </div>
 </div>
 
@@ -178,13 +171,27 @@ $(document).ready(function() {
   </div>
         <div class="box-body">
         <div class="btn-grid">
-    {#     <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
-            {% csrf_token %}
             {% for mem in project.members.all %}
                 <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
                 </button>
             {% endfor %}
-    {#     </form>#}
+        </div>
+        </div>
+</div>
+</div>
+
+<div class="col-md-6 clearfix">
+<div class="box box-danger">
+  <div class="box-header with-border">
+    <h3 class="box-title">Transfer ownership of {{project.title}}</h3>
+  </div>
+        <div class="box-body">
+        <div class="btn-grid">
+            {% csrf_token %}
+            {% for mem in project.members.all %}
+                <button class="btn btn-primary btn-sm" name="promote_user" value="{{mem.username}}"><i class="fa fa-child"></i> {{mem.username}}
+                </button>
+            {% endfor %}
         </div>
         </div>
 </div>
@@ -196,8 +203,6 @@ $(document).ready(function() {
     <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
   </div>
 
- {#  <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
-    {% csrf_token %}
       <div class="box-body">
         <div class="form-group">
           <label>Add Desired Skills</label>
@@ -206,7 +211,6 @@ $(document).ready(function() {
         </div>
       </div>
 
-{#     </form>#}
 </div>
 </div>
 
@@ -216,16 +220,14 @@ $(document).ready(function() {
     <h3 class="box-title">Remove Desired Skills from {{project.title}}</h3>
   </div>
   <div class="box-body">
-  {# Need to fix button grouping #}
-{#     <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
-        {% csrf_token %}
+  {# TODO: Need to fix button grouping #}
+
         {% for skill in project.desired_skills.all %}
             <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
             </button>
         {% empty %}
         <lead>No desired skills to remove</lead>
         {% endfor %}
-{#     </form>#}
   </div>
 </div>
 </div>
@@ -241,7 +243,6 @@ $(document).ready(function() {
                       sure you know what you are doing before pressing this button.
                   </p>
 
-                {#   <form action="{% url 'edit_project' project.slug %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">#}
                   {% csrf_token %}
                       <button class="btn btn-danger" name="delete_project" value="delete_project">
                           <i class="fa fa-trash"></i>

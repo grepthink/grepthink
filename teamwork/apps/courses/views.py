@@ -423,7 +423,7 @@ def edit_course(request, slug):
         messages.info(request,'Only Professor can edit course')
         return HttpResponseRedirect('/course')
 
-    # Add a member to the project - IMPLEMENTING
+    # Add a member to the course
     if request.POST.get('members'):
         # Get the members to add, as a list
         members = request.POST.getlist('members')
@@ -445,19 +445,25 @@ def edit_course(request, slug):
                     Alert.objects.create(
                         sender=request.user,
                         to=mem_to_add,
-                        msg="You were added to " + course.name,
+                        msg="You were added to: " + course.name,
                         url=reverse('view_one_course',args=[course.slug]),
                         )
 
         return redirect(edit_course, slug)
 
-    # Remove a user from the project
+    # Remove a user from the course
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Enrollment.objects.filter(user=f_user, course=course)
-        # to_delete = Membership.objects.filter(user=f_user, project=project)
+
         for mem_obj in to_delete:
+            Alert.objects.create(
+                sender=request.user,
+                to=f_user,
+                msg="You were removed from: " + course.name,
+                url=reverse('view_one_course',args=[course.slug]),
+                )
             mem_obj.delete()
         return redirect(edit_course, slug)
 
@@ -471,7 +477,7 @@ def edit_course(request, slug):
             course.info = data.get('info')
             course.term = data.get('term')
             course.limit_creation = data.get('limit_creation')
-            students = data.get('students')
+            # students = data.get('students')
             course.limit_weights = data.get('limit_weights')
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
@@ -480,29 +486,7 @@ def edit_course(request, slug):
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
-            course.save()
-
-            # clear all enrollments
-            enrollments = Enrollment.objects.filter(course=course)
-            for e in enrollments:
-                s = students.filter(user=e.user)
-                if not s.exists():
-                    Alert.objects.create(
-                        sender=request.user,
-                        to=e.user,
-                        msg="You were dropped from course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                    )
-                    e.delete()
-            for s in students:
-                if not enrollments.filter(course=course,user=s.user).exists():
-                    Alert.objects.create(
-                        sender=request.user,
-                        to=s.user,
-                        msg="You were enrolled in course " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                    )
-                    Enrollment.objects.create(user=s.user, course=course)
+            course.save()        
 
         return redirect(view_one_course, course.slug)
     else:
