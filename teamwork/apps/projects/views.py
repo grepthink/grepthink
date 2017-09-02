@@ -888,7 +888,7 @@ def tsr_update(request, slug):
         if request.method == 'POST':
             for email in emails:
                 # grab form
-                form = TsrForm(request.user.id, request.POST, members=members,
+                form = TSR(request.user.id, request.POST, members=members,
                     emails=emails,prefix=email, scrum_master=scrum_master)
                 if form.is_valid():
                     # put form data in variables
@@ -921,10 +921,10 @@ def tsr_update(request, slug):
         else:
             # if request was not post then display forms for filling out a TSR
             for m in emails:
-                form_i = TsrForm(request.user.id, request.POST, members=members,
+                form_i = TSR(request.user.id, request.POST, members=members,
                     emails=emails, prefix=m, scrum_master=scrum_master)
                 forms.append(form_i)
-            form = TsrForm(request.user.id, request.POST, members=members,
+            form = TSR(request.user.id, request.POST, members=members,
                 emails=emails, scrum_master=scrum_master)
         return render(request, 'projects/tsr_update.html',
             {'forms':forms,'emails':emails,'cur_proj': cur_proj,

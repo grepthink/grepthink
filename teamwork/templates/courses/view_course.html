@@ -29,6 +29,10 @@
     <div class="alert alert-success" role="alert">
         You are an instructor of this course.
     </div>
+    {% elif user.profile.isTa %}
+        <div class="alert alert-success" role="alert">
+        You are a teaching assistant for this course
+        </div>
     {% elif user not in course.students.all %}
         {% if not user.profile.isGT %}
             <div class="alert alert-warning" role="alert">
@@ -57,14 +61,15 @@
                 </a>
             </li>
 
+            
+
+            {% if user == course.creator or user.profile.isGT or user.profile.isTa %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create New Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
-
-            {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
                     Admin Tools
@@ -79,6 +84,7 @@
             <div class="tab-pane active" id="projects">
                 {% if user != course.creator %}
                     {% if not user.profile.isGT %}
+                        {% if not user.profile.isTa %}
                         {% if not course.limit_interest %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
@@ -87,6 +93,7 @@
                                     </a>
                                 </div>
                             </div>
+                        {% endif %}
                         {% endif %}
                     {% endif %}
                 {% endif %}
@@ -112,7 +119,7 @@
                             {% endfor %}
                             <input type="submit" value="Save Assignment">
                             </form>
-                            </div>
+                        </div>
                 </div>
             </div>
             </div>
@@ -166,7 +173,7 @@
 
                 <h3>Updates</h3>
                 <ul class="timeline">
-                    {% if user == course.creator or user.profile.isGT%}
+                    {% if user == course.creator or user.profile.isGT or user.profile.isTa%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'update_course' course.slug %}'">
@@ -191,7 +198,7 @@
                         <div class="timeline-item">
                             <div class="timeline-header clearfix">
                                 {{ update.title }}
-                                {% if user == update.creator or user.profile.isGT%}
+                                {% if user == update.creator or user.profile.isGT or user.profile.isTa %}
                                 <span class="pull-right">
                                     <a href='{% url 'update_course_update' course.slug update.id %}'>
                                         <button class="btn btn-default btn-xs">
@@ -330,7 +337,7 @@
             </div>
 
 
-            {% if user == course.creator  or user.profile.isGT%}
+            {% if user == course.creator  or user.profile.isGT or user.profile.isTa%}
             <div class="tab-pane" id="admin">
 
 
