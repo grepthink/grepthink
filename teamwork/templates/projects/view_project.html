@@ -135,6 +135,14 @@
                             {{ project.creator.email }}
                         </span></a>
                     </p>
+                    <p>
+                        <strong>Scrum Master</strong>
+                        <a href="{% url 'profile' project.scrum_master.username %}">
+                            <span class="label label-info">
+                                {{ project.scrum_master.email }}
+                            </span>
+                        </a>
+                    </p>
                     <p><strong>Members</strong>
                         {% for mem in project.members.all %}
                         {% if mem.username != null %}

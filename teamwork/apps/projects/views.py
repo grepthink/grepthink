@@ -476,6 +476,13 @@ def edit_project(request, slug):
         project.save()
         return redirect(edit_project, slug)
 
+    # Transfer Scrum Master
+    if request.POST.get('make_scrum'):
+        f_username = request.POST.get('make_scrum')
+        f_user = User.objects.get(username=f_username)
+        project.scrum_master = f_user
+        project.save()
+        return redirect(edit_project, slug)
 
     # Add skills to the project
     if request.POST.get('desired_skills'):
