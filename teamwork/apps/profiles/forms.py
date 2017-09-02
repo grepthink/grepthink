@@ -95,10 +95,6 @@ class SignUpForm(forms.ModelForm):
         initial = False,
         label = 'Sign up as a professor?',
         required = False)
-    ta = forms.BooleanField(
-        initial = False,
-        label = 'Sign up as a teaching assistant?',
-        required = False)
 
     class Meta:
         model = User

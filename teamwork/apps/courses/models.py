@@ -314,16 +314,39 @@ class Course(models.Model):
     Gets all students in a course excluding professors
     """
     def get_students(self):
-        students_and_prof = self.students.all()
-
+        temp = Enrollment.objects.filter(course=self,role="student")
         students = []
 
-        for stud in students_and_prof:
-            if not stud.profile.isProf:
-                students.append(stud)
+        for stud in temp:
+            students.append(stud.user)
 
         return students
 
+    """
+    Gets the tas for a course
+    """
+    def get_tas(self):
+        tas = []
+
+        temp = Enrollment.objects.filter(course=self,role="ta")
+
+        for i in temp:
+            tas.append(i.user)
+
+        return tas 
+
+    """
+    Gets ALL of the teaching staff
+    """
+    def get_staff(self):
+        tas = self.get_tas()
+        staff=[]
+        staff.append(self.creator)
+
+        for i in tas:
+            staff.append(i)
+
+        return staff   
 
 
 

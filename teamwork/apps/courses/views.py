@@ -81,6 +81,7 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
     profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    staff = course.get_staff()
     asgs = list(course.assignments.all())
 
 
@@ -138,7 +139,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
 @login_required
@@ -386,7 +387,6 @@ def create_course(request):
             course.info = data.get('info')
             course.term = data.get('term')
             course.slug = data.get('slug')
-            course.professor = data.get('professor')
             course.limit_creation = data.get('limit_creation')
             course.limit_weights = data.get('limit_weights')
             course.weigh_interest = data.get('weigh_interest') or 0
@@ -400,7 +400,7 @@ def create_course(request):
             course.save()
             # add creator as a member of the course w/ specific role
             if request.user.profile.isProf:
-                Enrollment.objects.create(user=request.user, course=course,role='professor')
+                Enrollment.objects.create(user=request.user, course=course,role="professor")
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
@@ -419,6 +419,13 @@ def edit_course(request, slug):
     page_name = "Edit Course"
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
+
+    tas = Enrollment.objects.filter(course=course, role="ta")
+    students = Enrollment.objects.filter(course=course, role="student")
+
+    print("HELLO")
+    print(tas)
+    print(students)
 
     if request.user.profile.isGT:
         pass
@@ -446,7 +453,7 @@ def edit_course(request, slug):
             #   to check if mem_to_add is in the user field of a current membership.
             if not course in mem_courses:
                 if not mem_to_add in students:
-                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Enrollment.objects.create(user=mem_to_add, course=course, role="student")
                     Alert.objects.create(
                         sender=request.user,
                         to=mem_to_add,
@@ -460,13 +467,60 @@ def edit_course(request, slug):
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
-        to_delete = Enrollment.objects.filter(user=f_user, course=course)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
 
         for mem_obj in to_delete:
             Alert.objects.create(
                 sender=request.user,
                 to=f_user,
                 msg="You were removed from: " + course.name,
+                url=reverse('view_one_course',args=[course.slug]),
+                )
+            mem_obj.delete()
+        return redirect(edit_course, slug)
+
+    # Add a TA
+    if request.POST.get('ta'):
+        # Get the members to add, as a list
+        members = request.POST.getlist('ta')
+        enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+
+            # Don't add a member if they already have membership in course
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this courses memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if mem_to_add in students:
+                Enrollment.objects.filter(user=mem_to_add).update(role="ta")
+            else:
+                Enrollment.objects.create(user=mem_to_add, course=course, role="ta")
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You were added to: " + course.name + "as a TA",
+                    url=reverse('view_one_course',args=[course.slug]),
+                    )
+
+        return redirect(edit_course, slug)
+
+    
+
+    # Remove a ta from the course
+    if request.POST.get('remove_ta'):
+        f_username = request.POST.get('remove_ta')
+        f_user = User.objects.get(username=f_username)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="ta")
+
+        for mem_obj in to_delete:
+            Alert.objects.create(
+                sender=request.user,
+                to=f_user,
+                msg="You were removed as the TA from: " + course.name,
                 url=reverse('view_one_course',args=[course.slug]),
                 )
             mem_obj.delete()
@@ -498,7 +552,7 @@ def edit_course(request, slug):
         form = EditCourseForm(request.user.id, slug,  instance=course)
     return render(
             request, 'courses/edit_course.html',
-            {'form': form,'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 
