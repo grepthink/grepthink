@@ -90,18 +90,29 @@
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
 
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
+
             <li class="pull-right">
                 {% if not request.user.profile.isProf %}
                 {% if not user in project.members.all %}
+                {% if requestButton %}
                 <a href="{% url 'request_to_join' project.slug %}">
                 <button type="button" class="btn-xs btn-default btn-block" name="request">
                             <i class="fa fa-plus"></i>
                             Request To Join Project
                 </button>
                 </a>
+                {% else %}
+                <a href="">
+                <button type="button" class="btn-xs btn-default btn-block" name="request" disabled>
+                            <i class="fa fa-paper-plane-o"></i>
+                            Request Sent
+                </button>
+                </a>
+                {% endif %}
                 {% endif %}
                 {% endif %}
             </li>
+
         </ul>
 
         <div class="tab-content">

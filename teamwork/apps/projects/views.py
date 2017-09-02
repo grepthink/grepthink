@@ -113,6 +113,10 @@ def view_one_project(request, slug):
     if request.user.profile.isProf:
         isProf = 1
 
+    requestButton = 1
+    if request.user in pending_members:
+        requestButton = 0
+
     updates = project.get_updates()
     resources = project.get_resources()
 
@@ -158,7 +162,7 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
         'project': project, 'project_members':project_members, 'pending_members': pending_members,
-        'pending_count':pending_count,
+        'pending_count':pending_count, 'requestButton':requestButton,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings})
 
@@ -184,9 +188,7 @@ def request_join_project(request, slug):
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
 
-        # TODO: send alert to project members and/or PO
-
-        messages.success(request, 'Request has been sent to the Project Owner.')
+        # TODO: send alert to project members and/or PO        
 
     return view_one_project(request, slug)
 
