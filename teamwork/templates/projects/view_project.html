@@ -83,7 +83,6 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
-                    <li role="presentation" class="divider"></li>
                 </ul>
             </li>
 
@@ -306,12 +305,12 @@
             <!-- /.tab-pane End Resources -->
 
             <!-- /.tab-pane request meeting -->
-            <!-- <div class="tab-pane" id="tab_4">
+            <div class="tab-pane" id="tab_4">
                 {% for p in meetings %}
                   <br>{{p}}</br>
                 {% endfor %}
                 <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
-            </div> -->
+            </div>
 
             <!-- TSR Tab -->
             <div class="tab-pane" id="tab_5">
@@ -466,7 +465,7 @@
 
 <!-- Pending Members Box -->
 {% if user in project_members or user == project.creator%}
-<div class="box sm-box-solid">
+<div class="box sm-box-solid collapsed-box">
 
     <div class="box-header with-border">
         <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>

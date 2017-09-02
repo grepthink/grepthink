@@ -168,13 +168,12 @@ def request_join_project(request, slug):
     project_members = project.members.all()
 
     if request.user in project_members:
-        # send an error
+        # TODO: send an error
         print("already in project")
     else:
         # user wants to join project
         # add to pending members list of projects
         project.pending_members.add(request.user)
-        print("added to pending members:", project.pending_members.all())
         project.save()
 
         # send email to project owner
@@ -185,8 +184,9 @@ def request_join_project(request, slug):
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
 
-        # send alert to project members
-        print("requested to join, sent email")
+        # TODO: send alert to project members and/or PO
+
+        messages.success(request, 'Request has been sent to the Project Owner.')
 
     return view_one_project(request, slug)
 
