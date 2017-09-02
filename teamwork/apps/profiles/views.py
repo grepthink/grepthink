@@ -46,7 +46,6 @@ def signup(request):
 
             prof = form.cleaned_data.get('prof')
 
-            # this does the same thing as the else no? damnit ryan, why?
             if GT:
                 user1 = User.objects.create_superuser(
                     username=username,
@@ -54,8 +53,10 @@ def signup(request):
                     email=email)
             else:
                 # parse email for 'username'
-                user1 = User.objects.create_user(username=username, password=password,
-                                         email=email)
+                user1 = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email)
 
             user = authenticate(username=username, password=password)
             login(request, user)
