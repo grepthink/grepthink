@@ -545,7 +545,7 @@ def edit_course(request, slug):
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
-            course.save()        
+            course.save()
 
         return redirect(view_one_course, course.slug)
     else:
@@ -562,11 +562,18 @@ def delete_course(request, slug):
     Delete course method
     """
     course = get_object_or_404(Course, slug=slug)
+    projects = projects_in_course(slug)
+
     if request.user.profile.isGT:
         pass
     elif not request.user.profile.isProf:
         return redirect(view_one_course, course.slug)
 
+    #Runs through each project and deletes them
+    for p in projects:
+        p.delete()
+
+    #deletes course
     course.delete()
     return redirect(view_courses)
 
