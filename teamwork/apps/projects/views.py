@@ -165,13 +165,36 @@ def view_one_project(request, slug):
         for j in completed_tsrs:
             avg = avg + j.percent_contribution
             avg = avg / len(completed_tsrs)
-            averages.append({'email':j.evaluatee.email,'avg':avg})
+            averages.append((j.evaluatee, avg))
             tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
+
+    tsr_keys = tsr_tuple.keys()
+
 
     print("\n\n")
     print("Tsrs")
-    print(tsr_tuple)
+    print(tsr_tuple.items())
+    tsr_items = tsr_tuple.items()
     print("\n\n")
+    for compTsr in tsr_items:
+        for e in compTsr[1]:
+            print(e[1])
+        print("===")
+
+    avg_tuple = {}
+    for i in averages:
+        if i[0] in avg_tuple:
+            avg_tuple[i[0]] +=  int(i[1])
+        else:
+            avg_tuple[i[0]] = int(i[1])
+    
+    avg_tuple2 = avg_tuple.items()
+
+    for i in avg_tuple.items():
+        print(i[0])
+        print(i[1])
+        print("====")
+
     med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
@@ -187,7 +210,7 @@ def view_one_project(request, slug):
         'project': project, 'project_members':project_members, 'pending_members': pending_members,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_tuple, 'contribute_levels' : mid, 'avg':averages})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
 
 def request_join_project(request, slug):
 

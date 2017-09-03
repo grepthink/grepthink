@@ -344,10 +344,161 @@
 
             <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
-                <form action="{% url 'view_tsr' project.slug %}">
-                    <input type="submit" value="View TSR" />
-                </form>
-                
+            <style>
+              table {
+                border-collapse: collapse;
+                width: 100%;
+              }
+
+              th, td {
+                text-align: left;
+                padding: 8px;
+              }
+              th {
+                background-color: #4CAF50;
+                color: black;
+              }
+            </style>
+                {% for ass in assigned_tsrs %}
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Sprint {{ ass.ass_number }}</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <div class="box-body no-padding">
+                   <ul class="nav nav-pills nav-stacked">
+
+                            <table class="table table-hover">
+                                       <tbody>
+                                       <tr>
+                                         <th>User</th>
+                                         <th>Evaluators</th>
+                                         <th>Contribution</th>
+                                         <th>Positive Feedback</th>
+                                         <th>Negative Feedback</th>
+                                         <th>Tasks Completed</th>
+                                         <th>Performance Assessment</th>
+                                         <th>Notes</th>
+                                       </tr>
+                                       {% for compTSR in tsrs %}
+                                        {% for eval in compTSR.1 %}
+                                            {% if forloop.last %}
+                                                <tr style="border-bottom-color: balck; border-bottom-style: solid;">
+                                            {% else %}
+                                                <tr>
+                                            {% endif %}
+                                             
+                                               <td>
+                                                {% if forloop.first %} 
+                                                    <a href="{% url 'profile' eval.1.evaluatee.username %}">
+                                                   {{eval.1.evaluatee.email}}</a>
+                                                {% endif %}
+                                               </td>
+                                               
+                                               <td>
+                                                    <a href="{% url 'profile' eval.1.evaluatee.username %}">
+                                                   {{eval.1.evaluator.email}}</a>
+                                               </td>
+
+                                               <td>
+                                                 {% if contribute_levels.high < eval.1.percent_contribution%}
+                                                   <div style="color:blue">{{eval.1.percent_contribution}}</div>
+                                                 {% else %}
+                                                 {% if contribute_levels.low < eval.1.percent_contribution %}
+                                                   <div style="color:green">{{eval.1.percent_contribution}}</div>
+                                                 {%else%}
+                                                   <div style="color:red">{{eval.1.percent_contribution}}</div>
+                                                 {% endif %}
+                                                 {% endif %}
+                                                   <p>
+                                               </td>
+
+                                               <td>
+                                                 {{eval.1.positive_feedback}}
+                                               </td>
+
+                                               <td>
+                                                 {{eval.1.negative_feedback}}
+                                               </td>
+
+                                               <td>
+                                                 {{eval.1.tasks_completed}}
+                                               </td>
+                                               <td>
+                                                 {{eval.1.performance_assessment}}
+                                               </td>
+                                               <td>
+                                                 {{eval.1.notes}}
+                                               </td>
+                                             </tr>
+                                       {% endfor %}
+                                    {% endfor %}
+                                       </tbody>
+                           </table>
+                   </ul>
+                 </div>
+
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+
+
+  
+
+                    
+                   
+
+            
+
+
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Average Contributions</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                <div class="box-body no-padding">
+                 <ul class="nav nav-pills nav-stacked">
+                     <table class="table table-hover">
+                     <tbody>
+                       <tr>
+                         <th>Student</th>
+                         <th>Contribution</th>
+                       </tr> 
+                    {% for avg in averages %}
+                     <tr>
+                       <td>{{ avg.0.email }}</td>
+                       <td>
+                         {% if contribute_levels.high < avg.1 %}
+                             <div style="color:blue">{{avg.1}}</div>
+                         {% else %}
+                         {% if contribute_levels.low < avg.1 %}
+                           <div style="color:green">{{avg.1}}</div>
+                         {%else%}
+
+                           <div style="color:red">{{avg.1}}</div>
+                         {% endif %}
+                         {% endif %}
+                         </td>
+                     </tr>
+                     {% endfor %}
+                     </tbody>
+                   </table>
+               </ul>
+               </div>
+               </div>
+                   
+              {% endfor %}
             </div>
 
 
