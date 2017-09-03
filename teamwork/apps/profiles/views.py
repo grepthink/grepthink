@@ -19,7 +19,7 @@ from django.urls import reverse
 
 def signup(request):
     """
-    public method that generates a form a user uses to sign up for an account
+    public method that generates a form a user uses to sign up for an account (push test)
     """
 
     page_name = "Signup"
@@ -45,6 +45,7 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
+            ta = form.cleaned_data.get('ta')
 
             # this does the same thing as the else no? damnit ryan, why?
             if GT:
@@ -68,6 +69,9 @@ def signup(request):
 
             # edits profile to add professor
             user1.profile.isProf = prof
+
+            # edits profile to add ta
+            user1.profile.isTa = ta
 
             # saves profile
             user1.save()
