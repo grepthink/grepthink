@@ -69,7 +69,7 @@
             <li class=""><a href="#tab_5" data-toggle="tab" 
                 aria-expanded="false">TSR</a></li>
             {% endif %}
-            {% if profile.isProf or profile.isTa %}
+            {% if request.user in staff or request.user.profile.isGT %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
             {% if user in project_members %}
@@ -93,7 +93,7 @@
 
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
             <li class="pull-right">
-                {% if not request.user.profile.isProf %}
+                {% if not request.user in staff %}
                 {% if not user in project.members.all %}
                 <a href="{% url 'request_to_join' project.slug %}">
                 <button type="button" class="btn-xs btn-default btn-block" name="request">
@@ -331,18 +331,30 @@
                 <!--{% endwith %}-->
                 <br>
                 <br>
-                <!--{% with "True" as scrum %}-->
+                {% if request.user == scrum_master %}
                 <form action="{% url 'tsr_update' project.slug %}">
                     <input type="submit" value="Scrum master TSR form" name="scrum_master_form" />
                 </form>
-                <!--{% endwith %}-->
+                {% endif %}
             </div>
 
+
+
+
+
+            <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
                 <form action="{% url 'view_tsr' project.slug %}">
                     <input type="submit" value="View TSR" />
                 </form>
+                
             </div>
+
+
+
+
+
+
 
             <!-- /.tab-pane chat -->
             <div class="tab-pane" id="tab_7">

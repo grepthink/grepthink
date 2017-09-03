@@ -103,7 +103,18 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
+
     project = get_object_or_404(Project, slug=slug)
+    scrum_master = project.scrum_master
+    updates = project.get_updates()
+    resources = project.get_resources()
+    # Get the project owner for color coding stuff
+    project_owner = project.creator.profile
+    members = project.members.all()
+
+    # Get the course given a project wow ethan great job keep it up.
+    course = project.course.first()
+    staff = course.get_staff()
 
     user = request.user
     profile = Profile.objects.get(user=user)
@@ -112,14 +123,6 @@ def view_one_project(request, slug):
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
     project_members = project.members.all()
-
-    isProf = 0
-    if request.user.profile.isProf:
-        isProf = 1
-
-
-    updates = project.get_updates()
-    resources = project.get_resources()
 
     project_chat = reversed(project.get_chat())
     if request.method == 'POST':
@@ -143,15 +146,35 @@ def view_one_project(request, slug):
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(project.readable_meetings)
 
-    # Get the course given a project wow ethan great job keep it up.
-    # course = Course.objects.get(projects=project)
-    course = project.course.first()
+    # ======================
+    assigned_tsrs = course.assignments.filter(ass_type="tsr", closed=False)
+    print("\n\n")
+    print("Assignments")
+    print(assigned_tsrs)
+    print("\n\n")
+    completed_tsrs = project.tsr.all()
+    print("\n\n")
+    print("Completed Tsrs")
+    print(completed_tsrs)
+    print("\n\n")
 
-    # Get the project owner for color coding stuff
-    # tempPO = User.objects.get(username=project.creator)
-    # project_owner = Profile.objects.get(user=tempPO)
-    project_owner = project.creator.profile
-    members = project.members.all()
+    tsr_tuple = {}
+    for i in assigned_tsrs:
+        averages = []
+        avg = 0
+        for j in completed_tsrs:
+            avg = avg + j.percent_contribution
+            avg = avg / len(completed_tsrs)
+            averages.append({'email':j.evaluatee.email,'avg':avg})
+            tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
+
+    print("\n\n")
+    print("Tsrs")
+    print(tsr_tuple)
+    print("\n\n")
+    med = int(100/len(members))
+    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
+    # ======================
 
 
     # Populate with project name and tagline
@@ -159,13 +182,12 @@ def view_one_project(request, slug):
     page_description = project.tagline or "Tagline"
     title = project.title or "Project"
 
-
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'isProf':isProf,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members,
-        'pending_count':pending_count,'profile' : profile,
+        'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_tuple, 'contribute_levels' : mid, 'avg':averages})
 
 def request_join_project(request, slug):
 

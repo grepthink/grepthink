@@ -98,7 +98,7 @@ def view_one_course(request, slug):
             data = assignmentForm.cleaned_data
             ass_date = data.get('ass_date')
             due_date = data.get('due_date')
-            ass_type = data.get('ass_type')
+            ass_type = data.get('ass_type').lower()
             ass_name = data.get('ass_name')
             ass_number = data.get('ass_number')
             description = data.get('description')

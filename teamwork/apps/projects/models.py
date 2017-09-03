@@ -307,7 +307,7 @@ class Project(models.Model):
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
-        related_name='project',
+        related_name='project_interest',
         default=None)
 
     # TODO:NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
@@ -316,7 +316,10 @@ class Project(models.Model):
     #create_date = models.DateTimeField(auto_now_add=True)
 
     # projects tsr
-    tsr = models.ManyToManyField(Tsr, default=None)
+    tsr = models.ManyToManyField(
+        Tsr,
+        related_name='project_tsr', 
+        default=None)
 
     # Store the teamSize for team generation and auto switch accepting members
     teamSize = models.IntegerField(
