@@ -171,15 +171,15 @@ def view_one_project(request, slug):
     tsr_keys = tsr_tuple.keys()
 
 
-    print("\n\n")
-    print("Tsrs")
-    print(tsr_tuple.items())
+    # print("\n\n")
+    # print("Tsrs")
+    # print(tsr_tuple.items())
     tsr_items = tsr_tuple.items()
-    print("\n\n")
-    for compTsr in tsr_items:
-        for e in compTsr[1]:
-            print(e[1])
-        print("===")
+    # print("\n\n")
+    # for compTsr in tsr_items:
+    #     for e in compTsr[1]:
+    #         print(e[1])
+    #     print("===")
 
     avg_tuple = {}
     for i in averages:
@@ -190,10 +190,10 @@ def view_one_project(request, slug):
     
     avg_tuple2 = avg_tuple.items()
 
-    for i in avg_tuple.items():
-        print(i[0])
-        print(i[1])
-        print("====")
+    # for i in avg_tuple.items():
+    #     print(i[0])
+    #     print(i[1])
+    #     print("====")
 
     med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
