@@ -155,6 +155,7 @@ def view_one_project(request, slug):
     # print(completed_tsrs)
     # print("\n\n")
 
+    averages = []
     tsr_tuple = {}
     for i in assigned_tsrs:
         averages = []
