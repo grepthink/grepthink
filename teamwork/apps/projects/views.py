@@ -18,6 +18,7 @@ from teamwork.apps.core.helpers import *
 from .forms import *
 from .models import *
 
+from itertools import chain
 import json
 
 
@@ -108,10 +109,18 @@ def view_one_project(request, slug):
     user = request.user
     profile = Profile.objects.get(user=user)
 
-    # to reduce querys in templates
+    # to reduce querys in templates -kp
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
     project_members = project.members.all()
+
+    isProf = 0
+    if request.user.profile.isProf:
+        isProf = 1
+
+    requestButton = 1
+    if request.user in pending_members:
+        requestButton = 0
 
     project_chat = reversed(project.get_chat())
     if request.method == 'POST':
@@ -185,7 +194,9 @@ def view_one_project(request, slug):
     #     print(i[1])
     #     print("====")
 
-    med = int(100/len(members))
+    med = 100
+    if len(members) > 0:
+        med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
 
@@ -198,6 +209,7 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'requestButton':requestButton,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
@@ -208,13 +220,12 @@ def request_join_project(request, slug):
     project_members = project.members.all()
 
     if request.user in project_members:
-        # send an error
+        # TODO: send an error
         print("already in project")
     else:
         # user wants to join project
         # add to pending members list of projects
         project.pending_members.add(request.user)
-        print("added to pending members:", project.pending_members.all())
         project.save()
 
         # send email to project owner
@@ -225,8 +236,7 @@ def request_join_project(request, slug):
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
 
-        # send alert to project members
-        print("requested to join, sent email")
+        # TODO: send alert to project members and/or PO
 
     return view_one_project(request, slug)
 
@@ -435,8 +445,16 @@ def edit_project(request, slug):
     Based off courses/views.py/edit_course
     """
     project = get_object_or_404(Project, slug=slug)
-
     course = project.course.first()
+    project_owner = project.creator.profile
+    members = project.members.all()
+
+    # membas = project.members.all()
+    # po_and_members = []
+    # # commented for now, needs work
+    # # po_and_members.append(project.creator)
+    # for i in membas:
+    #     po_and_members.append(i)
 
     # Populate page info with edit project title/name
     page_name = "Edit Project"
@@ -509,6 +527,7 @@ def edit_project(request, slug):
     # Transfer ownership of a project
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
+        print("promoting user!!!!!!", f_username)
         f_user = User.objects.get(username=f_username)
         project.creator = f_user
         project.save()
@@ -573,7 +592,7 @@ def edit_project(request, slug):
     else:
         form = EditProjectForm(request.user.id, instance=project)
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
+        'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project})
 
 
@@ -797,7 +816,9 @@ def view_tsr(request, slug):
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
-    med = int(100/len(members))
+    med = 100
+    if len(members) > 0:
+        med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
