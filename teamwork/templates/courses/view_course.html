@@ -29,6 +29,10 @@
     <div class="alert alert-success" role="alert">
         You are an instructor of this course.
     </div>
+    {% elif user.profile.isTa %}
+        <div class="alert alert-success" role="alert">
+        You are a teaching assistant for this course
+        </div>
     {% elif user not in course.students.all %}
         {% if not user.profile.isGT %}
             <div class="alert alert-warning" role="alert">
@@ -56,15 +60,16 @@
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-            {% if isProf %}
+
+            
+
+            {% if user == course.creator or user.profile.isGT or user.profile.isTa %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create New Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
-            {% endif %}
-            {% if user == course.creator or user.profile.isGT%}
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
                     Admin Tools
@@ -79,6 +84,7 @@
             <div class="tab-pane active" id="projects">
                 {% if user != course.creator %}
                     {% if not user.profile.isGT %}
+                        {% if not user.profile.isTa %}
                         {% if not course.limit_interest %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
@@ -88,13 +94,13 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% endif %}
                     {% endif %}
                 {% endif %}
 
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
-
             <div class="tab-pane" id="assignments">
             <div class="col-md-6">
                 <div class="box box-success">
@@ -167,7 +173,7 @@
 
                 <h3>Updates</h3>
                 <ul class="timeline">
-                    {% if user == course.creator or user.profile.isGT%}
+                    {% if user == course.creator or user.profile.isGT or user.profile.isTa%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'update_course' course.slug %}'">
@@ -192,7 +198,7 @@
                         <div class="timeline-item">
                             <div class="timeline-header clearfix">
                                 {{ update.title }}
-                                {% if user == update.creator or user.profile.isGT%}
+                                {% if user == update.creator or user.profile.isGT or user.profile.isTa %}
                                 <span class="pull-right">
                                     <a href='{% url 'update_course_update' course.slug update.id %}'>
                                         <button class="btn btn-default btn-xs">
@@ -237,8 +243,9 @@
                     </li>
                 </ul>
             </div>
-            <div class="tab-pane" id="members">
 
+
+            <div class="tab-pane" id="members">
             <div class="row">
 
                 <div class="col-md-3">
@@ -256,17 +263,19 @@
                     <!-- /.box-header -->
                     <div class="box-body no-padding">
                       <ul class="users-list clearfix">
+                      {% for mem in staff %}
                         <li style="list-style-type: none;">
-                          {% if creator.profile.avatar %}
-                            <img src="{{ creator.profile.avatar.url }}" class="img-circle" alt="User Image">
-                          {% else %}
+                            {% if mem.profile.avatar %}
+                            <img src="{{ mem.profile.avatar.url }}" class="img-circle" alt="User Image">
+                            {% else %}
                             <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
                                 class="img-circle" alt="User Image">
                                 <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
-                          {% endif %}
-                          <a class="users-list-name" href="{% url 'profile' course.creator %}">{{ course.creator }}</a>
-                          <span class="users-list-date"><a href="mailto:{{ course.creator.email }}" target="_top">{{ course.creator.email }}</a></span>
+                            {% endif %}
+                            <a class="users-list-name" href="{% url 'profile' mem %}">{{ mem }}</a>
+                            <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ mem.email }}" target="_top">{{ mem.email }}</a></span>
                         </li>
+                      {% endfor %}
                       </ul>
                       <!-- /.users-list -->
                     </div>
@@ -331,7 +340,7 @@
             </div>
 
 
-            {% if user == course.creator  or user.profile.isGT%}
+            {% if user == course.creator  or user.profile.isGT or user.profile.isTa%}
             <div class="tab-pane" id="admin">
 
 

@@ -359,14 +359,13 @@ class ChatForm(forms.ModelForm):
     class Meta:
         model = ProjectChat
         fields = ['content']
-        
-class TsrForm(forms.ModelForm):
 
+class TSR(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         members = kwargs.pop('members')
         emails = kwargs.pop('emails')
         scrum_master = kwargs.pop('scrum_master')
-        super(TsrForm, self).__init__(*args, **kwargs)
+        super(TSR, self).__init__(*args, **kwargs)
 
         if not scrum_master:
             self.fields['tasks_comp'].required = False

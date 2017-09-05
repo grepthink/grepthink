@@ -55,6 +55,7 @@ $(document).ready(function() {
   <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     {{block.super}}
   <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
 
 {% endblock stylesheets %}
@@ -112,6 +113,8 @@ $(document).ready(function() {
             <div class="box-body">
             <div class="form-group">
               <label>Add Members</label>
+              <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Add students by CruzId">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
               <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
               </select>
             </div>
@@ -119,8 +122,27 @@ $(document).ready(function() {
 
             <div class="box-body">
             <div class="btn-grid">
-                {% for mem in course.students.all %}
-                    <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.username}}"><i class="fa fa-trash"></i> {{mem.username}}
+                {% for mem in students%}
+                    <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.user.username}}"><i class="fa fa-trash"></i> {{mem.user.username}}
+                    </button>
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="box-body">
+            <div class="form-group">
+                <label>Add TA</label>
+                <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Add TA by CruzId, they will have same access as professor?">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+              <select class="form-control select2" id="ta" name="ta" multiple="multiple" style="width: 100%;">
+              </select>
+            </div>
+            </div>
+
+            <div class="box-body">
+            <div class="btn-grid">
+                {% for mem in tas %}
+                    <button class="btn btn-danger btn-sm" name="remove_ta" value="{{mem.user.username}}"><i class="fa fa-trash"></i> {{mem.user.username}}
                     </button>
                 {% endfor %}
             </div>

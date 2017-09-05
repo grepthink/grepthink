@@ -1,7 +1,10 @@
 #imports forms
 from django import forms
+from django.forms import extras
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from datetime import datetime
+from django.contrib.admin.widgets import AdminDateWidget
 
 from datetime import datetime
 from django.forms import extras
@@ -480,27 +483,24 @@ class AssignmentForm(forms.ModelForm):
         label="Assignment name",
         required=True,
         max_length=255)
-
+    # type of assignment, i.e. tsr
+    ass_type = forms.CharField(max_length=255, label="Assignment Type",
+        required=True)
     # assignment description
     description = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Assignment Description",
         required=True,
         max_length=255)
-
-    # type of assignment, i.e. tsr
-    ass_type = forms.CharField(max_length=255, label="Assignment Type",
-        required=True)
-
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
         widget=forms.NumberInput(),label='Assignment Number',
         max_digits=2,
         required=True,
         decimal_places=0)
-
     class Meta:
         model= Assignment
         widgets = {
         }
+
         fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']

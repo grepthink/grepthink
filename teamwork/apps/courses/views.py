@@ -9,11 +9,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from django.urls import reverse
 
+from django.contrib import messages
+
 from teamwork.apps.projects.models import *
 from teamwork.apps.core.helpers import *
 from teamwork.apps.core.forms import *
 from .forms import *
 from .models import *
+
+from datetime import datetime
 
 import csv
 import codecs
@@ -77,15 +81,15 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
     profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
+    staff = course.get_staff()
     asgs = list(course.assignments.all())
 
-    # professor = Enrollment.objects.filter(course = course, role = "professor")
-    # can add TA or w/e in the future
 
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
+
 
     assignmentForm = AssignmentForm(request.user.id)
     if(request.method == 'POST'):
@@ -94,10 +98,11 @@ def view_one_course(request, slug):
             data = assignmentForm.cleaned_data
             ass_date = data.get('ass_date')
             due_date = data.get('due_date')
-            ass_type = data.get('ass_type')
+            ass_type = data.get('ass_type').lower()
             ass_name = data.get('ass_name')
             ass_number = data.get('ass_number')
             description = data.get('description')
+
 
             # checking if there is an assignment of same type already in
             # progress based on assignment type and date
@@ -124,6 +129,7 @@ def view_one_course(request, slug):
                             return redirect(view_one_course,course.slug)
 
             course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+
                 ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
                 ass_number=ass_number))
             course.save()
@@ -133,7 +139,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'page_name' : page_name, 'page_description': page_description, 'title': title})
+        'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
 @login_required
@@ -381,7 +387,6 @@ def create_course(request):
             course.info = data.get('info')
             course.term = data.get('term')
             course.slug = data.get('slug')
-            course.professor = data.get('professor')
             course.limit_creation = data.get('limit_creation')
             course.limit_weights = data.get('limit_weights')
             course.weigh_interest = data.get('weigh_interest') or 0
@@ -395,7 +400,7 @@ def create_course(request):
             course.save()
             # add creator as a member of the course w/ specific role
             if request.user.profile.isProf:
-                Enrollment.objects.create(user=request.user, course=course,role='professor')
+                Enrollment.objects.create(user=request.user, course=course,role="professor")
 
             # we dont have to save again because we do not touch the project object
             # we are doing behind the scenes stuff (waves hand)
@@ -414,6 +419,13 @@ def edit_course(request, slug):
     page_name = "Edit Course"
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
+
+    tas = Enrollment.objects.filter(course=course, role="ta")
+    students = Enrollment.objects.filter(course=course, role="student")
+
+    print("HELLO")
+    print(tas)
+    print(students)
 
     if request.user.profile.isGT:
         pass
@@ -441,7 +453,7 @@ def edit_course(request, slug):
             #   to check if mem_to_add is in the user field of a current membership.
             if not course in mem_courses:
                 if not mem_to_add in students:
-                    Enrollment.objects.create(user=mem_to_add, course=course)
+                    Enrollment.objects.create(user=mem_to_add, course=course, role="student")
                     Alert.objects.create(
                         sender=request.user,
                         to=mem_to_add,
@@ -455,13 +467,60 @@ def edit_course(request, slug):
     if request.POST.get('remove_user'):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
-        to_delete = Enrollment.objects.filter(user=f_user, course=course)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
 
         for mem_obj in to_delete:
             Alert.objects.create(
                 sender=request.user,
                 to=f_user,
                 msg="You were removed from: " + course.name,
+                url=reverse('view_one_course',args=[course.slug]),
+                )
+            mem_obj.delete()
+        return redirect(edit_course, slug)
+
+    # Add a TA
+    if request.POST.get('ta'):
+        # Get the members to add, as a list
+        members = request.POST.getlist('ta')
+        enrollments = Enrollment.objects.filter(course=course)
+        students = course.students.all()
+
+        # Create membership objects for the newly added members
+        for uname in members:
+            mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+
+            # Don't add a member if they already have membership in course
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this courses memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if mem_to_add in students:
+                Enrollment.objects.filter(user=mem_to_add).update(role="ta")
+            else:
+                Enrollment.objects.create(user=mem_to_add, course=course, role="ta")
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You were added to: " + course.name + "as a TA",
+                    url=reverse('view_one_course',args=[course.slug]),
+                    )
+
+        return redirect(edit_course, slug)
+
+    
+
+    # Remove a ta from the course
+    if request.POST.get('remove_ta'):
+        f_username = request.POST.get('remove_ta')
+        f_user = User.objects.get(username=f_username)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="ta")
+
+        for mem_obj in to_delete:
+            Alert.objects.create(
+                sender=request.user,
+                to=f_user,
+                msg="You were removed as the TA from: " + course.name,
                 url=reverse('view_one_course',args=[course.slug]),
                 )
             mem_obj.delete()
@@ -486,14 +545,14 @@ def edit_course(request, slug):
             course.limit_interest = data.get('limit_interest')
             # course.lower_time_bound = data.get('lower_time_bound')
             # course.upper_time_bound = data.get('upper_time_bound')
-            course.save()        
+            course.save()
 
         return redirect(view_one_course, course.slug)
     else:
         form = EditCourseForm(request.user.id, slug,  instance=course)
     return render(
             request, 'courses/edit_course.html',
-            {'form': form,'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 
@@ -503,11 +562,18 @@ def delete_course(request, slug):
     Delete course method
     """
     course = get_object_or_404(Course, slug=slug)
+    projects = projects_in_course(slug)
+
     if request.user.profile.isGT:
         pass
     elif not request.user.profile.isProf:
         return redirect(view_one_course, course.slug)
 
+    #Runs through each project and deletes them
+    for p in projects:
+        p.delete()
+
+    #deletes course
     course.delete()
     return redirect(view_courses)
 

@@ -23,22 +23,25 @@ from django.utils import timezone
 # import of project models
 from teamwork.apps.projects.models import Project
 
+
 def get_all_courses(self):
     return Course.objects.all()
 
 class Assignment(models.Model):
     due_date = models.CharField(max_length=255, default="20991231")
     ass_date = models.CharField(max_length=255, default="20000101")
-    ass_type = models.CharField(max_length=255, default='tsr')
-    ass_name = models.CharField(max_length=255, default="TSR for Sprint X")
+    ass_type = models.CharField(max_length=255)
+    ass_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default="")
-    ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
+    ass_number = models.IntegerField( default=1)
+    closed = models.BooleanField(default=False)
 
     def __str__(self):
         """
         Human readeable representation of the Assignment object.
         """
         return ("%s, %s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number))
+
 
 def get_user_courses(self):
     """
@@ -313,16 +316,39 @@ class Course(models.Model):
     Gets all students in a course excluding professors
     """
     def get_students(self):
-        students_and_prof = self.students.all()
-
+        temp = Enrollment.objects.filter(course=self,role="student")
         students = []
 
-        for stud in students_and_prof:
-            if not stud.profile.isProf:
-                students.append(stud)
+        for stud in temp:
+            students.append(stud.user)
 
         return students
 
+    """
+    Gets the tas for a course
+    """
+    def get_tas(self):
+        tas = []
+
+        temp = Enrollment.objects.filter(course=self,role="ta")
+
+        for i in temp:
+            tas.append(i.user)
+
+        return tas 
+
+    """
+    Gets ALL of the teaching staff
+    """
+    def get_staff(self):
+        tas = self.get_tas()
+        staff=[]
+        staff.append(self.creator)
+
+        for i in tas:
+            staff.append(i)
+
+        return staff   
 
 
 
@@ -399,3 +425,4 @@ class CourseUpdate(models.Model):
             self.date_edit = datetime.datetime.now()
 
         super(CourseUpdate, self).save(*args, **kwargs)
+
