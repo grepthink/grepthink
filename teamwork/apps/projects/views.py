@@ -46,7 +46,7 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-    
+
     return _projects(request, my_projects)
 
 def view_meetings(request, slug):
@@ -147,6 +147,7 @@ def view_one_project(request, slug):
     # print(completed_tsrs)
     # print("\n\n")
 
+    averages = []
     tsr_tuple = {}
     for i in assigned_tsrs:
         averages = []
@@ -176,7 +177,7 @@ def view_one_project(request, slug):
             avg_tuple[i[0]] +=  int(i[1])
         else:
             avg_tuple[i[0]] = int(i[1])
-    
+
     avg_tuple2 = avg_tuple.items()
 
     # for i in avg_tuple.items():
