@@ -274,6 +274,35 @@ $(document).ready(function() {
               </div>
           </div>
   </div>
+
+<div class="col-md-6">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Project Members</h3>
+        </div>
+
+        <div class="box-body">
+        <div class="btn-grid">
+            {% for mem in project.members.all %}
+                {% if not mem == project.creator %}
+
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ mem.username }}
+                  </button>
+                  <div class="dropdown-menu">
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Promote to Scrum Master</a></li>
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Promote to Project Owner</a></li>
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Remove from Project</a></li>
+                  </div>
+
+                {% endif %}
+            {% endfor %}
+        </div>
+        </div>
+
+    </div>
+</div>
+
 </div>
 
 {% endblock content %}
