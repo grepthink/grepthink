@@ -589,10 +589,14 @@ class Project(models.Model):
         # #Gets project queryset of only projects user is in OR the user created
         # proj = Project.objects.filter(membership__in=myProjects)
 
-        proj = user.membership.all()
+        mem = list(user.membership.all())
 
 
-        return proj
+        created = list(user.project_creator.all())
+
+        projects = list(set(mem + created))
+
+        return projects
 
     @staticmethod
     def get_all_projects():
