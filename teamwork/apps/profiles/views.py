@@ -45,7 +45,7 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
-            ta = form.cleaned_data.get('ta')
+            # ta = form.cleaned_data.get('ta')
 
             if GT:
                 user1 = User.objects.create_superuser(
@@ -72,7 +72,7 @@ def signup(request):
             user1.profile.isProf = prof
 
             # edits profile to add ta
-            user1.profile.isTa = ta
+            # user1.profile.isTa = ta
 
             # saves profile
             user1.save()
