@@ -18,6 +18,7 @@ from teamwork.apps.core.helpers import *
 from .forms import *
 from .models import *
 
+from itertools import chain
 import json
 
 
@@ -193,7 +194,9 @@ def view_one_project(request, slug):
     #     print(i[1])
     #     print("====")
 
-    med = int(100/len(members))
+    med = 100
+    if len(members) > 0:
+        med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
 
@@ -442,8 +445,16 @@ def edit_project(request, slug):
     Based off courses/views.py/edit_course
     """
     project = get_object_or_404(Project, slug=slug)
-
     course = project.course.first()
+    project_owner = project.creator.profile
+    members = project.members.all()
+
+    # membas = project.members.all()
+    # po_and_members = []
+    # # commented for now, needs work
+    # # po_and_members.append(project.creator)
+    # for i in membas:
+    #     po_and_members.append(i)
 
     # Populate page info with edit project title/name
     page_name = "Edit Project"
@@ -515,6 +526,7 @@ def edit_project(request, slug):
 
     # Transfer ownership of a project
     if request.POST.get('promote_user'):
+        print("promoting user!!!!!!")
         f_username = request.POST.get('promote_user')
         f_user = User.objects.get(username=f_username)
         project.creator = f_user
@@ -580,7 +592,7 @@ def edit_project(request, slug):
     else:
         form = EditProjectForm(request.user.id, instance=project)
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
+        'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project})
 
 
@@ -804,7 +816,9 @@ def view_tsr(request, slug):
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
-    med = int(100/len(members))
+    med = 100
+    if len(members) > 0:
+        med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     page_name = "Professor/TA TSR View"
     page_description = "View project TSR"
