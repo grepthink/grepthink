@@ -46,18 +46,7 @@ def view_projects(request):
     then calls _projects to render the request to template view_projects.html
     """
     my_projects = Project.get_my_projects(request.user)
-    # print(my_projects)
-    # my_created = Project.get_created_projects(request.user)
-    # print(my_created)
-    # projects = my_projects | my_created
-    # projects = list(set(projects))
-    # print("my_projects:", my_projects)
-    my_created = Project.get_created_projects(request.user)
-    # print("my_created:", my_created)
-    projects = my_projects | my_created
-
-    # print(projects)
-
+    
     return _projects(request, my_projects)
 
 def view_meetings(request, slug):
@@ -148,15 +137,15 @@ def view_one_project(request, slug):
 
     # ======================
     assigned_tsrs = course.assignments.filter(ass_type="tsr", closed=False)
-    print("\n\n")
-    print("Assignments")
-    print(assigned_tsrs)
-    print("\n\n")
+    # print("\n\n")
+    # print("Assignments")
+    # print(assigned_tsrs)
+    # print("\n\n")
     completed_tsrs = project.tsr.all()
-    print("\n\n")
-    print("Completed Tsrs")
-    print(completed_tsrs)
-    print("\n\n")
+    # print("\n\n")
+    # print("Completed Tsrs")
+    # print(completed_tsrs)
+    # print("\n\n")
 
     tsr_tuple = {}
     for i in assigned_tsrs:

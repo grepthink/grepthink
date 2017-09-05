@@ -140,6 +140,7 @@ def view_matches(request):
     project_match_list = []
     course_set = []
 
+
     page_name = "View Matches"
     page_description = "View Matching Students"
     title = "View Matches"
@@ -153,10 +154,10 @@ def view_matches(request):
             course_set.append(course)
     else:
         my_projects = Project.get_my_projects(request.user)
-        my_created = Project.get_created_projects(request.user)
-        projects = my_projects | my_created
-        projects = list(set(projects))
-        for project in projects:
+        # my_created = Project.get_created_projects(request.user)
+        # projects = my_projects | my_created
+        # projects = list(set(projects))
+        for project in my_projects:
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
 

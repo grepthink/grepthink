@@ -270,11 +270,20 @@ $(document).ready(function() {
 
       </div> <!-- Box 3 Body -->
 
+
       <div class="box-footer">
+          <div class="pull-left">
+            <a href="{% url 'view_projects' %}">
+                <button class="btn btn-danger" type="button">
+                    Cancel
+                </button>
+            </a>
+          </div>
           <div class="pull-right">
               <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
                   Create Project
               </button>
+              
           </div>
       </div>
 
