@@ -167,32 +167,48 @@ $(document).ready(function() {
          </div>
 
          <div class="box-body">
-         <div class="btn-grid">
-             {% for mem in members %}
+             <!-- TEMPORARY -->
+              <ul class="nav nav-pills nav-stacked">
+               <table class="table table-hover">
+                  <tbody>
+                          <!-- <tr>
+                            <th>Members</th>
+                            <th>Scrum</th>
+                            <th>PO</th>
+                            <th>Remove</th>
+                          </tr> -->
+                          {% for mem in members %}
+                          <!-- username -->
+                          <tr>
+                          <td>
+                              <a href="{% url 'profile' mem.username %}">{{ mem.username }}</a>
+                          </td>
+                          <!-- promote to scrum master -->
+                          <td>
+                              <button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}"> Promote to Scrum Master
+                              </button>
+                          </td>
+                          <!-- promote to po -->
+                          <td>
+                              <button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}"> Promote to Project Owner
+                              </button>
+                          </td>
+                          <!-- remove from project -->
+                          <td>
+                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Remove from Project
+                              </button>
+                          </td>
+                          </tr>
+                          {% endfor %}
+                  </tbody>
+              </table>
+              </ul>
 
-                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     {{ mem.username }}
-                   </button>
-                   <div class="dropdown-menu">
-                       <li role="presentation"><button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}"> Promote to Scrum Master
-                       </button></li>
-
-                       <li role="presentation"><button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}"> Promote to Project Owner
-                       </button></li>
-
-                       <li role="presentation"><button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Remove from Project
-                       </button></li>
-                   </div>
-
-             {% endfor %}
-         </div>
-         <br />
-
-         <div>
-               <label>Add Members</label>
-               <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
-               </select>
-         </div>
+             <div>
+                   <label>Add Members</label>
+                   <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+                   </select>
+             </div>
          </div>
 
      </div>
