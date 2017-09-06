@@ -66,7 +66,7 @@
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
             <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
             {% if user in project_members %}
-            <li class=""><a href="#tab_5" data-toggle="tab" 
+            <li class=""><a href="#tab_5" data-toggle="tab"
                 aria-expanded="false">TSR</a></li>
             {% endif %}
             {% if request.user in staff or request.user.profile.isGT %}
@@ -124,7 +124,7 @@
                 </div>
                 <div>
                     <p>
-                        <strong>Owner</strong>
+                        <strong>Project Owner</strong>
                         <a href="{% url 'profile' project_owner.user.username %}">
                         {% if project_owner.isGT %}
                             <span class="label label-success">
@@ -403,14 +403,14 @@
                                             {% else %}
                                                 <tr>
                                             {% endif %}
-                                             
+
                                                <td>
-                                                {% if forloop.first %} 
+                                                {% if forloop.first %}
                                                     <a href="{% url 'profile' eval.1.evaluatee.username %}">
                                                    {{eval.1.evaluatee.email}}</a>
                                                 {% endif %}
                                                </td>
-                                               
+
                                                <td>
                                                     <a href="{% url 'profile' eval.1.evaluatee.username %}">
                                                    {{eval.1.evaluator.email}}</a>
@@ -459,12 +459,12 @@
                 <!-- /.box -->
 
 
-  
 
-                    
-                   
 
-            
+
+
+
+
 
 
                 <div class="box box-solid">
@@ -484,7 +484,7 @@
                        <tr>
                          <th>Student</th>
                          <th>Contribution</th>
-                       </tr> 
+                       </tr>
                     {% for avg in averages %}
                      <tr>
                        <td>{{ avg.0.email }}</td>
@@ -507,7 +507,7 @@
                </ul>
                </div>
                </div>
-                   
+
               {% endfor %}
             </div>
 
