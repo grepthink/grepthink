@@ -128,22 +128,6 @@ $(document).ready(function() {
                     {% endfor %}
                 </div>
                 {% endfor %}
-
-            <div class="box-footer">
-
-                <div class="pull-left">
-                <a href="{% url 'view_one_project' project.slug %}">
-                    <button class="btn btn-danger" type="button">
-                        Cancel
-                    </button>
-                </a>
-                </div>
-                <div class="pull-right">
-                    <button class="btn btn-success" type="submit" name="SUBMIT">
-                        Save changes
-                    </button>
-                </div>
-            </div>
     </div>
 </div>
 </div>
@@ -186,13 +170,21 @@ $(document).ready(function() {
                           </td>
                           <!-- promote to scrum master -->
                           <td>
+                              {% if not mem == project.scrum_master %}
                               <button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}"> Promote to Scrum Master
                               </button>
+                              {% else %}
+                              <label>Current Scrum Master</label>
+                              {% endif %}
                           </td>
                           <!-- promote to po -->
                           <td>
+                              {% if not mem == project.creator %}
                               <button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}"> Promote to Project Owner
                               </button>
+                              {% else %}
+                              <label>Project Owner</label>
+                              {% endif %}
                           </td>
                           <!-- remove from project -->
                           <td>
@@ -259,6 +251,20 @@ $(document).ready(function() {
 
               </div>
           </div>
+  </div>
+  <div class="col-md-12 clearfix">
+      <div class="pull-left">
+      <a href="{% url 'view_one_project' project.slug %}">
+          <button class="btn btn-default" type="button">
+              Cancel
+          </button>
+      </a>
+      </div>
+      <div class="pull-right">
+          <button class="btn btn-success" type="submit" name="SUBMIT">
+              Save changes
+          </button>
+      </div>
   </div>
 
 </form>

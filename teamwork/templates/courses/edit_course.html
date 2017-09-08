@@ -39,7 +39,7 @@ $(document).ready(function() {
       },
       cache: true
     },
-    placeholder: "Search for members to add",
+    placeholder: "Search for members by CruzId",
     //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
     minimumInputLength: 1,
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
@@ -121,11 +121,12 @@ $(document).ready(function() {
             </div>
 
             <div class="box-body">
-            <div class="btn-grid">
-                {% for mem in students%}
-                    <button class="btn btn-danger btn-sm" name="remove_user" value="{{mem.user.username}}"><i class="fa fa-trash"></i> {{mem.user.username}}
-                    </button>
-                {% endfor %}
+            <div class="form-group">
+              <label>Remove Members</label>
+              <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Remove students by CruzId">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+              <select class="form-control select2" id="remove_user" name="remove_user" multiple="multiple" style="width: 100%;">
+              </select>
             </div>
             </div>
 
@@ -209,11 +210,31 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
+        <div class="col-md-6">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Delete Course</h3>
+                </div>
+                <div class="box-body">
+                    <p>
+                        Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
+                        sure you know what you are doing before pressing this button.
+                    </p>
+
+                    <a href="{% url 'delete_course' course.slug %}">
+                        <button class="btn btn-danger" name="DELETE">
+                            <i class="fa fa-trash"></i>
+                            Delete course
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md-12 clearfix">
             <div class="pull-left">
             <a href="{% url 'view_one_course' course.slug %}">
-                <button class="btn btn-danger" type="button">
+                <button class="btn btn-default" type="button">
                     Cancel
                 </button>
             </a>
@@ -226,21 +247,6 @@ $(document).ready(function() {
         </div>
         </form>
 
-        <div class="col-md-10 clearfix">
-            <h2>Delete course</h2>
-
-            <p>
-                Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
-                sure you know what you are doing before pressing this button.
-            </p>
-
-            <a href="{% url 'delete_course' course.slug %}">
-                <button class="btn btn-danger" name="DELETE">
-                    <i class="fa fa-trash"></i>
-                    Delete course
-                </button>
-            </a>
-        </div>
     </div>
 </div>
 

@@ -18,6 +18,19 @@
 <div class="row">
     <div class="col-md-10">
         <section class="courses" clearfix>
+
+            <div class="small-box bg-green" style="border-radius: 10px">
+              <div class="inner">
+                <h3>Create a new Course</h3>
+              </div>
+              <div class="icon">
+                <i class="fa fa-plus"></i>
+              </div>
+              <a href="{% url 'create_course' %}" class="small-box-footer" style="border-radius: 10px">
+                Create <i class="fa fa-arrow-circle-right"></i>
+              </a>
+          </div>
+
             {% for course in courses %}
 
             <div class="small-box bg-aqua" style="border-radius: 10px">

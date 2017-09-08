@@ -465,18 +465,21 @@ def edit_course(request, slug):
 
     # Remove a user from the course
     if request.POST.get('remove_user'):
-        f_username = request.POST.get('remove_user')
-        f_user = User.objects.get(username=f_username)
-        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
+        members = request.POST.getlist('remove_user')
 
-        for mem_obj in to_delete:
-            Alert.objects.create(
-                sender=request.user,
-                to=f_user,
-                msg="You were removed from: " + course.name,
-                url=reverse('view_one_course',args=[course.slug]),
-                )
-            mem_obj.delete()
+        for mem in members:
+            f_user = User.objects.get(username=mem)
+            to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
+
+            for mem_obj in to_delete:
+                Alert.objects.create(
+                    sender=request.user,
+                    to=f_user,
+                    msg="You were removed from: " + course.name,
+                    url=reverse('view_one_course',args=[course.slug]),
+                    )
+                mem_obj.delete()
+
         return redirect(edit_course, slug)
 
     # Add a TA
@@ -508,7 +511,7 @@ def edit_course(request, slug):
 
         return redirect(edit_course, slug)
 
-    
+
 
     # Remove a ta from the course
     if request.POST.get('remove_ta'):

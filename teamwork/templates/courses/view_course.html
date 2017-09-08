@@ -61,8 +61,6 @@
                 </a>
             </li>
 
-            
-
             {% if user == course.creator or user.profile.isGT or user.profile.isTa %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
@@ -70,6 +68,7 @@
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
+
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
                     Admin Tools
@@ -77,6 +76,13 @@
                 </a>
             </li>
             {% endif %}
+
+            <li class="">
+            <a href="{% url 'create_project' %}">
+                Create New Project
+                <i class="fa fa-plus"></i>
+            </a>
+            </li>
         </ul>
 
         <div class="tab-content" style="background-color: #ecf0f5">
