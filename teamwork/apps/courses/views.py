@@ -479,7 +479,7 @@ def edit_course(request, slug):
                     url=reverse('view_one_course',args=[course.slug]),
                     )
                 mem_obj.delete()
-                
+
         return redirect(edit_course, slug)
 
     # Add a TA

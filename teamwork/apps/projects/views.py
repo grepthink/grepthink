@@ -239,7 +239,7 @@ def request_join_project(request, slug):
             )
     else:
         # user wants to join project
-        # add to pending members list of projects        
+        # add to pending members list of projects
         project.pending_members.add(request.user)
         project.save()
 
@@ -542,7 +542,6 @@ def edit_project(request, slug):
     # Transfer ownership of a project
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
-        print("promoting user!!!!!!", f_username)
         f_user = User.objects.get(username=f_username)
         project.creator = f_user
         project.save()

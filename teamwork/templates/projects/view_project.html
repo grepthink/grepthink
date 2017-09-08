@@ -97,32 +97,15 @@
             {% if requestButton %}
             <li class="pull-right">
             <a href="{% url 'request_to_join' project.slug %}">
-            <button type="button" class="btn-xs btn-default btn-block">
-                        <i class="fa fa-plus"></i>
-                        Request To Join Project
-            </button>
+                Request To Join Project
+                <i class="fa fa-plus"></i>
             </a>
             </li>
             {% else %}
             <li class="pull-right">
             <a href="{% url 'request_to_join' project.slug %}">
-            <button type="button" class="btn-xs btn-default btn-block">
-                        <i class="fa fa-undo"></i>
-                        Cancel Request
-            </button>
-            </a>
-            </li>
-
-            <li class="pull-right">
-            <a href="">
-            <button type="button" class="btn-xs-flat btn-default btn-block" disabled>
-                        <i class="fa fa-paper-plane-o"></i>
-                        Request Sent
-            </button>
-            <!-- <label>
-                <i class="fa fa-paper-plane-o"></i>
-                Request Sent
-            </label> -->
+                Cancel Your Request to Join
+                <i class="fa fa-undo"></i>
             </a>
             </li>
             {% endif %}

@@ -127,7 +127,7 @@ $(document).ready(function() {
                     <label class="control-label">{{ error }}</label>
                     {% endfor %}
                 </div>
-                {% endfor %}        
+                {% endfor %}
     </div>
 </div>
 </div>
@@ -170,13 +170,21 @@ $(document).ready(function() {
                           </td>
                           <!-- promote to scrum master -->
                           <td>
+                              {% if not mem == project.scrum_master %}
                               <button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}"> Promote to Scrum Master
                               </button>
+                              {% else %}
+                              <label>Current Scrum Master</label>
+                              {% endif %}
                           </td>
                           <!-- promote to po -->
                           <td>
+                              {% if not mem == project.creator %}
                               <button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}"> Promote to Project Owner
                               </button>
+                              {% else %}
+                              <label>Project Owner</label>
+                              {% endif %}
                           </td>
                           <!-- remove from project -->
                           <td>
