@@ -92,27 +92,43 @@
 
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
 
+            {% if not request.user in staff %}
+            {% if not user in project.members.all %}
+            {% if requestButton %}
             <li class="pull-right">
-                {% if not request.user in staff %}
-                {% if not user in project.members.all %}
-                {% if requestButton %}
-                <a href="{% url 'request_to_join' project.slug %}">
-                <button type="button" class="btn-xs btn-default btn-block" name="request">
-                            <i class="fa fa-plus"></i>
-                            Request To Join Project
-                </button>
-                </a>
-                {% else %}
-                <a href="">
-                <button type="button" class="btn-xs btn-default btn-block" name="request" disabled>
-                            <i class="fa fa-paper-plane-o"></i>
-                            Request Sent
-                </button>
-                </a>
-                {% endif %}
-                {% endif %}
-                {% endif %}
+            <a href="{% url 'request_to_join' project.slug %}">
+            <button type="button" class="btn-xs btn-default btn-block">
+                        <i class="fa fa-plus"></i>
+                        Request To Join Project
+            </button>
+            </a>
             </li>
+            {% else %}
+            <li class="pull-right">
+            <a href="{% url 'request_to_join' project.slug %}">
+            <button type="button" class="btn-xs btn-default btn-block">
+                        <i class="fa fa-undo"></i>
+                        Cancel Request
+            </button>
+            </a>
+            </li>
+
+            <li class="pull-right">
+            <a href="">
+            <button type="button" class="btn-xs-flat btn-default btn-block" disabled>
+                        <i class="fa fa-paper-plane-o"></i>
+                        Request Sent
+            </button>
+            <!-- <label>
+                <i class="fa fa-paper-plane-o"></i>
+                Request Sent
+            </label> -->
+            </a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+
 
         </ul>
 

@@ -215,16 +215,31 @@ def view_one_project(request, slug):
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
 
 def request_join_project(request, slug):
-
+    print("EXECUTING")
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
+    pending_members = project.pending_members.all()
 
     if request.user in project_members:
         # TODO: send an error
         print("already in project")
+    elif request.user in pending_members:
+        # Cancel Request to join
+        # remove member from pending list
+        for mem in pending_members:
+            if mem == request.user:
+                project.pending_members.remove(mem)
+                project.save()
+
+        Alert.objects.create(
+            sender=request.user,
+            to=project.creator,
+            msg=request.user.username + " has revoked his request to join " + project.title,
+            url=reverse('view_one_project',args=[project.slug]),
+            )
     else:
         # user wants to join project
-        # add to pending members list of projects
+        # add to pending members list of projects        
         project.pending_members.add(request.user)
         project.save()
 
