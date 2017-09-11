@@ -310,7 +310,7 @@
                         {% if studs.username != null %}
                         <a href="{% url 'profile' studs.username %}">
                         <li style="list-style-type: none;">
-                          {% gravatar studs.email 150 %}
+                          {% gravatar studs.email 75 %}
                           </a>
                           <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
                           <span class="users-list-date"><a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
