@@ -17,18 +17,6 @@
 
             {% gravatar user.email 150 %}
 
-{#            
-            <!-- Set the user image in sidebar -->
-              {% if user.profile.avatar %}
-                    <img src="{{ user.profile.avatar.url }}" class="img-circle" alt="User Image">
-              {% else %}
-                <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                    class="img-circle" alt="User Image">
-                    <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
-              {% endif %} 
-
-#}
-
             </div>
             <div class="pull-left info">
                 <p>{% firstof user.get_short_name user.get_username %}</p>
