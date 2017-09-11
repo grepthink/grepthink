@@ -57,6 +57,8 @@ INSTALLED_APPS = [
 
     'django.contrib.admin',
 
+    'django_gravatar',
+
     'chartjs'
 ]
 
