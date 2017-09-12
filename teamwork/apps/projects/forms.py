@@ -251,7 +251,8 @@ class EditProjectForm(forms.ModelForm):
 
     project_image = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
     max_length=100,
-    required=False)
+    required=False,
+    help_text="Enter a valid Image URL, Example:https://i.imgur.com/example.jpg")
 
     # lower_time_bound = forms.ChoiceField(
     #         label="Custom Lower Time Boundary for Scheduling",
