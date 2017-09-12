@@ -123,6 +123,9 @@ $(document).ready(function() {
                 <div class="form-group{% if field.errors %} has-error{% endif %}">
                     <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
                     {{ field }}
+                    {% if field.help_text %}
+                    <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
                     {% for error in field.errors %}
                     <label class="control-label">{{ error }}</label>
                     {% endfor %}
