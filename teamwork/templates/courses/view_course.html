@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load i18n %}
+{% load gravatar %}
 
 {% block stylesheets %}
 
@@ -271,13 +272,7 @@
                       <ul class="users-list clearfix">
                       {% for mem in staff %}
                         <li style="list-style-type: none;">
-                            {% if mem.profile.avatar %}
-                            <img src="{{ mem.profile.avatar.url }}" class="img-circle" alt="User Image">
-                            {% else %}
-                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                                class="img-circle" alt="User Image">
-                                <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
-                            {% endif %}
+                            {% gravatar mem.email 150 %}
                             <a class="users-list-name" href="{% url 'profile' mem %}">{{ mem }}</a>
                             <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ mem.email }}" target="_top">{{ mem.email }}</a></span>
                         </li>
@@ -315,13 +310,7 @@
                         {% if studs.username != null %}
                         <a href="{% url 'profile' studs.username %}">
                         <li style="list-style-type: none;">
-                          {% if studs.avatar %}
-                            <img src="{{ studs.avatar.url }}" class="img-circle" alt="User Image">
-                          {% else %}
-                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                                class="img-circle" alt="User Image">
-                                <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
-                          {% endif %}
+                          {% gravatar studs.email 75 %}
                           </a>
                           <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
                           <span class="users-list-date"><a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>

@@ -10,3 +10,4 @@ Pillow
 numpy
 django-chartjs
 sendgrid
+django-gravatar2

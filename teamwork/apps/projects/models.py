@@ -290,6 +290,10 @@ class Project(models.Model):
         max_length=20,
         unique=True)
 
+    project_image = models.TextField(
+        max_length=100,
+        default='http://i.imgur.com/5Z17VfH.png')
+
 
 
     # TODO:NEED TO SETUP M2M not proper

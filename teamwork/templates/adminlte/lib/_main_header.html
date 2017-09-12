@@ -51,26 +51,14 @@
                 </li>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        {% if user.profile.avatar %}
-                            <img class="user-image" src="{{ user.profile.avatar.url }}" alt="User Image">
-                        {% else %}
-                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=50&amp;d=mm"
-                        class="user-image" alt="User Image">
-                            <!-- <img class="user-image" src="/media/avatars/Greppy.jpg" alt="User Image"> -->
-                        {% endif %}
+                        <img src="{% avatar_url size=50 %}" class="user-image" alt="User Image">
                         {# <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span> #}
                         <span class="hidden-xs">Account</span>
                     </a>
                     <ul class="dropdown-menu">
                         {% block user_header %}
                         <li class="user-header">
-                            {% if user.profile.avatar %}
-                                <img class="img-circle" src="{{ user.profile.avatar.url }}" alt="User Image">
-                            {% else %}
-                            <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                            class="img-circle" alt="User Image">
-                                <!-- <img class="img-circle" src="/media/avatars/Greppy.jpg" alt="User Image"> -->
-                            {% endif %}
+                            <img src="{% avatar_url size=180 %}" class="img-circle" alt="User Image">
                             <p>
                                 {% firstof request.user.get_short_name request.user.get_username %}
                                 <small>Grepper since {{ request.user.date_joined }}</small>
