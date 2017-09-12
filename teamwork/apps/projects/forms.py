@@ -196,6 +196,7 @@ class EditProjectForm(forms.ModelForm):
         #  because it would change the URL associated with the project.
         # 'instance' in kwargs if there exists a project_id matching given slug.
         self.fields['slug'].widget = forms.HiddenInput()
+        self.fields['project_image'].validators.append(URLValidator)
 
         if 'instance' in kwargs and kwargs['instance']:
             self.fields['accepting'].initial = kwargs['instance'].avail_mem
@@ -248,6 +249,10 @@ class EditProjectForm(forms.ModelForm):
         min_value=0, max_value=10, label="Max Team Size",
         required=False)
 
+    project_image = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
+    max_length=100,
+    required=False)
+
     # lower_time_bound = forms.ChoiceField(
     #         label="Custom Lower Time Boundary for Scheduling",
     #         #Choices from Lower_Boundary_Choice
@@ -268,6 +273,13 @@ class EditProjectForm(forms.ModelForm):
             'content', 'slug','weigh_interest', 'weigh_know',
             'weigh_learn', 'teamSize'
         ]
+
+    def clean(self):
+        super(EditProjectForm, self).clean()
+        if not validate_url(self.cleaned_data.get('project_image')):
+            self._errors['project_image'] = self.error_class(['Invalid URL'])
+
+        return self.cleaned_data
 
 
 class ViewProjectForm(forms.ModelForm):

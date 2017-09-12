@@ -4,14 +4,14 @@
 {% for project in projects %}
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
-       
+
       <div class="box box-widget widget-user-2">
 
         <a href="{% url 'view_one_project' project.slug %}" style="none">
         <!-- Add the bg color to the header using any of the bg-* classes -->
         <div class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
           <div class="widget-user-image">
-            <img class="img-circle" src="http://www.ucsc.edu/images/thought-provoking/art-conversation-non-traditional.jpg" alt="User Avatar">
+            <img class="img-circle" src={{project.project_image}} alt="Project Image">
           </div>
           <!-- /.widget-user-image -->
           <h3 class="widget-user-username">{{project.title}}</h3>
