@@ -1,10 +1,8 @@
 
 
-
 {% for project in projects %}
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
-
       <div class="box box-widget widget-user-2">
 
         <a href="{% url 'view_one_project' project.slug %}" style="none">

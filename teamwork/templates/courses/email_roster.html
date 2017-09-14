@@ -7,6 +7,12 @@
 <script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
 
+<!-- {% block crumb %}
+<li><a href="{% url 'view_course' %}">Courses</a></li>
+<li><a href="{% url 'view_one_course' slug %}">{{ cur_course.name }}</a></li>
+<li><a href="">Email Roster</a></li>
+{% endblock crumb %} -->
+
 {% block content %}
 
 <div class="col-md-3">
@@ -45,7 +51,7 @@
                      {% endfor %}
              </ul>
            </div>
-           
+
             <!-- /.box-body -->
           </div>
           <!-- /.box -->

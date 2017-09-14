@@ -2,22 +2,13 @@
 {% load static %}
 {% load i18n %}
 
-{% block content %}
-<ol class="breadcrumb">
-    <li><a href="{% url 'index' %}">Home</a></li>
-    <li><a href="{% url 'view_course' %}">Courses</a></li>
-    <li>
-        <a href="{% url 'view_one_course' course.slug %}">
-            {{ course.name }}
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'update_course' course.slug %}">
-            Post update
-        </a>
-    </li>
-</ol>
+<!-- {% block crumb %}
+<li><a href="{% url 'view_course' %}">Courses</a></li>
+<li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+<li><a href="">Post Update</a></li>
+{% endblock crumb %} -->
 
+{% block content %}
 <div class="row">
     <div class="col-md-10">
         <form action="{% url 'update_course' course.slug %}" method="post"

@@ -423,10 +423,6 @@ def edit_course(request, slug):
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
 
-    print("HELLO")
-    print(tas)
-    print(students)
-
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
@@ -530,28 +526,30 @@ def edit_course(request, slug):
         return redirect(edit_course, slug)
 
     if request.method == 'POST':
+        print("POSTING")
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
         if form.is_valid():
+            print("FORM IS VALID")
             # edit the course object, omitting slug
             data = form.cleaned_data
             course.name = data.get('name')
             course.info = data.get('info')
             course.term = data.get('term')
             course.limit_creation = data.get('limit_creation')
-            # students = data.get('students')
             course.limit_weights = data.get('limit_weights')
             course.weigh_interest = data.get('weigh_interest') or 0
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
-
             course.limit_interest = data.get('limit_interest')
-            # course.lower_time_bound = data.get('lower_time_bound')
-            # course.upper_time_bound = data.get('upper_time_bound')
+
             course.save()
+        else:
+            print("FORM ERRORS: ", form.errors)
 
         return redirect(view_one_course, course.slug)
     else:
+        print("NOT POSTING: ", request.method)
         form = EditCourseForm(request.user.id, slug,  instance=course)
     return render(
             request, 'courses/edit_course.html',
@@ -722,7 +720,7 @@ def email_roster(request, slug):
 
     return render(request, 'courses/email_roster.html', {
         'slug':slug, 'form':form, 'count':count, 'students':students_in_course,
-        'addcode':addcode,
+        'addcode':addcode, 'cur_course':cur_course,
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
@@ -768,6 +766,7 @@ def upload_csv(request, slug):
     page_name = "Upload CSV File"
     page_description = "CSV Upload"
     title = "Upload CSV"
+    course = get_object_or_404(Course, slug=slug)
 
     recipients = []
 
@@ -791,6 +790,6 @@ def upload_csv(request, slug):
             print("form is invalid")
 
     return render(request, 'core/upload_csv.html', {
-        'slug':slug, 'form':form,
+        'slug':slug, 'form':form, 'course':course,
         'page_name':page_name, 'page_description':page_description,'title':title
     })

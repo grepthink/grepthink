@@ -170,12 +170,10 @@ class EditCourseForm(forms.ModelForm):
             self.fields['slug'].widget = forms.HiddenInput()
             self.fields['term'].widget = forms.HiddenInput()
         else:
-            self.fields['students'].widget = forms.HiddenInput()
             self.fields['limit_interest'].widget = forms.HiddenInput()
 
-        # get_sueruser_list
+        # get_superuser_list
         superuser = User.objects.filter(is_superuser=True)
-        self.fields['students'].queryset = students_in_course
         self.fields['name'].validators.append(ForbiddenNamesValidator)
 
     #course name field
@@ -212,15 +210,6 @@ class EditCourseForm(forms.ModelForm):
         #Field NOT Required
         required=False)
 
-    # #Students field
-    # students = forms.ModelMultipleChoiceField(
-    #     #Multiple Choice Selection
-    #     widget=forms.CheckboxSelectMultiple,
-    #     #From all user objects
-    #     queryset=User.objects.all().values('email'),
-    #     #Field NOT Required
-    #     required=False)
-
     #Field for only professor creating courses
     limit_creation = forms.BooleanField(
         #Initially field is false
@@ -253,7 +242,7 @@ class EditCourseForm(forms.ModelForm):
     #META CLASS
     class Meta:
         model = Course
-        fields = ['name', 'info', 'term', 'students', 'slug', 'limit_creation',
+        fields = ['name', 'info', 'term', 'slug', 'limit_creation',
                 'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
 
 

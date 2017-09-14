@@ -7,11 +7,10 @@
 {% endblock head %}
 
 {% block content %}
-<ol class="breadcrumb">
-    <li><a href="{% url 'index' %}">Home</a></li>
-    <li><a href="{% url 'view_course' %}">Courses</a></li>
-    <li><a href="{% url 'create_course' %}">Create a new course</a></li>
-</ol>
+
+<!-- {% block crumb %}
+<li><a href="{% url 'create_course' %}">Create Course</a></li>
+{% endblock crumb %} -->
 
 <div class="row">
     <form action="{% url 'create_course' %}" method="post" role="form"

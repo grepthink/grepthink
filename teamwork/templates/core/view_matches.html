@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 {% endblock stylesheets %}
 
+{% block crumb %}
+<li><a href="{% url 'view_matches' %}">My Matches</a></li>
+{% endblock crumb %}
+
 {% block content %}
 
 {% if not user.profile.isProf%}
@@ -57,7 +61,7 @@
                             </span>
                         </span>
                     </p>
-                   
+
                     <p>
                     <ol>
                         {% for match in p_match_tup.1 %}

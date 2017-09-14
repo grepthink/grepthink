@@ -2,12 +2,11 @@
 {% load static %}
 {% load i18n %}
 
+<!-- JAVASCRIPT BLOCK -->
 {% block javascript %}
 {{block.super}}
 <script src="{% static 'js/select2.full.min.js' %}"></script>
-
 <script type="text/javascript">
-
 $(document).ready(function() {
   $(".select2").select2({
     ajax: {
@@ -47,25 +46,27 @@ $(document).ready(function() {
   });
 });
 </script>
-
 {% endblock javascript %}
 
+<!-- LOAD CSS STYLESHEETS -->
 {% block stylesheets %}
   <!-- Select2 -->
   <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     {{block.super}}
   <link rel="stylesheet" href="{% static 'css/stats.css' %}">
   <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
-
-
 {% endblock stylesheets %}
 
+<!-- LOAD JS SCRIPT FILES -->
 {% block head %}
 <script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
 
+
 {% block content %}
-<ol class="breadcrumb">
+
+<!-- OLD BREADCRUMB -->
+<!-- <ol class="breadcrumb">
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
@@ -78,10 +79,16 @@ $(document).ready(function() {
             Edit course
         </a>
     </li>
-</ol>
+</ol> -->
 
+<!-- THIS FOLLOWING BREADCRUMB IS STILL BEING USED EVEN THOUGH COMMENTED, DOESN' WORK IF UNCOMMENTED -->
+<!-- {% block crumb %}
+<li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+<li><a href="{% url 'edit_course' course.slug %}">Edit Course</a></li>
+{% endblock crumb %} -->
 
 <div class="row">
+    <!-- BEGINNING OF FORM -->
     <form action="{% url 'edit_course' course.slug %}" method="post" role="form"
         class="clearfix" enctype="multipart/form-data">
         <div class="col-md-6">

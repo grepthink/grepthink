@@ -5,106 +5,11 @@
 
 {% block content %}
 
+<!-- BREADCRUMB -->
+<!-- {% block crumb %}
+<li><a href="{% url 'view_projects' %}">My Projects</a></li>
+{% endblock crumb %} -->
 
 {% include "projects/partial_project_box.html" with projects=projects %}
 
-
-{% comment %}
-
-<section class="projects">
-    <div class="row">
-      {% for project in projects %}
-
-            <div class="col-sm-6 col-md-4">
-
-                    {% if project.avail_mem %}
-                        {% if project.sponsor %}
-                            <div class="box box-solid box-warning"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% else %}
-                            <div class="box box-solid box-success"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% endif %}
-                    {% else %}
-                        {% if project.sponsor %}
-                            <div class="box box-solid box-warning"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% else %}
-                            <div class="box box-solid box-danger"
-                            onclick="window.location.href='{% url 'view_one_project' project.slug %}'">
-                        {% endif %}
-                    {% endif %}
-                    <div class="box-header">
-                        <h3 class="box-title" style="overflow: auto">{{ project.title }}</h3>
-                    </div>
-                    <div class="box-body">
-                        <p class="lead">
-                            {{ project.tagline }}
-                        </p>
-                        <p>
-                            <strong>Owner</strong>
-                            <span class="label label-success">
-                                {{ project.creator.email }}
-                            </span>
-                        </p>
-                        <p><strong>Members</strong>
-                            {% for mem in project.members.all %}
-                            {% if mem.username != null %}
-                            <span class="label label-primary">
-                                {{ mem.username }}
-                            </span>
-                            {% endif %}
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <strong>Accepting Members</strong>
-                            {% if project.avail_mem %}
-                                Yes
-                            {% else %}
-                                No
-                            {% endif %}
-                        </p>
-                        <p>
-                            <strong>Sponsored</strong>
-                            {% if project.sponsor %}
-                                Yes
-                            {% else %}
-                                No
-                            {% endif %}
-
-                        </p>
-                    </div>
-                    <div class="box-footer clearfix">
-                      {% if request.user == project.creator or request.user.profile.isGT %}
-                        <a href="{% url 'edit_project' project.slug %}">
-                            <button class="btn btn-success">
-                                <i class="fa fa-edit"></i>
-                                Edit
-                            </button>
-                        </a>
-                      {% endif %}
-                        <a href="{% url 'view_one_project' project.slug %}"
-                            class="pull-right">
-                            <button class="btn btn-info">
-                                <i class="fa fa-eye"></i>
-                                View
-                            </button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        {% empty %}
-        <div class="alert alert-warning" role="alert">
-            <i class="fa fa-warning"></i>
-            There are no projects yet. Go ahead and
-            <a href="{% url 'create_project' %}" class="alert-link">
-                create one now!
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-
-</section>
-{% endcomment %}
 {% endblock content %}
