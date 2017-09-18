@@ -406,14 +406,6 @@ def view_alerts(request):
     page_name = "Alerts"
     page_description = "Your notifications"
 
-    # Testing by injecting alerts every time
-    #extra = Alert()
-    #extra.sender = user
-    #extra.to = user
-    #extra.msg = "You viewed your alerts"
-    #extra.url = reverse('profile', args=[user.username])
-    #extra.save()
-
     unread = profile.unread_alerts()
     archive = profile.read_alerts()
 
@@ -445,6 +437,18 @@ def unread_alert(request, ident):
         alert.save()
     return redirect(view_alerts)
 
+@login_required
+def archive_alerts(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)    
+    unread = profile.unread_alerts()
+
+    for alert in unread:
+        if alert.to.id is user.id:
+            alert.read = True
+            alert.save()
+
+    return redirect(view_alerts)
 
 @login_required
 def delete_alert(request, ident):

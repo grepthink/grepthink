@@ -40,7 +40,7 @@
                         <li>
                             <ul class="menu">
                                 {% for alert in user.profile.unread_alerts %}
-                                <li><a>{{ alert.msg }}</a></li>
+                                <li><a href="{% url 'view_alerts' %}">{{ alert.msg }}</a></li>
                                 {% empty %}
                                 <li><i>There are no unread alerts</i></li>
                                 {% endfor %}

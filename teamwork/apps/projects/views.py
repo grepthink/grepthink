@@ -215,14 +215,35 @@ def view_one_project(request, slug):
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
 
 def request_join_project(request, slug):
-    print("EXECUTING")
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
     pending_members = project.pending_members.all()
 
     if request.user in project_members:
         # TODO: send an error
-        print("already in project")
+        print("already in project, button shouldn't appear")
+    elif request.user not in pending_members:
+        # user wants to join project
+        # add to pending members list of projects
+        project.pending_members.add(request.user)
+        project.save()
+
+        # notify user that their request has gone through successfully
+        messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
+
+        # send email to project owner
+        creator = project.creator
+        subject = "{0} has requested to join {1}".format(request.user, project.title)
+        # TODO: create link that goes directly to accept or deny
+        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
+        content = "{0}\n\n www.grepthink.com".format(content_text)
+        send_email(creator, "noreply@grepthink.com", subject, content)
+
+        # TODO: send alert to project members and/or PO
+
+        # TODO: would rather redirect to view_one_course!
+        return redirect(view_projects)
+
     elif request.user in pending_members:
         # Cancel Request to join
         # remove member from pending list
@@ -237,21 +258,6 @@ def request_join_project(request, slug):
             msg=request.user.username + " has revoked his request to join " + project.title,
             url=reverse('view_one_project',args=[project.slug]),
             )
-    else:
-        # user wants to join project
-        # add to pending members list of projects
-        project.pending_members.add(request.user)
-        project.save()
-
-        # send email to project owner
-        creator = project.creator
-        subject = "{0} has requested to join {1}".format(request.user, project.title)
-        # TODO: create link that goes directly to accept or deny
-        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
-        content = "{0}\n\n www.grepthink.com".format(content_text)
-        send_email(creator, "noreply@grepthink.com", subject, content)
-
-        # TODO: send alert to project members and/or PO
 
     return view_one_project(request, slug)
 

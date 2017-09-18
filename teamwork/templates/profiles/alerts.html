@@ -17,12 +17,20 @@
         <span class="label pull-right bg-blue">
             {{ unread|length }}
         </span>
+
+        <span class="pull-right" style="padding-right:25px">
+            <a href="{% url 'archive_alerts' %}" style="">
+                <button class="btn-xs btn-default">
+                    Archive All
+                </button>
+            </a>
+        </span>
     </div>
     <div class="panel-collapse collapse in" id="unread">
         <table class="table">
             <tbody>
                 <tr>
-                    <th style="width:100px">Date</th>
+                    <th style="width:15%">Date</th>
                     <th class="pull-left-container">Contents</th>
                     <th class="pull-right">Actions</th>
                 </tr>

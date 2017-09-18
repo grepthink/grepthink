@@ -30,130 +30,6 @@ from django.utils import timezone
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
 
-
-# from teamwork.apps.courses.models import Course
-# can't do this, would cause dependency loop :(
-
-# Generates add code
-def rand_code(size):
-    # Usees a random choice from lowercase, uppercase, and digits
-    return ''.join([
-        random.choice(string.ascii_letters + string.digits) for i in range(size)
-    ])
-
-# Converts a number into a weekday
-def dayofweek(number):
-    return {
-        9: "Sunday",
-        10: "Monday",
-        11: "Tuesday",
-        12: "Wednesday",
-        13: "Thursday",
-        14: "Friday",
-        15: "Saturday",
-    }.get(number, "Day that doesnt exist")
-
-def dayasday(day):
-    return {
-        "Sunday": '2017-04-09T',
-        "Monday": '2017-04-10T',
-        "Teusday": '2017-04-11T',
-        "Wednesday": '2017-04-12T',
-        "Thursday": '2017-04-13T',
-        "Friday": '2017-04-14T',
-        "Saturday": '2017-04-15T',
-    }.get(day, '2017-04-00T')
-
-# Given an array, creates a bitstring based on meeting times
-# def to_bits(day, l, h):
-def to_bits(day):
-    # Creates array of all 0's of length 48
-    bitstring = [False]*48
-    # Loops through each Event in array
-    for event in day:
-        # Start = double start hour (30 min intervals)
-        start = 2*event.start_time_hour
-        # End = double End hour (30 min intervals)
-        end = 2*event.end_time_hour
-
-        # SPECIAL CASE: Because 12a == 0, we manually set end to 47
-        if event.end_time_hour == 0:
-            end = 47
-
-
-        for i in range (start, end+1):
-            bitstring[i] = True
-        # If we ended in XX:30, block off next bit
-        if event.end_time_min == 30:
-            bitstring[end+1] = True
-
-
-    # Manually block off time bounds given by professor
-    for x in range(0, 16):
-        bitstring[x] = True
-    for x in range(44, 48):
-        bitstring[x] = True
-
-    return bitstring
-
-#given a bitstring, converts to array containing start and end time
-def from_bits(bitstring):
-    event_array = []
-    temp = 0
-    start_hour = 0
-    start_min = 0
-    end_hour = 0
-    end_minute = 0
-
-    i = 0
-    # For each index in bitstring
-    while i < len(bitstring):
-        # If current index is False (Free)
-        if bitstring[i] is False:
-            # If odd, start at xx:30
-            if i % 2 != 0:
-                start_min = 30
-            # Start hour is i/2
-            start_hour = floor(i/2)
-
-            # Loops until True (Busy)
-            temp = i
-            while bitstring[temp] == False:
-                # If next element is True (Busy), we are at end of time slot
-
-                # Getting out of range Here
-                # What to do if last element in array?
-                if temp == len(bitstring) - 1:
-                    # Update i
-                    i = temp
-                    # If odd, end at xx:30
-                    if i % 2 != 0:
-                        end_min = 30
-                    # End hour is i/2
-                    end_hour = floor(i/2)
-                    break
-
-                elif bitstring[temp + 1] == True:
-                    # Update i
-                    i = temp
-                    # If odd, end at xx:30
-                    if i % 2 != 0:
-                        end_min = 30
-                    # End hour is i/2
-                    end_hour = floor(i/2)
-                    break
-
-                # Increase temp
-                temp += 1
-
-            # Add event to array
-            event_array.append([start_hour, start_min, end_hour, end_min])
-
-        # Update iterator
-        i=i+1
-
-    return event_array
-
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
@@ -563,7 +439,6 @@ class Membership(models.Model):
     def __str__(self):
         return("%s: %s"%(self.user.username, self.project.title))
 
-
 class ProjectUpdate(models.Model):
     """
     ProjectUpdate objects are updates associated with a project
@@ -622,6 +497,126 @@ class ProjectChat(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.author.username, self.content)
+
+# Generates add code
+def rand_code(size):
+    # Usees a random choice from lowercase, uppercase, and digits
+    return ''.join([
+        random.choice(string.ascii_letters + string.digits) for i in range(size)
+    ])
+
+# Converts a number into a weekday
+def dayofweek(number):
+    return {
+        9: "Sunday",
+        10: "Monday",
+        11: "Tuesday",
+        12: "Wednesday",
+        13: "Thursday",
+        14: "Friday",
+        15: "Saturday",
+    }.get(number, "Day that doesnt exist")
+
+def dayasday(day):
+    return {
+        "Sunday": '2017-04-09T',
+        "Monday": '2017-04-10T',
+        "Teusday": '2017-04-11T',
+        "Wednesday": '2017-04-12T',
+        "Thursday": '2017-04-13T',
+        "Friday": '2017-04-14T',
+        "Saturday": '2017-04-15T',
+    }.get(day, '2017-04-00T')
+
+# Given an array, creates a bitstring based on meeting times
+# def to_bits(day, l, h):
+def to_bits(day):
+    # Creates array of all 0's of length 48
+    bitstring = [False]*48
+    # Loops through each Event in array
+    for event in day:
+        # Start = double start hour (30 min intervals)
+        start = 2*event.start_time_hour
+        # End = double End hour (30 min intervals)
+        end = 2*event.end_time_hour
+
+        # SPECIAL CASE: Because 12a == 0, we manually set end to 47
+        if event.end_time_hour == 0:
+            end = 47
+
+
+        for i in range (start, end+1):
+            bitstring[i] = True
+        # If we ended in XX:30, block off next bit
+        if event.end_time_min == 30:
+            bitstring[end+1] = True
+
+
+    # Manually block off time bounds given by professor
+    for x in range(0, 16):
+        bitstring[x] = True
+    for x in range(44, 48):
+        bitstring[x] = True
+
+    return bitstring
+
+#given a bitstring, converts to array containing start and end time
+def from_bits(bitstring):
+    event_array = []
+    temp = 0
+    start_hour = 0
+    start_min = 0
+    end_hour = 0
+    end_minute = 0
+
+    i = 0
+    # For each index in bitstring
+    while i < len(bitstring):
+        # If current index is False (Free)
+        if bitstring[i] is False:
+            # If odd, start at xx:30
+            if i % 2 != 0:
+                start_min = 30
+            # Start hour is i/2
+            start_hour = floor(i/2)
+
+            # Loops until True (Busy)
+            temp = i
+            while bitstring[temp] == False:
+                # If next element is True (Busy), we are at end of time slot
+
+                # Getting out of range Here
+                # What to do if last element in array?
+                if temp == len(bitstring) - 1:
+                    # Update i
+                    i = temp
+                    # If odd, end at xx:30
+                    if i % 2 != 0:
+                        end_min = 30
+                    # End hour is i/2
+                    end_hour = floor(i/2)
+                    break
+
+                elif bitstring[temp + 1] == True:
+                    # Update i
+                    i = temp
+                    # If odd, end at xx:30
+                    if i % 2 != 0:
+                        end_min = 30
+                    # End hour is i/2
+                    end_hour = floor(i/2)
+                    break
+
+                # Increase temp
+                temp += 1
+
+            # Add event to array
+            event_array.append([start_hour, start_min, end_hour, end_min])
+
+        # Update iterator
+        i=i+1
+
+    return event_array
 
 
 # project status: open/closed and number available
