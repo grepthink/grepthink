@@ -191,8 +191,13 @@ $(document).ready(function() {
                           </td>
                           <!-- remove from project -->
                           <td>
+                              {% if mem == user %}
+                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Leave Project
+                              </button>
+                              {% else %}
                               <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Remove from Project
                               </button>
+                              {% endif %}
                           </td>
                           </tr>
                           {% endfor %}

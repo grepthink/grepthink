@@ -468,7 +468,7 @@ def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     course = project.course.first()
     project_owner = project.creator.profile
-    members = project.members.all()
+    members = project.members.all()    
 
     # membas = project.members.all()
     # po_and_members = []
@@ -614,7 +614,7 @@ def edit_project(request, slug):
         form = EditProjectForm(request.user.id, instance=project)
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
-        'form': form, 'project': project})
+        'form': form, 'project': project, 'user':request.user})
 
 
 @login_required
