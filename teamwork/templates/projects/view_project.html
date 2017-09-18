@@ -88,7 +88,9 @@
             </li>
 
             <!-- COGWHEEL -->
+            {% if user in project.members.all %}
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
+            {% endif %}
 
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
 
@@ -347,10 +349,6 @@
                 {% endif %}
             </div>
 
-
-
-
-
             <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
             <style>
@@ -456,13 +454,6 @@
                   <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
-
-
-
-
-
-
-
 
 
 

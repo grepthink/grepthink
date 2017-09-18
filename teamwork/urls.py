@@ -136,7 +136,7 @@ urlpatterns = [
         url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
         url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
         url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
-        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert,
-                name="delete_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert, name="delete_alert"),
+        url(r'^alerts/readall/$', profile_views.archive_alerts, name="archive_alerts"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
