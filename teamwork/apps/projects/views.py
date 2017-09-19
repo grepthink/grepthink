@@ -15,6 +15,7 @@ from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
 
+from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
 from .models import *
 
@@ -468,7 +469,7 @@ def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     course = project.course.first()
     project_owner = project.creator.profile
-    members = project.members.all()    
+    members = project.members.all()
 
     # membas = project.members.all()
     # po_and_members = []
@@ -482,20 +483,23 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
+    print("request method: ", request.method)
+
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
         pass
-    elif not request.user == project.creator and request.user not in project.members.all():
+    elif not request.user == project.creator:
         #redirect them with a message
-        messages.info(request, 'Only Project Owner can edit project!')
-        return HttpResponseRedirect('/project/all')
+        messages.warning(request, 'Only the Project Owner can make changes to this project!')
+        return redirect(view_one_project, project.slug)
 
     if request.POST.get('delete_project'):
-        # ## Check that the current user is the project owner
-        # if not request.user.username == project.creator:
-        #     messages.info(request,'Only project owner can delete project.')
-        # else:
-        project.delete()
+        # Check that the current user is the project owner
+        if request.user == project.creator:
+            project.delete()
+        else:
+            messages.warning(request,'Only project owner can delete project.')
+
         return HttpResponseRedirect('/project/all')
 
     # Add a member to the project
@@ -540,8 +544,28 @@ def edit_project(request, slug):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Membership.objects.filter(user=f_user, project=project)
-        for mem_obj in to_delete:
-            mem_obj.delete()
+
+        remaining = Membership.objects.filter(project=project).exclude(user=f_user)
+
+        # check if they were the only member of the project
+        if len(members) == 1:
+            messages.warning(request,
+             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+        else:
+            # check if user that is being removed was Project Owner
+            if f_user == project.creator:
+                project.creator = remaining.first().user
+            # check if user that is being removed was Scrum Master
+            if f_user == project.scrum_master:
+                project.scrum_master = remaining.first().user
+
+            project.save()
+            messages.info(request, "{0} has been removed from the project".format(f_username))
+
+            # delete membership
+            for mem_obj in to_delete:
+                mem_obj.delete()
+
         return redirect(edit_project, slug)
 
 
@@ -549,8 +573,14 @@ def edit_project(request, slug):
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
         f_user = User.objects.get(username=f_username)
-        project.creator = f_user
-        project.save()
+
+        if request.user == project.creator:
+            project.creator = f_user
+            project.save()
+            messages.info(request, "{0} is now the Project Owner".format(f_username))
+        else:
+            messages.warning(request,'Only the current Project Owner can give away Project Ownership.')
+
         return redirect(edit_project, slug)
 
     # Transfer Scrum Master
@@ -559,6 +589,7 @@ def edit_project(request, slug):
         f_user = User.objects.get(username=f_username)
         project.scrum_master = f_user
         project.save()
+        messages.info(request, "{0} is now the Scrum Master".format(f_username))
         return redirect(edit_project, slug)
 
     # Add skills to the project
@@ -1133,3 +1164,43 @@ def reject_member(request, slug, uname):
             )
 
     return redirect(view_one_project, slug)
+
+@login_required
+def email_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    page_name = "Email Project"
+    page_description = "Emailing members of Project: %s"%(project.title)
+    title = "Email Project"
+
+    students_in_project = project.members.all()
+
+    count = len(students_in_project) or 0
+
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = EmailRosterForm(request.POST, request.FILES)
+        #if form is accepted
+        if form.is_valid():
+            #the courseID will be gotten from the form
+            data = form.cleaned_data
+            subject = data.get('subject')
+            content = data.get('content')
+
+            # attachment = request.FILES['attachment']
+            # if attachment:
+            #     handle_file(attachment)
+
+            send_email(students_in_project, request.user.email, subject, content)
+
+            return redirect('view_one_project', slug)
+        else:
+            # redirect to error
+            print("EmailRosterForm not valid")
+
+    return render(request, 'projects/email_project.html', {
+        'slug':slug, 'form':form, 'count':count, 'students':students_in_project,
+        'project':project,
+        'page_name':page_name, 'page_description':page_description,
+        'title':title
+    })
