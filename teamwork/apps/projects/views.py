@@ -482,20 +482,23 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
+    print("request method: ", request.method)
+
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
         pass
-    elif not request.user == project.creator and request.user not in project.members.all():
+    elif not request.user == project.creator:
         #redirect them with a message
-        messages.info(request, 'Only Project Owner can edit project!')
-        return HttpResponseRedirect('/project/all')
+        messages.warning(request, 'Only the Project Owner can make changes to this project!')
+        return redirect(view_one_project, project.slug)
 
     if request.POST.get('delete_project'):
-        # ## Check that the current user is the project owner
-        # if not request.user.username == project.creator:
-        #     messages.info(request,'Only project owner can delete project.')
-        # else:
-        project.delete()
+        # Check that the current user is the project owner
+        if request.user == project.creator:
+            project.delete()
+        else:
+            messages.warning(request,'Only project owner can delete project.')
+
         return HttpResponseRedirect('/project/all')
 
     # Add a member to the project
@@ -544,8 +547,8 @@ def edit_project(request, slug):
         remaining = Membership.objects.filter(project=project).exclude(user=f_user)
 
         # check if they were the only member of the project
-        if len(members) == 1:                        
-            messages.info(request,
+        if len(members) == 1:
+            messages.warning(request,
              "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
         else:
             # check if user that is being removed was Project Owner
@@ -556,6 +559,7 @@ def edit_project(request, slug):
                 project.scrum_master = remaining.first().user
 
             project.save()
+            messages.info(request, "{0} has been removed from the project".format(f_username))
 
             # delete membership
             for mem_obj in to_delete:
@@ -568,8 +572,14 @@ def edit_project(request, slug):
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
         f_user = User.objects.get(username=f_username)
-        project.creator = f_user
-        project.save()
+
+        if request.user == project.creator:
+            project.creator = f_user
+            project.save()
+            messages.info(request, "{0} is now the Project Owner".format(f_username))
+        else:
+            messages.warning(request,'Only the current Project Owner can give away Project Ownership.')
+
         return redirect(edit_project, slug)
 
     # Transfer Scrum Master
@@ -578,6 +588,7 @@ def edit_project(request, slug):
         f_user = User.objects.get(username=f_username)
         project.scrum_master = f_user
         project.save()
+        messages.info(request, "{0} is now the Scrum Master".format(f_username))
         return redirect(edit_project, slug)
 
     # Add skills to the project
