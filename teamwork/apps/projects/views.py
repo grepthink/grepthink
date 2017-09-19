@@ -468,7 +468,7 @@ def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     course = project.course.first()
     project_owner = project.creator.profile
-    members = project.members.all()    
+    members = project.members.all()
 
     # membas = project.members.all()
     # po_and_members = []
@@ -540,8 +540,27 @@ def edit_project(request, slug):
         f_username = request.POST.get('remove_user')
         f_user = User.objects.get(username=f_username)
         to_delete = Membership.objects.filter(user=f_user, project=project)
-        for mem_obj in to_delete:
-            mem_obj.delete()
+
+        remaining = Membership.objects.filter(project=project).exclude(user=f_user)
+
+        # check if they were the only member of the project
+        if len(members) == 1:                        
+            messages.info(request,
+             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+        else:
+            # check if user that is being removed was Project Owner
+            if f_user == project.creator:
+                project.creator = remaining.first().user
+            # check if user that is being removed was Scrum Master
+            if f_user == project.scrum_master:
+                project.scrum_master = remaining.first().user
+
+            project.save()
+
+            # delete membership
+            for mem_obj in to_delete:
+                mem_obj.delete()
+
         return redirect(edit_project, slug)
 
 
