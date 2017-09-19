@@ -693,8 +693,7 @@ def email_roster(request, slug):
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
 
-    form = EmailRosterForm()
-    print("REQUEST METHOD:", request.method)
+    form = EmailRosterForm()    
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
@@ -710,7 +709,6 @@ def email_roster(request, slug):
             # if attachment:
             #     handle_file(attachment)
 
-            print("send_email being called")
             send_email(students_in_course, request.user.email, subject, content)
 
             return redirect('view_one_course', slug)

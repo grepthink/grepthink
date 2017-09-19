@@ -88,10 +88,17 @@
             </li>
 
             <!-- COGWHEEL -->
-            {% if user in project.members.all %}
-            <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
-            {% endif %}
 
+            <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
+
+            <!-- EMAIL STUDENTS IN PROJECT -->
+            {% if request.user in staff %}
+            <li class="pull-right">
+            <a href="{% url 'email_project' project.slug %}">
+                Email Project Members
+            </a>
+            </li>
+            {% endif %}
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
 
             {% if not request.user in staff %}

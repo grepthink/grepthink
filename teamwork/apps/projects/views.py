@@ -15,6 +15,7 @@ from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
 
+from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
 from .models import *
 
@@ -1163,3 +1164,43 @@ def reject_member(request, slug, uname):
             )
 
     return redirect(view_one_project, slug)
+
+@login_required
+def email_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    page_name = "Email Project"
+    page_description = "Emailing members of Project: %s"%(project.title)
+    title = "Email Project"
+
+    students_in_project = project.members.all()
+
+    count = len(students_in_project) or 0
+
+    form = EmailRosterForm()
+    if request.method == 'POST':
+        # send the current user.id to filter out
+        form = EmailRosterForm(request.POST, request.FILES)
+        #if form is accepted
+        if form.is_valid():
+            #the courseID will be gotten from the form
+            data = form.cleaned_data
+            subject = data.get('subject')
+            content = data.get('content')
+
+            # attachment = request.FILES['attachment']
+            # if attachment:
+            #     handle_file(attachment)
+
+            send_email(students_in_project, request.user.email, subject, content)
+
+            return redirect('view_one_project', slug)
+        else:
+            # redirect to error
+            print("EmailRosterForm not valid")
+
+    return render(request, 'projects/email_project.html', {
+        'slug':slug, 'form':form, 'count':count, 'students':students_in_project,
+        'project':project,
+        'page_name':page_name, 'page_description':page_description,
+        'title':title
+    })
