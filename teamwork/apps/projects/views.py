@@ -14,6 +14,7 @@ from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
+from teamwork.apps.courses.views import view_one_course
 
 from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
@@ -239,11 +240,13 @@ def request_join_project(request, slug):
         content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
+        messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
         # TODO: send alert to project members and/or PO
 
-        # TODO: would rather redirect to view_one_course!
-        return redirect(view_projects)
+        course = project.course.first()
+
+        return redirect(view_one_course, course.slug)
 
     elif request.user in pending_members:
         # Cancel Request to join
@@ -1172,7 +1175,7 @@ def email_project(request, slug):
     page_description = "Emailing members of Project: %s"%(project.title)
     title = "Email Project"
 
-    students_in_project = project.members.all()
+    students_in_project = project.get_members()
 
     count = len(students_in_project) or 0
 
@@ -1192,6 +1195,7 @@ def email_project(request, slug):
             #     handle_file(attachment)
 
             send_email(students_in_project, request.user.email, subject, content)
+            messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
             return redirect('view_one_project', slug)
         else:

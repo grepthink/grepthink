@@ -263,6 +263,18 @@ class Project(models.Model):
 
         super(Project, self).save(*args, **kwargs)
 
+    """
+    Gets all students in a project and returns a list
+    """
+    def get_members(self):
+        temp = self.members.all()        
+        students = []
+
+        for stud in temp:
+            students.append(stud)
+
+        return students
+
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
     def generate_avail(self):
         event_list = []     # list of all events for each user

@@ -65,8 +65,9 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
     """
-    page_name = "View Course"
-    page_description = "View Course Information"
+    course = get_object_or_404(Course, slug=slug)
+    page_name = "%s"%(course.name)
+    page_description = "Course Overview"
     title = "%s"%(slug)
 
     if request.user.profile.isProf:
@@ -74,7 +75,6 @@ def view_one_course(request, slug):
     else:
         isProf = 0
 
-    course = get_object_or_404(Course, slug=slug)
     projects = projects_in_course(slug)
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
@@ -613,6 +613,7 @@ def update_course(request, slug):
             subject = "{0} has posted an update to {1}".format(request.user, course)
             content = "{0}\n\n www.grepthink.com".format(new_update.content)
             send_email(students_in_course, "noreply@grepthink.com", subject, content)
+            messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
             return redirect(view_one_course, course.slug)
     else:
@@ -693,13 +694,12 @@ def email_roster(request, slug):
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
 
-    form = EmailRosterForm()    
+    form = EmailRosterForm()
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
         #if form is accepted
         if form.is_valid():
-            print("form is valid")
             #the courseID will be gotten from the form
             data = form.cleaned_data
             subject = data.get('subject')
@@ -710,6 +710,7 @@ def email_roster(request, slug):
             #     handle_file(attachment)
 
             send_email(students_in_course, request.user.email, subject, content)
+            messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
             return redirect('view_one_course', slug)
         else:
@@ -748,6 +749,7 @@ def email_csv(request, slug):
 
             print("recipients in email_csv",recipients)
             send_email(recipients, request.user.email, subject, content)
+            messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
             return redirect('view_one_course', slug)
 

@@ -313,7 +313,7 @@ class Course(models.Model):
         return updates_by_date
 
     """
-    Gets all students in a course excluding professors
+    Gets all students in a course excluding professors and returns a list
     """
     def get_students(self):
         temp = Enrollment.objects.filter(course=self,role="student")
@@ -335,7 +335,7 @@ class Course(models.Model):
         for i in temp:
             tas.append(i.user)
 
-        return tas 
+        return tas
 
     """
     Gets ALL of the teaching staff
@@ -348,7 +348,7 @@ class Course(models.Model):
         for i in tas:
             staff.append(i)
 
-        return staff   
+        return staff
 
 
 
@@ -425,4 +425,3 @@ class CourseUpdate(models.Model):
             self.date_edit = datetime.datetime.now()
 
         super(CourseUpdate, self).save(*args, **kwargs)
-
