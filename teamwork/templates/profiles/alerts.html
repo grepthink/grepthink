@@ -44,6 +44,19 @@
                     </td>
                     <td class="pull-right">
                         <div class="btn btn-sm pull-right">
+                            {% if alert.alertType == "invitation" %}
+                            {# {% url 'add_member' alert.slug profile.user.username %} #}
+                            <a href="{% url 'add_member' alert.slug profile.user.username %}" style="">
+                                <button class="btn-xs btn-primary">
+                                    Accept
+                                </button>
+                            </a>
+                            <a href="{% url 'reject_member' alert.slug profile.user.username %}" style="">
+                                <button class="btn-xs btn-default">
+                                    Decline
+                                </button>
+                            </a>
+                            {% endif %}
                             <a href="{% url 'read_alert' alert.id %}"><i class="fa fa-eye"></i></a>
                         </div>
                     </td>

@@ -38,7 +38,7 @@ def send_email(recipients, gt_email, subject, content):
             for student in recipients:
                 student_email_list.append(Email(student.email))
     else:
-        print("bad response")
+        print("bad response ", type(recipients))
         return HttpResponseBadRequest()
 
     # Handle email sending
@@ -60,6 +60,7 @@ def send_email(recipients, gt_email, subject, content):
         p = Personalization()
         p.add_to(email)
         mail.add_personalization(p)
+
 
     # The following line was giving SSL Certificate errors.
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357

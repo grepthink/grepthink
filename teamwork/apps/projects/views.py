@@ -14,6 +14,8 @@ from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
+from teamwork.apps.courses.views import view_one_course
+from teamwork.apps.profiles.views import view_alerts
 
 from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
@@ -229,9 +231,6 @@ def request_join_project(request, slug):
         project.pending_members.add(request.user)
         project.save()
 
-        # notify user that their request has gone through successfully
-        messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
-
         # send email to project owner
         creator = project.creator
         subject = "{0} has requested to join {1}".format(request.user, project.title)
@@ -239,11 +238,14 @@ def request_join_project(request, slug):
         content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
+        # notify user that their request has gone through successfully
+        messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
 
         # TODO: send alert to project members and/or PO
 
-        # TODO: would rather redirect to view_one_course!
-        return redirect(view_projects)
+        course = project.course.first()
+
+        return redirect(view_one_course, course.slug)
 
     elif request.user in pending_members:
         # Cancel Request to join
@@ -483,7 +485,6 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
-    print("request method: ", request.method)
 
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
@@ -509,32 +510,57 @@ def edit_project(request, slug):
         # Get the members to add, as a list
         members = request.POST.getlist('members')
 
-        curr_members = Membership.objects.filter(project=project)
-
-        # Create membership objects for the newly added members
+        # send requests to members
         for uname in members:
             mem_to_add = User.objects.get(username=uname)
-            mem_courses = Course.get_my_courses(mem_to_add)
-            # Don't add a member if they already have membership in project
-            # Confirm that the member is a part of the course
-            # List comprehenshion: loops through this projects memberships in order
-            #   to check if mem_to_add is in the user field of a current membership.
-            if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
-                Membership.objects.create(
-                    user=mem_to_add, project=project, invite_reason='')
-                Alert.objects.create(
-                    sender=request.user,
-                    to=mem_to_add,
-                    msg="You were added to " + project.title,
-                    url=reverse('view_one_project',args=[project.slug]),
-                    )
-                # remove member from pending list if he/she was on it
-                pending_members = project.pending_members.all()
-                if mem_to_add in pending_members:
-                    for mem in pending_members:
-                        if mem == mem_to_add:
-                            project.pending_members.remove(mem)
-                            project.save()
+
+            # add user to pending invitations
+            project.pending_invitations.add(mem_to_add)
+            project.save()
+
+            # send user an alert
+            Alert.objects.create(
+                sender=request.user,
+                to=mem_to_add,
+                msg="You have been invited to join the Project: " + project.title,
+                url=reverse('view_one_project',args=[project.slug]),
+                alertType="invitation",
+                slug=project.slug
+                )
+
+            # send user an email
+            subject = "GrepThink Project Invitation: " + project.title
+            content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
+
+            send_email(mem_to_add, request.user.email, subject, content)
+            messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
+
+        # curr_members = Membership.objects.filter(project=project)
+        #
+        # # Create membership objects for the newly added members
+        # for uname in members:
+        #     mem_to_add = User.objects.get(username=uname)
+        #     mem_courses = Course.get_my_courses(mem_to_add)
+        #     # Don't add a member if they already have membership in project
+        #     # Confirm that the member is a part of the course
+        #     # List comprehenshion: loops through this projects memberships in order
+        #     #   to check if mem_to_add is in the user field of a current membership.
+        #     if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+        #         Membership.objects.create(
+        #             user=mem_to_add, project=project, invite_reason='')
+        #         Alert.objects.create(
+        #             sender=request.user,
+        #             to=mem_to_add,
+        #             msg="You were added to " + project.title,
+        #             url=reverse('view_one_project',args=[project.slug]),
+        #             )
+        #         # remove member from pending list if he/she was on it
+        #         pending_members = project.pending_members.all()
+        #         if mem_to_add in pending_members:
+        #             for mem in pending_members:
+        #                 if mem == mem_to_add:
+        #                     project.pending_members.remove(mem)
+        #                     project.save()
 
 
         return redirect(edit_project, slug)
@@ -1139,6 +1165,16 @@ def add_member(request, slug, uname):
                     project.pending_members.remove(mem)
                     project.save()
 
+    # taken from alert code
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    unread = profile.unread_alerts()
+    for alert in unread:
+        if alert.slug == project.slug:
+            if alert.to.id is user.id:
+                alert.read = True
+                alert.save()
+
     return redirect(view_one_project, slug)
 
 def reject_member(request, slug, uname):
@@ -1163,6 +1199,17 @@ def reject_member(request, slug, uname):
             url=reverse('view_one_project',args=[project.slug]),
             )
 
+    # taken from alert code
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    unread = profile.unread_alerts()
+    for alert in unread:
+        if alert.slug == project.slug:
+            if alert.to.id is user.id:
+                alert.read = True
+                alert.save()
+                return redirect(view_alerts)
+
     return redirect(view_one_project, slug)
 
 @login_required
@@ -1172,7 +1219,7 @@ def email_project(request, slug):
     page_description = "Emailing members of Project: %s"%(project.title)
     title = "Email Project"
 
-    students_in_project = project.members.all()
+    students_in_project = project.get_members()
 
     count = len(students_in_project) or 0
 
@@ -1192,6 +1239,7 @@ def email_project(request, slug):
             #     handle_file(attachment)
 
             send_email(students_in_project, request.user.email, subject, content)
+            messages.add_message(request, messages.SUCCESS, "Email Sent!")
 
             return redirect('view_one_project', slug)
         else:
