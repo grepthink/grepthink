@@ -274,30 +274,31 @@ def show_interest(request, slug):
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
     title = "Show Interest"
 
-
-    #if not enough projects or user is not professor
+    #if user is professor
     if user.profile.isProf:
         #redirect them with a message
         messages.info(request,'Professor cannot show interest')
         return HttpResponseRedirect('/course')
-    #if not enough projects or user is not professor
+
+    #if not enough projects
     if len(projects) == 0:
         #redirect them with a message
         messages.info(request,'No projects to show interest in!')
         return HttpResponseRedirect('/course')
+
+    # if course has disabled setting interest
     if cur_course.limit_interest:
         #redirect them with a message
         messages.info(request,'Can no longer show interest!')
         return HttpResponseRedirect('/course')
 
-
     # if current course not in users enrolled courses
-    if not cur_course in user_courses and course.creator != user:
+    if not cur_course in user_courses and cur_course.creator != user:
         messages.info(request,'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
 
 
-    # SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
+    # TODO: SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
 
     if request.method == 'POST':
         form = ShowInterestForm(request.user.id, request.POST, slug = slug)

@@ -139,6 +139,11 @@ class Project(models.Model):
         related_name='pending',
         default="")
 
+    pending_invitations = models.ManyToManyField(
+        User,
+        related_name='invitations',
+        default="")
+
     # TODO:
     # meeting_location
     # weekly_meeting_time with TA
@@ -267,7 +272,7 @@ class Project(models.Model):
     Gets all students in a project and returns a list
     """
     def get_members(self):
-        temp = self.members.all()        
+        temp = self.members.all()
         students = []
 
         for stud in temp:

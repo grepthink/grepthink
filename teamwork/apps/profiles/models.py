@@ -131,13 +131,18 @@ class Alert(models.Model):
 
     sender = models.ForeignKey(User, default=None, related_name="sender")
     to = models.ForeignKey(User, related_name="to")
-    date = models.DateTimeField(auto_now_add=True)
-    # type = models.CharField(max_length=20, default="null")
+    date = models.DateTimeField(auto_now_add=True)    
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
     url = models.CharField(max_length=500,default="")
-    # could be handy but pain in the ass at the moment
-    # alertType = models.CharField(max_length=30, default="")
+
+    # Slug is used to accept invitations
+    slug = models.CharField(
+        max_length=20,
+        default="")
+
+    # two alert types: basic and invitation
+    alertType = models.CharField(max_length=30, default="basic")
 
     def __str__(self):
         return str(self.sender) + " -> " + str(self.to) + " : " + str()
