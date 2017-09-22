@@ -825,23 +825,29 @@ def export_xls(request, slug):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
+    # PROJECT SECTION OF SPREADSHEET
     for proj in projects:
         row_num += 1
         members = proj.get_members()
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
         ws.write(row_num, 1, "TA Meeting:", font_style)
+        ws.write(row_num, 2, proj.ta_time, font_style)
         row_num += 1
         ws.write(row_num, 1, "Location:", font_style)
+        ws.write(row_num, 2, proj.ta_location, font_style)
+        row_num += 2
+        ws.write(row_num, 1, "Members:", font_style)
         for mem in members:
             row_num += 1
-            ws.write(row_num, 1, mem.email, font_style)
+            ws.write(row_num, 2, mem.email, font_style)
 
     students_num = Enrollment.objects.filter(course = course, role="student")
     projects_num = projects_in_course(course.slug)
     students_projects = []
     students_projects_not = []
 
+    # DISPLAY PROJECTLESS SECTION OF SPREADSHEET
     for i in projects_num:
         for j in i.members.all():
             if not j in students_projects:
@@ -852,12 +858,10 @@ def export_xls(request, slug):
             students_projects_not.append(i.user)
 
     row_num += 3
-    ws.write(row_num, 0, "Project-less", font_style)
+    ws.write(row_num, 0, "Students without a Project", font_style)
     for stud in students_projects_not:
         row_num += 1
         ws.write(row_num, 1, stud.email, font_style)
-
-
 
 
     # columns = ['Course', 'First name', 'Last name', 'Email address', ]
@@ -868,10 +872,7 @@ def export_xls(request, slug):
     # font_style = xlwt.XFStyle()
     #
     # rows = User.objects.all().values_list('username', 'first_name', 'last_name', 'email')
-    # for row in rows:
-    #     row_num += 1
-    #     for col_num in range(len(row)):
-    #         ws.write(row_num, col_num, row[col_num], font_style)
+
 
     wb.save(response)
     return response
