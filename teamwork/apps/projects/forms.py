@@ -278,7 +278,7 @@ class EditProjectForm(forms.ModelForm):
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor', 'ta_location', 'ta_time',
-            'content', 'slug','weigh_interest', 'weigh_know',
+            'content', 'slug','weigh_interest', 'weigh_know', 'project_image',
             'weigh_learn', 'teamSize'
         ]
 
