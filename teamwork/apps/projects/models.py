@@ -144,13 +144,25 @@ class Project(models.Model):
         related_name='invitations',
         default="")
 
-    # TODO:
-    # meeting_location
-    # weekly_meeting_time with TA
-    # scrum meeting
-    # github_link
-    # assigned_ta
+    # Location of Weekly meeting with TA
+    ta_location = models.TextField(
+        max_length=38,
+        default="")
 
+    # Time of Weekly meeting with TA
+    ta_time = models.TextField(
+        max_length=38,
+        default="")
+
+    # Project's Assigned Teacher Assistant
+    assigned_ta = models.ManyToManyField(
+        User,
+        related_name='assigned_ta',
+        default="")
+
+    # TODO:
+    # scrum_schedule
+    # github_link
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
@@ -184,10 +196,6 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-
-
-
-
     # the interest in a project can be access through back realtionship
     # project.interested.all()
     interest = models.ManyToManyField(

@@ -658,6 +658,8 @@ def edit_project(request, slug):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.project_image = form.cleaned_data.get('project_image')
+            project.ta_time = form.cleaned_data.get('ta_time')
+            project.ta_location = form.cleaned_data.get('ta_location')
             # Project content
             project.content = form.cleaned_data.get('content')
             project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
