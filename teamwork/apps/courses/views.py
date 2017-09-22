@@ -863,21 +863,5 @@ def export_xls(request, slug):
         row_num += 1
         ws.write(row_num, 1, stud.email, font_style)
 
-
-    # columns = ['Course', 'First name', 'Last name', 'Email address', ]
-    # for col_num in range(len(columns)):
-    #     ws.write(row_num, col_num, columns[col_num], font_style)
-    #
-    # # Sheet body, remaining rows
-    # font_style = xlwt.XFStyle()
-    #
-    # rows = User.objects.all().values_list('username', 'first_name', 'last_name', 'email')
-
-
     wb.save(response)
     return response
-
-    return render(request, 'courses/export.html', {
-        'course':course,
-        'page_name':page_name, 'page_description':page_description,'title':title
-    })
