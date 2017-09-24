@@ -152,6 +152,9 @@ def view_matches(request):
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
+
+
+
     else:
         my_projects = Project.get_my_projects(request.user)
         # my_created = Project.get_created_projects(request.user)
@@ -233,6 +236,7 @@ def matchstats(request, slug, project_match_list):
     interest_match = {}
 
     cur_project = get_object_or_404(Project, slug=slug)
+
     cur_desiredSkills = cur_project.desired_skills.all()
 
     # match_list is a str object so parse it for usernames...

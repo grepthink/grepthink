@@ -144,13 +144,25 @@ class Project(models.Model):
         related_name='invitations',
         default="")
 
-    # TODO:
-    # meeting_location
-    # weekly_meeting_time with TA
-    # scrum meeting
-    # github_link
-    # assigned_ta
+    # Location of Weekly meeting with TA
+    ta_location = models.TextField(
+        max_length=38,
+        default="")
 
+    # Time of Weekly meeting with TA
+    ta_time = models.TextField(
+        max_length=38,
+        default="")
+
+    # Project's Assigned Teacher Assistant
+    assigned_ta = models.ManyToManyField(
+        User,
+        related_name='assigned_ta',
+        default="")
+
+    # TODO:
+    # scrum_schedule
+    # github_link
 
     # Skills needed for the project.
     desired_skills = models.ManyToManyField(
@@ -184,10 +196,6 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-
-
-
-
     # the interest in a project can be access through back realtionship
     # project.interested.all()
     interest = models.ManyToManyField(
@@ -634,45 +642,3 @@ def from_bits(bitstring):
         i=i+1
 
     return event_array
-
-
-# project status: open/closed and number available
-# currently commented to avoid conflict with other files
-"""
-class Project_Status (Project):
-
-    #numerical ranges for number of members in a group
-    SIX = 6
-    FIVE = 5
-    FOUR = 4
-    THREE = 3
-    TWO = 2
-    ONE = 1
-    ZERO = 0
-    MAX_CHOICES = (
-        (SIX,'Six'),
-        (FIVE,'Five'),
-    )
-    NUM_CHOICES = (
-        (FIVE,'Five'),
-        (FOUR,'Four'),
-        (THREE,'Three'),
-        (TWO,'Two'),
-        (ONE,'One'),
-        (ZERO,'Zero'),
-    )
-
-    # max_cap = maximum number of members in a group
-    # current_mem = number of members currently in a group
-    # need_mem = number of members needed in a group
-    # avail_mem = determine open/closed status of a project
-    max_cap = models.PositiveIntegerField(choices = MAX_CHOICES)PositiveIntegerField
-    current_mem = models.PositiveIntegerField(default = 1, choices = NUM_CHOICES)
-    need_mem = models.PositiveIntegerField(choices = NUM_CHOICES)
-    avail_mem = models.BooleanField(default = True)
-
-    def remain(self):
-        self.need_mem = {{self.max_cap|sub: self.current_mem}}
-        self.avail_mem = case(when(self.need_mem = 0, then = False))
-
-"""

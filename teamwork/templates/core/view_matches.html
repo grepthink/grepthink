@@ -158,7 +158,7 @@
                                 {% endfor %}
                             </p>
                             {% if p_match_tup.1 %}
-                            <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a>
+                            <a href="{% url 'matchstats' p_match_tup.1.slug p_match_tup.2 %}"><p> MatchStats </p> </a>
                             {% endif %}
 
                             <p>The following students may work well with this project: </p>
@@ -196,14 +196,14 @@
                         </div>
                         <div class="panel-footer clearfix">
                           {% if request.user.username == p_match_tup.1.creator %}
-                            <a href="{% url 'edit_project' p_match_tup.0.slug %}">
+                            <a href="{% url 'edit_project' p_match_tup.1.slug %}">
                                 <button class="btn btn-success">
                                     <i class="fa fa-edit"></i>
                                     Edit
                                 </button>
                             </a>
                           {% endif %}
-                            <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
+                            <a href="{% url 'view_one_project' p_match_tup.1.slug %}"
                                 class="pull-right">
                                 <button class="btn btn-info">
                                     <i class="fa fa-eye"></i>

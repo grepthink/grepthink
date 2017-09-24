@@ -349,7 +349,7 @@
                         <a href="{% url 'edit_course' course.slug %}">
                         <button type="button" class="btn btn-default btn-block">
                                     <i class="fa fa-edit"></i>
-                                    Edit Course Info
+                                    Edit Course
 
                         </button>
                         </a>
@@ -394,6 +394,13 @@
                         <button type="button" class="btn btn-default btn-block">
                                     <i class="fa fa-users"></i>
                                     Auto-Generate Teams
+                        </button>
+                        </a>
+
+                        <a href="{% url 'export_xls' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-internet-explorer"></i>
+                                    Export course to Spreadsheet
                         </button>
                         </a>
 

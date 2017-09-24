@@ -254,24 +254,31 @@ class EditProjectForm(forms.ModelForm):
     required=False,
     help_text="Enter a valid Image URL, Example:https://i.imgur.com/example.jpg")
 
-    # lower_time_bound = forms.ChoiceField(
-    #         label="Custom Lower Time Boundary for Scheduling",
-    #         #Choices from Lower_Boundary_Choice
-    #         choices=Lower_Boundary_Choice,
-    #         #Field Required
-    #         required=False)
-    # upper_time_bound = forms.ChoiceField(
-    #         label="Custom Upper Time Boundary for Scheduling",
-    #         #Choices from Upper_Boundary_Choice
-    #         choices=Upper_Boundary_Choice,
-    #         #Field Required
-    #         required=False)
+    # Location of Weekly meeting with TA
+    ta_location = forms.CharField(
+        label="Location of Weekly Meeting w/ TA",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=50,
+        required=False)
+
+    # Time of Weekly meeting with TA
+    ta_time = forms.CharField(
+        label="Time of Weekly Meeting w/ TA",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=50,
+        required=False)
+
+    # # Project's Assigned Teacher Assistant
+    # assigned_ta = models.ManyToManyField(
+    #     User,
+    #     related_name='assigned_ta',
+    #     default="")
 
     class Meta:
         model = Project
         fields = [
-            'title', 'tagline', 'accepting', 'sponsor',
-            'content', 'slug','weigh_interest', 'weigh_know',
+            'title', 'tagline', 'accepting', 'sponsor', 'ta_location', 'ta_time',
+            'content', 'slug','weigh_interest', 'weigh_know', 'project_image',
             'weigh_learn', 'teamSize'
         ]
 

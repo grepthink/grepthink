@@ -27,15 +27,13 @@ from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
 
 urlpatterns = [
-        #/
+        # CORE AND SIGNUP
         url(r'^$', core_views.index, name='index'),
         url(r'^about/$', core_views.about, name='about'),
-        # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
-
         url(r'^search/$', core_views.search, name='search'),
 
-
+        # PROJECT
         # /create_project/
         url(r'^project/create/$', project_views.create_project, name='create_project'),
         # /view_projects/
@@ -62,18 +60,14 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', project_views.reject_member, name='reject_member'),
         # Email Members of Project
         url(r'^project/(?P<slug>[^/]+)/email_members/$', project_views.email_project, name='email_project'),
-        
-        # select members
+        # select members (select2)
         url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
-        # for select2
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
 
-        # kevin's addition select2
-        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
-
-
+        # COURSE
+        #
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
         # Join a course (valid for all courses)
@@ -108,25 +102,24 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/lock$',course_views.lock_interest, name='lock_interest'),
         # link to show interest page
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
+        # select2 for course
+        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        # Export Spreadsheet
+        url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
 
-        # /admin/
+        # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),
-        # /login/
         url(r'^login', auth_views.login, {'template_name': 'core/login.html'}, name='login'),
-        #logout
         url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
 
-        # /username/ - A users unique profile url
+        # PROFILE
         url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
-        # /username/edit - Edit user profile
         url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
-        # edit your schedule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
-        # save event for scehdule
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
 
-        # link to view matches for your projects
+        # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
         url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),

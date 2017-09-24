@@ -11,3 +11,4 @@ numpy
 django-chartjs
 sendgrid
 django-gravatar2
+xlwt

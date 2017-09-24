@@ -149,15 +149,8 @@ def view_one_project(request, slug):
 
     # ======================
     assigned_tsrs = course.assignments.filter(ass_type="tsr", closed=False)
-    # print("\n\n")
-    # print("Assignments")
-    # print(assigned_tsrs)
-    # print("\n\n")
+
     completed_tsrs = project.tsr.all()
-    # print("\n\n")
-    # print("Completed Tsrs")
-    # print(completed_tsrs)
-    # print("\n\n")
 
     averages = []
     tsr_tuple = {}
@@ -171,17 +164,8 @@ def view_one_project(request, slug):
             tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
 
     tsr_keys = tsr_tuple.keys()
-
-
-    # print("\n\n")
-    # print("Tsrs")
-    # print(tsr_tuple.items())
     tsr_items = tsr_tuple.items()
-    # print("\n\n")
-    # for compTsr in tsr_items:
-    #     for e in compTsr[1]:
-    #         print(e[1])
-    #     print("===")
+
 
     avg_tuple = {}
     for i in averages:
@@ -191,11 +175,6 @@ def view_one_project(request, slug):
             avg_tuple[i[0]] = int(i[1])
 
     avg_tuple2 = avg_tuple.items()
-
-    # for i in avg_tuple.items():
-    #     print(i[0])
-    #     print(i[1])
-    #     print("====")
 
     med = 100
     if len(members) > 0:
@@ -658,6 +637,8 @@ def edit_project(request, slug):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.project_image = form.cleaned_data.get('project_image')
+            project.ta_time = form.cleaned_data.get('ta_time')
+            project.ta_location = form.cleaned_data.get('ta_location')
             # Project content
             project.content = form.cleaned_data.get('content')
             project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
