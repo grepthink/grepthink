@@ -105,7 +105,7 @@ urlpatterns = [
         # select2 for course
         url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
         # select2 for course
-        url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
+        # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
         url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
         # Claim Projects (TA)

@@ -830,6 +830,9 @@ def export_xls(request, slug):
         members = proj.get_members()
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
+        ws.write(row_num, 1, "TA:", font_style)
+        ws.write(row_num, 2, proj.ta.email, font_style)
+        row_num += 1
         ws.write(row_num, 1, "TA Meeting:", font_style)
         ws.write(row_num, 2, proj.ta_time, font_style)
         row_num += 1
@@ -895,7 +898,7 @@ def claim_projects(request, slug):
         if request.POST.get('remove_claim'):
             proj_name = request.POST.get('remove_claim')
             to_delete = get_object_or_404(Project, title=proj_name)
-            to_delete.ta.remove(request.user)
+            to_delete.ta = course.creator
             to_delete.save()
             profile.claimed_projects.remove(to_delete)
             profile.save()
@@ -925,21 +928,3 @@ def claim_projects(request, slug):
             {'course': course, 'available':available, 'claimed_projects':claimed_projects,
             'page_name' : page_name, 'page_description': page_description, 'title': title
             })
-
-def select_projects(request, slug, title):
-    print("SELECTING")
-    if request.method == 'GET' and request.is_ajax():
-        # JSON prefers dictionaries over lists.
-        data = dict()
-        # A list in a dictionary, accessed in select2 ajax
-        data['items'] = []
-        q = request.GET.get('q')
-        if q is not None:
-            results = Project.objects.filter(
-                Q( title__contains = q ) ).order_by( 'title' )
-        for p in results:
-            data['items'].append({'id': p.title, 'text': p.title })
-        return JsonResponse(data)
-
-
-    return HttpResponse("Failure")
