@@ -58,10 +58,6 @@ def get_user_courses(self):
     # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
-        # myEnrollment = Enrollment.objects.filter(user=self)
-
-        # #Filters for courses based on enrollment
-        # my_courses = Course.objects.filter(enrollment__in=myEnrollment)
         my_courses = self.enrollment.all()
     return my_courses
 
@@ -267,12 +263,6 @@ class Course(models.Model):
         """
         Gets a list of course objects that the user is in
         """
-        # #Gets current user's enrollments
-        # myEnrollment = Enrollment.objects.filter(user=user)
-
-        # #Filters for courses based on enrollment
-        # my_courses = Course.objects.filter(enrollment__in=myEnrollment)
-
         my_courses = user.enrollment.all()
 
         return my_courses
