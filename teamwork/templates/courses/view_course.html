@@ -4,14 +4,74 @@
 {% load i18n %}
 {% load gravatar %}
 
+{# following 2 blocks copied from edit_project.html #}
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/select_projects/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for Projects to Claim",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
+});
+
+</script>
+
+{% endblock javascript %}
+
+
 {% block stylesheets %}
+<!-- Select2 -->
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 
   {{block.super}}
+<!-- for multi dropdowns and other goodies -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
+
 
 {% block crumb %}
     <li><a href="{% url 'view_course' %}">Courses</a></li>
@@ -30,7 +90,7 @@
     <div class="alert alert-success" role="alert">
         You are an instructor of this course.
     </div>
-    {% elif user.profile.isTa %}
+    {% elif user_role == "ta" %}
         <div class="alert alert-success" role="alert">
         You are a teaching assistant for this course
         </div>
@@ -84,6 +144,17 @@
                 <i class="fa fa-plus"></i>
             </a>
             </li>
+
+            {% if user_role == "ta" %}
+            <li class="pull-right">
+            <a href="{% url 'claim_projects' course.slug %}">
+            <!-- <a href="#claim" data-toggle="tab" aria-expanded="false"> -->
+                Claim Projects
+                <i class="fa fa-plus"></i>
+            </a>
+            </li>
+            {% endif %}
+
         </ul>
 
         <div class="tab-content" style="background-color: #ecf0f5">
@@ -91,7 +162,7 @@
             <div class="tab-pane active" id="projects">
                 {% if user != course.creator %}
                     {% if not user.profile.isGT %}
-                        {% if not user.profile.isTa %}
+                        {% if not user_role == "ta" %}
                         {% if not course.limit_interest %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
@@ -108,6 +179,7 @@
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
+
             <div class="tab-pane" id="assignments">
             <div class="col-md-6">
                 <div class="box box-success">
@@ -330,6 +402,54 @@
                   </div>
                   <!--/.box -->
                 </div>
+
+                </div>
+            </div>
+
+            <div class="tab-pane" id="claim">
+
+                <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        Select Multiple projects using Ctrl(PC) or Command(OSX)
+                    </p>
+                </div>
+
+                <div class="col-md-1">
+
+                    <select multiple="" size=10>
+                        {% for proj in course.projects.all %}
+                            <option>
+                                {{ proj.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button>Claim</button>
+                    <form method="get">
+                        {% csrf_token %}
+                        <input type="submit" value="claim" name="claimBtn" id="claimBtn" class="btn btn-success"/>
+                    </form>
+                </div>
+                    <div class="col-md-1">
+
+
+                      <select multiple="" size=10>
+                        <option>option 1</option>
+                        <option>option 2</option>
+                        <option>option 3</option>
+                        <option>option 4</option>
+                        <option>option 5</option>
+                      </select>
+                      <button>Remove</button>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <label>Claim Projects</label>
+                        <select class="form-control select2" id="claim_projects" name="claim_projects" multiple="multiple" style="width: 100%;">
+                        </select>
+                        </div>
+                    </div>
 
                 </div>
             </div>

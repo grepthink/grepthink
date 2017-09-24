@@ -407,9 +407,13 @@ def create_project(request):
             project.content = form.cleaned_data.get('content')
             project.scrum_master = request.user
 
+            # Course the project is in
+            in_course = form.cleaned_data.get('course')
+            # Init TA of Project ot be the Professor
+            project.ta = in_course.creator
             project.save()
 
-            in_course = form.cleaned_data.get('course')
+            # Add project to course
             in_course.projects.add(project)
 
             # Local list of memebers, used to create Membership objects

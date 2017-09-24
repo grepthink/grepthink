@@ -206,12 +206,6 @@ $(document).ready(function() {
             <h3 class="box-title">Add Skills</h3>
           </div>
 
-          {% if user.profile.isGT %}
-         {#  <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
-          {% else %}
-        {#  <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
-          {% endif %}
-            {% csrf_token %}
               <div class="box-body">
                 <div class="form-group">
                   <label>Add Known Skills</label>
@@ -224,9 +218,7 @@ $(document).ready(function() {
                   </select>
                 </div>
               </div>
-
-
-        {#    </form> #}
+        
         </div>
         </div>
         <div class="col-md-6 clearfix">
@@ -282,8 +274,6 @@ $(document).ready(function() {
            <div class="box-body">
                <div class="form-group">
                  Grepthink currently uses uses <b>Gravatar</b> for users' Avatars, sign up <a href="https://en.gravatar.com/">here</a> with the email you used to sign up for Grepthink
-                 <!-- <span class="pull-left">{{ form.avatar }}</span>
-                 <button class="btn btn-danger btn-sm pull-right" name="delete_avatar" value="delete_avatar"><i class="fa fa-trash"></i> Delete Avatar</button> -->
                </div>
            </div>
        </div>

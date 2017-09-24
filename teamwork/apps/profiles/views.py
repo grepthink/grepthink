@@ -440,7 +440,7 @@ def unread_alert(request, ident):
 @login_required
 def archive_alerts(request):
     user = request.user
-    profile = Profile.objects.get(user=user)    
+    profile = Profile.objects.get(user=user)
     unread = profile.unread_alerts()
 
     for alert in unread:

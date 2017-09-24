@@ -139,9 +139,17 @@ class Project(models.Model):
         related_name='pending',
         default="")
 
+    # Pending members that have been invited to join the project
     pending_invitations = models.ManyToManyField(
         User,
         related_name='invitations',
+        default="")
+
+    # TA assigned to the project
+    ta = models.ForeignKey(
+        User,
+        related_name='ta',
+        on_delete=models.CASCADE,
         default="")
 
     # Location of Weekly meeting with TA

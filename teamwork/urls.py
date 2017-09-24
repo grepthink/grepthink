@@ -104,8 +104,12 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         # select2 for course
         url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        # select2 for course
+        url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
         url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        # Claim Projects (TA)
+        url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),
