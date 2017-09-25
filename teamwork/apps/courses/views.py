@@ -125,7 +125,7 @@ def view_one_course(request, slug):
 
                         # verifies existing project doesnt exist within due date
                         if asg_ass_date < today <= asg_due_date:
-                            print("assignment already in progress")
+                            # print("assignment already in progress")
                             # need to change this redirect to display message
                             # so that user is aware their info wasn't stored
                             return redirect(view_one_course,course.slug)
@@ -310,7 +310,7 @@ def show_interest(request, slug):
             #Gets first choice, creates interest object for it
 
             # Clear all interest objects where user is current user and for this course, avoid duplicates
-            all_interests = Interest.objects.filter(project=projects)
+            all_interests = Interest.objects.filter(project_interest=projects)
             interests = user.interest.all()
             if interests is not None: interests.delete()
 
