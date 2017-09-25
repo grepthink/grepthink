@@ -41,6 +41,7 @@ class ProjectTestCase(TestCase):
                         title="Test Project 1",
                         creator=self.user1,
                         scrum_master=self.user2,
+                        ta=self.user2,
                         tagline="Test Tagline 1",
                         content="Test Content 1",
                         avail_mem=True,
