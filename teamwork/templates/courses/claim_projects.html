@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{# following 2 blocks copied from edit_project.html #}
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $('.multi_dropdown').select2();
+  // $(".select2").select2({
+  //   ajax: {
+  //     url: "ajax/select_projects/",
+  //     dataType: 'json',
+  //     delay: 250,
+  //     data: function (params) {
+  //       return {
+  //         q: params.term, // search term
+  //         page: params.page
+  //       };
+  //     },
+  //     processResults: function (data, params) {
+  //       // parse the results into the format expected by Select2
+  //       // since we are using custom formatting functions we do not need to
+  //       // alter the remote JSON data, except to indicate that infinite
+  //       // scrolling can be used
+  //       params.page = params.page || 1;
+  //
+  //       console.log(data);
+  //       console.log(params);
+  //
+  //       return {
+  //         results: data.items,
+  //         pagination: {
+  //           more: (params.page * 30) < data.total_count
+  //         }
+  //       };
+  //     },
+  //     cache: true
+  //   },
+  //   placeholder: "Search for Projects to Claim",
+  //   //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+  //   minimumInputLength: 1,
+  //   //templateResult: formatRepo, // omitted for brevity, see the source of this page
+  //   //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  // });
+
+});
+
+</script>
+
+{% endblock javascript %}
+
+
+{% block stylesheets %}
+<!-- Select2 -->
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+  {{block.super}}
+<!-- for multi dropdowns and other goodies -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+{% endblock stylesheets %}
+
+{% block head %}
+  <script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+  <form action="{% url 'claim_projects' course.slug %}" method="post" role="form">
+    {% csrf_token %}
+    {{ form.status }}
+    <div class="col-md-12 clearfix">
+        <div class="box box-primary">
+            <div class="box-body">
+    <div class="form-group">
+      <label>Claim Projects you are the TA of</label>
+      <select name="select_projects" class="form-control multi_dropdown" multiple="multiple" style="width: 100%;">
+          {% for proj in available %}
+          <option value="{{ proj.title }}">
+              {{ proj.title }}
+          </option>
+          {% endfor %}
+      </select>
+
+    </div>
+
+    {% for proj in claimed_projects %}
+        <button class="btn btn-danger btn-sm" name="remove_claim" value="{{ proj.title }}"><i class="fa fa-trash"></i> {{ proj.title }}
+        </button>
+    {% empty %}
+    <lead>No known skills to remove</lead>
+    {% endfor %}
+
+    <div class="box-footer">
+        <div class="pull-left">
+             <a href="{% url 'view_one_course' course.slug %}">
+                <button class="btn" type="button">
+                    Back
+                </button>
+            </a>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" name="SUBMIT">
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+  </form>
+
+{% endblock content %}

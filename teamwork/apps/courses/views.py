@@ -70,6 +70,9 @@ def view_one_course(request, slug):
     page_description = "Course Overview"
     title = "%s"%(slug)
 
+    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+
+    # TODO: get rid of isProf and use user_role
     if request.user.profile.isProf:
         isProf = 1
     else:
@@ -89,7 +92,6 @@ def view_one_course(request, slug):
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
-
 
     assignmentForm = AssignmentForm(request.user.id)
     if(request.method == 'POST'):
@@ -139,6 +141,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
+        'user_role':user_role,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
@@ -351,7 +354,6 @@ def show_interest(request, slug):
     else:
         form = ShowInterestForm(request.user.id, slug = slug)
 
-
     return render(
             request, 'courses/show_interest.html',
             {'form': form,'cur_course': cur_course, 'page_name' : page_name, 'page_description': page_description, 'title': title}
@@ -399,12 +401,11 @@ def create_course(request):
             students = data.get('students')
             # save this object
             course.save()
-            # add creator as a member of the course w/ specific role
+
+            # add enrollment object for professor
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course,role="professor")
 
-            # we dont have to save again because we do not touch the project object
-            # we are doing behind the scenes stuff (waves hand)
             return redirect(upload_csv, course.slug)
     else:
         form = CreateCourseForm(request.user.id)
@@ -502,7 +503,7 @@ def edit_course(request, slug):
                 Alert.objects.create(
                     sender=request.user,
                     to=mem_to_add,
-                    msg="You were added to: " + course.name + "as a TA",
+                    msg="You were added to: " + course.name + " as a TA",
                     url=reverse('view_one_course',args=[course.slug]),
                     )
 
@@ -527,11 +528,9 @@ def edit_course(request, slug):
         return redirect(edit_course, slug)
 
     if request.method == 'POST':
-        print("POSTING")
         # send the current user.id to filter out
         form = EditCourseForm(request.user.id, slug, request.POST, request.FILES)
         if form.is_valid():
-            print("FORM IS VALID")
             # edit the course object, omitting slug
             data = form.cleaned_data
             course.name = data.get('name')
@@ -827,9 +826,12 @@ def export_xls(request, slug):
 
     # PROJECT SECTION OF SPREADSHEET
     for proj in projects:
-        row_num += 1
+        row_num += 2
         members = proj.get_members()
         ws.write(row_num, 0, proj.title, font_style)
+        row_num += 1
+        ws.write(row_num, 1, "TA:", font_style)
+        ws.write(row_num, 2, proj.ta.email, font_style)
         row_num += 1
         ws.write(row_num, 1, "TA Meeting:", font_style)
         ws.write(row_num, 2, proj.ta_time, font_style)
@@ -865,3 +867,64 @@ def export_xls(request, slug):
 
     wb.save(response)
     return response
+
+@login_required
+def claim_projects(request, slug):
+    page_name = "Claim Projects"
+    page_description = "Select the projects that you are assigned to"
+    title = "Claim Projects"
+    course = get_object_or_404(Course, slug=slug)
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    projects = course.projects.all()
+    claimed_projects = profile.claimed_projects.all()
+    filtered = profile.claimed_projects.filter(course=course)
+
+    print("claimed: ", claimed_projects)
+    print("filter: ", filtered)
+
+    available = []
+    for proj in projects:
+        found = False
+        for p in claimed_projects:
+            if (proj == p):
+                found = True
+        if not found:
+            available.append(proj)
+
+    if request.method == 'POST':
+        print("we are posting")
+
+        if request.POST.get('remove_claim'):
+            proj_name = request.POST.get('remove_claim')
+            to_delete = get_object_or_404(Project, title=proj_name)
+            to_delete.ta = course.creator
+            to_delete.save()
+            profile.claimed_projects.remove(to_delete)
+            profile.save()
+
+            return redirect(view_one_course, course.slug)
+
+        if request.POST.get('select_projects'):
+            to_claim = request.POST.getlist('select_projects')
+
+            # manally search for project object with the same title
+            to_claim_projects = []
+            for proj in projects:
+                for title in to_claim:
+                    if proj.title == title:
+                        to_add = get_object_or_404(Project, title=title)
+                        to_claim_projects.append(to_add)
+
+            for p in to_claim_projects:
+                p.ta = request.user
+                p.save()
+                profile.claimed_projects.add(p)
+                profile.save()
+
+            return redirect(view_one_course, course.slug)
+
+    return render(request, 'courses/claim_projects.html',
+            {'course': course, 'available':available, 'claimed_projects':claimed_projects,
+            'page_name' : page_name, 'page_description': page_description, 'title': title
+            })

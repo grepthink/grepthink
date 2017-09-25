@@ -493,3 +493,32 @@ class AssignmentForm(forms.ModelForm):
         }
 
         fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
+
+
+class ClaimProjectsForm(forms.Form):
+    """
+    Form used for TA's to select their projects
+    """
+
+    def __init__(self, slug, *args, **kwargs):
+        super(ClaimProjectsForm, self).__init__(*args, **kwargs)
+        course = Course.objects.get(slug=slug)
+        course_projects = course.projects.all()
+
+        if len(course_projects) > 1:
+            self.fields['all_projects'].choices = course_projects
+            self.fields['all_projects'].widget = forms.SelectMultiple
+
+    all_projects = forms.ChoiceField(
+            label="All Projects",
+            required=False
+    )
+
+    claimed_projects = forms.ChoiceField(
+            label="Claimed Projects",
+            required=False
+    )
+
+    class Meta:
+        model = Course
+        fields = ['all_projects', 'claimed_projects']

@@ -15,7 +15,6 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.
@@ -131,7 +130,7 @@ class Alert(models.Model):
 
     sender = models.ForeignKey(User, default=None, related_name="sender")
     to = models.ForeignKey(User, related_name="to")
-    date = models.DateTimeField(auto_now_add=True)    
+    date = models.DateTimeField(auto_now_add=True)
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
     url = models.CharField(max_length=500,default="")
@@ -204,8 +203,12 @@ class Profile(models.Model):
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 
+    claimed_projects = models.ManyToManyField('projects.Project', related_name="claimed_projects", default="")
+
     isProf = models.BooleanField(default=False)
     isGT = models.BooleanField(default=False)
+
+    # don't believe this is used anywhere 9/24
     isTa = models.BooleanField(default=False)
 
     def __str__(self):

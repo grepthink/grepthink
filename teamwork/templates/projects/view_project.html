@@ -152,6 +152,14 @@
                             </span>
                         </a>
                     </p>
+                    <p>
+                        <strong>Teacher Assistant</strong>
+                        <a href="{% url 'profile' project.ta.username %}">
+                            <span class="label label-info">
+                                {{ project.ta.email }}
+                            </span>
+                        </a>
+                    </p>
                     <p><strong>Members</strong>
                         {% for mem in project.members.all %}
                         {% if mem.username != null %}
