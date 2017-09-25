@@ -826,7 +826,7 @@ def export_xls(request, slug):
 
     # PROJECT SECTION OF SPREADSHEET
     for proj in projects:
-        row_num += 1
+        row_num += 2
         members = proj.get_members()
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
