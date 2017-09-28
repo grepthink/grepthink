@@ -68,7 +68,6 @@
 
                         <!-- Menu Footer-->
                         {% block menu_footer %}
-                        <div class="box-body no-padding">
                          <ul class="nav nav-pills nav-stacked">
                                 <li><a href="{% url 'profile' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-user"></i>Profile</a></li>
@@ -87,7 +86,7 @@
                          <ul class="nav nav-pills nav-stacked">
                                 <li><a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
                          </ul>
-                       </div>
+
                        {% comment %}
                         <li class="user-footer">
                             <div class="pull-left">
