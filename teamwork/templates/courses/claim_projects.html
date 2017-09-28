@@ -11,43 +11,6 @@
 
 $(document).ready(function() {
   $('.multi_dropdown').select2();
-  // $(".select2").select2({
-  //   ajax: {
-  //     url: "ajax/select_projects/",
-  //     dataType: 'json',
-  //     delay: 250,
-  //     data: function (params) {
-  //       return {
-  //         q: params.term, // search term
-  //         page: params.page
-  //       };
-  //     },
-  //     processResults: function (data, params) {
-  //       // parse the results into the format expected by Select2
-  //       // since we are using custom formatting functions we do not need to
-  //       // alter the remote JSON data, except to indicate that infinite
-  //       // scrolling can be used
-  //       params.page = params.page || 1;
-  //
-  //       console.log(data);
-  //       console.log(params);
-  //
-  //       return {
-  //         results: data.items,
-  //         pagination: {
-  //           more: (params.page * 30) < data.total_count
-  //         }
-  //       };
-  //     },
-  //     cache: true
-  //   },
-  //   placeholder: "Search for Projects to Claim",
-  //   //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-  //   minimumInputLength: 1,
-  //   //templateResult: formatRepo, // omitted for brevity, see the source of this page
-  //   //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-  // });
-
 });
 
 </script>
@@ -83,7 +46,7 @@ $(document).ready(function() {
         <div class="box box-primary">
             <div class="box-body">
     <div class="form-group">
-      <label>Claim Projects you are the TA of</label>
+      <label>I am a TA for the following projects:</label>
       <select name="select_projects" class="form-control multi_dropdown" multiple="multiple" style="width: 100%;">
           {% for proj in available %}
           <option value="{{ proj.title }}">
@@ -94,12 +57,16 @@ $(document).ready(function() {
 
     </div>
 
+    <div class="form-group">
+
     {% for proj in claimed_projects %}
         <button class="btn btn-danger btn-sm" name="remove_claim" value="{{ proj.title }}"><i class="fa fa-trash"></i> {{ proj.title }}
         </button>
     {% empty %}
     <lead>No known skills to remove</lead>
     {% endfor %}
+
+    </div>
 
     <div class="box-footer">
         <div class="pull-left">

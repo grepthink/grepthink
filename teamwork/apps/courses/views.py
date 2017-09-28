@@ -439,6 +439,7 @@ def edit_course(request, slug):
         members = request.POST.getlist('members')
         enrollments = Enrollment.objects.filter(course=course)
         students = course.students.all()
+        added = False
 
         # Create membership objects for the newly added members
         for uname in members:
@@ -458,12 +459,18 @@ def edit_course(request, slug):
                         msg="You were added to: " + course.name,
                         url=reverse('view_one_course',args=[course.slug]),
                         )
+                    added = True
+        if added:
+            messages.add_message(request, messages.SUCCESS, "Successfully added member(s) to course.")
+        else:
+            messages.add_message(request, messages.SUCCESS, "Failed to successfully add member(s) to course.")
 
-        return redirect(edit_course, slug)
+        # return redirect(edit_course, slug)
 
     # Remove a user from the course
     if request.POST.get('remove_user'):
         members = request.POST.getlist('remove_user')
+        removed = False
 
         for mem in members:
             f_user = User.objects.get(username=mem)
@@ -477,8 +484,13 @@ def edit_course(request, slug):
                     url=reverse('view_one_course',args=[course.slug]),
                     )
                 mem_obj.delete()
+                removed = True
+        if removed:
+            messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
+        else:
+            messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
 
-        return redirect(edit_course, slug)
+        # return redirect(edit_course, slug)
 
     # Add a TA
     if request.POST.get('ta'):
@@ -507,9 +519,9 @@ def edit_course(request, slug):
                     url=reverse('view_one_course',args=[course.slug]),
                     )
 
-        return redirect(edit_course, slug)
+        messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
 
-
+        # return redirect(edit_course, slug)
 
     # Remove a ta from the course
     if request.POST.get('remove_ta'):
@@ -525,7 +537,10 @@ def edit_course(request, slug):
                 url=reverse('view_one_course',args=[course.slug]),
                 )
             mem_obj.delete()
-        return redirect(edit_course, slug)
+
+        messages.add_message(request, messages.SUCCESS, "Removed TA from Course.")
+
+        # return redirect(edit_course, slug)
 
     if request.method == 'POST':
         # send the current user.id to filter out
@@ -542,15 +557,14 @@ def edit_course(request, slug):
             course.weigh_know = data.get('weigh_know') or 0
             course.weigh_learn = data.get('weigh_learn') or 0
             course.limit_interest = data.get('limit_interest')
-
             course.save()
         else:
             print("FORM ERRORS: ", form.errors)
 
         return redirect(view_one_course, course.slug)
     else:
-        print("NOT POSTING: ", request.method)
         form = EditCourseForm(request.user.id, slug,  instance=course)
+
     return render(
             request, 'courses/edit_course.html',
             {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
@@ -880,13 +894,10 @@ def claim_projects(request, slug):
     claimed_projects = profile.claimed_projects.all()
     filtered = profile.claimed_projects.filter(course=course)
 
-    print("claimed: ", claimed_projects)
-    print("filter: ", filtered)
-
     available = []
     for proj in projects:
         found = False
-        for p in claimed_projects:
+        for p in filtered:
             if (proj == p):
                 found = True
         if not found:
@@ -902,6 +913,7 @@ def claim_projects(request, slug):
             to_delete.save()
             profile.claimed_projects.remove(to_delete)
             profile.save()
+            messages.add_message(request, messages.SUCCESS, "Project's TA Fields updated.")
 
             return redirect(view_one_course, course.slug)
 
@@ -921,7 +933,7 @@ def claim_projects(request, slug):
                 p.save()
                 profile.claimed_projects.add(p)
                 profile.save()
-
+            messages.add_message(request, messages.SUCCESS, "Project's TA Fields updated.")
             return redirect(view_one_course, course.slug)
 
     return render(request, 'courses/claim_projects.html',

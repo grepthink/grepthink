@@ -456,18 +456,10 @@ def edit_project(request, slug):
     project_owner = project.creator.profile
     members = project.members.all()
 
-    # membas = project.members.all()
-    # po_and_members = []
-    # # commented for now, needs work
-    # # po_and_members.append(project.creator)
-    # for i in membas:
-    #     po_and_members.append(i)
-
     # Populate page info with edit project title/name
     page_name = "Edit Project"
     page_description = "Make changes to " + project.title
     title = "Edit Project"
-
 
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
@@ -492,31 +484,43 @@ def edit_project(request, slug):
         this_course = Course.objects.get(projects=project)
         # Get the members to add, as a list
         members = request.POST.getlist('members')
-
+        # current members of the project
+        curr_members = Membership.objects.filter(project=project)
+        added = False
         # send requests to members
         for uname in members:
             mem_to_add = User.objects.get(username=uname)
+            mem_courses = Course.get_my_courses(mem_to_add)
+            # Don't add a member if they already have membership in project
+            # Confirm that the member is a part of the course
+            # List comprehenshion: loops through this projects memberships in order
+            #   to check if mem_to_add is in the user field of a current membership.
+            if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+                # add user to pending invitations
+                project.pending_invitations.add(mem_to_add)
+                project.save()
 
-            # add user to pending invitations
-            project.pending_invitations.add(mem_to_add)
-            project.save()
+                # send user an alert
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You have been invited to join the Project: " + project.title,
+                    url=reverse('view_one_project',args=[project.slug]),
+                    alertType="invitation",
+                    slug=project.slug
+                    )
 
-            # send user an alert
-            Alert.objects.create(
-                sender=request.user,
-                to=mem_to_add,
-                msg="You have been invited to join the Project: " + project.title,
-                url=reverse('view_one_project',args=[project.slug]),
-                alertType="invitation",
-                slug=project.slug
-                )
+                # send user an email
+                subject = "GrepThink Project Invitation: " + project.title
+                content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
 
-            # send user an email
-            subject = "GrepThink Project Invitation: " + project.title
-            content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
+                send_email(mem_to_add, request.user.email, subject, content)
+                added = True
 
-            send_email(mem_to_add, request.user.email, subject, content)
+        if added:
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
+        else:
+            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project")
 
         # curr_members = Membership.objects.filter(project=project)
         #
