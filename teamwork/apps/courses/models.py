@@ -134,6 +134,12 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
+
+    # Physical location of the course, ie building name/number
+    location = models.CharField(
+        max_length=200,
+        default="")
+
     # Slug for course, string
     slug = models.CharField(
         # with max length 20
