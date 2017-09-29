@@ -70,6 +70,9 @@ def view_one_course(request, slug):
     page_description = "Course Overview"
     title = "%s"%(slug)
 
+    # Pushing this down
+    # To see if
+    # it's actually being pushed to heroku
     if not request.user.profile.isGT:
         user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
     else:
