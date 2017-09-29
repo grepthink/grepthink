@@ -157,10 +157,13 @@ def view_one_project(request, slug):
     for i in assigned_tsrs:
         averages = []
         avg = 0
+        #print(len(completed_tsrs))
         for j in completed_tsrs:
+            print("Evaluatee: %s"%j.evaluatee)
             avg = avg + j.percent_contribution
-            avg = avg / len(completed_tsrs)
+            #avg = avg / len(completed_tsrs)
             averages.append((j.evaluatee, avg))
+            #print("%d\n\n"%avg)
             tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
 
     tsr_keys = tsr_tuple.keys()
@@ -875,6 +878,7 @@ def view_tsr(request, slug):
             avg=0
             if(len(tsr_single)!=0):
                 for tsr_obj in tsr_single:
+                    print("\n\n%d\n\n"%tsr_obj.percent_contribution)
                     avg=avg+tsr_obj.percent_contribution
                 avg=avg/len(tsr_single)
             tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
