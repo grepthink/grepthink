@@ -70,7 +70,10 @@ def view_one_course(request, slug):
     page_description = "Course Overview"
     title = "%s"%(slug)
 
-    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
 
     # TODO: get rid of isProf and use user_role
     if request.user.profile.isProf:
