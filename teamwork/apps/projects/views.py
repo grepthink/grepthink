@@ -161,7 +161,7 @@ def view_one_project(request, slug):
         for j in completed_tsrs:
             print("Evaluatee: %s"%j.evaluatee)
             avg = avg + j.percent_contribution
-            #avg = avg / len(completed_tsrs)
+            avg = avg / len(completed_tsrs)
             averages.append((j.evaluatee, avg))
             #print("%d\n\n"%avg)
             tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
