@@ -123,7 +123,7 @@ class Course(models.Model):
     # imma change this back to test migrations
     info = models.CharField(
         # with max length 300
-        max_length=400,
+        max_length=300,
         # default as "There is no Course Description"
         default="There is no Course Description")
     # Term, string
