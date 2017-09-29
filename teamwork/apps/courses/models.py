@@ -120,6 +120,7 @@ class Course(models.Model):
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     # Course info, string
+    # imma change this back to test migrations
     info = models.CharField(
         # with max length 300
         max_length=400,
