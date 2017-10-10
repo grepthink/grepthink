@@ -141,14 +141,14 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator.email }}
+                            {{ project.creator.username }}
                         </span></a>
                     </p>
                     <p>
                         <strong>Scrum Master</strong>
                         <a href="{% url 'profile' project.scrum_master.username %}">
                             <span class="label label-info">
-                                {{ project.scrum_master.email }}
+                                {{ project.scrum_master.username }}
                             </span>
                         </a>
                     </p>
@@ -156,7 +156,7 @@
                         <strong>Teacher Assistant</strong>
                         <a href="{% url 'profile' project.ta.username %}">
                             <span class="label label-info">
-                                {{ project.ta.email }}
+                                {{ project.ta.username }}
                             </span>
                         </a>
                     </p>
@@ -165,7 +165,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                            {{ mem.email }}
+                            {{ mem.username }}
                         </span>
                         </a>
                         {% endif %}

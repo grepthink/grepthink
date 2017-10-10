@@ -467,7 +467,7 @@ def edit_project(request, slug):
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
         pass
-    elif not request.user == project.creator:
+    elif not request.user  in project.members.all():
         #redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
