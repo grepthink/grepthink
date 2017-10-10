@@ -240,7 +240,7 @@ def request_join_project(request, slug):
         Alert.objects.create(
             sender=request.user,
             to=project.creator,
-            msg=request.user.username + " has revoked his request to join " + project.title,
+            msg=request.user.username + " has revoked there request to join " + project.title,
             url=reverse('view_one_project',args=[project.slug]),
             )
 
