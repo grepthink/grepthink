@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'about' %}"> FAQ </a></li>
+
+{% endblock crumb %}
+
+
+{% block content %}
+
+<div class="content body">
+
+
+  <!-- ============================================================= -->
+
+  <section id="faq">
+    {# <h2 class="page-header"><a href="#faq">FAQ</a></h2> #}
+    <h3>What is GrepThink?</h3>
+    <p class="lead">GrepThink facilitates team formation for the purpose of developing and collaborating on group projects in an educational environment.</p>
+
+    <h3>How does it work?</h3>
+    <p class="lead">The platform allows professors to create private and organized spaces for students to post project ideas and join existing projects.</p>
+    <p class="lead">Using user profiles, GrepThink will match students with other member of their class based on technical skills, schedule, prior coursework, project ideas, and interests.</p>
+
+    <h3>What's the motivation?</h3>
+    <p class="lead">Traditional team forming for group projects is a haphazard process that puts stress on individuals and leads to disjoint groups.</p>
+
+    <p class="lead">By matching students based on their profiles and project goals, GroupThink will help create groups that work and learn better together.</p>
+
+    <p class="lead">GrepThink is also a reaction to the faculty to student ratio at UCSC. Many classes now have to rely on group projects to make grading possible. This can be a great learning experience but can be a hurdle for many students that struggle to find a group they fit into.</p>
+
+    <h3>How is this different than other products like Doodle, Piazza, or Canvas?</h3>
+    <p class="lead">Current tools used for group projects (i.e. Google Sheets, Piazza Forms) are unorganized and lack functionality.</p>
+  </section>
+
+
+</div>
+
+
+
+{% endblock content %}

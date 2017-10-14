@@ -1,0 +1,69 @@
+# Travis build configuration for teamwork-project
+#
+# Originally adapted from Travis CI Examples [1].
+#
+# References:
+# [1] https://docs.travis-ci.com/user/languages/python/#Examples
+# [2] https://gist.github.com/ndarville/3625246
+# [3] https://github.com/ndarville/pony-forum/blob/master/.travis.yml
+# [4] https://docs.travis-ci.com/user/environment-variables/#Global-Variables
+# [5] https://docs.travis-ci.com/user/languages/python/#Testing-Against-Multiple-Versions-of-Dependencies-(e.g.-Django-or-Flask)
+
+language: python
+python:
+  # - "2.6"
+  # - "2.7"
+  # - "3.2"
+  # - "3.3"
+  # - "3.4"
+  # - "3.5"
+  # - "3.5-dev" # 3.5 development branch
+  - "3.6"
+  # - "3.6-dev" # 3.6 development branch
+  # - "3.7-dev" # 3.7 development branch
+  # - "nightly" # currently points to 3.7-dev
+
+services: postgresql
+
+# Set global [4] env variables used in settings.py and
+# set matrix env variables to run multiple builds with
+# different configurations.
+env:
+  global:
+    # Note that DATABASE_URL is not set here, see settings.py
+    - DEBUG=True
+    - SECRET_KEY=s3cr3tk3y
+  matrix:
+    # Test against multiple Django versions [5].
+    - DJANGO_VERSION="1.10.5"
+    - DJANGO_VERSION="1.11"
+
+
+# Install dependencies
+install:
+  # Install different Django version on each build [5].
+  - pip install -q Django==$DJANGO_VERSION
+  - pip install coverage
+  - pip install flake8
+  - pip install coveralls
+  - pip install -r requirements.txt
+
+before_script:
+  # Create a test database, adapted from [2] and [3].
+  - psql -c "CREATE DATABASE travisdb;" -U postgres
+  # @TODO: (andgates) Is Django Version actually being set?
+  - python manage.py --version
+  # Perform initial migrations
+  - python manage.py makemigrations auth core profiles projects courses
+  - python manage.py migrate
+
+# Run unit tests
+script:
+  # Flake8 to enforce style, too many errrors to think about rn.
+#  - flake8
+  # How about lets just fail the build if someone forgot a print statement...
+  - flake8 --select=T003
+  # Use coverage to run unit tests. Only report on files from this directory.
+  - coverage run --source='.' manage.py test
+after_success:
+  - coveralls

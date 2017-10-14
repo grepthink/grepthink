@@ -1,0 +1,74 @@
+
+{% extends "adminlte/login.html" %}
+
+{# Hard coded title because title and site_title not sent to login since auth_views is used #}
+{% block title %}
+{{ title|default:_('Signup') }} | {{ site_title|default:_('GrepThink') }}
+{% endblock title %}
+
+{% block content %}
+
+{% block logo %}
+
+<div class="login-logo">
+    <a href="{% block logo_href %}/{% endblock %}">
+        {% block logo_text %} <b>Grep</b>Think {% endblock logo_text %}
+    </a>
+</div>
+{% endblock logo %}
+
+{% block form %}
+
+{% block login_form %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                &times;
+                </button>
+                {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+  <div class="signup">
+    <form action="{% url 'signup' %}" method="post" role="form">
+      {% csrf_token %}
+      {% for field in form.visible_fields %}
+        <div class="form-group{% if field.errors %} has-error{% endif %}">
+          <label for="{{ field.label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <span class="help-block">{{ field.help_text|safe }}</span>
+          {% endif %}
+          {% for error in field.errors %}
+            <label class="control-label">{{ error }}</label>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+  </div>
+
+
+
+        <div class="row">
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'about' %}" class="btn btn-link">Frequently Asked Questions</a>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign up</button>
+        </div>
+        <!-- /.col -->
+      </div>
+
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    </form>
+{% endblock login_form %}
+
+{% endblock form %}
+
+{% endblock content %}

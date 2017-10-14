@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+<!-- {% block crumb %}
+<li><a href="{% url 'view_course' %}">Courses</a></li>
+<li><a href="{% url 'view_one_course' slug %}">{{ course.name }}</a></li>
+<li><a href="">Upload CSV</a></li>
+{% endblock crumb %} -->
+
+{% block content %}
+
+<form action="" method="post" role="form"
+    class="clearfix" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.status }}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+        {% if field.label == 'Students' %}
+            <div style="max-height: 200px; overflow-y: scroll;">
+                {{ field }}
+            </div>
+        {% else %}
+            {{ field }}
+        {% endif %}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="pull-left">
+        <a href="{% url 'view_one_course' slug %}">
+           <button class="btn btn-default" type="button">
+               Skip
+           </button>
+       </a>
+    </div>
+    <div class="pull-right">
+        <button class="btn btn-success" type="submit" name="SUBMIT">
+            Continue
+        </button>
+    </div>
+</form>
+{% endblock content %}
