@@ -199,6 +199,40 @@ def view_one_project(request, slug):
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
 
+def leave_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    members = project.members.all()
+    pending_members = project.pending_members.all()
+    f_user = request.user
+    to_delete = Membership.objects.filter(user=f_user, project=project)
+
+    remaining = Membership.objects.filter(project=project).exclude(user=f_user)
+
+
+    if (f_user not in members):
+        messages.warning(request, "You cannot leave a project you are not a member of!")
+        HttpResponseRedirect('project/all')
+    # check if they were the only member of the project
+    elif len(members) == 1:
+        messages.warning(request,
+         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+    else:
+        # check if user that is being removed was Project Owner
+        if f_user == project.creator:
+            project.creator = remaining.first().user
+        # check if user that is being removed was Scrum Master
+        if f_user == project.scrum_master:
+            project.scrum_master = remaining.first().user
+
+        project.save()
+        messages.info(request, "You have left {0}".format(project))
+
+        # delete membership
+        for mem_obj in to_delete:
+            mem_obj.delete()
+
+    return redirect(view_projects)
+
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
