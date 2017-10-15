@@ -67,7 +67,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'app77834587@heroku.com'
 EMAIL_HOST_PASSWORD = 'uxbxqvi53352'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = Grepthink Team <initial_email@grepthink.com>
+DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 #For Testing, comment out for production
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
