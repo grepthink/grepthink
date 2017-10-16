@@ -19,6 +19,7 @@
     <div class="col-md-10">
         <section class="courses" clearfix>
 
+            {% if request.user.profile.isProf %}
             <div class="small-box bg-green" style="border-radius: 10px">
               <div class="inner">
                 <h3>Create a new Course</h3>
@@ -29,7 +30,8 @@
               <a href="{% url 'create_course' %}" class="small-box-footer" style="border-radius: 10px">
                 Create <i class="fa fa-arrow-circle-right"></i>
               </a>
-          </div>
+            </div>
+            {% endif %}
 
             {% for course in courses %}
 

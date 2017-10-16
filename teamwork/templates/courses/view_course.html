@@ -59,6 +59,7 @@ $(document).ready(function() {
 {% block stylesheets %}
 <!-- Select2 -->
 <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
   {{block.super}}
 <!-- for multi dropdowns and other goodies -->
@@ -122,7 +123,7 @@ $(document).ready(function() {
                 </a>
             </li>
 
-            {% if user == course.creator or user.profile.isGT or user.profile.isTa %}
+            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create New Assignment
@@ -336,7 +337,7 @@ $(document).ready(function() {
                       <h3 class="box-title">Instructors</h3>
 
                       <div class="box-tools pull-right">
-                        <span class="label label-info">1</span>
+                        <span class="label label-info">{{ staff|length }}</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
                       </div>
@@ -369,9 +370,16 @@ $(document).ready(function() {
                   <div class="box box-info">
                     <div class="box-header with-border">
                       <h3 class="box-title">Students</h3>
-
                       <div class="box-tools pull-right">
-                        <span class="label label-danger">{{ students|length }}</span>
+                        <span class="tooltip2"><span class="label label-info">{{ students|length }}</span>
+                           <span class="tooltiptext2">Total Members of the class
+                           </span>
+                        </span>
+
+                        <span class="tooltip2"><span class="label label-danger">{{ available|length }}</span>
+                             <span class="tooltiptext2">Members in <span class="label label-danger"> </span> are not in a group
+                             </span>
+                         </span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
                       </div>
@@ -382,13 +390,18 @@ $(document).ready(function() {
 
                         {% for studs in students %}
                         {% if studs.username != null %}
-                        <a href="{% url 'profile' studs.username %}">
-                        <li style="list-style-type: none;">
-                          {% gravatar studs.email 75 %}
-                          </a>
-                          <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
-                          <span class="users-list-date"><a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
-                        </li>
+                            <a href="{% url 'profile' studs.username %}">
+                            <li style="list-style-type: none;">
+                              {% gravatar studs.email 75 %}
+                              </a>
+                              <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
+                              {% if studs in available %}
+                              <span class="label label-danger" >
+                              {% else %}
+                              <span class="label label-default" >
+                              {% endif %}
+                              <a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
+                            </li>
                         {% endif %}
                         {% empty %}
                         <p>There are no students enrolled in this course</p>
@@ -457,7 +470,7 @@ $(document).ready(function() {
             </div>
 
 
-            {% if user == course.creator  or user.profile.isGT or user.profile.isTa%}
+            {% if user == course.creator  or user.profile.isGT or user_role == "ta"%}
             <div class="tab-pane" id="admin">
 
 
