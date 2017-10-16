@@ -90,7 +90,6 @@ def view_one_course(request, slug):
     staff = course.get_staff()
     asgs = list(course.assignments.all())
 
-
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
@@ -265,6 +264,37 @@ def join_course(request):
     else:
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+
+
+# @login_required
+# def drop_course(request, slug):
+#     #Does not delete projects
+#     user = request.user
+#     # current course
+#     cur_course = get_object_or_404(Course, slug=slug)
+#     # projects in current course
+#     projects = projects_in_course(slug)
+#     # enrollment objects containing current user
+#     user_courses = request.user.enrollment.all()
+#     # current courses user is in
+#     to_delete = Enrollment.objects.filter(user=user, course=cur_course, role="student")
+#
+#     for mem_obj in to_delete:
+#         Alert.objects.create(
+#             sender=request.user,
+#             to=f_user,
+#             msg="You were removed from: " + course.name,
+#             url=reverse('view_one_course',args=[course.slug]),
+#             )
+#         mem_obj.delete()
+#         removed = True
+#
+#     if removed:
+#         messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
+#     else:
+#         messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
+#
+#     return HttpResponseRedirect('/course')
 
 @login_required
 def show_interest(request, slug):
