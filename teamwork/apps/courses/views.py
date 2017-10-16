@@ -90,6 +90,16 @@ def view_one_course(request, slug):
     staff = course.get_staff()
     asgs = list(course.assignments.all())
 
+
+    available=[]
+    for i in students:
+        available.append(i.user)
+
+    for i in projects:
+        for j in i.members.all():
+            if j in available:
+                available.remove(j)
+
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
@@ -143,7 +153,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'user_role':user_role,
+        'user_role':user_role, 'available':available,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
