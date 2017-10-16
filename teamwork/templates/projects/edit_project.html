@@ -131,10 +131,28 @@ $(document).ready(function() {
                     {% endfor %}
                 </div>
                 {% endfor %}
+            </div>
+
+
+            <div class="box-body">
+            <div class="form-group">
+                <div class="pull-left">
+                <a href="{% url 'view_one_project' project.slug %}">
+                    <button class="btn btn-default" type="button">
+                        Cancel
+                    </button>
+                </a>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-success" type="submit" name="SUBMIT">
+                        Save changes
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
     </div>
-</div>
-</div>
- 
+
  <div class="col-md-6">
      <div class="box box-primary">
          <div class="box-header with-border">
@@ -246,20 +264,6 @@ $(document).ready(function() {
 
               </div>
           </div>
-  </div>
-  <div class="col-md-12 clearfix">
-      <div class="pull-left">
-      <a href="{% url 'view_one_project' project.slug %}">
-          <button class="btn btn-default" type="button">
-              Cancel
-          </button>
-      </a>
-      </div>
-      <div class="pull-right">
-          <button class="btn btn-success" type="submit" name="SUBMIT">
-              Save changes
-          </button>
-      </div>
   </div>
 
 </form>

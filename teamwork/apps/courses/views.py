@@ -70,7 +70,10 @@ def view_one_course(request, slug):
     page_description = "Course Overview"
     title = "%s"%(slug)
 
-    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
 
     # TODO: get rid of isProf and use user_role
     if request.user.profile.isProf:
@@ -87,6 +90,15 @@ def view_one_course(request, slug):
     staff = course.get_staff()
     asgs = list(course.assignments.all())
 
+
+    available=[]
+    for i in students:
+        available.append(i.user)
+
+    for i in projects:
+        for j in i.members.all():
+            if j in available:
+                available.remove(j)
 
     student_users = []
     for stud in students:
@@ -141,7 +153,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'user_role':user_role,
+        'user_role':user_role, 'available':available,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
@@ -152,10 +164,16 @@ def view_stats(request, slug):
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
 
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=cur_course).first().role
+    else:
+        user_role = 'GT'
+
     if request.user.profile.isGT:
         pass
     elif not request.user.profile.isProf:
-        return redirect(view_one_course, cur_course.slug)
+        if not user_role=="ta":
+            return redirect(view_one_course, cur_course.slug)
 
     students_num = Enrollment.objects.filter(course = cur_course, role="student")
     projects_num = projects_in_course(slug)
@@ -256,6 +274,37 @@ def join_course(request):
     else:
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
+
+
+# @login_required
+# def drop_course(request, slug):
+#     #Does not delete projects
+#     user = request.user
+#     # current course
+#     cur_course = get_object_or_404(Course, slug=slug)
+#     # projects in current course
+#     projects = projects_in_course(slug)
+#     # enrollment objects containing current user
+#     user_courses = request.user.enrollment.all()
+#     # current courses user is in
+#     to_delete = Enrollment.objects.filter(user=user, course=cur_course, role="student")
+#
+#     for mem_obj in to_delete:
+#         Alert.objects.create(
+#             sender=request.user,
+#             to=f_user,
+#             msg="You were removed from: " + course.name,
+#             url=reverse('view_one_course',args=[course.slug]),
+#             )
+#         mem_obj.delete()
+#         removed = True
+#
+#     if removed:
+#         messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
+#     else:
+#         messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
+#
+#     return HttpResponseRedirect('/course')
 
 @login_required
 def show_interest(request, slug):
@@ -424,14 +473,16 @@ def edit_course(request, slug):
 
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
+    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
 
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
     elif not request.user.profile.isProf or not course.creator == request.user:
-        #redirect them to the /course directory with message
-        messages.info(request,'Only Professor can edit course')
-        return HttpResponseRedirect('/course')
+        if not user_role=="ta":
+            #redirect them to the /course directory with message
+            messages.info(request,'Only Professor can edit course')
+            return HttpResponseRedirect('/course')
 
     # Add a member to the course
     if request.POST.get('members'):
