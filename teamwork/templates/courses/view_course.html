@@ -122,7 +122,7 @@ $(document).ready(function() {
                 </a>
             </li>
 
-            {% if user == course.creator or user.profile.isGT or user.profile.isTa %}
+            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create New Assignment
@@ -457,7 +457,7 @@ $(document).ready(function() {
             </div>
 
 
-            {% if user == course.creator  or user.profile.isGT or user.profile.isTa%}
+            {% if user == course.creator  or user.profile.isGT or user_role == "ta"%}
             <div class="tab-pane" id="admin">
 
 

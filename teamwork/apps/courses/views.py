@@ -155,10 +155,16 @@ def view_stats(request, slug):
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
 
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=cur_course).first().role
+    else:
+        user_role = 'GT'
+
     if request.user.profile.isGT:
         pass
     elif not request.user.profile.isProf:
-        return redirect(view_one_course, cur_course.slug)
+        if not user_role=="ta":
+            return redirect(view_one_course, cur_course.slug)
 
     students_num = Enrollment.objects.filter(course = cur_course, role="student")
     projects_num = projects_in_course(slug)
@@ -427,14 +433,16 @@ def edit_course(request, slug):
 
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
+    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
 
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
     elif not request.user.profile.isProf or not course.creator == request.user:
-        #redirect them to the /course directory with message
-        messages.info(request,'Only Professor can edit course')
-        return HttpResponseRedirect('/course')
+        if not user_role=="ta":
+            #redirect them to the /course directory with message
+            messages.info(request,'Only Professor can edit course')
+            return HttpResponseRedirect('/course')
 
     # Add a member to the course
     if request.POST.get('members'):
