@@ -157,10 +157,13 @@ def view_one_project(request, slug):
     for i in assigned_tsrs:
         averages = []
         avg = 0
+        #print(len(completed_tsrs))
         for j in completed_tsrs:
+            print("Evaluatee: %s"%j.evaluatee)
             avg = avg + j.percent_contribution
             avg = avg / len(completed_tsrs)
             averages.append((j.evaluatee, avg))
+            #print("%d\n\n"%avg)
             tsr_tuple.setdefault(j.evaluatee, []).append([avg, j, i])
 
     tsr_keys = tsr_tuple.keys()
@@ -195,6 +198,40 @@ def view_one_project(request, slug):
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
+
+def leave_project(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    members = project.members.all()
+    pending_members = project.pending_members.all()
+    f_user = request.user
+    to_delete = Membership.objects.filter(user=f_user, project=project)
+
+    remaining = Membership.objects.filter(project=project).exclude(user=f_user)
+
+
+    if (f_user not in members):
+        messages.warning(request, "You cannot leave a project you are not a member of!")
+        HttpResponseRedirect('project/all')
+    # check if they were the only member of the project
+    elif len(members) == 1:
+        messages.warning(request,
+         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+    else:
+        # check if user that is being removed was Project Owner
+        if f_user == project.creator:
+            project.creator = remaining.first().user
+        # check if user that is being removed was Scrum Master
+        if f_user == project.scrum_master:
+            project.scrum_master = remaining.first().user
+
+        project.save()
+        messages.info(request, "You have left {0}".format(project))
+
+        # delete membership
+        for mem_obj in to_delete:
+            mem_obj.delete()
+
+    return redirect(view_projects)
 
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -237,7 +274,7 @@ def request_join_project(request, slug):
         Alert.objects.create(
             sender=request.user,
             to=project.creator,
-            msg=request.user.username + " has revoked his request to join " + project.title,
+            msg=request.user.username + " has revoked there request to join " + project.title,
             url=reverse('view_one_project',args=[project.slug]),
             )
 
@@ -464,7 +501,7 @@ def edit_project(request, slug):
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
         pass
-    elif not request.user == project.creator:
+    elif not request.user  in project.members.all():
         #redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
@@ -875,6 +912,7 @@ def view_tsr(request, slug):
             avg=0
             if(len(tsr_single)!=0):
                 for tsr_obj in tsr_single:
+                    print("\n\n%d\n\n"%tsr_obj.percent_contribution)
                     avg=avg+tsr_obj.percent_contribution
                 avg=avg/len(tsr_single)
             tsr_dict.append({'email':member.email, 'tsr' :tsr_single,

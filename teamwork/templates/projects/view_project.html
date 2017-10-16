@@ -84,6 +84,11 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
+
+                    {% if user in project_members %}
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'leave_project' project.slug %}">Leave Project </a></li>
+                    {% endif %}
+
                 </ul>
             </li>
 
@@ -141,14 +146,14 @@
                         {% else %}
                             <span class="label label-info">
                         {% endif %}
-                            {{ project.creator.email }}
+                            {{ project.creator.username }}
                         </span></a>
                     </p>
                     <p>
                         <strong>Scrum Master</strong>
                         <a href="{% url 'profile' project.scrum_master.username %}">
                             <span class="label label-info">
-                                {{ project.scrum_master.email }}
+                                {{ project.scrum_master.username }}
                             </span>
                         </a>
                     </p>
@@ -156,7 +161,7 @@
                         <strong>Teacher Assistant</strong>
                         <a href="{% url 'profile' project.ta.username %}">
                             <span class="label label-info">
-                                {{ project.ta.email }}
+                                {{ project.ta.username }}
                             </span>
                         </a>
                     </p>
@@ -165,7 +170,7 @@
                         {% if mem.username != null %}
                         <a href="{% url 'profile' mem.username %}">
                         <span class="label label-primary">
-                            {{ mem.email }}
+                            {{ mem.username }}
                         </span>
                         </a>
                         {% endif %}

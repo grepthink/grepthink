@@ -91,6 +91,18 @@ def signup(request):
                       {'form': SignUpForm(), 'page_name' : page_name,
                       'page_description': page_description, 'title': title})
 
+def password_reset(request):
+    return
+
+def password_reset_done(request):
+    return
+
+def password_reset_confirm(request):
+    return
+
+def password_reset_complete(request):
+    return
+
 @login_required
 def view_profile(request, username):
     """

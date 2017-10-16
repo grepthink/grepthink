@@ -32,6 +32,11 @@ urlpatterns = [
         url(r'^about/$', core_views.about, name='about'),
         url(r'^signup/$', profile_views.signup, name='signup'),
         url(r'^search/$', core_views.search, name='search'),
+        url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
+        url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
+        url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+            auth_views.password_reset_confirm, name='password_reset_confirm'),
+        url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
 
         # PROJECT
         # /create_project/
@@ -54,6 +59,8 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
         # Request to join Project
         url(r'^project/(?P<slug>[^/]+)/join/$', project_views.request_join_project, name='request_to_join'),
+        # Request to leave Project
+        url(r'^project/(?P<slug>[^/]+)/leave/$', project_views.leave_project, name='leave_project'),
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', project_views.add_member, name='add_member'),
         # Add member to project
@@ -78,6 +85,8 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
         # Delete individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course, name='delete_course'),
+        # Drop from a course based on a slug
+        #url(r'^course/(?P<slug>[^/]+)/drop/$', course_views.drop_course, name='drop_course'),
         # Edit individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
         # Stats page link

@@ -55,11 +55,14 @@
 
         <div class="row">
         <div class="col-xs-8">
-            <a class="text-left" href="{% url 'signup' %}" class="btn btn-link">Create an account</a>
+            <a class="text-left" href="{% url 'signup' %}" class="btn btn-link"><b>Create</b> an account</a>
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
           <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+        </div>
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'password_reset' %}" class="btn btn-link">Forgot Password</a>
         </div>
         <!-- /.col -->
       </div>
