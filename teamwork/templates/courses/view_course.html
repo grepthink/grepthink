@@ -145,13 +145,6 @@ $(document).ready(function() {
             </a>
             </li>
 
-            <!-- <li class="">
-            <a href="{% url 'drop_course' course.slug %}">
-                Drop Course
-                <i class="fa fa-close"></i>
-            </a>
-            </li> -->
-
             {% if user_role == "ta" %}
             <li class="pull-right">
             <a href="{% url 'claim_projects' course.slug %}">
