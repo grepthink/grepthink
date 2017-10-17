@@ -64,8 +64,8 @@ INSTALLED_APPS = [
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = config('SENDGRID_USERNAME')
-EMAIL_HOST_PASSWORD = config('SENDGRID_PASSWORD')
+EMAIL_HOST_USER = 'Mr.PoopyButthole'
+EMAIL_HOST_PASSWORD = 'sup3rfuckins3cr3t'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 #For Testing, comment out for production
