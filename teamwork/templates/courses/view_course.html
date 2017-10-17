@@ -126,8 +126,14 @@ $(document).ready(function() {
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
-                    Create New Assignment
+                    Create Assignment
                     <i class="fa fa-plus"></i>
+                </a>
+            </li>
+            <li class="">
+                <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
+                    View Assignments
+                    <i class="fa fa-folder-open"></i>
                 </a>
             </li>
 
@@ -141,7 +147,7 @@ $(document).ready(function() {
 
             <li class="">
             <a href="{% url 'create_project' %}">
-                Create New Project
+                Create Project
                 <i class="fa fa-plus"></i>
             </a>
             </li>
@@ -205,6 +211,47 @@ $(document).ready(function() {
             </div>
             </div>
             </div>
+
+            <!-- /.tab-pane View Assignments -->
+            <div class="tab-pane" id="Viewassignments">
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Assignments</h3>
+                        <div class="box-body no-padding">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>Assigned</th>
+                                        <th>Due</th>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th>Number</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    {% for asg in assignments %}
+                                    <tr>
+                                        <td>{{asg.ass_date}}</td>
+                                        <td>{{asg.due_date}}</td>
+                                        <td>{{asg.ass_type}}</th>
+                                        <td>{{asg.ass_name}}</td>
+                                        <td>{{asg.ass_number}}</td>
+                                        {% if asg.closed %}
+                                            <td><i class="fa fa-lock" aria-hidden="true" style="color:red;"></i></td>
+                                        {% else %}
+                                            <td><i class="fa fa-unlock" aria-hidden="true" style="color:green;"></i></td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- /.tab-pane End View Assignments -->
+
+
 
             <div class="tab-pane" id="description">
                 <div>

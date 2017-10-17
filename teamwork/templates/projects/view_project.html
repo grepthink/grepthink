@@ -39,6 +39,7 @@
   <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
   <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
 {% endblock stylesheets %}
 
@@ -363,18 +364,60 @@
 
             <!-- TSR Tab -->
             <div class="tab-pane" id="tab_5">
-                <!--{% with "False" as scrum %}-->
-                <form action="{% url 'tsr_update' project.slug %}">
-                    <input type="submit" value="Normal TSR form" name="normal_form" />
-                </form>
-                <!--{% endwith %}-->
-                <br>
-                <br>
-                {% if request.user == scrum_master %}
-                <form action="{% url 'tsr_update' project.slug %}">
-                    <input type="submit" value="Scrum master TSR form" name="scrum_master_form" />
-                </form>
-                {% endif %}
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Assignments</h3>
+                        <div class="box-body no-padding">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>Assigned</th>
+                                        <th>Due</th>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th>Number</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    {% for asg in assignments %}
+                                    <tr>
+                                        <td>{{asg.ass_date}}</td>
+                                        <td>{{asg.due_date}}</td>
+                                        <td>{{asg.ass_type}}</td>
+                                        <td>{{asg.ass_name}}</td>
+                                        <td>{{asg.ass_number}}</td>
+                                        <td>
+                                            {% if asg.closed %}
+                                                <i class="fa fa-lock" aria-hidden="true" style="color:red;"></i>
+                                            {% else %}
+                                                <i class="fa fa-unlock" aria-hidden="true" style="color:green;"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="form-group">
+                                            <span class="pull-left">
+                                                <form action="{% url 'tsr_update' project.slug %}">
+                                                    <input class="btn btn-sm" type="submit" value="Member Form" name="normal_form" />
+                                                </form>
+                                            </span>
+                                            {% if request.user == scrum_master %}
+                                            <span class="pull-right">
+
+                                                <form action="{% url 'tsr_update' project.slug %}">
+                                                    <input class="btn btn-sm" type="submit" value="Scrum master Form" name="scrum_master_form" />
+                                                </form>
+                                            </span>
+                                            <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+                                               <span class="tooltiptext2">Scrum Master <strong>must</strong> complete both forms</span>
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <!-- View TSR Tab -->

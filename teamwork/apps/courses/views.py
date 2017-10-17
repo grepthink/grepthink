@@ -105,9 +105,9 @@ def view_one_course(request, slug):
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
 
-    assignmentForm = AssignmentForm(request.user.id)
+    assignmentForm = AssignmentForm(request.user.id, slug)
     if(request.method == 'POST'):
-        assignmentForm = AssignmentForm(request.user.id,request.POST)
+        assignmentForm = AssignmentForm(request.user.id, slug, request.POST)
         if assignmentForm.is_valid():
             data = assignmentForm.cleaned_data
             ass_date = data.get('ass_date')
@@ -153,7 +153,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'user_role':user_role, 'available':available,
+        'user_role':user_role, 'available':available, 'assignments':asgs,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
