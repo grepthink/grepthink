@@ -227,6 +227,7 @@ $(document).ready(function() {
                                         <th>Name</th>
                                         <th>Number</th>
                                         <th>Status</th>
+                                        <th></th>
                                     </tr>
                                     {% for asg in assignments %}
                                     <tr>
@@ -240,6 +241,23 @@ $(document).ready(function() {
                                         {% else %}
                                             <td><i class="fa fa-unlock" aria-hidden="true" style="color:green;"></i></td>
                                         {% endif %}
+                                        <td>
+                                            <a href="{% url 'edit_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+
+
+                                            <a href="{% url 'delete_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash"></i>
+                                                            Delete
+                                                </button>
+                                            </a>
+                                        </td>
+
                                     </tr>
                                     {% endfor %}
                                 </tbody>

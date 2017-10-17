@@ -377,6 +377,7 @@
                                         <th>Name</th>
                                         <th>Number</th>
                                         <th>Status</th>
+                                        <th> </th>
                                     </tr>
                                     {% for asg in assignments %}
                                     <tr>
@@ -399,15 +400,14 @@
                                                 </form>
                                             </span>
                                             {% if request.user == scrum_master %}
-                                            <span class="pull-right">
-
-                                                <form action="{% url 'tsr_update' project.slug %}">
-                                                    <input class="btn btn-sm" type="submit" value="Scrum master Form" name="scrum_master_form" />
-                                                </form>
-                                            </span>
-                                            <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
-                                               <span class="tooltiptext2">Scrum Master <strong>must</strong> complete both forms</span>
-                                            </span>
+                                                <span class="pull-right">
+                                                    <form action="{% url 'tsr_update' project.slug %}">
+                                                        <input class="btn btn-sm" type="submit" value="Scrum master Form" name="scrum_master_form" />
+                                                    </form>
+                                                </span>
+                                                <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+                                                   <span class="tooltiptext2">Scrum Master <strong>must</strong> complete both forms</span>
+                                                </span>
                                             {% endif %}
                                         </td>
                                     </tr>

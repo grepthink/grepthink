@@ -110,12 +110,12 @@ def view_one_course(request, slug):
         assignmentForm = AssignmentForm(request.user.id, slug, request.POST)
         if assignmentForm.is_valid():
             data = assignmentForm.cleaned_data
-            ass_date = data.get('ass_date')
             due_date = data.get('due_date')
+            ass_date = data.get('ass_date')
             ass_type = data.get('ass_type').lower()
             ass_name = data.get('ass_name')
-            ass_number = data.get('ass_number')
             description = data.get('description')
+            ass_number = data.get('ass_number')
 
 
             # checking if there is an assignment of same type already in
@@ -620,6 +620,53 @@ def edit_course(request, slug):
             request, 'courses/edit_course.html',
             {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
+@login_required
+def edit_assignment(request, slug):
+    """
+    Edit assignment method, creating generic form
+    """
+    ass = get_object_or_404(Assignment, slug=slug)
+    course = ass.course.first()
+    page_name = "Edit Assignment"
+    page_description = "Edit %s"%(ass.ass_name)
+    title = "Edit Assignment"
+
+    if request.user.profile.isGT:
+        pass
+    #if user is not a professor or they did not create course
+    elif not request.user.profile.isProf or not course.creator == request.user:
+        if not user_role=="ta":
+            #redirect them to the /course directory with message
+            messages.info(request,'Only Professor can edit assignment')
+            return HttpResponseRedirect('/course')
+
+    if(request.method == 'POST'):
+        assignmentForm = EditAssignmentForm(request.user.id, slug, request.POST)
+        if assignmentForm.is_valid():
+            data = assignmentForm.cleaned_data
+            due_date = data.get('due_date')
+            ass_date = data.get('ass_date')
+            ass_type = data.get('ass_type').lower()
+            ass_name = data.get('ass_name')
+            description = data.get('description')
+            ass_number = data.get('ass_number')
+
+            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
+                ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
+                ass_number=ass_number))
+            course.save()
+        else:
+            print("FORM ERRORS: ", form.errors)
+
+        return redirect(view_one_course,course.slug)
+
+    else:
+        form = EditAssignmentForm(request.user.id, slug, instance=ass)
+
+    return render(
+            request, 'courses/edit_assignment.html',
+            {'assignmentForm': form,'course': course, 'ass':ass, 'page_name' : page_name, 'page_description': page_description, 'title': title}
+            )
 
 
 @login_required
@@ -642,6 +689,28 @@ def delete_course(request, slug):
     #deletes course
     course.delete()
     return redirect(view_courses)
+
+@login_required
+def delete_assignment(request, slug):
+    """
+    Delete course method
+    """
+    ass = get_object_or_404(Assignment, slug=slug)
+    course = ass.course.first()
+
+
+    if request.user.profile.isGT:
+        pass
+    elif not request.user.profile.isProf:
+        return redirect(view_one_course, course.slug)
+
+    #Runs through each project and deletes them
+    for a in ass.subs.all():
+        a.delete()
+
+    #deletes course
+    ass.delete()
+    return redirect(view_one_course, course.slug)
 
 @login_required
 def update_course(request, slug):
