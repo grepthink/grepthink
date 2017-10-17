@@ -109,6 +109,8 @@ def view_one_project(request, slug):
     course = project.course.first()
     staff = course.get_staff()
 
+    asgs = list(course.assignments.all())
+
     user = request.user
     profile = Profile.objects.get(user=user)
 
@@ -194,7 +196,7 @@ def view_one_project(request, slug):
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members,
-        'requestButton':requestButton,
+        'requestButton':requestButton, 'assignments':asgs,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'averages':avg_tuple2, 'assigned_tsrs': assigned_tsrs})
