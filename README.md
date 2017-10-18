@@ -5,6 +5,6 @@ GrepThink
 [![Coverage Status](https://coveralls.io/repos/github/grepthink/grepthink/badge.svg?branch=production)](https://coveralls.io/github/grepthink/grepthink?branch=production)
 
 Build better teams, one match at a time!
-
+Trevor Ching
 Fall17 Fork:<br />
 10-18-17 4:27pm - Sean's change<br />
