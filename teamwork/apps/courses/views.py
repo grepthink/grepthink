@@ -114,44 +114,20 @@ def view_one_course(request, slug):
     if(request.method == 'POST'):
         assignmentForm = AssignmentForm(request.user.id, slug, request.POST)
         if assignmentForm.is_valid():
-            data = assignmentForm.cleaned_data
-            due_date = data.get('due_date')
-            ass_date = data.get('ass_date')
-            ass_type = data.get('ass_type').lower()
-            ass_name = data.get('ass_name')
-            description = data.get('description')
-            ass_number = data.get('ass_number')
+            ass = Assignment()
+            ass.due_date = assignmentForm.cleaned_data.get('due_date')
+            ass.ass_date = assignmentForm.cleaned_data.get('ass_date')
+            ass.ass_type =assignmentForm.cleaned_data.get('ass_type').lower()
+            ass.ass_name = assignmentForm.cleaned_data.get('ass_name')
+            ass.description = assignmentForm.cleaned_data.get('description')
+            ass.ass_number = assignmentForm.cleaned_data.get('ass_number')
+            print(ass.ass_number)
 
+            ass.save()
 
-            # checking if there is an assignment of same type already in
-            # progress based on assignment type and date
-            split_type = ass_type.split(" ")
-            print(split_type)
-            for asg in asgs:
-                for word in split_type:
-                    if word in asg.ass_type:
-                        today = datetime.now().date()
-                        # date formatting
-                        asg_ass_date = asg.ass_date
-                        asg_ass_date = datetime.strptime(asg_ass_date,
-                            "%Y-%m-%d").date()
-                        # date formatting
-                        asg_due_date = asg.due_date
-                        asg_due_date = datetime.strptime(asg_due_date,
-                            "%Y-%m-%d").date()
-
-                        # verifies existing project doesnt exist within due date
-                        if asg_ass_date < today <= asg_due_date:
-                            # print("assignment already in progress")
-                            # need to change this redirect to display message
-                            # so that user is aware their info wasn't stored
-                            return redirect(view_one_course,course.slug)
-
-            course.assignments.add(Assignment.objects.create(ass_name=ass_name,
-                ass_type=ass_type, ass_date=ass_date, due_date=due_date, description=description,
-                ass_number=ass_number))
+            course.assignments.add(ass)
             course.save()
-            print(course.assignments.all())
+
         messages.info(request, 'You have successfully created an assignment')
         return redirect(view_one_course,course.slug)
 
@@ -639,8 +615,6 @@ def edit_assignment(request, slug):
         user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
     else:
         user_role = 'GT'
-
-    print("user_role:", user_role)
 
     if request.user.profile.isGT:
         pass

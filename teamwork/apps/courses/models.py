@@ -34,8 +34,8 @@ def get_all_courses(self):
     return Course.objects.all()
 
 class Assignment(models.Model):
-    due_date = models.CharField(max_length=255, default="20991231")
-    ass_date = models.CharField(max_length=255, default="20000101")
+    due_date = models.DateField()
+    ass_date = models.DateField()
     ass_type = models.CharField(max_length=255)
     ass_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default="")

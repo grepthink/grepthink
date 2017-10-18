@@ -122,7 +122,7 @@ $(document).ready(function() {
                     <i class="fa fa-group"></i>
                 </a>
             </li>
-            
+
             <li class="">
                 <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
                     View Assignments
@@ -220,7 +220,16 @@ $(document).ready(function() {
                     <div class="col-md-12">
                     <h3 class="box-title">Assignments</h3>
                         <div class="box-body no-padding">
-                            <table class="table table-striped">
+                            <style>
+                                th {
+                                  background-color: #00A65A;
+                                  color: white;
+                                }
+                                tr {
+                                    background-color: white;
+                                }
+                            </style>
+                            <table class="table table-hover">
                                 <tbody>
                                     <tr>
                                         <th>Assigned</th>
@@ -228,21 +237,15 @@ $(document).ready(function() {
                                         <th>Type</th>
                                         <th>Name</th>
                                         <th>Number</th>
-                                        <th>Status</th>
                                         <th></th>
                                     </tr>
                                     {% for asg in assignments %}
                                     <tr>
-                                        <td>{{asg.ass_date}}</td>
-                                        <td>{{asg.due_date}}</td>
+                                        <td>{{asg.ass_date|date:'Y-m-d'}}</td>
+                                        <td>{{asg.due_date|date:'Y-m-d'}}</td>
                                         <td>{{asg.ass_type}}</th>
                                         <td>{{asg.ass_name}}</td>
                                         <td>{{asg.ass_number}}</td>
-                                        {% if asg.closed %}
-                                            <td><i class="fa fa-lock" aria-hidden="true" style="color:red;"></i></td>
-                                        {% else %}
-                                            <td><i class="fa fa-unlock" aria-hidden="true" style="color:green;"></i></td>
-                                        {% endif %}
                                         <td>
                                             <a href="{% url 'edit_assignment' asg.slug %}">
                                                 <button type="button" class="btn btn-info btn-sm">
