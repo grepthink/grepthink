@@ -35,14 +35,17 @@
 
             <div class="box-body">
                 <form action="{% url 'edit_assignment' ass.slug %}" method="post" role="form"
-                    class="clearfix" enctype="multipart/form-data">
-                {% for field in form.visible_fields %}
+                    class="clearfix">
+                {% for field in assignmentForm.visible_fields %}
                 {% csrf_token %}
                     <div class="form-group">
                         <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
                         {{ field }}
                     </div>
+                {%empty%}
+                No visible fields at the moment.
                 {% endfor %}
+
 
                 <div class="box-body">
                 <div class="form-group">

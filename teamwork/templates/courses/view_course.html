@@ -122,6 +122,13 @@ $(document).ready(function() {
                     <i class="fa fa-group"></i>
                 </a>
             </li>
+            
+            <li class="">
+                <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
+                    View Assignments
+                    <i class="fa fa-folder-open"></i>
+                </a>
+            </li>
 
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             <li class="">
@@ -130,12 +137,7 @@ $(document).ready(function() {
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
-            <li class="">
-                <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
-                    View Assignments
-                    <i class="fa fa-folder-open"></i>
-                </a>
-            </li>
+
 
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
