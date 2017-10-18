@@ -2,6 +2,8 @@
 A project that builds off of [grepthink](https://github.com/grepthink/grepthink/) that assists professors and teaching assistants in determining problematic teams and team members.
 
 ## Demo Instructions
+Prerequisite: Python 3 must be installed. You can get that [here](https://www.python.org/downloads/)
+
 1. Start by cloning our project with `git clone https://github.com/divark/tsrassistant.git`
 2. Once downloaded, go into your main directory and proceed to make a .env file with the following contents:
 ```
