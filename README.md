@@ -7,5 +7,4 @@ GrepThink
 Build better teams, one match at a time!
 
 Fall17 Fork:<br />
-10-16-17 16:00 - Change 1<br />
-10-16-17 16:17 - Change 2<br />
+10-18-17 4:27pm - Sean's change<br />

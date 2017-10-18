@@ -20,6 +20,8 @@ venv
 *.pyc
 staticfiles
 .env
+#.env#
+.env~
 
 # Github’s Default Python .gitignore
 # Byte-compiled / optimized / DLL files

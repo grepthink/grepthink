@@ -124,6 +124,7 @@ if 'TRAVIS' in os.environ:
 # Setup the database using dj based on the DATABASE_URL set in .env
 else:
     DATABASES = {
+        
         'default': dj_database_url.config(
             default=config('DATABASE_URL')
         )
