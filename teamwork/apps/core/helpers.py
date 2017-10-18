@@ -46,7 +46,8 @@ def send_email(recipients, gt_email, subject, content):
 
     # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
     # but I'm not sure how the Mail() constructor below works without it.
-    to_email = Email("initial_email@grepthink.com", "GrepThink")
+    # to_email = Email("initial_email@grepthink.com", "GrepThink")
+    to_email = Email("mrp00pybutth0l3@yourmom.com", "GrepThink")
 
     from_email = Email(gt_email)
 
