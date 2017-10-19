@@ -51,8 +51,10 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
-        # Update TSR information for normal tsr
-        url(r'^project/(?P<slug>[^/]+)/tsr/$', project_views.tsr_update, name='tsr_update'),
+        # Update TSR information
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_update, name='tsr_update'),
+        # Edit TSR information
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_edit, name='tsr_edit'),
         # View TSRs
         url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
         # View meeting times
@@ -74,7 +76,11 @@ urlpatterns = [
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
 
         # COURSE
-        #
+        # Delete individual assignment (based on slug)
+        url(r'^assignment/(?P<slug>[^/]+)/delete/$', course_views.delete_assignment, name='delete_assignment'),
+        # Edit individual assignment (based on slug)
+        url(r'^assignment/(?P<slug>[^/]+)/edit/$', course_views.edit_assignment, name='edit_assignment'),
+
         # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
         # Join a course (valid for all courses)

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+<script>
+function checkTextField(field) {
+    if (field.value == '') {
+        alert("Field is empty");
+    }
+}
+</script>
+<input type="text" name="checking" id="checking"
+onblur="checkTextField(this);" />
+{% block content %}
+ Poop
+{% endblock content %}

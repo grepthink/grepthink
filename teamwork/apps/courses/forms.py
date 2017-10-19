@@ -5,8 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from datetime import datetime
 from django.contrib.admin.widgets import AdminDateWidget
+from django.shortcuts import get_object_or_404
 
 from datetime import datetime
+from datetime import timedelta
 from django.forms import extras
 from django.contrib.admin.widgets import AdminDateWidget
 
@@ -452,41 +454,114 @@ class AssignmentForm(forms.ModelForm):
     """
     Form used for making a new assignment
     """
-    def __init__(self, uid, *args, **kwargs):
+    def __init__(self, uid, slug, *args, **kwargs):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
+        course= get_object_or_404(Course, slug=slug)
+        assNum=len(course.assignments.all())
+        print(assNum)
+        self.fields['ass_number'].initial = assNum + 1
+
     # date assignment will start
     ass_date = forms.DateField(
         widget = extras.SelectDateWidget,
         input_formats = ['%Y-%m-%d'],
-        label="Open Date"
+        label="Open Date",
+        initial=datetime.date.today()
     )
     # date assignment will end (users can no longer submit)
     due_date = forms.DateField(
         widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d']
+        input_formats = ['%Y-%m-%d'],
+        initial=datetime.date.today() + timedelta(days=7)
     )
+
     # assignment name
     ass_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Assignment name",
         required=True,
         max_length=255)
+
     # type of assignment, i.e. tsr
-    ass_type = forms.CharField(max_length=255, label="Assignment Type",
-        required=True)
+    ass_type = forms.CharField(
+        max_length=255,
+        label="Assignment Type",
+        required=True,
+        initial='TSR')
+
     # assignment description
     description = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Assignment Description",
         required=True,
         max_length=255)
+
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
         widget=forms.NumberInput(),label='Assignment Number',
         max_digits=2,
         required=True,
-        decimal_places=0)
+        decimal_places=0
+        )
+    class Meta:
+        model= Assignment
+        widgets = {
+        }
+
+        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
+
+#Edit assignment form
+class EditAssignmentForm(forms.ModelForm):
+    """
+    form to edit ass
+    """
+    def __init__(self, uid, slug, *args, **kwargs):
+        super(EditAssignmentForm, self).__init__(*args, **kwargs)
+        creator = User.objects.get(id=uid)
+
+    # date assignment will start
+    ass_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d'],
+        label="Open Date",
+        initial=datetime.date.today()
+    )
+    # date assignment will end (users can no longer submit)
+    due_date = forms.DateField(
+        widget = extras.SelectDateWidget,
+        input_formats = ['%Y-%m-%d'],
+        initial=datetime.date.today() + timedelta(days=7)
+    )
+
+    # assignment name
+    ass_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment name",
+        required=True,
+        max_length=255)
+
+    # type of assignment, i.e. tsr
+    ass_type = forms.CharField(
+        max_length=255,
+        label="Assignment Type",
+        required=True,
+        initial='TSR')
+
+    # assignment description
+    description = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Assignment Description",
+        required=True,
+        max_length=255)
+
+    # number of assignment, first starts at 1
+    ass_number = forms.DecimalField(
+        widget=forms.NumberInput(),label='Assignment Number',
+        max_digits=2,
+        required=True,
+        decimal_places=0
+        )
     class Meta:
         model= Assignment
         widgets = {
