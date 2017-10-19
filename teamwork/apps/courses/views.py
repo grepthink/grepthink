@@ -70,6 +70,9 @@ def view_one_course(request, slug):
     page_description = "Course Overview"
     title = "%s"%(slug)
 
+    # Pushing this down
+    # To see if
+    # it's actually being pushed to heroku
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
         if request.user in course.students.all() or request.user.profile.isProf:

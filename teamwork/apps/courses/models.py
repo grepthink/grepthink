@@ -148,9 +148,10 @@ class Course(models.Model):
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
     # Course info, string
+    # imma change this back to test migrations
     info = models.CharField(
         # with max length 300
-        max_length=400,
+        max_length=300,
         # default as "There is no Course Description"
         default="There is no Course Description")
     # Term, string
@@ -161,6 +162,12 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
+
+    # Physical location of the course, ie building name/number
+    location = models.CharField(
+        max_length=200,
+        default="")
+
     # Slug for course, string
     slug = models.CharField(
         # with max length 20
