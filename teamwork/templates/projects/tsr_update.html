@@ -11,7 +11,7 @@ function checkTextField(field) {
 <input type="text" name="checking" id="checking"
 onblur="checkTextField(this);" />
 {% block content %}
-  <form action="{% url 'tsr_update' cur_proj.slug %}" method="post" role="form">
+  <form action="{% url 'tsr_update' cur_proj.slug ass.slug%}" method="post" role="form">
     {% csrf_token %}
     {% for form in forms %}
       <br>

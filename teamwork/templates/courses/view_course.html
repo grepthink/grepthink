@@ -123,13 +123,21 @@ $(document).ready(function() {
                 </a>
             </li>
 
+            <li class="">
+                <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
+                    View Assignments
+                    <i class="fa fa-folder-open"></i>
+                </a>
+            </li>
+
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
-                    Create New Assignment
+                    Create Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
+
 
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -141,7 +149,7 @@ $(document).ready(function() {
 
             <li class="">
             <a href="{% url 'create_project' %}">
-                Create New Project
+                Create Project
                 <i class="fa fa-plus"></i>
             </a>
             </li>
@@ -205,6 +213,68 @@ $(document).ready(function() {
             </div>
             </div>
             </div>
+
+            <!-- /.tab-pane View Assignments -->
+            <div class="tab-pane" id="Viewassignments">
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Assignments</h3>
+                        <div class="box-body no-padding">
+                            <style>
+                                th {
+                                  background-color: #00A65A;
+                                  color: white;
+                                }
+                                tr {
+                                    background-color: white;
+                                }
+                            </style>
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th>Assigned</th>
+                                        <th>Due</th>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th>Number</th>
+                                        <th></th>
+                                    </tr>
+                                    {% for asg in assignments %}
+                                    <tr>
+                                        <td>{{asg.ass_date|date:'Y-m-d'}}</td>
+                                        <td>{{asg.due_date|date:'Y-m-d'}}</td>
+                                        <td>{{asg.ass_type}}</th>
+                                        <td>{{asg.ass_name}}</td>
+                                        <td>{{asg.ass_number}}</td>
+                                        <td>
+                                            <a href="{% url 'edit_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+
+
+                                            <a href="{% url 'delete_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash"></i>
+                                                            Delete
+                                                </button>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- /.tab-pane End View Assignments -->
+
+
 
             <div class="tab-pane" id="description">
                 <div>

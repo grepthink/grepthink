@@ -73,7 +73,7 @@ def po_match(project):
         know = i.known.all()
         for j in know:
             cur_course = Course.get_my_courses(j.user)
-            # if is to allow for updating the score of users already counted
+            # if is to allow for updating   the score of users already counted
             if j.user not in project.members.all() and project not in Project.get_created_projects(j.user):
                 if j.user in initial:
                     initial[j.user][0] += (2 * knowWeight)
@@ -113,7 +113,7 @@ def po_match(project):
     for l in initial.keys():
         temp = by_schedule(l, project)
         initial[l][0] += temp
-        initial[l][4] += temp 
+        initial[l][4] += temp
 
     return sort(initial)
     # past classes match
