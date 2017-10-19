@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tsr',
             name='slug',
-            field=models.CharField(default='', max_length=20, unique=True),
+            field=models.CharField(default='', max_length=20, unique=False),
         ),
     ]
