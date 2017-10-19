@@ -21,27 +21,60 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 # import of project models
-from teamwork.apps.projects.models import Project
+from teamwork.apps.projects.models import Project, Tsr
 
+# Generates add code
+def rand_code(size):
+    # Usees a random choice from lowercase, uppercase, and digits
+    return ''.join([
+        random.choice(string.ascii_letters + string.digits) for i in range(size)
+    ])
 
 def get_all_courses(self):
     return Course.objects.all()
 
 class Assignment(models.Model):
-    due_date = models.CharField(max_length=255, default="20991231")
-    ass_date = models.CharField(max_length=255, default="20000101")
+    due_date = models.DateField()
+    ass_date = models.DateField()
     ass_type = models.CharField(max_length=255)
     ass_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default="")
     ass_number = models.IntegerField( default=1)
     closed = models.BooleanField(default=False)
+    subs = models.ManyToManyField(
+        Tsr,
+        default="",
+        # Tsr can access course through this relation
+        # Tsr.ass.first()
+        related_name='ass',
+        )
+
+    # Unique URL slug for assignment
+    slug = models.CharField(
+        default="",
+        max_length=20,
+        unique=True)
 
     def __str__(self):
         """
         Human readeable representation of the Assignment object.
         """
-        return ("%s, %s, %s, %s, %s, %d"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number))
+        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number, self.slug))
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Assignment object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Course object in the database!
+        """
 
+        # Generate URL slug if not specified
+        if self.slug is None or len(self.slug) == 0:
+            newslug = rand_code(10)
+            while Assignment.objects.filter(slug=newslug).exists():
+                newslug = rand_code(10)
+            self.slug = newslug
+
+        super(Assignment, self).save(*args, **kwargs)
 
 def get_user_courses(self):
     """
@@ -66,12 +99,7 @@ def get_user_courses(self):
 auth.models.User.add_to_class('get_user_courses', get_user_courses)
 
 
-# Generates add code
-def rand_code(size):
-    # Usees a random choice from lowercase, uppercase, and digits
-    return ''.join([
-        random.choice(string.ascii_letters + string.digits) for i in range(size)
-    ])
+
 
 
 class Course(models.Model):
@@ -162,7 +190,7 @@ class Course(models.Model):
     assignments=models.ManyToManyField(
         # to Assignment model
         Assignment,
-        related_name='asses') # :D hehe -kp
+        related_name='course') # :D hehe -kp
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user

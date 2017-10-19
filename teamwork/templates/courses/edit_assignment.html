@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+<!-- JAVASCRIPT BLOCK -->
+{% block javascript %}
+{{block.super}}
+
+{% endblock javascript %}
+
+<!-- LOAD CSS STYLESHEETS -->
+{% block stylesheets %}
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+{% endblock stylesheets %}
+
+<!-- LOAD JS SCRIPT FILES -->
+{% block head %}
+<script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+
+{% block content %}
+
+<div class="row">
+    <!-- BEGINNING OF FORM -->
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Edit Assignment</h3>
+                </div>
+
+            <div class="box-body">
+                <form action="{% url 'edit_assignment' ass.slug %}" method="post" role="form"
+                    class="clearfix">
+                {% for field in assignmentForm.visible_fields %}
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {%empty%}
+                No visible fields at the moment.
+                {% endfor %}
+
+
+                <div class="box-body">
+                <div class="form-group">
+                    <div class="pull-left">
+                    <a href="{% url 'view_one_course' course.slug %}">
+                        <button class="btn btn-default" type="button">
+                            Cancel
+                        </button>
+                    </a>
+                    </div>
+                    <div class="pull-right">
+                        <button class="btn btn-success" type="submit" name="SUBMIT">
+                            Save changes
+                        </button>
+                    </div>
+                </div>
+                </div>
+                </form>
+        </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Delete Assignment</h3>
+                </div>
+                <div class="box-body">
+                    <p>
+                        Note that deleting an assignment is <strong>IRREVERSIBLE</strong>, please make
+                        sure you know what you are doing before pressing this button.
+                    </p>
+
+                    <a href="{% url 'delete_assignment' ass.slug %}">
+                        <button class="btn btn-danger" name="DELETE">
+                            <i class="fa fa-trash"></i>
+                            Delete Assignment
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock content %}
