@@ -30,6 +30,13 @@ from django.utils import timezone
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
 
+# Generates add code
+def rand_code(size):
+    # Usees a random choice from lowercase, uppercase, and digits
+    return ''.join([
+        random.choice(string.ascii_letters + string.digits) for i in range(size)
+    ])
+
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
@@ -68,11 +75,27 @@ class Tsr(models.Model):
     performance_assessment = models.CharField(max_length=255, default='')
     # scrum input only
     notes = models.CharField(max_length=255, default='')
+    # soft deadline fix
+    late = models.BooleanField(default=False)
+    # Unique URL slug for assignment
+    slug = models.CharField(
+        default="",
+        max_length=20,
+        unique=True)
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
             self.positive_feedback, self.negative_feedback,
             self.tasks_completed, self.performance_assessment, self.notes)))
+    def save(self, *args, **kwargs):
+        # Generate URL slug if not specified
+        if self.slug is None or len(self.slug) == 0:
+            newslug = rand_code(10)
+            while Tsr.objects.filter(slug=newslug).exists():
+                newslug = rand_code(10)
+            self.slug = newslug
+
+        super(Tsr, self).save(*args, **kwargs)
 
 class Project(models.Model):
     """
