@@ -88,6 +88,23 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 
+def get_project_tsrs(request, slug):
+    """
+    Public method that takes a request and slug returns all tsrs from a project
+    as a single string.
+
+    String form follows string representation of TSR class in models.py, split
+    up per view by a newline.
+    """
+    project = get_object_or_404(Project, slug=slug)
+    completed_tsrs = project.tsr.all()
+    tsrs_in_string = ""
+
+    for current_tsr in completed_tsrs:
+        tsrs_in_string += str(current_tsr) + '\n'
+
+    return tsrs_in_string
+
 
 def view_one_project(request, slug):
     """
@@ -96,6 +113,8 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
+
+    #print(get_project_tsrs(request, slug))
 
     project = get_object_or_404(Project, slug=slug)
     scrum_master = project.scrum_master
