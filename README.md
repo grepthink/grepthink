@@ -15,5 +15,5 @@ Ali Alkaheli<br />
 Fall17 Fork Changelog:<br />
 10-18-17 4:27pm - Sean's change<br />
 10-19-17 5:24pm - Hugh's change<br />
-10-20-17 12:50pm - Sean added Release plan, Sprint 1 plan, and intro slides to ./docs/fall17
-10-20-17 1:35pm - Sean Synced fork with GrepThink upstream
+10-20-17 12:50pm - Sean added Release plan, Sprint 1 plan, and intro slides to ./docs/fall17<br />
+10-20-17 1:35pm - Sean Synced fork with GrepThink upstream<br />
