@@ -17,4 +17,4 @@ Fall17 Fork Changelog:<br />
 10-19-17 5:24pm - Hugh's change<br />
 10-20-17 12:50pm - Sean added Release plan, Sprint 1 plan, and intro slides to ./docs/fall17<br />
 10-20-17 1:35pm - Sean Synced fork with GrepThink upstream<br />
-10-20-17 2:20pm - Sean added chat app under ./teamwork/apps<br />
+10-20-17 2:20pm - Sean added chat app under ./teamwork/apps and added Sprint 1 Report under ./docs/fall17<br />
