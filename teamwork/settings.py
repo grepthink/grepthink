@@ -64,8 +64,8 @@ INSTALLED_APPS = [
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'app77834587@heroku.com'
-EMAIL_HOST_PASSWORD = 'uxbxqvi53352'
+EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 #For Testing, comment out for production
