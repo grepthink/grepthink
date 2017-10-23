@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'teamwork.apps.profiles',
     'teamwork.apps.projects',
     'teamwork.apps.courses',
+    'teamwork.apps.chat',
 
     'django_adminlte',
     'django_adminlte_theme',
