@@ -4,6 +4,7 @@ dj-database-url==0.4.2
 whitenoise==3.3.0
 python-decouple==3.0
 Unipath==1.1
+channels==1.1.8
 django-adminlte2
 Markdown
 Pillow
