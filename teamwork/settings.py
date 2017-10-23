@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'django_gravatar',
 
     'chartjs'
+
+    'channels'
 ]
 
 EMAIL_HOST = 'smtp.sendgrid.net'
