@@ -35,6 +35,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -42,7 +43,9 @@ INSTALLED_APPS = [
     # Disable Django's own staticfiles handling in favour of WhiteNoise, for
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
+    'channels',
     'whitenoise.runserver_nostatic',
+    
     'django.contrib.staticfiles',
 
     'teamwork.apps.core',
@@ -50,7 +53,7 @@ INSTALLED_APPS = [
     'teamwork.apps.projects',
     'teamwork.apps.courses',
     'teamwork.apps.chat',
-
+    
     'django_adminlte',
     'django_adminlte_theme',
 
@@ -62,7 +65,7 @@ INSTALLED_APPS = [
 
     'chartjs',
 
-    'channels',
+    
 ]
 
 EMAIL_HOST = 'smtp.sendgrid.net'
@@ -157,6 +160,18 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+#Channel Layer definitions
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Redis channel layer implementation asgi_redis
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+
+       "ROUTING": "teamwork.routing.channel_routing", # We will create it in a moment
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
