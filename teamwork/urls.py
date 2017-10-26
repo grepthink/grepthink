@@ -25,6 +25,7 @@ from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
+from teamwork.apps.chat import views as chat_views
 
 urlpatterns = [
         # CORE AND SIGNUP
@@ -138,6 +139,11 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
 
+        # CHAT
+        # View all Chats
+        url(r'^chat/$', chat_views.view_chats, name='view_chats'),
+        # View Individual Chats
+        
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
