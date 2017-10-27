@@ -56,7 +56,7 @@ def chat_init(message):
 def chat_make(message):
     room = Chatroon(room_name=message["name"])
     room.save()
-    message.user.add(room)
+    message.user.rooms.add(room)
     room.websocket_group.add(message.reply_channel)
     message.reply_channel.send({
             "text": json.dumps({
