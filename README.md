@@ -23,5 +23,6 @@ Fall17 Fork Changelog:<br />
 that only lists the chat rooms created. Chat rooms can be created through the admin page and users can be added into the room. Have not tested the actual chat
 because I am unable to link into a chat room or create a chat room via a link when listing the chat rooms. So the message system is not tested yet, but the website
 still loads.<br />
+10-27-17 1:54pm - Anjali added chat side bar to _main_sidebar.html so it connects to chat.html<br />
 10-27-17 2:32pm - Trevor, Basic messaging functions work, messages can be received from users in the same room.
 Chat room still needs to be created and implemented into the grepthink base.html file.<br />
