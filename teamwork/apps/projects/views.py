@@ -790,6 +790,7 @@ def tsr_update(request, slug, assslug):
     form for user. Different form generated based on which
     button was pressed (scrum/normal)
     """
+    print("Hit in tsr_update!\n")
     page_name = "TSR Update"
     page_description = "Update TSR form"
     title = "TSR Update"
@@ -805,6 +806,7 @@ def tsr_update(request, slug, assslug):
         emails.append(member.email)
 
     params = str(request)
+    print("My params are %s\n" % params)
     if "scrum_master_form" in params:
         scrum_master = True
     else:
@@ -823,6 +825,7 @@ def tsr_update(request, slug, assslug):
 
     forms =list()
     if request.method == 'POST':
+        percent_addup = 0
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
@@ -831,6 +834,7 @@ def tsr_update(request, slug, assslug):
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
                 tsr.percent_contribution = form.cleaned_data.get('perc_contribution')
+                percent_addup += int(tsr.percent_contribution)
                 tsr.positive_feedback = form.cleaned_data.get('pos_fb')
                 tsr.negative_feedback = form.cleaned_data.get('neg_fb')
                 tsr.tasks_completed = form.cleaned_data.get('tasks_comp')
@@ -842,7 +846,32 @@ def tsr_update(request, slug, assslug):
                 print(tsr.late)
 
                 tsr.save()
+                forms.append(tsr)
 
+                # # gets fields variables and saves them to project
+                # cur_proj.tsr.add(tsr)
+                # cur_proj.save()
+                # asg.subs.add(tsr)
+                # asg.save()
+
+        if len(emails) != 1 and percent_addup != 100:
+            messages.error(request, "Contribution does not add up to 100%. Please try again.")
+
+            del forms[:]
+            forms = list()
+            for m in emails:
+                form_i=TSR(request.user.id, request.POST, members=members,
+                 emails=emails, prefix=m, scrum_master=scrum_master)
+                forms.append(form_i)
+            form = TSR(request.user.id, request.POST, members=members,
+                emails=emails, scrum_master=scrum_master)
+
+            return render(request, 'projects/tsr_update.html',
+            {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
+            'page_name' : page_name, 'page_description': page_description,
+            'title': title})
+        else:
+            for tsr in forms:
                 # gets fields variables and saves them to project
                 cur_proj.tsr.add(tsr)
                 cur_proj.save()
