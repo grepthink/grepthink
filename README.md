@@ -23,3 +23,4 @@ Fall17 Fork Changelog:<br />
 that only lists the chat rooms created. Chat rooms can be created through the admin page and users can be added into the room. Have not tested the actual chat
 because I am unable to link into a chat room or create a chat room via a link when listing the chat rooms. So the message system is not tested yet, but the website
 still loads.
+10-27-17 1:54pm - Anjali added chat side bar to _main_sidebar.html so it connects to chat.html
