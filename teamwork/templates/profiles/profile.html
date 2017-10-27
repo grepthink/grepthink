@@ -30,6 +30,10 @@
     <!-- BOX HEADER -->
   <div class="box-header with-border">
     <h3 class="box-title">About Me</h3>
+    <span class="pull-right">
+        <a href="{% url 'edit_profile' user.username %}"
+        class="btn btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
+    </span>
   </div>
 
   <!-- BOX BODY -->

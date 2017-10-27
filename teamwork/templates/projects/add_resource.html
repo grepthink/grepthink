@@ -10,37 +10,43 @@
 <div class="page-header">
     <h1> Post Resource for {{ project.title }}</h1>
 </div>
-<div class="row">
-    <div class="col-md-10">
-        <form action="{% url 'resource_update' project.slug %}" method="post" role="form"
-            class="clearfix" onSubmit="document.getElementById('submit').disabled=true;">
-            {% csrf_token %}
-            {{ form.status }}
-            {% for field in form.visible_fields %}
-            <div class="form-group {% if field.errors %} has-error{% endif %}">
-                <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                {{ field }}
-                {% for error in field.errors %}
-                <label class="control-label">{{ error }}</label>
-                {% endfor %}
-            </div>
-            {% endfor %}
-            <div class="pull-left">
-            <a href="{% url 'view_one_project' project.slug %}">
-                <button class="btn btn-danger" type="button">
-                    Cancel
-                </button>
-            </a>
-            </div>
-            <div class="pull-right">
-                <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
-                    Post Resource
-                </button>
-            </div>
-        </form>
-    </div>
+<div class="box box-primary">
+  <div class="box-header with-border">
+    <h3 class="box-title">Post Resource</h3>
+  </div>
+  <form action="{% url 'resource_update' project.slug %}" method="post" role="form"
+      class="clearfix" onSubmit="document.getElementById('submit').disabled=true;">
+  <div class="box-body">
+      {% csrf_token %}
+      {{ form.status }}
+      {% for field in form.visible_fields %}
+      <div class="form-group {% if field.errors %} has-error{% endif %}">
+          <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+          {% endfor %}
+      </div>
+      {% endfor %}
+   </div>
+   <div class="box-body">
+   <div class="form-group">
+      <div class="pull-left">
+      <a href="{% url 'view_one_project' project.slug %}">
+          <button class="btn btn-danger" type="button">
+              Cancel
+          </button>
+      </a>
+      </div>
+      <div class="pull-right">
+          <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
+              Post Resource
+          </button>
+      </div>
+   </div>
+   </div>
+  </form>
 </div>
-
 
 
 
