@@ -22,5 +22,5 @@ Fall17 Fork Changelog:<br />
 10-26-17 10:50pm - Trevor Messages should be routed to consumers and sent into a chat room along with basic error checking. Also made a basic chat html page
 that only lists the chat rooms created. Chat rooms can be created through the admin page and users can be added into the room. Have not tested the actual chat
 because I am unable to link into a chat room or create a chat room via a link when listing the chat rooms. So the message system is not tested yet, but the website
-still loads.
+still loads. <br />
 10-27-17 1:54pm - Anjali added chat side bar to _main_sidebar.html so it connects to chat.html
