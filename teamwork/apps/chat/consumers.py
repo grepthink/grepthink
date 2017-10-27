@@ -50,13 +50,32 @@ def chat_init(message):
         #this should populate the client without http
         for text in room.get_chat():
             send_text_to_one(message.user,text)
-        
+
+#funtion to make a chat name,
+# need to discuss what to JSON
+def chat_make(message):
+    room = Chatroon(room_name=message["name"])
+    room.save()
+    message.user.rooms.add(room)
+    room.websocket_group.add(message.reply_channel)
+    message.reply_channel.send({
+            "text": json.dumps({
+                "join":str(room.id),
+                "name":room.name,
+            })
+        })
+
+
+
+
+
 #Looks similir to chat_init, might be the same thing
 #Should test this to find out, and ask Hugh what its supposed to do
 @channel_session_user
 @catch_client_error
 def chat_join(message):
     room = get_room_or_error(message["room"],message.user)
+    message.user.rooms.add(room)
     
     room.websocket_group.add(message.reply_channel)
     message.channel_session['rooms'] = list(
@@ -75,6 +94,7 @@ def chat_join(message):
 def chat_leave(message):
     room = get_room_or_error(message["room"],message.user)
     
+    mesaage.user.rooms.remove(room)
     room.websocket_group.discard(message.reply_channel)
     message.channel_session['rooms'] = list(
         set(message.channel_session['rooms'])
