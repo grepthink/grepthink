@@ -29,7 +29,7 @@ import json
 
 # Create your views here.
 def view_chats(request):
-    chat_rooms = Chatroom.objects.order_by("room_name")
+    chat_rooms = Chatroom.objects.order_by("name")
     title = "Chat"
     
     return render(request,'chat/chat.html',{

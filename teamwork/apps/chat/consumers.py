@@ -1,7 +1,7 @@
 from channels.auth import channel_session_user_from_http, channel_session_user
 from channels import Channel
 from .models import *
-from .utils import catch_client_error
+from .utils import *
 import json
 
 
@@ -54,7 +54,7 @@ def chat_init(message):
 #funtion to make a chat name,
 # need to discuss what to JSON
 def chat_make(message):
-    room = Chatroon(room_name=message["name"])
+    room = Chatroon(name=message["name"])
     room.save()
     message.user.rooms.add(room)
     room.websocket_group.add(message.reply_channel)
@@ -76,16 +76,17 @@ def chat_make(message):
 def chat_join(message):
     room = get_room_or_error(message["room"],message.user)
     message.user.rooms.add(room)
-    
+
+
     room.websocket_group.add(message.reply_channel)
     message.channel_session['rooms'] = list(
-        set(message.channel_session['rooms'])
+        set(message.channel_session['chatrooms'])
         .union([room.id]))
         
     message.reply_channel.send({
         "text": json.dumps({
             "join": str(room.id),
-            "name": room.name,
+            "title": room.name,
         }),
     })
     

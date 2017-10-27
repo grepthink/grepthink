@@ -6,19 +6,18 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Chatroom(models.Model):
     
-    room_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     user = models.ManyToManyField(User, related_name='rooms')
 
     class Meta:
-        ordering = ('room_name',)
+        ordering = ('name',)
 
 
-
-
+    @property
     def websocket_group(self):
-        return Group("Room:" +str(self.id))
+        return Group("Room-" +str(self.id))
     
-    def new_message(self,message,user):
+    def send_message(self,message,user):
         #a modified version of that one
         #will send a message to all
         message = {'chatroom':str(self.id), 'message':message, 'username':user.username}
@@ -39,7 +38,7 @@ class Chatroom(models.Model):
         return self.chat.all()[:10]
 
     def __str__(self):
-        return self.room_name
+        return self.name
 
 #this isn't the right place for this, so move it later
 #also it may be unneeded, but oh well
