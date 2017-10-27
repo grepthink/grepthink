@@ -1,8 +1,7 @@
-from channels import route
+from channels import include
 
-def message_handler(message):
-   print(message['text'])
-   
 channel_routing = [
-   route("websocket.receive", message_handler)
+   include("teamwork.apps.chat.routing.websocket_routing", path=r"^/chat/stream"),
+   
+   include("teamwork.apps.chat.routing.custom_routing"),
 ]

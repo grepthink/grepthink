@@ -29,6 +29,7 @@ class Chatroom(models.Model):
         text.save()
 
         #dumps or dump?
+        #dumps!
         self.websocket_group.send(
             {"text":json.dumps(message)}
             )
