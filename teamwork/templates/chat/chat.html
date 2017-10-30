@@ -6,11 +6,9 @@
 {% block header_text %}GT Chat{% endblock %}
 
 {% block content %}
-
     <ul class="rooms">
         {% for room in rooms %}
-            <li>
-            <a href="{% url 'view_one_chat' slug=room.name %}" class="alert-link">
+            <li class="room-link" data-room-id="{{ room.id }}">
             {{ room }}
             </li>
             <!--<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>-->
@@ -22,10 +20,8 @@
     <div id="chats">
     </div>
 
-{% endblock %}
 
 <!--Links the rooms but the chatroom does not show up. Messages are being sent-->
-{% block extra_body %}
     <script src="{% static "js/jquery-2.2.3.min.js" %}" type="text/javascript"></script>
     <script src="{% static "channels/js/websocketbridge.js" %}" type="text/javascript"></script>
     <script type="text/javascript">
@@ -52,7 +48,7 @@
                             "<div class='room' id='room-" + data.join + "'>" +
                             "<h2>" + data.title + "</h2>" +
                             "<div class='messages'></div>" +
-                            "<form><input><button>Send</button></form>" +
+                            "<form>Your message<input><button>Send</button></form>" +
                             "</div>"
                     );
                     // Hook up send button to send a message
@@ -72,7 +68,7 @@
                     $("#room-" + data.leave).remove();
                     // Handle getting a message
                 } else if (data.message || data.msg_type != 0) {
-                    var msgdiv = $("#room-" + data.room + " .messages");
+                    var msgdiv = $("#room-" + data.chatroom + " .messages");
                     var ok_msg = "";
                     // msg types are defined in chat/settings.py
                     // Only for demo purposes is hardcoded, in production scenarios, consider call a service.
@@ -122,4 +118,4 @@
             }
         });
     </script>
-{% endblock %}
+{% endblock content%}

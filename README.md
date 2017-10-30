@@ -26,3 +26,4 @@ still loads.<br />
 10-27-17 1:54pm - Anjali added chat side bar to _main_sidebar.html so it connects to chat.html<br />
 10-27-17 2:32pm - Trevor, Basic messaging functions work, messages can be received from users in the same room.
 Chat room still needs to be created and implemented into the grepthink base.html file.<br />
+10-24-17 ->10-29-17 models are implemented, small fixes in various places, teying to get testing working. Please understand what you read, don't just copy<br />

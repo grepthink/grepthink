@@ -1,5 +1,6 @@
 from channels.auth import channel_session_user_from_http, channel_session_user
 from channels import Channel
+from channels.auth import channel_session_user_from_http, channel_session_user
 from .models import *
 from .utils import *
 import json
@@ -10,8 +11,9 @@ import json
 # also named like the example t came from
 @channel_session_user_from_http
 def ws_connect(message):
-    message.reply_channel.send({"accept":True})
+    message.reply_channel.send({'accept':True})
     message.channel_session['chatrooms'] = []
+    
 
 #no idea what to change here, but something need to be changed
 #Basically unloads the message payload for now and sends it into the chat
