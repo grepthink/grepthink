@@ -7,11 +7,13 @@ import json
 
 
 
+
 # most of these are not tested, but a good example of the system
 # also named like the example t came from
 @channel_session_user_from_http
 def ws_connect(message):
     message.reply_channel.send({'accept':True})
+    Group("User-"+str(message.user.id)).add(message.reply_channel)
     message.channel_session['chatrooms'] = []
     
 
@@ -34,11 +36,11 @@ def ws_disconnect(message):
         
 #assuming logged in, will catch that later
 #this is how I assume it should work, rest is like the example
-#not tested!
+#not tested! maybe not used
 @channel_session_user
 def chat_init(message):
     #make self session for one to one server replies
-    Group("User:"+str(message.user.id)).add(message.reply_channel)
+    Group("User-"+str(message.user.id)).add(message.reply_channel)
     #get rooms and add to session
     for room in message.user.rooms.all():
         room.websocket_group.add(message.reply_channel)
@@ -73,12 +75,12 @@ def chat_make(message):
 
 #Looks similir to chat_init, might be the same thing
 #Should test this to find out, and ask Hugh what its supposed to do
+
 @channel_session_user
 @catch_client_error
 def chat_join(message):
     room = get_room_or_error(message["room"],message.user)
     message.user.rooms.add(room)
-
 
     room.websocket_group.add(message.reply_channel)
     message.channel_session['rooms'] = list(
@@ -91,6 +93,8 @@ def chat_join(message):
             "title": room.name,
         }),
     })
+    for text in room.get_chat_init():
+        send_text_to_one(message.user,text)
     
 @channel_session_user
 @catch_client_error

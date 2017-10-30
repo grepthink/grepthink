@@ -18,14 +18,15 @@ class Chatroom(models.Model):
         return Group("Room-" +str(self.id))
     
     def send_message(self,message,user):
-        #a modified version of that one
-        #will send a message to all
-        message = {'chatroom':str(self.id), 'message':message, 'username':user.username}
+
 
         #save the text for later
         text = Chattext(room=self,author=user)
         text.content = message
         text.save()
+        #a modified version of that one
+        #will send a message to all
+        message = {'chatroom':str(self.id), 'message':message, 'username':user.username}
 
         #dumps or dump?
         #dumps!
@@ -34,8 +35,12 @@ class Chatroom(models.Model):
             )
 
     #django doesn't have a some() just this thing
-    def get_chat(self):
+    def get_chat_init(self):
         return self.chat.all()[:10]
+
+    #maybe should catch error here, but oh well
+    def get_chat_next(self,number):
+        return self.chat.all()[number:number+10]
 
     def __str__(self):
         return self.name
@@ -45,7 +50,7 @@ class Chatroom(models.Model):
 #send a message to a user
 def send_text_to_one(user,chattext):
     message = {'chatroom':str(chattext.room.id),'message':chattext.content, 'username':chattext.author.username}
-    Group("User:"+str(user.id)).send(
+    Group("User-"+str(user.id)).send(
         {"text":json.dumps(message)}
         )
 
