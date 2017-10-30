@@ -28,14 +28,7 @@ import json
 
 
 # Create your views here.
-def view_chats(request):
-    chat_rooms = Chatroom.objects.order_by("name")
-    title = "Chat"
-    
-    return render(request,'chat/chat.html',{
-        "rooms": chat_rooms, 'title': title})
-"""
-def _chats(request, chats):
+def _chats(request, rooms):
     page = request.GET.get('page')
 
     # Populate with page name and title
@@ -43,21 +36,21 @@ def _chats(request, chats):
     page_description = "Chat List"
     title = "My Chats"
 
-
-    return render(request, 'projects/view_chats.html', {'page_name': page_name,
+    return render(request, 'chat/chat.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'chats': chats})
+        'rooms': rooms})
 
 @login_required
 def view_chats(request):
-    my_chats = Chat.get_my_chats(request.user)
-
-    return _chats(request, my_chats)
+    rooms = Chatroom.objects.order_by("name")
+    return _chats(request, rooms)
 
 @login_required
 def view_one_chat(request, slug):
-    chat = get_object_or_404(Chat, slug=slug)
-    messages 
-    return render
+    chat = get_object_or_404(Chatroom, name=slug)
+    title = "GT Chat"
+    name = slug
+    messages = chat.get_chat()
 
-"""
+    return render(request, 'chat/one_chat.html',{
+        'title': title, 'chat': chat, 'name': name, 'messages': messages})

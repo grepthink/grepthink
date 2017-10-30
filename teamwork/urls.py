@@ -143,7 +143,8 @@ urlpatterns = [
         # View all Chats
         url(r'^chat/$', chat_views.view_chats, name='view_chats'),
         # View Individual Chats
-        
+        url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
+
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
