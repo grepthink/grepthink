@@ -97,7 +97,7 @@ def chat_join(message):
 def chat_leave(message):
     room = get_room_or_error(message["room"],message.user)
     
-    mesaage.user.rooms.remove(room)
+    message.user.rooms.remove(room)
     room.websocket_group.discard(message.reply_channel)
     message.channel_session['rooms'] = list(
         set(message.channel_session['rooms'])

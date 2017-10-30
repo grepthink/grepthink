@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-<!-- Still need to make the chat html fit into the grepthink base html file-->
 {% load static %}
 
 {% block title %}GT Chat{% endblock %}
@@ -73,7 +72,7 @@
                     // msg types are defined in chat/settings.py
                     // Only for demo purposes is hardcoded, in production scenarios, consider call a service.
                             ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.username + "</span>" +
+                                    "<span class='username'>" + data.username + ": </span>" +
                                     "<span class='body'>" + data.message + "</span>" +
                                     "</div>";
                     msgdiv.append(ok_msg);
