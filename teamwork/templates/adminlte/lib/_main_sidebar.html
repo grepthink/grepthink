@@ -69,6 +69,17 @@
                             <i class="fa fa-comments"></i>
                             <span>Chat</span>
                         </a>
+			    <ul class ="treeview-menu">
+      				<li><a href="{% url 'view_chats' %}"><i class="fa fa-circle-o"></i>View all chats</a></li>
+				{% if user.get_user_courses %}
+				{% for course in user.get_user_courses %}
+					<li class"">
+					
+					</i> {{course.name}}</a>
+				</li>
+					{% endfor %}
+					{% endif %}
+			   </ul>
                     </li>
 
                     <li>
