@@ -88,22 +88,24 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 
-def get_project_tsrs(request, slug):
-    """
-    Public method that takes a request and slug returns all tsrs from a project
-    as a single string.
+#I don't think we need this..
+#
+# def get_project_tsrs(request, slug):
+#     """
+#     Public method that takes a request and slug returns all tsrs from a project
+#     as a single string.
 
-    String form follows string representation of TSR class in models.py, split
-    up per view by a newline.
-    """
-    project = get_object_or_404(Project, slug=slug)
-    completed_tsrs = project.tsr.all()
-    tsrs_in_string = ""
+#     String form follows string representation of TSR class in models.py, split
+#     up per view by a newline.
+#     """
+#     project = get_object_or_404(Project, slug=slug)
+#     completed_tsrs = project.tsr.all()
+#     tsrs_in_string = ""
 
-    for current_tsr in completed_tsrs:
-        tsrs_in_string += str(current_tsr) + '\n'
+#     for current_tsr in completed_tsrs:
+#         tsrs_in_string += str(current_tsr) + '\n'
 
-    return tsrs_in_string
+#     return tsrs_in_string
 
 
 def view_one_project(request, slug):
@@ -806,7 +808,6 @@ def tsr_update(request, slug, assslug):
         emails.append(member.email)
 
     params = str(request)
-    print("My params are %s\n" % params)
     if "scrum_master_form" in params:
         scrum_master = True
     else:
@@ -873,6 +874,7 @@ def tsr_update(request, slug, assslug):
         else:
             for tsr in forms:
                 # gets fields variables and saves them to project
+                print(tsr.ass_number)
                 cur_proj.tsr.add(tsr)
                 cur_proj.save()
                 asg.subs.add(tsr)
@@ -975,6 +977,35 @@ def tsr_edit(request, slug, assslug):
     {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
     'page_name' : page_name, 'page_description': page_description,
     'title': title})
+
+def is_current_teammate_tsrs_similar(project, asgn_number, marginofsimilarity):
+    """
+    Helper function that returns a dictionary of dictionaries
+    reporting if each teammate's TSRs are similar to one another
+    depending on the margin of similiarity.
+    """
+    all_similarities = {}
+    members = project.members.all()
+
+    for current_evaluator in members:
+        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator).exclude(evaluatee=current_evaluator))
+        evaluator_similarities = {}
+
+        for evaluator in evaluator_tsrs:
+            evaluatee = evaluator.evaluatee
+            evaluatee_tsr = project.tsr.all().filter(ass_number=asgn_number, evaluator=evaluatee, evaluatee=evaluator)
+            
+            percent_of_percentcontribution = evaluator.percent_contribution * marginofsimilarity
+            upper_margin = evaluator.percent_contribution + percent_of_percentcontribution
+
+            lower_margin = evaluator.percent_contribution - percent_of_percentcontribution
+
+            if lower_margin <= evaluatee_tsr.percent_contribution <= upper_margin:
+                evaluator_similarities[evaluatee] = True
+            else:
+                evaluator_similarities[evaluatee] = False
+        all_similarities[current_evaluator] = evaluator_similarities
+    return all_similarities
 
 
 
