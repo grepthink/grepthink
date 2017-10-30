@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     'channels',
+	# whitenoise nostatic might be rendered useles because of channels, look into that eventally
     'whitenoise.runserver_nostatic',
-    
+	
     'django.contrib.staticfiles',
 
     'teamwork.apps.core',
@@ -166,10 +167,16 @@ redis_host = os.environ.get('REDIS_HOST', 'localhost')
 #Channel Layer definitions
 CHANNEL_LAYERS = {
     "default": {
-        # This example app uses the Redis channel layer implementation asgi_redis
+        # The current Backend is temporary and using a default one, but not suited for deploying.
+		# Setting up the redis requires running the redis server and having this set
+		# as the backend.
+		#"BACKEND": "asgi_redis.RedisLocalChannelLayer",
+		#"CONFIG": {
+        #   "hosts": [("redis-server-name", 6379)],
+        #},
         "BACKEND": "asgiref.inmemory.ChannelLayer",
 
-       "ROUTING": "teamwork.routing.channel_routing", # We will create it in a moment
+       "ROUTING": "teamwork.routing.channel_routing",
     },
 }
 
