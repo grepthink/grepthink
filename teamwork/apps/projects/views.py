@@ -733,7 +733,19 @@ def resource_update(request, slug):
     else:
         form = ResourceForm(request.user.id)
 
-    return render(request, 'projects/add_resource.html',{'form': form, 'project': project})
+    return render(request, 'projects/add_resource.html', {'form': form, 'project': project})
+
+def populate_tsr_forms(request, emails, members, scrum_master):
+    """
+    Private helper function that takes a request, emails, members, and scrum_master
+    variables to populate the tsr_forms based on the member's email.
+    """
+    tsr_forms = list()
+    for member_email in emails:
+        form_iterator = TSR(request.user.id, request.POST, members=members,
+                            emails=emails, prefix=member_email, scrum_master=scrum_master)
+        tsr_forms.append(form_iterator)
+    return tsr_forms
 
 @login_required
 def tsr_update(request, slug, assslug):
@@ -748,7 +760,6 @@ def tsr_update(request, slug, assslug):
 
     user = request.user
     cur_proj = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=cur_proj)
     asg = get_object_or_404(Assignment, slug=assslug)
     today = datetime.now().date()
     members = cur_proj.members.all()
@@ -756,7 +767,6 @@ def tsr_update(request, slug, assslug):
     for member in members:
         emails.append(member.email)
 
-    params = str(request)
     if cur_proj.scrum_master == user:
         scrum_master = True
     else:
@@ -770,16 +780,16 @@ def tsr_update(request, slug, assslug):
     if asg_ass_date <= today <= asg_due_date:
         late = False
     else:
-        late=True
+        late = True
     print(late)
 
-    forms = list()
+    tsr_forms = list()
     if request.method == 'POST':
         percent_addup = 0
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, prefix=email, scrum_master=scrum_master)
+                       emails=emails, prefix=email, scrum_master=scrum_master)
             if form.is_valid():
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
@@ -791,38 +801,26 @@ def tsr_update(request, slug, assslug):
                 tsr.performance_assessment = form.cleaned_data.get('perf_assess')
                 tsr.notes = form.cleaned_data.get('notes')
                 tsr.evaluator = request.user
-                tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
+                tsr.evaluatee = User.objects.filter(email__iexact=email).first()
                 tsr.late = late
                 print(tsr.late)
 
                 tsr.save()
-                forms.append(tsr)
-
-                # # gets fields variables and saves them to project
-                # cur_proj.tsr.add(tsr)
-                # cur_proj.save()
-                # asg.subs.add(tsr)
-                # asg.save()
+                tsr_forms.append(tsr)
 
         if len(emails) != 1 and percent_addup != 100:
             messages.error(request, "Contribution does not add up to 100%. Please try again.")
 
-            del forms[:]
-            forms = list()
-            for m in emails:
-                form_i=TSR(request.user.id, request.POST, members=members,
-                 emails=emails, prefix=m, scrum_master=scrum_master)
-                forms.append(form_i)
+            tsr_forms = populate_tsr_forms(request, emails, members, scrum_master)
             form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, scrum_master=scrum_master)
+                       emails=emails, scrum_master=scrum_master)
             return render(request, 'projects/tsr_update.html',
-            {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
-            'page_name' : page_name, 'page_description': page_description,
-            'title': title, 'scrum_master_form':'scrum_master_form'})
+                          {'forms':tsr_forms, 'cur_proj': cur_proj, 'ass':asg,
+                           'page_name' : page_name, 'page_description': page_description,
+                           'title': title, 'scrum_master_form':'scrum_master_form'})
         else:
-            for tsr in forms:
+            for tsr in tsr_forms:
                 # gets fields variables and saves them to project
-                print(tsr.ass_number)
                 cur_proj.tsr.add(tsr)
                 cur_proj.save()
                 asg.subs.add(tsr)
@@ -831,18 +829,13 @@ def tsr_update(request, slug, assslug):
         return redirect(view_one_project, slug)
 
     else:
-        # if request was not post then display forms
-        for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members,
-             emails=emails, prefix=m, scrum_master=scrum_master)
-            forms.append(form_i)
-        form = TSR(request.user.id, request.POST, members=members,
-            emails=emails, scrum_master=scrum_master)
+        # if request was not post then display tsr_forms
+        tsr_forms = populate_tsr_forms(request, emails, members, scrum_master)
 
     return render(request, 'projects/tsr_update.html',
-    {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
-    'page_name' : page_name, 'page_description': page_description,
-    'title': title})
+                  {'forms':tsr_forms, 'cur_proj':cur_proj, 'ass':asg,
+                   'page_name':page_name, 'page_description':page_description,
+                   'title':title})
 
 @login_required
 def tsr_edit(request, slug, assslug):
