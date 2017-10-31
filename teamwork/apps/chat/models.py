@@ -26,11 +26,17 @@ class Chatroom(models.Model):
         
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
-        message = {'chatroom':str(self.id), 'message':message, 'username':user.username, 'date': text.date.strftime("%I:%M %p")}
+        message = {
+            'chatroom':str(self.id), 
+            'message':message, 
+            'username':user.username, 
+            'date': text.date.strftime("%I:%M %p")
+            }
 
         #Sends the message payload
         self.websocket_group.send(
-            {"text":json.dumps(message)}
+            {
+                "text":json.dumps(message)}
             )
         
 
@@ -48,9 +54,15 @@ class Chatroom(models.Model):
 
 #When a user loads a room this sends the saved messages in the database
 def send_text_to_one(user,chattext):
-    message = {'chatroom':str(chattext.room.id),'message':chattext.content, 'username':chattext.author.username, 'date': chattext.date.strftime("%I:%M %p")}
+    message = {
+        'chatroom':str(chattext.room.id),
+        'message':chattext.content, 
+        'username':chattext.author.username, 
+        'date': chattext.date.strftime("%I:%M %p")
+        }
     Group("User-"+str(user.id)).send(
-        {"text":json.dumps(message)}
+        {
+            "text":json.dumps(message)}
         )
 
 class Chattext(models.Model):
