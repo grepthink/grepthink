@@ -31,7 +31,8 @@
 
             var webSocketBridge = new channels.WebSocketBridge();
             webSocketBridge.connect(ws_path);
-            // Handle incoming messages
+            //When the websocket receives a payload it needs to decide what type it is
+            //then handle it.
             webSocketBridge.listen(function(data) {
                 // Decode the JSON
                 console.log("Got websocket message", data);
@@ -40,7 +41,7 @@
                     alert(data.error);
                     return;
                 }
-                // Handle joining
+                // When you join this creates the room
                 if (data.join) {
                     console.log("Joining room " + data.join);
                     var roomdiv = $(
@@ -61,19 +62,19 @@
                         return false;
                     });
                     $("#chats").append(roomdiv);
-                    // Handle leaving
+                 //Removes the room when click the room link again
                 } else if (data.leave) {
                     console.log("Leaving room " + data.leave);
                     $("#room-" + data.leave).remove();
                     // Handle getting a message
-                } else if (data.message || data.msg_type != 0) {
+                } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
                     var ok_msg = "";
-                    // msg types are defined in chat/settings.py
-                    // Only for demo purposes is hardcoded, in production scenarios, consider call a service.
+                    // Displays the message payload
                             ok_msg = "<div class='message'>" +
                                     "<span class='username'>" + data.username + ": </span>" +
-                                    "<span class='body'>" + data.message + "</span>" +
+                                    "<span class='body'>" + data.message + "    </span>" +
+                                    "<span class='date'>" + data.date + "</span>" +
                                     "</div>";
                     msgdiv.append(ok_msg);
 
@@ -88,18 +89,19 @@
                 return $("#room-" + roomId).length > 0;
             };
 
-            // Room join/leave
+            // Create the clickable link to the chat room
             $("li.room-link").click(function () {
                 roomId = $(this).attr("data-room-id");
                 if (inRoom(roomId)) {
-                    // Leave room
+                    // Payload sent when you leave a room
+                    
                     $(this).removeClass("joined");
                     webSocketBridge.send({
                         "command": "leave",
                         "room": roomId
                     });
                 } else {
-                    // Join room
+                    // Initial message payload sent when you join a room
                     $(this).addClass("joined");
                     webSocketBridge.send({
                         "command": "join",

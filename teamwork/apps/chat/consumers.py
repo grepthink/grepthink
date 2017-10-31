@@ -70,9 +70,6 @@ def chat_make(message):
         })
 
 
-
-
-
 #Looks similir to chat_init, might be the same thing
 #Should test this to find out, and ask Hugh what its supposed to do
 
@@ -93,8 +90,12 @@ def chat_join(message):
             "title": room.name,
         }),
     })
+    for index in range(9,0,-1):
+        send_text_to_one(message.user, room.get_chat_init()[index])
+    """
     for text in room.get_chat_init():
         send_text_to_one(message.user,text)
+    """
     
 @channel_session_user
 @catch_client_error

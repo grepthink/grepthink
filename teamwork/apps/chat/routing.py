@@ -15,7 +15,7 @@ websocket_routing = [
 custom_routing = [
     #Handle different chat commands here,
     #websocket receive routes messages here and goes
-    #to the proper place
+    #to the proper place, gets routed from the javascript
     route("chat.receive", chat_join, command="^join$"),
     route("chat.receive", chat_leave, command="^leave$"),
     route("chat.receive", chat_send, command="^send$"),

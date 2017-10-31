@@ -3,7 +3,7 @@ from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
 
-# Create your models here.
+# Chatroom model which holds the chat room ID and the name
 class Chatroom(models.Model):
     
     name = models.CharField(max_length=255)
@@ -17,24 +17,25 @@ class Chatroom(models.Model):
     def websocket_group(self):
         return Group("Room-" +str(self.id))
     
+    #Saves the Chattext model with metadata and sends the payload to the websocket
     def send_message(self,message,user):
 
-
-        #save the text for later
         text = Chattext(room=self,author=user)
         text.content = message
         text.save()
-        #a modified version of that one
-        #will send a message to all
-        message = {'chatroom':str(self.id), 'message':message, 'username':user.username}
+        
+        #Holds the message payload
+        #Date time format is set as Hours:Minutes AM/PM
+        message = {'chatroom':str(self.id), 'message':message, 'username':user.username, 'date': text.date.strftime("%I:%M %p")}
 
-        #dumps or dump?
-        #dumps!
+        #Sends the message payload
         self.websocket_group.send(
             {"text":json.dumps(message)}
             )
+        
 
-    #django doesn't have a some() just this thing
+    #When a chat is initially loaded, gets the last 10 messages saved, in theory.
+    #Called from consumers
     def get_chat_init(self):
         return self.chat.all()[:10]
 
@@ -45,11 +46,9 @@ class Chatroom(models.Model):
     def __str__(self):
         return self.name
 
-#this isn't the right place for this, so move it later
-#also it may be unneeded, but oh well
-#send a message to a user
+#When a user loads a room this sends the saved messages in the database
 def send_text_to_one(user,chattext):
-    message = {'chatroom':str(chattext.room.id),'message':chattext.content, 'username':chattext.author.username}
+    message = {'chatroom':str(chattext.room.id),'message':chattext.content, 'username':chattext.author.username, 'date': chattext.date.strftime("%I:%M %p")}
     Group("User-"+str(user.id)).send(
         {"text":json.dumps(message)}
         )
@@ -68,7 +67,7 @@ class Chattext(models.Model):
         ordering = ("-date", )
         
     def __str__(self):
-        return '(0) - (1)'.format(self.author.username, self.content)
+        return '(0) - (1) - (2)'.format(self.author.username, self.content)
     
     
 
