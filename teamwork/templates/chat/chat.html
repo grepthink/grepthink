@@ -5,6 +5,13 @@
 {% block title %}GT Chat{% endblock %}
 {% block header_text %}GT Chat{% endblock %}
 
+{% block crumb %}
+
+{# Breadcrumb for All Chats #}
+<li><a href="{% url 'view_chats' %}"> All Chat </a></li>
+
+{% endblock crumb %}
+
 {% block content %}
     <ul class="rooms">
         {% for room in rooms %}
