@@ -27,3 +27,4 @@ still loads.<br />
 10-27-17 2:32pm - Trevor, Basic messaging functions work, messages can be received from users in the same room.
 Chat room still needs to be created and implemented into the grepthink base.html file.<br />
 10-24-17 ->10-29-17 models are implemented, small fixes in various places, teying to get testing working. Please understand what you read, don't just copy<br />
+11-1-17 - Sean: Added sub urls from /chat (for ex. /chat/room1) and now the chatroom auto loads upon entering those sub-urls.<br />

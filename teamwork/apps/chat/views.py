@@ -47,10 +47,10 @@ def view_chats(request):
 
 @login_required
 def view_one_chat(request, slug):
-    chat = get_object_or_404(Chatroom, name=slug)
+    room = get_object_or_404(Chatroom, name=slug)
     title = "GT Chat"
     name = slug
-    messages = chat.get_chat()
+    #messages = room.get_chat_init()
 
     return render(request, 'chat/one_chat.html',{
-        'title': title, 'chat': chat, 'name': name, 'messages': messages})
+        'title': title, 'room': room, 'name': name})
