@@ -29,6 +29,7 @@ from django.utils import timezone
 
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
+from teamwork.apps.chat.models import *
 
 # Generates add code
 def rand_code(size):
@@ -261,8 +262,11 @@ class Project(models.Model):
     weigh_know = models.IntegerField(
         default=1)
     weigh_learn = models.IntegerField(
-        default=1)
-
+        default=1) 
+    
+    chatroom = None
+    
+    
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.

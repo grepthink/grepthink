@@ -90,8 +90,16 @@ def chat_join(message):
             "title": room.name,
         }),
     })
-    for index in range(9,0,-1):
-        send_text_to_one(message.user, room.get_chat_init()[index])
+    
+    chat_messages = room.get_chat_init()
+    number_of_messages = len(chat_messages)
+    starting_point = 0
+    if number_of_messages <= 9 :
+        starting_point = number_of_messages - 1
+    else:
+        starting_point = 9
+    for index in range(starting_point,0,-1):
+        send_text_to_one(message.user, chat_messages[index])
     """
     for text in room.get_chat_init():
         send_text_to_one(message.user,text)
