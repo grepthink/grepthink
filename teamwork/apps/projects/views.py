@@ -23,6 +23,8 @@ from .models import *
 
 from itertools import chain
 import json
+import math
+import decimal
 
 
 def _projects(request, projects):
@@ -98,6 +100,10 @@ def view_one_project(request, slug):
     #print(get_project_tsrs(request, slug))
 
     project = get_object_or_404(Project, slug=slug)
+
+    print("Averages for current TSRs: %s\n" % averages_for_all_evals(project))
+    print("Similarities for TSR 2: %s" % similarity_for_given_evals(project, 2))
+    
     scrum_master = project.scrum_master
     updates = project.get_updates()
     resources = project.get_resources()
@@ -794,7 +800,7 @@ def tsr_update(request, slug, assslug):
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
                 tsr.percent_contribution = form.cleaned_data.get('perc_contribution')
-                percent_addup += int(tsr.percent_contribution)
+                percent_addup += tsr.percent_contribution
                 tsr.positive_feedback = form.cleaned_data.get('pos_fb')
                 tsr.negative_feedback = form.cleaned_data.get('neg_fb')
                 tsr.tasks_completed = form.cleaned_data.get('tasks_comp')
@@ -919,34 +925,52 @@ def tsr_edit(request, slug, assslug):
     'page_name' : page_name, 'page_description': page_description,
     'title': title})
 
-def current_teammate_tsrs_similar(project, asgn_number, marginofsimilarity):
+def similarity_for_given_evals(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries
-    reporting if each teammate's TSRs are similar to one another
-    depending on the margin of similiarity.
+    reporting if each teammate's evaluations of him/herself and others 
+    are similar across all TSRs.
     """
     all_similarities = {}
     members = project.members.all()
+    marginofsimilarity = decimal.Decimal(0.1)
 
     for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator).exclude(evaluatee=current_evaluator))
+        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
         evaluator_similarities = {}
+        average_contribution = 0
 
-        for evaluator in evaluator_tsrs:
-            evaluatee = evaluator.evaluatee
-            evaluatee_tsr = project.tsr.all().filter(ass_number=asgn_number, evaluator=evaluatee, evaluatee=evaluator)
-            
-            percent_of_percentcontribution = evaluator.percent_contribution * marginofsimilarity
-            upper_margin = evaluator.percent_contribution + percent_of_percentcontribution
+        for evaluation in evaluator_tsrs:
+            average_contribution += evaluation.percent_contribution
+        average_contribution /= len(evaluator_tsrs)
+        upper_bound = math.ceil(average_contribution + (average_contribution * marginofsimilarity))
+        lower_bound = math.floor(average_contribution - (average_contribution * marginofsimilarity))
 
-            lower_margin = evaluator.percent_contribution - percent_of_percentcontribution
-
-            if lower_margin <= evaluatee_tsr.percent_contribution <= upper_margin:
+        for evaluation in evaluator_tsrs:
+            evaluatee = evaluation.evaluatee
+            if lower_bound <= evaluation.percent_contribution <= upper_bound:
                 evaluator_similarities[evaluatee] = True
             else:
                 evaluator_similarities[evaluatee] = False
         all_similarities[current_evaluator] = evaluator_similarities
     return all_similarities
+
+def averages_for_all_evals(project):
+    """
+    Helper function that returns a dictionary of averages for percent
+    contributions for each team member in a project.
+    """
+    member_averages = {}
+    members = project.members.all()
+
+    for current_evaluator in members:
+        evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluator))
+        average_contribution = 0
+
+        for evaluation in evaluator_tsrs:
+            average_contribution += evaluation.percent_contribution
+        member_averages[current_evaluator] = average_contribution / len(evaluator_tsrs)
+    return member_averages
 
 
 @login_required
