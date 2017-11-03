@@ -3,11 +3,18 @@ from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
 
+#https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+#USE THE LINK ABOVE FOR TIME FORMATS
 # Chatroom model which holds the chat room ID and the name
 class Chatroom(models.Model):
-    
-    name = models.CharField(max_length=255)
-    user = models.ManyToManyField(User, related_name='rooms')
+    #Name of the room
+    name = models.CharField(
+        max_length = 255,
+        default="")
+    #The members of the chat
+    user = models.ManyToManyField(
+        User,
+        related_name = 'rooms')
 
     class Meta:
         ordering = ('name',)
@@ -36,8 +43,8 @@ class Chatroom(models.Model):
         #Sends the message payload
         self.websocket_group.send(
             {
-                "text":json.dumps(message)}
-            )
+                "text":json.dumps(message)
+            })
         
 
     #When a chat is initially loaded, gets the last 10 messages saved, in theory.
@@ -64,14 +71,33 @@ def send_text_to_one(user,chattext):
         {
             "text":json.dumps(message)}
         )
+#When a user loads a room this sends the saved messages in the database
+def send_texts_to_one(user,messages):
+    Group("User-"+str(user.id)).send(
+        {
+            "text":json.dumps({'messages':messages})}
+        )
 
 class Chattext(models.Model):
     
-    room = models.ForeignKey(Chatroom, related_name='chat', on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Chatroom,
+        related_name='chat',
+        on_delete=models.CASCADE)
+        
     #need to change this to deleted user later, for now it's fine
-    author = models.ForeignKey(User, related_name='author_char', on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True,editable=True)
-    content = models.CharField(max_length=2000, default="")
+    author = models.ForeignKey(
+        User,
+        related_name='author_char',
+        on_delete=models.CASCADE)
+        
+    date = models.DateTimeField(
+        auto_now_add=True,
+        editable=True)
+        
+    content = models.CharField(
+        max_length=2000,
+        default="")
         
 
     class Meta:

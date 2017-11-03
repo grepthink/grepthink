@@ -16,6 +16,7 @@ from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
 from teamwork.apps.courses.views import view_one_course
 from teamwork.apps.profiles.views import view_alerts
+from teamwork.apps.chat.models import Chatroom
 
 from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
@@ -414,7 +415,8 @@ def create_project(request):
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
             # Create an object for the input
-            project = Project()
+            project  = Project()
+            
 
             # Fill all the simple fields and save project object.
             project.slug = form.cleaned_data.get('slug')
@@ -429,7 +431,14 @@ def create_project(request):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
             project.scrum_master = request.user
-
+            
+            #Creates a chatroom with the title of the project and adds the creator
+            chatroom = Chatroom()
+            chatroom.name = project.title
+            chatroom.save()
+            chatroom.user.add(user)
+            project.chatroom = chatroom
+            
             # Course the project is in
             in_course = form.cleaned_data.get('course')
             # Init TA of Project ot be the Professor

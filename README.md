@@ -28,3 +28,5 @@ still loads.<br />
 Chat room still needs to be created and implemented into the grepthink base.html file.<br />
 10-24-17 ->10-29-17 models are implemented, small fixes in various places, teying to get testing working. Please understand what you read, don't just copy<br />
 11-1-17 12:30pm - Sean: Added sub urls from /chat (for ex. /chat/room1) and now the chatroom auto loads upon entering those sub-urls. Breadcrumbs are added for both view_chats and view_one_chat.<br />
+11-2-17 8:20pm - Sean: Deleted unneeded code in chat.html, set proper leave in one_chat.html for a websocket disconnect, deleted unneeded copy file "chat - Copy.html". Working on user authenication next.<br />
+11-3-17 12:37 - Hugh: get messages added, working much better.<br />
