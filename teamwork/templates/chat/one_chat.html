@@ -85,6 +85,20 @@
                     msgdiv.append(ok_msg);
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                }else if (data.messages) {
+					for (var i =0;i<data.messages.length;i++){
+						var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
+						var ok_msg = "";
+						// Displays the message payload
+                            ok_msg = "<div class='message'>" +
+                                    "<span class='username'>" + data.messages[i].username + ": </span>" +
+                                    "<span class='body'>" + data.messages[i].message + "    </span>" +
+                                    "<span class='date'>" + data.messages[i].date + "</span>" +
+                                    "</div>";
+						msgdiv.append(ok_msg);
+					}
+
+                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");
                 }
