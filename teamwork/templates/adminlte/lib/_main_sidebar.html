@@ -63,24 +63,8 @@
                             <span>Home</span>
                         </a>
                     </li>
-                        <!-- create chat; need to change url link and image -->
-                    <li>
-                        <a href="{% url 'view_chats' %}">
-                            <i class="fa fa-comments"></i>
-                            <span>Chat</span>
-                        </a>
-			    <ul class ="treeview-menu">
-      				<li><a href="{% url 'view_chats' %}"><i class="fa fa-circle-o"></i>View all chats</a></li>
-				{% if user.get_user_courses %}
-				{% for course in user.get_user_courses %}
-					<li class"">
-					
-					</i> {{course.name}}</a>
-				</li>
-					{% endfor %}
-					{% endif %}
-			   </ul>
-                    </li>
+                       
+                 
 
                     <li>
                         <a href="{% url 'create_project' %}">
@@ -95,6 +79,31 @@
                             <span>My Projects</span>
                         </a>
                     </li>
+	
+		<!-- create chat; need to change url link and image -->
+			<li class="treeview active">
+                        <a href="{% url 'view_chats' %}">
+                            <i class="fa fa-comments"></i>
+                            <span>Chat</span>
+			    <span class="pull-right-container">
+			        <i class="fa fa-angle-left pull-right"></i>
+			    </span>
+                        </a>
+                            <ul class ="treeview-menu">
+                                <li><a href="{% url 'view_chats' %}"><i class="fa fa-circle-o"></i>View all chats</a></li>
+                                {% if user.form.title %}
+                                {% for project in user.form.title %}
+                                        <li class="">
+                                                <a href="{% url 'view_one_project' project.slug %}"><i class="fa fa-circle-o">
+                                        </i> {{project.name}}</a>
+                                </li>
+                                        {% endfor %}
+                                        {% endif %}
+                           </ul>
+                    </li>
+
+
+
                         <li>
                             <a href="{% url 'view_matches' %}">
                                 <i class="fa fa-handshake-o"></i>
