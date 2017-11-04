@@ -98,8 +98,16 @@ def chat_join(message):
         starting_point = number_of_messages - 1
     else:
         starting_point = 9
+    messages = []
     for index in range(starting_point,0,-1):
-        send_text_to_one(message.user, chat_messages[index])
+        text = {
+            'chatroom':str(chat_messages[index].room.id),
+            'message':chat_messages[index].content, 
+            'username':chat_messages[index].author.username, 
+            'date':chat_messages[index].date.strftime("%I:%M %p")
+            }
+        messages.append( text)    
+    send_texts_to_one(message.user, messages)
 
     
 @channel_session_user

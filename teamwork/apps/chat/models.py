@@ -80,6 +80,12 @@ def send_text_to_one(user,chattext):
         {
             "text":json.dumps(message)}
         )
+#When a user loads a room this sends the saved messages in the database
+def send_texts_to_one(user,messages):
+    Group("User-"+str(user.id)).send(
+        {
+            "text":json.dumps({'messages':messages})}
+        )
 
 class Chattext(models.Model):
     
