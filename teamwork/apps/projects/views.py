@@ -24,7 +24,6 @@ from .models import *
 from itertools import chain
 import json
 
-
 def _projects(request, projects):
     """
     Private method that will be used for paginator once I figure out how to get it working.
@@ -197,6 +196,52 @@ def view_one_project(request, slug):
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
     today = datetime.now().date()
+    
+
+    #=======================
+    #Analysis Tab Work 
+    # Checks to see if analysis already exists for assignment specific TSRs, will generate analysis IF it does not already exist AND
+    # TSR's completed. This means the correct amount of Tsr's for the assignment per project exist, with the correct matches to evaluator
+    # and evaluatee
+    
+    #checks the course for each assignment of type tsr and goes through each to get the assignment number and associated analysis
+    for each_assigned_tsr in assigned_tsrs: 
+       
+         assigned_tsr_number = each_assigned_tsr.ass_number
+         existing_analysis = project.analysis.filter(tsr_number = assigned_tsr_number)
+
+         #check to see if an instance of the analysis for a specific tsr assigned does not exist for the project
+         #if it exists, skip over analysis generation completely, if not go through with next check
+         if not existing_analysis.exists():
+             completed_tsrs_per_ass_number = project.tsr.filter(ass_number = assigned_tsr_number)
+
+             if mem_count == (len(completed_tsrs_per_ass_number)/mem_count):
+                 tsr_exists = {}
+                 
+                 for each_member in members :
+                     tsr_per_evaluator = completed_tsrs_per_ass_number.filter(evaluator = each_member)
+                     
+                     for each_evaluatee in members:
+                         tsr_exists[str(each_member), str(each_evaluatee)] = tsr_per_evaluator.filter(evaluatee = each_evaluatee).exists()
+
+                 num_distinct_tsrs = sum(tsr_exists.values())
+                 if  len(completed_tsrs_per_ass_number) == num_distinct_tsrs :
+                    #Put functions here
+                    dummy_word = dummy_function_echo('word')
+                    #Put functions here
+                 
+                 else:
+                     messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
+
+    all_existing_analysis = project.analysis.all()
+    analysis_tuple={}
+
+    for p in project.analysis.all():
+            analysis_tuple.setdefault(p.associated_member, []).append([0,p])            
+
+    analysis_keys = analysis_tuple.keys()
+    analysis_items = analysis_tuple.items()
+
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
@@ -204,7 +249,8 @@ def view_one_project(request, slug):
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'analysis_keys' : analysis_keys})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -957,15 +1003,15 @@ def view_tsr(request, slug):
     sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
     for i in sprint_numbers.all():
         #averages=list()
-        tsr_dict=list()
+        tsr_dict = list()
         for member in members:
-            tsr_single=list()
+            tsr_single = list()
             # for every member in project, filter query using member.id
             # and assignment number
             for member_ in members:
                 if member == member_:
                     continue
-                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
+                tsr_query_result = Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
                 if(len(tsr_query_result)==0):
                     continue
                 tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
@@ -1339,3 +1385,57 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
+
+def dummy_function_mult(number_a, number_b):
+    return number_a*number_b;
+
+def dummy_function_add(number_a, number_b):
+    return number_a + number_b;
+
+def dummy_function_word(word_a):
+    return word_a
+    
+#the wrapper function : gets current project and data and saves it to correct project
+def setAnalysisData(project, analysisData):
+    analysis = Analysis()
+    analysis.tsr_number = analysisData[0]
+    analysis.associated_member = analysisData[1]
+    analysis.analysis_type = analysisData[2]
+    analysis.analysis_output = analysisData[3]
+    analysis.flag_tripped = analysisData[4]
+    analysis.flag_detail = analysisData[5]
+    analysis.save()
+                 
+    #saving in manytomany field project
+    project.analysis.add(analysis)
+    project.save()
+
+
+
+    
+#the wrapper function : gets current project and data and saves it to correct project
+def setAnalysisData(project, analysisData):
+    analysis = Analysis()
+    analysis.tsr_number = analysisData[0]
+    analysis.associated_member = analysisData[1]
+    analysis.analysis_type = analysisData[2]
+    analysis.analysis_output = analysisData[3]
+    analysis.flag_tripped = analysisData[4]
+    analysis.flag_detail = analysisData[5]
+    analysis.save()
+                 
+    #saving in manytomany field project
+    project.analysis.add(analysis)
+    project.save()
+
+
+    #the wrapper function : gets current project and data and saves it to correct project
+def setFlag(currentAnalysisObject, flag_info):
+    currentAnalysisObject.flag_tripped = flag_info[0]
+    currentAnalysisObject.flag_detail = flag_info[1]
+    currentAnalysisObject.save()
+
+
+def dummy_function_echo(word):
+    return word
+        

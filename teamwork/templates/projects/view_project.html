@@ -612,6 +612,7 @@
 
             <!--VIEW TSR Analysis TAB-->
 
+         
             <div class="tab-pane" id="tab_8">
             <style>
               table {
@@ -628,10 +629,11 @@
                 color: white;
               }
             </style>
+
                 {% for ass in assigned_tsrs %}
                 <div class="box box-solid">
                   <div class="box-header with-border">
-                    <h3 class="box-title">TSR Analysis #{{ ass.ass_number }}</h3>
+                    <h3 class="box-title">Tsr Analysis Flagged #{{ ass.ass_number }}</h3>
 
                     <div class="box-tools">
                       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -646,23 +648,104 @@
                             <table class="table table-hover">
                                        <tbody>
                                        <tr>
-                                         <th style="width:1%;">Student</th>
-                                         <th style="width:1%; text-align:center;"> Weekly Average Contribution (%)</th>
-                                         <th style="width:20%;"> Lowest Rating (%)</th>
-                                         <th style="width:20%;"> Highest Rating (%)</th>
-                                         <th style="width:20%; text-align:center;">Average Positive Feedback Word Count</th>
-                                         <th style="width:20%; text-align:center;">Average Negative Feedback Word Count</th>
-                                         <th style="width:20%;"> Review Similarity(%)</th>
-                                         <th style="width:20%;">Notes</th>
+                                         <th style="width:1%; text-align:center;">Student</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Type</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Results</th>
+                                         <th style="width:20%; text-align:center;"> Flag Details</th>
                                        </tr>
                                        {% for m in members %}
                                            <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
-                                              <td>
-                                                    <a href="{% url 'profile' m.username %}">
-                                                    {{m.email}}</a>
-                                              </td>
-                                  
-                                    {% endfor %}
+                                       {% for analysis_ass in all_analysis %}
+                                       {% for analysis_piece in analysis_ass.1 %}
+                                                 {% if m == analysis_ass.0 %}
+                                                 {% if analysis_piece.1.tsr_number == ass.ass_number%}
+                                                 {% if analysis_piece.1.flag_tripped == True%}
+                                              
+                                                <td>
+                                                     <a href="{% url 'profile' analysis_ass.0.username %}">
+                                                    {{analysis_ass.0.email}}</a>
+                                                </td>
+
+                                               <td style="background-color:#FFFF00; text-align:center;">
+                                                 {{analysis_piece.1.analysis_type}}
+                                               </td>
+
+                                                <td style="background-color:#FFFF00; text-align:center;">
+                                                 {{analysis_piece.1.analysis_output}}
+                                                </td>
+
+                                                <td style="background-color:#FFFF00; text-align:center;">
+                                                 {{analysis_piece.1.flag_detail}}
+                                                </td>
+                                       
+                                             </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+                                       {% endfor %}     
+                                       {% endfor %}
+                                       {% endfor %}
+                                       </tbody>
+                           </table>
+                   </ul>
+                 </div>
+
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+              {% endfor %}
+
+                {% for ass in assigned_tsrs %}
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Tsr Analysis #{{ ass.ass_number }}</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <div class="box-body no-padding">
+                   <ul class="nav nav-pills nav-stacked">
+
+                            <table class="table table-hover">
+                                       <tbody>
+                                       <tr>
+                                         <th style="width:1%; text-align:center;">Student</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Type</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Results</th>
+                                       </tr>
+                                       {% for m in members %}
+                                           <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                       {% for analysis_ass in all_analysis %}
+                                       {% for analysis_piece in analysis_ass.1 %}
+                                                 {% if m == analysis_ass.0 %}
+                                                 {% if analysis_piece.1.tsr_number == ass.ass_number%}
+                                                 {% if analysis_piece.1.flag_tripped == False%}
+                                              
+                                                <td>
+                                                     <a href="{% url 'profile' analysis_ass.0.username %}">
+                                                    {{analysis_ass.0.email}}</a>
+                                                </td>
+
+                                               <td style="text-align:center;">
+                                                 {{analysis_piece.1.analysis_type}}
+                                               </td>
+
+                                                <td style="text-align:center;">
+                                                 {{analysis_piece.1.analysis_output}}
+                                                </td>
+
+                                       
+                                             </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+                                       {% endfor %}     
+                                       {% endfor %}
+                                       {% endfor %}
                                        </tbody>
                            </table>
                    </ul>
@@ -719,8 +802,7 @@
             </div>
 
 
-            <!--VIEW TSR ANALYSIS TAB END-->
-
+            <!--VIEW TSR ANALYSIS TAB END
 
 
             <!-- /.tab-pane chat -->

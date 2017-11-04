@@ -99,31 +99,34 @@ class Tsr(models.Model):
 
 # Data structure for Analysis Tab
 class Analysis(models.Model):
-   """ 
+    """ 
     Analysis: A database model (object) for the analysis of TSR's and their flags
-   
-    Fields:
-        analysis : a dictionary containing the following : TSR# , The Flag Information , and the numerical data 
-   
-    Methods:
     """
-    #A number assigned to the specific instance of a TSR assignment number
-    tsr_number = DecimalField(max_digits = 2, decimal_places = 0, default = 0)
-
+    #A number assigned based on the specific instance of a TSR assignment number 
+    tsr_number = models.DecimalField(max_digits = 2, decimal_places = 0, default = 0)
+    #associated user linked to particular piece of data
     associated_member = models.ForeignKey(User, on_delete=models.CASCADE,
-        related_name="associated member", default=0)
-
+    related_name="associated_member", default=0)
+    #type of analysis is inputted
     analysis_type = models.CharField(max_length = 255, default = '')
-
+    #actual result of analysis/numerical results
     analysis_output = models.CharField(max_length = 255, default = '')
-
+    #flagged?
     flag_tripped = models.BooleanField(default=False)
-
+    #reason for flagging
     flag_detail = models.CharField(max_length = 255, default = '')
 
 
     def __str__(self):
-        return(("%s, %s, %d"%(self.analysis_type, self.analysis_output, self.analysis_number)))
+        return(("%d, %s, %s, %s, %s, %s"%(self.tsr_number, self.associated_member, self.analysis_type, self.analysis_output, self.flag_tripped,self.flag_detail)))
+
+
+    def get_flag(self):
+        no_flag = 'No flag associated with this piece of analysis'
+        if flag_tripped == True:
+            return(("%s, %s, "%(self.flag_tripped, self.flag_detail)))
+        else: 
+            return no_flag
     
 
 class Project(models.Model):
@@ -274,13 +277,13 @@ class Project(models.Model):
         related_name='project_tsr',
         default=None)
 
-    """
+    
     # project's analysis
     analysis = models.ManyToManyField(
         Analysis,
         related_name='project_analysis',
         default=None)
-    """
+    
 
 
     # Store the teamSize for team generation and auto switch accepting members

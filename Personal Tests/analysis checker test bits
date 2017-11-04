@@ -1,0 +1,44 @@
+ There existed in views, were used in place of analysis for temporary testing.
+
+                         assigned_tsr_number = each_assigned_tsr.ass_number
+                         dummy_num = dummy_function_mult(7,3)
+                         dummy_type = "wc"
+                         dummy_num_str = str(dummy_num)
+                         dummy_string = dummy_function_word('bird')
+                         func_info = [assigned_tsr_number , User.objects.filter(email__iexact='stud1@tsrassistant.com').first() , dummy_type, dummy_num_str, False, "None"]
+                         setAnalysisData(project, func_info)
+                         dummy_instance = project.analysis.get()
+                         flag_info = [True, dummy_string]
+                         setFlag(project.analysis.get(tsr_number = 1, analysis_type = "wc") , flag_info )
+
+                         assigned_tsr_number = 1
+                         dummy_num = dummy_function_add(70,3)
+                         dummy_type = "high contribution"
+                         dummy_num_str = str(dummy_num)
+                         dummy_string = dummy_function_word('nerd')
+                         func_info = [assigned_tsr_number , User.objects.filter(email__iexact='stud3@tsrassistant.com').first() , dummy_type, dummy_num_str, False, dummy_string]
+                         setAnalysisData(project, func_info)
+
+                         assigned_tsr_number = 2
+                         dummy_num = dummy_function_add(7,30)
+                         dummy_type = "high contribution"
+                         dummy_num_str = str(dummy_num)
+                         dummy_string = dummy_function_word('word')
+                         func_info = [assigned_tsr_number , User.objects.filter(email__iexact='stud2@tsrassistant.com').first() , dummy_type, dummy_num_str, False, dummy_string]
+                         setAnalysisData(project, func_info)
+
+
+                         def dummy_function_mult(number_a, number_b):
+                            return number_a*number_b;
+
+                         def dummy_function_add(number_a, number_b):
+                            return number_a + number_b;
+
+                         def dummy_function_word(word_a):
+                            return word_a
+
+Inserted before the render on view:
+
+   #print ('[%s]' % ', '.join(map(str, analysis_items)))
+   #print ('[%s]' % ', '.join(map(str,tsr_items)))
+   #print ('[%s]' % ', '.join(map(str,avgs)))
