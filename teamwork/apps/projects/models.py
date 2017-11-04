@@ -120,7 +120,8 @@ class Project(models.Model):
     Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
                        (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
                        (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
-
+        
+                       
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
         max_length=255,
@@ -140,6 +141,18 @@ class Project(models.Model):
         User,
         related_name='scrum_master',
         on_delete=models.CASCADE)
+    
+    #Temporary foreign key to a chatroom model, subject to change cause
+    #it makes migrations difficult
+    chatroom = Chatroom()
+    """
+    chatroom = models.ForeignKey(
+        Chatroom,
+        related_name='chatroom',
+        on_delete=models.CASCADE,
+        default=None,
+        null=True)
+    """
 
     # Short project description
     tagline = models.TextField(
@@ -264,7 +277,7 @@ class Project(models.Model):
     weigh_learn = models.IntegerField(
         default=1) 
     
-    chatroom = None
+    
     
     
     # The Meta class provides some extra information about the Project model.

@@ -10,7 +10,8 @@ class Chatroom(models.Model):
     #Name of the room
     name = models.CharField(
         max_length = 255,
-        default="")
+        default='',
+        null=True)
     #The members of the chat
     user = models.ManyToManyField(
         User,
@@ -55,6 +56,14 @@ class Chatroom(models.Model):
     #maybe should catch error here, but oh well
     def get_chat_next(self,number):
         return self.chat.all()[number:number+10]
+    
+    #Takes in a username and searches for the user, then adds them to the chatroom
+    def add_user_to_chat(self,user):
+        return
+        
+    #Removes the selected user from the chat
+    def remove_user(self,user):
+        return
 
     def __str__(self):
         return self.name

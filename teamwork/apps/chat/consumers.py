@@ -100,10 +100,7 @@ def chat_join(message):
         starting_point = 9
     for index in range(starting_point,0,-1):
         send_text_to_one(message.user, chat_messages[index])
-    """
-    for text in room.get_chat_init():
-        send_text_to_one(message.user,text)
-    """
+
     
 @channel_session_user
 @catch_client_error
