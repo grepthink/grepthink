@@ -89,16 +89,16 @@
 			        <i class="fa fa-angle-left pull-right"></i>
 			    </span>
                         </a>
-                            <ul class ="treeview-menu">
+                            <ul class ="rooms">
                                 <li><a href="{% url 'view_chats' %}"><i class="fa fa-circle-o"></i>View all chats</a></li>
-                                {% if user.form.title %}
-                                {% for project in user.form.title %}
+                                
+                                {% for room in rooms %}
                                         <li class="">
-                                                <a href="{% url 'view_one_project' project.slug %}"><i class="fa fa-circle-o">
-                                        </i> {{project.name}}</a>
+                                                <a href="{% url 'view_one_chat' slug=room.name %}">
+                                        </i> {{room}}</a>
                                 </li>
                                         {% endfor %}
-                                        {% endif %}
+                                       
                            </ul>
                     </li>
 
