@@ -24,6 +24,7 @@ from .models import *
 from itertools import chain
 import json
 import math
+import decimal
 
 
 def _projects(request, projects):
@@ -198,6 +199,7 @@ def view_one_project(request, slug):
     # ======================
     today = datetime.now().date()
 
+	
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
@@ -945,7 +947,6 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     members = project.members.all()
 
-    
 	
     # put emails into list
     emails=list()
@@ -985,9 +986,8 @@ def view_tsr(request, slug):
     med = 1
     if len(members):
         med = int(100/len(members))
-    med = c
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-    print(c)
+
 
     if request.method == 'POST':
 
@@ -1372,6 +1372,7 @@ def similarity_of_eval_history(project):
                 else:
                     evaluator_similarities[current_evaluatee] = False
         historic_similarities[current_evaluator] = evaluator_similarities
+    print(historic_similarities)
     return historic_similarities
     
 def giving_outlier_scores(project, asgn_number):
@@ -1393,11 +1394,12 @@ def giving_outlier_scores(project, asgn_number):
             evaluatee = evaluation.evaluatee
             if evaluation.percent_contribution <= low_bound:
                 evaluator_outliers[evaluatee] = 'Low'
-            else:
+            elif evaluation.percent_contribution >= high_bound:
                 evaluator_outliers[evaluatee] = 'High'
         outlier_scores[current_evaluator] = evaluator_outliers
+    print(outlier_scores)
     return outlier_scores
-    
+
 def tsr_word_count(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries of dictionaries of (pos/neg feedback, word count) pairs keyed
@@ -1418,6 +1420,7 @@ def tsr_word_count(project, asgn_number):
             feedback_lengths['neg_feedback'] = len(neg_feedback)
             evaluator_word_counts[evaluatee] = feedback_lengths
         word_counts[current_evaluator] = evaluator_word_counts 
+    print(word_counts)
     return word_counts
 
         
