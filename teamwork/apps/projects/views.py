@@ -233,15 +233,14 @@ def view_one_project(request, slug):
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
 
-    all_existing_analysis = project.analysis.all()
-    analysis_tuple={}
+#historical functions go here
 
-    for p in project.analysis.all():
-            analysis_tuple.setdefault(p.associated_member, []).append([0,p])            
+    analysis_dicts={}
 
-    analysis_keys = analysis_tuple.keys()
-    analysis_items = analysis_tuple.items()
+    for analysis_object in project.analysis.all():
+            analysis_dicts.setdefault(analysis_object.analysis_type, []).append([analysis_object])            
 
+    analysis_items = analysis_dicts.items()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
@@ -250,7 +249,7 @@ def view_one_project(request, slug):
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
-        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'analysis_keys' : analysis_keys})
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -1386,16 +1385,9 @@ def email_project(request, slug):
         'title':title
     })
 
-def dummy_function_mult(number_a, number_b):
-    return number_a*number_b;
-
-def dummy_function_add(number_a, number_b):
-    return number_a + number_b;
-
-def dummy_function_word(word_a):
-    return word_a
     
 #the wrapper function : gets current project and data and saves it to correct project
+#preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output, [boolean]flag_tripped, [string]flag_detail))
 def setAnalysisData(project, analysisData):
     analysis = Analysis()
     analysis.tsr_number = analysisData[0]
@@ -1410,30 +1402,15 @@ def setAnalysisData(project, analysisData):
     project.analysis.add(analysis)
     project.save()
 
+    return analysis
 
 
-    
-#the wrapper function : gets current project and data and saves it to correct project
-def setAnalysisData(project, analysisData):
-    analysis = Analysis()
-    analysis.tsr_number = analysisData[0]
-    analysis.associated_member = analysisData[1]
-    analysis.analysis_type = analysisData[2]
-    analysis.analysis_output = analysisData[3]
-    analysis.flag_tripped = analysisData[4]
-    analysis.flag_detail = analysisData[5]
-    analysis.save()
-                 
-    #saving in manytomany field project
-    project.analysis.add(analysis)
-    project.save()
-
-
-    #the wrapper function : gets current project and data and saves it to correct project
-def setFlag(currentAnalysisObject, flag_info):
-    currentAnalysisObject.flag_tripped = flag_info[0]
-    currentAnalysisObject.flag_detail = flag_info[1]
-    currentAnalysisObject.save()
+#the wrapper function :updates the piece of analysis with the correct flag information
+#preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
+def setFlag(analysis_object, flag_info):
+    analysis_object.flag_tripped = flag_info[0]
+    analysis_object.flag_detail = flag_info[1]
+    analysis_object.save()
 
 
 def dummy_function_echo(word):

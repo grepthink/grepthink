@@ -649,33 +649,23 @@
                                        <tbody>
                                        <tr>
                                          <th style="width:1%; text-align:center;">Student</th>
-                                         <th style="width:20%; text-align:center;"> Analysis Type</th>
-                                         <th style="width:20%; text-align:center;"> Analysis Results</th>
                                          <th style="width:20%; text-align:center;"> Flag Details</th>
                                        </tr>
                                        {% for m in members %}
                                            <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
                                        {% for analysis_ass in all_analysis %}
                                        {% for analysis_piece in analysis_ass.1 %}
-                                                 {% if m == analysis_ass.0 %}
-                                                 {% if analysis_piece.1.tsr_number == ass.ass_number%}
-                                                 {% if analysis_piece.1.flag_tripped == True%}
+                                                 {% if m == analysis_piece.0.associated_member %}
+                                                 {% if analysis_piece.0.tsr_number == ass.ass_number%}
+                                                 {% if analysis_piece.0.flag_tripped == True%}
                                               
                                                 <td>
-                                                     <a href="{% url 'profile' analysis_ass.0.username %}">
-                                                    {{analysis_ass.0.email}}</a>
-                                                </td>
-
-                                               <td style="background-color:#FFFF00; text-align:center;">
-                                                 {{analysis_piece.1.analysis_type}}
-                                               </td>
-
-                                                <td style="background-color:#FFFF00; text-align:center;">
-                                                 {{analysis_piece.1.analysis_output}}
+                                                     <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                                    {{analysis_piece.0.associated_member.email}}</a>
                                                 </td>
 
                                                 <td style="background-color:#FFFF00; text-align:center;">
-                                                 {{analysis_piece.1.flag_detail}}
+                                                 {{analysis_piece.0.flag_detail}}
                                                 </td>
                                        
                                              </tr>
@@ -721,26 +711,26 @@
                                            <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
                                        {% for analysis_ass in all_analysis %}
                                        {% for analysis_piece in analysis_ass.1 %}
-                                                 {% if m == analysis_ass.0 %}
-                                                 {% if analysis_piece.1.tsr_number == ass.ass_number%}
-                                                 {% if analysis_piece.1.flag_tripped == False%}
+                                                 {% if m == analysis_piece.0.associated_member %}
+                                                 {% if analysis_piece.0.tsr_number == ass.ass_number%}
+                                       
                                               
                                                 <td>
-                                                     <a href="{% url 'profile' analysis_ass.0.username %}">
-                                                    {{analysis_ass.0.email}}</a>
+                                                  <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                                  {{analysis_piece.0.associated_member.email}}</a>
                                                 </td>
 
                                                <td style="text-align:center;">
-                                                 {{analysis_piece.1.analysis_type}}
+                                                 {{analysis_piece.0.analysis_type}}
                                                </td>
 
                                                 <td style="text-align:center;">
-                                                 {{analysis_piece.1.analysis_output}}
+                                                 {{analysis_piece.0.analysis_output}}
                                                 </td>
 
                                        
                                              </tr>
-                                            {% endif %}
+                                      
                                             {% endif %}
                                             {% endif %}
                                        {% endfor %}     

@@ -103,18 +103,18 @@ class Analysis(models.Model):
     Analysis: A database model (object) for the analysis of TSR's and their flags
     """
     #A number assigned based on the specific instance of a TSR assignment number 
-    tsr_number = models.DecimalField(max_digits = 2, decimal_places = 0, default = 0)
+    tsr_number = models.PositiveIntegerField(default = 0)
     #associated user linked to particular piece of data
     associated_member = models.ForeignKey(User, on_delete=models.CASCADE,
     related_name="associated_member", default=0)
     #type of analysis is inputted
-    analysis_type = models.CharField(max_length = 255, default = '')
+    analysis_type = models.TextField()
     #actual result of analysis/numerical results
-    analysis_output = models.CharField(max_length = 255, default = '')
+    analysis_output = models.TextField()
     #flagged?
     flag_tripped = models.BooleanField(default=False)
     #reason for flagging
-    flag_detail = models.CharField(max_length = 255, default = '')
+    flag_detail = models.TextField()
 
 
     def __str__(self):
@@ -123,11 +123,10 @@ class Analysis(models.Model):
 
     def get_flag(self):
         no_flag = 'No flag associated with this piece of analysis'
-        if flag_tripped == True:
+        if self.flag_tripped:
             return(("%s, %s, "%(self.flag_tripped, self.flag_detail)))
-        else: 
-            return no_flag
-    
+        
+        return no_flag
 
 class Project(models.Model):
     """
