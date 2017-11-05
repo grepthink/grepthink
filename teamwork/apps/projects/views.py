@@ -223,7 +223,15 @@ def view_one_project(request, slug):
                  num_distinct_tsrs = sum(tsr_exists.values())
                  if  len(completed_tsrs_per_ass_number) == num_distinct_tsrs :
                     #Put functions here
-                    dummy_word = dummy_function_echo('word')
+                    my_similarities_for_asgn = similarity_for_given_evals(project, assigned_tsr_number)
+
+                    for member in my_similarities_for_asgn:
+                        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output, [boolean]flag_tripped, [string]flag_detail))
+                        analysis_data = (assigned_tsr_number, member, "Similarity for Given Evaluations",
+                                         my_similarities_for_asgn[member],
+                                         has_atleast_one_identical(member, my_similarities_for_asgn),
+                                         "%s has been giving very similar scores to other team members." % member)
+                        setAnalysisData(project, analysis_data)
                     #Put functions here
                  
                  else:
@@ -960,11 +968,18 @@ def tsr_edit(request, slug, assslug):
     'page_name' : page_name, 'page_description': page_description,
     'title': title})
 
+def has_atleast_one_identical(member, total_report):
+    for name in total_report:
+        tuple_result = total_report[member][name]
+        if tuple_result[0]:
+            return True
+    return False
+
 def similarity_for_given_evals(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries
     reporting if each teammate's evaluations of him/herself and others 
-    are similar across all TSRs.
+    are similar across a range of particular TSRs.
     """
     all_similarities = {}
     members = project.members.all()
@@ -977,7 +992,7 @@ def similarity_for_given_evals(project, asgn_number):
 
         for evaluation in evaluator_tsrs:
             average_contribution += evaluation.percent_contribution
-        average_contribution /= len(evaluator_tsrs)
+        average_contribution /= len(members)
         upper_bound = math.ceil(average_contribution + (average_contribution * marginofsimilarity))
         lower_bound = math.floor(average_contribution - (average_contribution * marginofsimilarity))
 
@@ -1004,7 +1019,7 @@ def averages_for_all_evals(project):
 
         for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
-        member_averages[current_evaluatee] = round(average_contribution / len(evaluatee_tsrs), 1)
+        member_averages[current_evaluatee] = round(average_contribution / len(members), 1)
     return member_averages
 
 
