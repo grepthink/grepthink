@@ -1350,7 +1350,7 @@ def similarity_of_eval_history(project):
     """
     historic_similarities = {}
     members = project.members.all()
-    marginofsimilarity = 0.1
+    marginofsimilarity = decimal.Decimal(0.1)
 
     for current_evaluator in members:
         evaluator_similarities = {}
@@ -1382,7 +1382,7 @@ def giving_outlier_scores(project, asgn_number):
     outlier_scores = {}
     members = project.members.all()
     ideal_average = math.floor(100/len(members))
-    outlier_percentage = 0.5
+    outlier_percentage = decimal.Decimal(0.5)
     low_bound = math.floor(ideal_average - (ideal_average * outlier_percentage))
     high_bound = math.ceil(ideal_average + (ideal_average * outlier_percentage))
     
