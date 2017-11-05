@@ -488,10 +488,13 @@
                                          <th style="width:20%;">Performance Assessment</th>
                                          <th style="width:20%;">Notes</th>
                                        </tr>
+                                       <!--{{ tsrs|pprint }} see output_of_print_tsrs.txt-->
+                                       <br><br>
                                        {% for m in members %}
                                            <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
-                                       {% for compTSR in tsrs %}
-                                       {% for eval in compTSR.1 %}
+                                       {% for completed_tsrs in tsrs %}
+                                       <!--{{ completed_tsrs|pprint }} see output_of_tsr_subcontainer.txt-->
+                                       {% for eval in completed_tsrs.1 %}
                                                 {% if eval.1.evaluatee == m %}
                                                 {% if eval.2 == ass%}
                                                 <td>

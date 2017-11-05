@@ -1,0 +1,28 @@
+def current_teammate_tsrs_similar(project, asgn_number, marginofsimilarity):
+    """
+    Helper function that returns a dictionary of dictionaries
+    reporting if each teammate's TSRs are similar to one another
+    depending on the margin of similiarity.
+    """
+    all_similarities = {}
+    members = project.members.all()
+
+    for current_evaluator in members:
+        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
+        evaluator_similarities = {}
+
+        for evaluator in evaluator_tsrs:
+            evaluatee = evaluator.evaluatee
+            evaluatee_tsr = project.tsr.all().filter(ass_number=asgn_number, evaluator=evaluatee, evaluatee=current_evaluator)
+            
+            percent_of_percentcontribution = evaluator.percent_contribution * marginofsimilarity
+            upper_margin = evaluator.percent_contribution + percent_of_percentcontribution
+
+            lower_margin = evaluator.percent_contribution - percent_of_percentcontribution
+
+            if lower_margin <= evaluatee_tsr.percent_contribution <= upper_margin:
+                evaluator_similarities[evaluatee] = True
+            else:
+                evaluator_similarities[evaluatee] = False
+        all_similarities[current_evaluator] = evaluator_similarities
+    return all_similarities
