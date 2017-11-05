@@ -230,15 +230,7 @@ def view_one_project(request, slug):
                  num_distinct_tsrs = sum(tsr_exists.values())
                  if  len(completed_tsrs_per_ass_number) == num_distinct_tsrs :
                     #Put functions here
-                    my_similarities_for_asgn = similarity_for_given_evals(project, assigned_tsr_number)
-
-                    for member in my_similarities_for_asgn:
-                        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output, [boolean]flag_tripped, [string]flag_detail))
-                        analysis_data = (assigned_tsr_number, member, "Similarity for Given Evaluations",
-                                         my_similarities_for_asgn[member],
-                                         has_atleast_one_identical(member, my_similarities_for_asgn),
-                                         "%s has been giving very similar scores to other team members." % member)
-                        setAnalysisData(project, analysis_data)
+                    similarity_for_given_evals(project, assigned_tsr_number)
                     #Put functions here
                  
                  else:
@@ -1010,6 +1002,14 @@ def similarity_for_given_evals(project, asgn_number):
             else:
                 evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
         all_similarities[current_evaluator] = evaluator_similarities
+
+    for member in all_similarities:
+        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output, [boolean]flag_tripped, [string]flag_detail))
+        analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
+                         all_similarities[member],
+                         has_atleast_one_identical(member, all_similarities),
+                         "%s has been giving very similar scores to other team members." % member)
+        setAnalysisData(project, analysis_data)
     return all_similarities
 
 def averages_for_all_evals(project):
