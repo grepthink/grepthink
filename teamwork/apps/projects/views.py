@@ -201,6 +201,8 @@ def view_one_project(request, slug):
     # ======================
     today = datetime.now().date()
 
+    print(similarity_for_given_evals(project, 1))
+
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
@@ -946,9 +948,9 @@ def similarity_for_given_evals(project, asgn_number):
         for evaluation in evaluator_tsrs:
             evaluatee = evaluation.evaluatee
             if lower_bound <= evaluation.percent_contribution <= upper_bound:
-                evaluator_similarities[evaluatee] = True
+                evaluator_similarities[evaluatee] = (True, evaluation.percent_contribution)
             else:
-                evaluator_similarities[evaluatee] = False
+                evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
         all_similarities[current_evaluator] = evaluator_similarities
     return all_similarities
 
