@@ -1,6 +1,8 @@
 # TSR Assistant (UCSC Fall 2017 - CMPS 115-01)
 A project that builds off of [grepthink](https://github.com/grepthink/grepthink/) that assists professors and teaching assistants in determining problematic teams and team members.
 
+Project Documentation and Planning Notes can be found [here.](https://drive.google.com/drive/folders/0B1R1qp5QghphYndneXQ5LVQ2d2s?usp=sharing)
+
 ## Demo Instructions
 Prerequisite: Python 3 must be installed. You can get that [here](https://www.python.org/downloads/)
 

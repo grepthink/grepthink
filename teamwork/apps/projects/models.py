@@ -97,6 +97,37 @@ class Tsr(models.Model):
 
         super(Tsr, self).save(*args, **kwargs)
 
+# Data structure for Analysis Tab
+class Analysis(models.Model):
+    """ 
+    Analysis: A database model (object) for the analysis of TSR's and their flags
+    """
+    #A number assigned based on the specific instance of a TSR assignment number 
+    tsr_number = models.PositiveIntegerField(default = 0)
+    #associated user linked to particular piece of data
+    associated_member = models.ForeignKey(User, on_delete=models.CASCADE,
+    related_name="associated_member", default=0)
+    #type of analysis is inputted
+    analysis_type = models.TextField()
+    #actual result of analysis/numerical results
+    analysis_output = models.TextField()
+    #flagged?
+    flag_tripped = models.BooleanField(default=False)
+    #reason for flagging
+    flag_detail = models.TextField()
+
+
+    def __str__(self):
+        return(("%d, %s, %s, %s, %s, %s"%(self.tsr_number, self.associated_member, self.analysis_type, self.analysis_output, self.flag_tripped,self.flag_detail)))
+
+
+    def get_flag(self):
+        no_flag = 'No flag associated with this piece of analysis'
+        if self.flag_tripped:
+            return(("%s, %s, "%(self.flag_tripped, self.flag_detail)))
+        
+        return no_flag
+
 class Project(models.Model):
     """
     Project: A database model (object) for projects.
@@ -244,6 +275,15 @@ class Project(models.Model):
         Tsr,
         related_name='project_tsr',
         default=None)
+
+    
+    # project's analysis
+    analysis = models.ManyToManyField(
+        Analysis,
+        related_name='project_analysis',
+        default=None)
+    
+
 
     # Store the teamSize for team generation and auto switch accepting members
     teamSize = models.IntegerField(
