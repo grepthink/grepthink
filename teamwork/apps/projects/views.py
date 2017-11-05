@@ -194,7 +194,6 @@ def view_one_project(request, slug):
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     today = datetime.now().date()
 
-	
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
@@ -940,9 +939,9 @@ def similarity_for_given_evals(project, asgn_number):
         for evaluation in evaluator_tsrs:
             evaluatee = evaluation.evaluatee
             if lower_bound <= evaluation.percent_contribution <= upper_bound:
-                evaluator_similarities[evaluatee] = True
+                evaluator_similarities[evaluatee] = (True, evaluation.percent_contribution)
             else:
-                evaluator_similarities[evaluatee] = False
+                evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
         all_similarities[current_evaluator] = evaluator_similarities
     return all_similarities
 
@@ -954,13 +953,13 @@ def averages_for_all_evals(project):
     member_averages = {}
     members = project.members.all()
 
-    for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluator))
+    for current_evaluatee in members:
+        evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
         average_contribution = 0
 
-        for evaluation in evaluator_tsrs:
+        for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
-        member_averages[current_evaluator] = average_contribution / len(evaluator_tsrs)
+        member_averages[current_evaluatee] = round(average_contribution / len(evaluatee_tsrs), 1)
     return member_averages
 
 
