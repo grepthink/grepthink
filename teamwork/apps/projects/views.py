@@ -93,18 +93,9 @@ def view_one_project(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
     from the model with given project slug.  Renders projects/view_project.html
-
     Passing status check unit test in test_views.py.
     """
-
-
-    #print(get_project_tsrs(request, slug))
-
-
     project = get_object_or_404(Project, slug=slug)
-
-    print("Averages for current TSRs: %s\n" % averages_for_all_evals(project))
-    print("Similarities for TSR 2: %s" % similarity_for_given_evals(project, 2))
     
     scrum_master = project.scrum_master
     updates = project.get_updates()
