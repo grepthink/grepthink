@@ -100,9 +100,6 @@ def view_one_project(request, slug):
     #print(get_project_tsrs(request, slug))
 
     project = get_object_or_404(Project, slug=slug)
-
-    print("Averages for current TSRs: %s\n" % averages_for_all_evals(project))
-    print("Similarities for TSR 2: %s" % similarity_for_given_evals(project, 2))
     
     scrum_master = project.scrum_master
     updates = project.get_updates()
@@ -963,13 +960,13 @@ def averages_for_all_evals(project):
     member_averages = {}
     members = project.members.all()
 
-    for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluator))
+    for current_evaluatee in members:
+        evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
         average_contribution = 0
 
-        for evaluation in evaluator_tsrs:
+        for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
-        member_averages[current_evaluator] = average_contribution / len(evaluator_tsrs)
+        member_averages[current_evaluatee] = round(average_contribution / len(evaluatee_tsrs), 1)
     return member_averages
 
 
