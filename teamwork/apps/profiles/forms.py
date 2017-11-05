@@ -14,7 +14,7 @@ def SignupDomainValidator(value):
     public method that takes a value
     """
     grepthinkers = ['rmonroe@grepthink.com', 'mgates@grepthink.com',
-                   'sdougher@grepthink.com', 'kpannell@grepthink.com']
+                   'sdougher@grepthink.com', 'kpannell@grepthink.com', 'admin@grepthink.com']
 
     # Block any @grepthink email
     if 'grepthink' in value and (value not in grepthinkers):

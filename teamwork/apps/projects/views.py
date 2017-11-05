@@ -23,6 +23,7 @@ from .models import *
 
 from itertools import chain
 import json
+import math
 
 
 def _projects(request, projects):
@@ -96,7 +97,6 @@ def view_one_project(request, slug):
 
     Passing status check unit test in test_views.py.
     """
-
     project = get_object_or_404(Project, slug=slug)
     scrum_master = project.scrum_master
     updates = project.get_updates()
@@ -945,7 +945,8 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     members = project.members.all()
 
-
+    
+	
     # put emails into list
     emails=list()
     for member in members:
@@ -984,12 +985,14 @@ def view_tsr(request, slug):
     med = 1
     if len(members):
         med = int(100/len(members))
+    med = c
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-
+    print(c)
 
     if request.method == 'POST':
 
         return redirect(view_projects)
+    
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
 
 
@@ -1339,3 +1342,83 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
+
+def similarity_of_eval_history(project):
+    """
+    Helper function that returns a dictionary of dictionaries
+    reporting if each teammate's evaluations for team members are similar across all TSRs.
+    """
+    historic_similarities = {}
+    members = project.members.all()
+    marginofsimilarity = 0.1
+
+    for current_evaluator in members:
+        evaluator_similarities = {}
+        
+        for current_evaluatee in members:
+            evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee, evaluator=current_evaluator))
+            average_evaluation = 0
+            
+            for evaluation in evaluator_tsrs:
+                average_evaluation += evaluation.percent_contribution
+            
+            average_evaluation /= len(evaluator_tsrs)
+            upper_bound = math.ceil(average_evaluation + (average_evaluation * marginofsimilarity))
+            lower_bound = math.floor(average_evaluation - (average_evaluation * marginofsimilarity))
+
+            for evaluation in evaluator_tsrs:
+                if lower_bound <= evaluation.percent_contribution <= upper_bound:
+                    evaluator_similarities[current_evaluatee] = True
+                else:
+                    evaluator_similarities[current_evaluatee] = False
+        historic_similarities[current_evaluator] = evaluator_similarities
+    return historic_similarities
+    
+def giving_outlier_scores(project, asgn_number):
+    """
+    Helper function that returns a dictionary of dictionaries of (member, low/high) pairs keyed
+    to evaluator.
+    """
+    outlier_scores = {}
+    members = project.members.all()
+    ideal_average = math.floor(100/len(members))
+    outlier_percentage = 0.5
+    low_bound = math.floor(ideal_average - (ideal_average * outlier_percentage))
+    high_bound = math.ceil(ideal_average + (ideal_average * outlier_percentage))
+    
+    for current_evaluator in members:
+        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
+        evaluator_outliers = {}
+        for evaluation in evaluator_tsrs:
+            evaluatee = evaluation.evaluatee
+            if evaluation.percent_contribution <= low_bound:
+                evaluator_outliers[evaluatee] = 'Low'
+            else:
+                evaluator_outliers[evaluatee] = 'High'
+        outlier_scores[current_evaluator] = evaluator_outliers
+    return outlier_scores
+    
+def tsr_word_count(project, asgn_number):
+    """
+    Helper function that returns a dictionary of dictionaries of dictionaries of (pos/neg feedback, word count) pairs keyed
+    to evaluatee keyed to evaluator.
+    """
+    word_counts = {}
+    members = project.members.all()
+    
+    for current_evaluator in members:
+        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
+        evaluator_word_counts = {}
+        for evaluation in evaluator_tsrs:
+            evaluatee = evaluation.evaluatee
+            feedback_lengths = {}
+            pos_feedback = evaluation.positive_feedback.split(None)
+            neg_feedback = evaluation.negative_feedback.split(None)
+            feedback_lengths['pos_feedback'] = len(pos_feedback)
+            feedback_lengths['neg_feedback'] = len(neg_feedback)
+            evaluator_word_counts[evaluatee] = feedback_lengths
+        word_counts[current_evaluator] = evaluator_word_counts 
+    return word_counts
+
+        
+
