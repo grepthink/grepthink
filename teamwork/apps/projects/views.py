@@ -1343,7 +1343,7 @@ def email_project(request, slug):
         'title':title
     })
 
-def similarity_of_eval_history(project):
+def similarity_of_eval_history(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries
     reporting if each teammate's evaluations for team members are similar across all TSRs.
@@ -1372,7 +1372,6 @@ def similarity_of_eval_history(project):
                 else:
                     evaluator_similarities[current_evaluatee] = False
         historic_similarities[current_evaluator] = evaluator_similarities
-    print(historic_similarities)
     return historic_similarities
     
 def giving_outlier_scores(project, asgn_number):
@@ -1397,7 +1396,6 @@ def giving_outlier_scores(project, asgn_number):
             elif evaluation.percent_contribution >= high_bound:
                 evaluator_outliers[evaluatee] = 'High'
         outlier_scores[current_evaluator] = evaluator_outliers
-    print(outlier_scores)
     return outlier_scores
 
 def tsr_word_count(project, asgn_number):
@@ -1420,7 +1418,6 @@ def tsr_word_count(project, asgn_number):
             feedback_lengths['neg_feedback'] = len(neg_feedback)
             evaluator_word_counts[evaluatee] = feedback_lengths
         word_counts[current_evaluator] = evaluator_word_counts 
-    print(word_counts)
     return word_counts
 
         
