@@ -42,15 +42,20 @@ def _chats(request, rooms):
 
 @login_required
 def view_chats(request):
-    rooms = Chatroom.objects.order_by("name")
-    return _chats(request, rooms)
+    #rooms = Chatroom.objects.order_by("name")
+    my_rooms = request.user.rooms.all()
+    return _chats(request, my_rooms)
 
 @login_required
 def view_one_chat(request, slug):
     room = get_object_or_404(Chatroom, name=slug)
-    title = "GT Chat"
-    name = slug
-    #messages = room.get_chat_init()
+    user_rooms = request.user.rooms.all()
+    if(room in user_rooms):
+        title = "GT Chat"
+        name = slug
+        #messages = room.get_chat_init()
 
-    return render(request, 'chat/one_chat.html',{
-        'title': title, 'room': room, 'name': name})
+        return render(request, 'chat/one_chat.html',{
+            'title': title, 'room': room, 'name': name})
+    else:
+        return view_chats(request)

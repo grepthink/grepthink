@@ -33,4 +33,4 @@ Chat room still needs to be created and implemented into the grepthink base.html
 11-4-17 2:50pm - Trevor: Made projects and chat connected not by foreign key anymore. When a project is created a chat is created with it, when members are added to the project they are added to the
 chat, and when someone is removed or leaves from the project they are removed from the chat. This should not interfere with current projects already in the datbase because it checks
 for existing chats matching the project title name, which may cause other errors if a chat is created with the project name.......<br />
-
+11-5-17 6:15pm - Sean: Added authentication to chat views. Only lists user's chatrooms in "/chat" (no longer all of them) and if someone tries to get get into a chat via url slug, checks if they are a member of the room.<br />
