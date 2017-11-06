@@ -226,12 +226,13 @@ def view_one_project(request, slug):
                     similarity_for_given_evals(project, assigned_tsr_number)
                     giving_outlier_scores(project, assigned_tsr_number)
                     tsr_word_count(project, assigned_tsr_number)
+                    similarity_of_eval_history(project, assigned_tsr_number)
+                    averages_for_all_evals(project, assigned_tsr_number)
+
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
 
 #historical functions go here
-    averages_for_all_evals(project)
-    similarity_of_eval_history(project)
     analysis_dicts={}
 
     for analysis_object in project.analysis.all():
@@ -1194,7 +1195,7 @@ def email_project(request, slug):
     })
 
     
-def similarity_of_eval_history(project):
+def similarity_of_eval_history(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries
     reporting if each teammate's evaluations for team members are similar across all TSRs.
@@ -1202,7 +1203,7 @@ def similarity_of_eval_history(project):
     historic_similarities = {}
     members = project.members.all()
     marginofsimilarity = decimal.Decimal(0.1)
-    asgn_number = 0
+
 
     for current_evaluator in members:
         evaluator_similarities = {}
@@ -1210,22 +1211,22 @@ def similarity_of_eval_history(project):
         for current_evaluatee in members:
             evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee, evaluator=current_evaluator))
             average_evaluation = 0
-            
+            num_evals_considered = 0
             for evaluation in evaluator_tsrs:
-                average_evaluation += evaluation.percent_contribution
-                
-                if evaluation.ass_number > highest_asgn_number:
-                    asgn_number = evaluation.ass_number
+                if evaluation.ass_number <= asgn_number:
+                    average_evaluation += evaluation.percent_contribution
+                    num_evals_considered += 1
             
-            average_evaluation /= len(evaluator_tsrs)
+            average_evaluation /= num_evals_considered
             upper_bound = math.ceil(average_evaluation + (average_evaluation * marginofsimilarity))
             lower_bound = math.floor(average_evaluation - (average_evaluation * marginofsimilarity))
 
             for evaluation in evaluator_tsrs:
-                if lower_bound <= evaluation.percent_contribution <= upper_bound:
-                    evaluator_similarities[current_evaluatee] = True
-                else:
-                    evaluator_similarities[current_evaluatee] = False
+                if evaluation.ass_number <= asgn_number:
+                    if lower_bound <= evaluation.percent_contribution <= upper_bound:
+                        evaluator_similarities[current_evaluatee] = True
+                    else:
+                        evaluator_similarities[current_evaluatee] = False
         historic_similarities[current_evaluator] = evaluator_similarities
     for member in historic_similarities:
         hist_similar_count = 0
@@ -1331,7 +1332,7 @@ def tsr_word_count(project, asgn_number):
             elif verbose_test > 1:
                 verbose_count += 1
                 
-		if sparse_count > 0 or verbose_count > 0:
+        if sparse_count > 0 or verbose_count > 0:
             setFlag(analysis_object, (True, "%s has given %d sparse responses and %d verbose responses." % (member, sparse_count, verbose_count)))
 		
     return word_counts
@@ -1381,40 +1382,37 @@ def similarity_for_given_evals(project, asgn_number):
         setFlag(analysis_object, analysis_flags)
     return all_similarities
 
-def averages_for_all_evals(project):
+def averages_for_all_evals(project, asgn_number):
     """
     Helper function that returns a dictionary of averages for percent
     contributions for each team member in a project.
     """
     member_averages = {}
     members = project.members.all()
-    highest_asgn_number = 0
 
     for current_evaluatee in members:
         evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
         average_contribution = 0
-
+        num_evals_considered = 0
         for evaluation in evaluatee_tsrs:
-            average_contribution += evaluation.percent_contribution
-
-            if evaluation.ass_number > highest_asgn_number:
-                highest_asgn_number = evaluation.ass_number
+            if evaluation.ass_number <= asgn_number:
+                average_contribution += evaluation.percent_contribution
+                num_evals_considered += 1
+             
         bounds = ideal_score_ranges(project)
-        analysis_data = (highest_asgn_number, current_evaluatee, "Averages for all Evaluations",
+        member_averages[current_evaluatee] = round(average_contribution / num_evals_considered, 1)
+        analysis_data = (asgn_number, current_evaluatee, "Averages for all Evaluations",
                          member_averages[current_evaluatee])
-        member_averages[current_evaluatee] = round(average_contribution / len(members), 1)
-
+        analysis_object = setAnalysisData(project, analysis_data)
         # bounds[1] is the high bound.
         if member_averages[current_evaluatee] >= bounds[1]:
             analysis_flag = (True,
                              "%s has a higher than typical average score." % current_evaluatee)
-            analysis_object = setAnalysisData(project, analysis_data)
             setFlag(analysis_object, analysis_flag)
         # bounds[0] is the low bound.
         elif member_averages[current_evaluatee] <= bounds[0]:
             analysis_flag = (False,
                              "%s has a lower than typical average score." % current_evaluatee)
-            analysis_object = setAnalysisData(project, analysis_data)
             setFlag(analysis_object, analysis_flag)
     return member_averages
     
