@@ -223,14 +223,15 @@ def view_one_project(request, slug):
                  num_distinct_tsrs = sum(tsr_exists.values())
                  if  len(completed_tsrs_per_ass_number) == num_distinct_tsrs :
                     #Put functions here
-
-                    #Put functions here
-                 
+                    similarity_for_given_evals(project, assigned_tsr_number)
+                    giving_outlier_scores(project, assigned_tsr_number)
+                    tsr_word_count(project, assigned_tsr_number)
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
 
 #historical functions go here
-
+    averages_for_all_evals(project)
+    similarity_of_eval_history(project)
     analysis_dicts={}
 
     for analysis_object in project.analysis.all():
@@ -1192,7 +1193,8 @@ def email_project(request, slug):
         'title':title
     })
 
-def similarity_of_eval_history(project, asgn_number):
+    
+def similarity_of_eval_history(project):
     """
     Helper function that returns a dictionary of dictionaries
     reporting if each teammate's evaluations for team members are similar across all TSRs.
@@ -1200,6 +1202,7 @@ def similarity_of_eval_history(project, asgn_number):
     historic_similarities = {}
     members = project.members.all()
     marginofsimilarity = decimal.Decimal(0.1)
+    asgn_number = 0
 
     for current_evaluator in members:
         evaluator_similarities = {}
@@ -1210,6 +1213,9 @@ def similarity_of_eval_history(project, asgn_number):
             
             for evaluation in evaluator_tsrs:
                 average_evaluation += evaluation.percent_contribution
+                
+                if evaluation.ass_number > highest_asgn_number:
+                    asgn_number = evaluation.ass_number
             
             average_evaluation /= len(evaluator_tsrs)
             upper_bound = math.ceil(average_evaluation + (average_evaluation * marginofsimilarity))
@@ -1365,6 +1371,14 @@ def similarity_for_given_evals(project, asgn_number):
             else:
                 evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
         all_similarities[current_evaluator] = evaluator_similarities
+
+    for member in all_similarities:
+        analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
+                         all_similarities[member])
+        analysis_flags = (has_atleast_one_identical(member, all_similarities),
+                          "%s has been giving very similar scores to other team members." % member)
+        analysis_object = setAnalysisData(project, analysis_data)
+        setFlag(analysis_object, analysis_flags)
     return all_similarities
 
 def averages_for_all_evals(project):
@@ -1374,6 +1388,7 @@ def averages_for_all_evals(project):
     """
     member_averages = {}
     members = project.members.all()
+    highest_asgn_number = 0
 
     for current_evaluatee in members:
         evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
@@ -1381,7 +1396,26 @@ def averages_for_all_evals(project):
 
         for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
+
+            if evaluation.ass_number > highest_asgn_number:
+                highest_asgn_number = evaluation.ass_number
+        bounds = ideal_score_ranges(project)
+        analysis_data = (highest_asgn_number, current_evaluatee, "Averages for all Evaluations",
+                         member_averages[current_evaluatee])
         member_averages[current_evaluatee] = round(average_contribution / len(members), 1)
+
+        # bounds[1] is the high bound.
+        if member_averages[current_evaluatee] >= bounds[1]:
+            analysis_flag = (True,
+                             "%s has a higher than typical average score." % current_evaluatee)
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, analysis_flag)
+        # bounds[0] is the low bound.
+        elif member_averages[current_evaluatee] <= bounds[0]:
+            analysis_flag = (False,
+                             "%s has a lower than typical average score." % current_evaluatee)
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, analysis_flag)
     return member_averages
     
 #the wrapper function : gets current project and data and saves it to correct project
