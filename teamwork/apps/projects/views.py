@@ -1004,12 +1004,12 @@ def similarity_for_given_evals(project, asgn_number):
         all_similarities[current_evaluator] = evaluator_similarities
 
     for member in all_similarities:
-        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output, [boolean]flag_tripped, [string]flag_detail))
         analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
-                         all_similarities[member],
-                         has_atleast_one_identical(member, all_similarities),
-                         "%s has been giving very similar scores to other team members." % member)
-        setAnalysisData(project, analysis_data)
+                         all_similarities[member])
+        analysis_flags = (has_atleast_one_identical(member, all_similarities),
+                          "%s has been giving very similar scores to other team members." % member)
+        analysis_object = setAnalysisData(project, analysis_data)
+        setFlag(analysis_object, analysis_flags)
     return all_similarities
 
 def averages_for_all_evals(project):
@@ -1019,6 +1019,7 @@ def averages_for_all_evals(project):
     """
     member_averages = {}
     members = project.members.all()
+    highest_asgn_number = 0
 
     for current_evaluatee in members:
         evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
@@ -1026,7 +1027,26 @@ def averages_for_all_evals(project):
 
         for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
+
+            if evaluation.ass_number > highest_asgn_number:
+                highest_asgn_number = evaluation.ass_number
+        bounds = somefunction(project)
+        analysis_data = (highest_asgn_number, current_evaluatee, "Averages for all Evaluations",
+                         member_averages[current_evaluatee])
         member_averages[current_evaluatee] = round(average_contribution / len(members), 1)
+
+        # bounds[1] is the high bound.
+        if member_averages[current_evaluatee] >= bounds[1]:
+            analysis_flag = (True,
+                             "%s has a higher than typical average score." % current_evaluatee)
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, analysis_flag)
+        # bounds[0] is the low bound.
+        elif member_averages[current_evaluatee] <= bounds[0]:
+            analysis_flag = (False,
+                             "%s has a lower than typical average score." % current_evaluatee)
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, analysis_flag)
     return member_averages
 
 
@@ -1270,8 +1290,6 @@ def setAnalysisData(project, analysisData):
     analysis.associated_member = analysisData[1]
     analysis.analysis_type = analysisData[2]
     analysis.analysis_output = analysisData[3]
-    analysis.flag_tripped = analysisData[4]
-    analysis.flag_detail = analysisData[5]
     analysis.save()
                  
     #saving in manytomany field project
