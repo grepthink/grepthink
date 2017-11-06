@@ -73,6 +73,15 @@
             {% if request.user in staff or request.user.profile.isGT %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
+
+
+            <!--TEST TAB-->
+            {% if request.user in staff or request.user.profile.isGT %}
+            <li class=""><a href="#tab_8" data-toggle="tab" aria-expanded="false">View Analysis</a></li>
+            {% endif %}
+            <!--TEST TAB-->
+
+
             {% if user in project_members %}
             <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li>
             {% endif %}
@@ -479,10 +488,13 @@
                                          <th style="width:20%;">Performance Assessment</th>
                                          <th style="width:20%;">Notes</th>
                                        </tr>
+                                       <!--{{ tsrs|pprint }} see output_of_print_tsrs.txt-->
+                                       <br><br>
                                        {% for m in members %}
                                            <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
-                                       {% for compTSR in tsrs %}
-                                       {% for eval in compTSR.1 %}
+                                       {% for completed_tsrs in tsrs %}
+                                       <!--{{ completed_tsrs|pprint }} see output_of_tsr_subcontainer.txt-->
+                                       {% for eval in completed_tsrs.1 %}
                                                 {% if eval.1.evaluatee == m %}
                                                 {% if eval.2 == ass%}
                                                 <td>
@@ -601,7 +613,189 @@
 
 
 
+            <!--VIEW TSR Analysis TAB-->
 
+         
+            <div class="tab-pane" id="tab_8">
+            <style>
+              table {
+                border-collapse: collapse;
+                width: 100%;
+              }
+
+              th, td {
+                text-align: left;
+                padding: 8px;
+              }
+              th {
+                background-color: #00A65A;
+                color: white;
+              }
+            </style>
+
+                {% for ass in assigned_tsrs %}
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Tsr Analysis Flagged #{{ ass.ass_number }}</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <div class="box-body no-padding">
+                   <ul class="nav nav-pills nav-stacked">
+
+                            <table class="table table-hover">
+                                       <tbody>
+                                       <tr>
+                                         <th style="width:1%; text-align:center;">Student</th>
+                                         <th style="width:20%; text-align:center;"> Flag Details</th>
+                                       </tr>
+                                       {% for m in members %}
+                                           <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                       {% for analysis_ass in all_analysis %}
+                                       {% for analysis_piece in analysis_ass.1 %}
+                                                 {% if m == analysis_piece.0.associated_member %}
+                                                 {% if analysis_piece.0.tsr_number == ass.ass_number%}
+                                                 {% if analysis_piece.0.flag_tripped == True%}
+                                              
+                                                <td>
+                                                     <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                                    {{analysis_piece.0.associated_member.email}}</a>
+                                                </td>
+
+                                                <td style="background-color:#FFFF00; text-align:center;">
+                                                 {{analysis_piece.0.flag_detail}}
+                                                </td>
+                                       
+                                             </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endif %}
+                                       {% endfor %}     
+                                       {% endfor %}
+                                       {% endfor %}
+                                       </tbody>
+                           </table>
+                   </ul>
+                 </div>
+
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+              {% endfor %}
+
+                {% for ass in assigned_tsrs %}
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Tsr Analysis #{{ ass.ass_number }}</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <div class="box-body no-padding">
+                   <ul class="nav nav-pills nav-stacked">
+
+                            <table class="table table-hover">
+                                       <tbody>
+                                       <tr>
+                                         <th style="width:1%; text-align:center;">Student</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Type</th>
+                                         <th style="width:20%; text-align:center;"> Analysis Results</th>
+                                       </tr>
+                                       {% for m in members %}
+                                           <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                       {% for analysis_ass in all_analysis %}
+                                       {% for analysis_piece in analysis_ass.1 %}
+                                                 {% if m == analysis_piece.0.associated_member %}
+                                                 {% if analysis_piece.0.tsr_number == ass.ass_number%}
+                                       
+                                              
+                                                <td>
+                                                  <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                                  {{analysis_piece.0.associated_member.email}}</a>
+                                                </td>
+
+                                               <td style="text-align:center;">
+                                                 {{analysis_piece.0.analysis_type}}
+                                               </td>
+
+                                                <td style="text-align:center;">
+                                                 {{analysis_piece.0.analysis_output}}
+                                                </td>
+
+                                       
+                                             </tr>
+                                      
+                                            {% endif %}
+                                            {% endif %}
+                                       {% endfor %}     
+                                       {% endfor %}
+                                       {% endfor %}
+                                       </tbody>
+                           </table>
+                   </ul>
+                 </div>
+
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+              {% endfor %}
+
+
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Total Average Contribution</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                <div class="box-body no-padding">
+                 <ul class="nav nav-pills nav-stacked">
+                     <table class="table table-hover">
+                     <tbody>
+                       <tr>
+                         <th>Student</th>
+                         <th>Contribution (%)</th>
+                       </tr>
+                    {% for avg in avgs %}
+                     <tr>
+                       <td>{{ avg.0.email }}</td>
+                       <td>
+                         {% if contribute_levels.high < avg.1 %}
+                             <div style="color:blue">{{avg.1}}</div>
+                         {% else %}
+                         {% if contribute_levels.low < avg.1 %}
+                           <div style="color:green">{{avg.1}}</div>
+                         {%else%}
+
+                           <div style="color:red">{{avg.1}}</div>
+                         {% endif %}
+                         {% endif %}
+                        </td>
+                     </tr>
+                     {% endfor %}
+                     </tbody>
+                   </table>
+               </ul>
+               </div>
+               </div>
+
+
+            </div>
+
+
+            <!--VIEW TSR ANALYSIS TAB END
 
 
             <!-- /.tab-pane chat -->
