@@ -53,9 +53,11 @@ def view_one_chat(request, slug):
     if(room in user_rooms):
         title = "GT Chat"
         name = slug
+        user = request.user
         #messages = room.get_chat_init()
 
         return render(request, 'chat/one_chat.html',{
-            'title': title, 'room': room, 'name': name})
+            'title': title, 'room': room, 'name': name,
+            'user': user})
     else:
         return view_chats(request)
