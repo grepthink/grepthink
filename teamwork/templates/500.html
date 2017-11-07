@@ -3,6 +3,10 @@
 {% load static %}
 {% load i18n %}
 
+{% block page_description %}
+{{ page_description|default:_('500 Error') }}
+{% endblock page_description %}
+
 {% block content %}   
 
     <!-- Content Header (Page header) -->
@@ -23,11 +27,13 @@
         <div class="error-content">
           <h3><i class="fa fa-warning text-yellow"></i> Well this is embarrassing.</h3>
 
-          <p>
-            The GrepThink developers have been notified of this error and are working on it.
+          <p>The GrepThink developers have been notified of this error and are working on it.</p>
 
-            Send an email to bugs@grepthink.com if you have extra information about how the error was caused.
-          </p>
+          <p>Send an email to bugs@grepthink.com if you have extra information about how the error was caused.</p>
+
+          <p><a href="{% url 'index' %}">Click here to go back to your dashboard</a></p>
+
+
 
           <img src="https://i.imglnx.com/5sc5ed.gif">
         </div>
