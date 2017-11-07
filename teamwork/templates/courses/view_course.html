@@ -185,6 +185,17 @@ $(document).ready(function() {
                     {% endif %}
                 {% endif %}
 
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                      Sort by <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Alphabetical</a></li>
+                      <li><a href="#">Recent Update</a></li>
+                      <li><a href="#">Accepting Members</a></li>
+                    </ul>
+                </div>
+
                     {% include "projects/partial_project_box.html" with projects=projects %}
 
             </div>
