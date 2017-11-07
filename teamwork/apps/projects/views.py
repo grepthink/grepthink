@@ -181,14 +181,24 @@ def view_one_project(request, slug):
 
     tsr_tuple={}
 
-    for i in assigned_tsrs:
-        for j in project.tsr.all():
-            if j in i.subs.all():
-                tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
 
-    tsr_keys = tsr_tuple.keys()
-    tsr_items = tsr_tuple.items()
-    mem_count = len(members)
+    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+        for i in assigned_tsrs:
+            for j in project.tsr.all():
+                if j in i.subs.all():
+                    tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+
+        tsr_keys = tsr_tuple.keys()
+        tsr_items = tsr_tuple.items()
+        mem_count = len(members)
+    else:
+        tsr_keys = None
+        tsr_items = None
+        mem_count = None
 
 
     med = 100
