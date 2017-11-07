@@ -89,6 +89,7 @@ $(document).ready(function() {
 {% block stylesheets %}
   <!-- Select2 -->
   <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
   {{block.super}}
 
@@ -111,7 +112,7 @@ $(document).ready(function() {
 <div class = "row">
 
     <div class="col-md-6">
-        <div class="box box-primary">
+        <div class="box box-success">
           <div class="box-header with-border">
             <h3 class="box-title">Edit Project</h3>
           </div>
@@ -119,18 +120,62 @@ $(document).ready(function() {
           <div class="box-body">
                 {% csrf_token %}
                 {{ form.status }}
-                {% for field in form.visible_fields %}
-                <div class="form-group{% if field.errors %} has-error{% endif %}">
-                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                    <p class="help">{{ field.help_text|safe }}</p>
-                    {% endif %}
-                    {% for error in field.errors %}
-                    <label class="control-label">{{ error }}</label>
-                    {% endfor %}
+
+                {{ form.non_field_errors }}
+
+                <div class="form-group">
+                    {{ form.title.errors }}
+                    <label for="{{ form.title.id_for_label }}" class="control-label">
+                    Project Title:
+                    </label>
+                    {{ form.title }}
                 </div>
-                {% endfor %}
+
+                <div class="form-group">
+                    {{ form.tagline.errors }}
+                    <label for="{{ form.tagline.id_for_label }}" class="control-label">
+                    Project Tagline:
+                    </label>
+                    {{ form.tagline }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.content.errors }}
+                    <label for="{{ form.content.id_for_label }}" class="control-label">
+                    Project description <a href="https://daringfireball.net/projects/markdown/syntax">[Markdown supported]</a>:
+                    </label>
+                    {{ form.content }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.project_image.errors }}
+                    <label for="{{ form.project_image.id_for_label }}" class="control-label">
+                    Project Image:
+                    </label>
+                    {{ form.project_image }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.accepting.errors }}
+                    <label for="{{ form.accepting.id_for_label }}" class="control-label">
+                    Is this project currently <b>accepting new members</b>?:
+                    </label>
+                    {{ form.accepting }}
+                </div>
+
+                {% if request.user.profile.isProf or request.user.profile.isGT %}
+
+                <div class="form-group">
+                    {{ form.sponsor.errors }}
+                    <label for="{{ form.sponsor.id_for_label }}" class="control-label">
+                    Is this project <b>sponsored</b> by a company?:
+                    </label>
+                    {{ form.sponsor }}
+                </div>
+
+                {% endif %}
+
+
             </div>
 
 
@@ -151,10 +196,32 @@ $(document).ready(function() {
             </div>
             </div>
         </div>
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
+          </div>
+
+              <div class="box-body">
+                <div class="form-group">
+                  <label>Add Desired Skills</label>
+                  <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+                <label>Remove Desired Skills</label> <br />
+                {% for skill in project.desired_skills.all %}
+                    <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                    </button>
+                {% empty %}
+                <lead>No desired skills to remove</lead>
+                {% endfor %}
+
+              </div>
+
+        </div>
     </div>
 
  <div class="col-md-6">
-     <div class="box box-primary">
+     <div class="box box-info">
          <div class="box-header with-border">
            <h3 class="box-title">Project Members</h3>
          </div>
@@ -220,30 +287,79 @@ $(document).ready(function() {
      </div>
  </div>
 
-<div class="col-md-6 clearfix">
-<div class="box box-primary">
-  <div class="box-header with-border">
-    <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
-  </div>
 
-      <div class="box-body">
-        <div class="form-group">
-          <label>Add Desired Skills</label>
-          <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
-          </select>
-        </div>
-        <label>Remove Desired Skills</label> <br />
-        {% for skill in project.desired_skills.all %}
-            <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
-            </button>
-        {% empty %}
-        <lead>No desired skills to remove</lead>
-        {% endfor %}
 
+<div class="col-md-6">
+  <div class="box box-primary">
+    <div class="box-header with-border">
+      <h3 class="box-title">Optional Settings</h3>
+    </div>
+    <div class="box-body">
+      <div class="form-group">
+          {{ form.teamSize.errors }}
+          <label for="{{ form.teamSize.id_for_label }}" class="control-label">
+          Max Team Size:
+          </label>
+          {{ form.teamSize }}
       </div>
 
-</div>
-</div>
+      <div class="form-group">
+          {{ form.ta_location.errors }}
+          <label for="{{ form.ta_location.id_for_label }}" class="control-label">
+          TA Meeting Location:
+          </label>
+          {{ form.ta_location }}
+      </div>
+
+      <div class="form-group">
+          {{ form.ta_time.errors }}
+          <label for="{{ form.ta_time.id_for_label }}" class="control-label">
+          TA Meeting Time:
+          </label>
+          {{ form.ta_time }}
+      </div>
+
+      <div class="form-group">
+          {{ form.weigh_interest.errors }}
+          <label for="{{ form.weigh_interest.id_for_label }}" class="control-label">
+          <span class="tooltip2"><span style="color:#3C8DBC"><i class='glyphicon glyphicon-info-sign'></i></span>
+               <span class="tooltiptext2">Overwrite weight of interest in the project during matching</span>
+          </span>
+          Weight of user interest in project:
+          </label>
+          {{ form.weigh_interest }}
+      </div>
+
+      <div class="form-group">
+          {{ form.weigh_know.errors }}
+          <label for="{{ form.weigh_know.id_for_label }}" class="control-label">
+          <span class="tooltip2"><span style="color:#3C8DBC"><i class='glyphicon glyphicon-info-sign'></i></span>
+               <span class="tooltiptext2">Overwrite the weight of knowing a skill during matching</span>
+          </span>
+          Weight of skills users already know
+          </label>
+          {{ form.weigh_know }}
+      </div>
+
+
+      <div class="form-group">
+          {{ form.weigh_learn.errors }}
+          <label for="{{ form.weigh_learn.id_for_label }}" class="control-label">
+          <span class="tooltip2"><span style="color:#3C8DBC"><i class='glyphicon glyphicon-info-sign'></i></span>
+               <span class="tooltiptext2">Overwrite the weight of wanting to learn a skill during matching</span>
+          </span>
+          Weight of skills users want to learn
+          </label>
+          {{ form.weigh_learn }}
+      </div>
+
+    </div> <!-- Box 3 Body -->
+
+    </div> <!-- Box 3 -->
+
+  </form>
+
+</div> <!-- Col 3 -->
 
   <div class="col-md-6">
       <div class="box box-danger">
