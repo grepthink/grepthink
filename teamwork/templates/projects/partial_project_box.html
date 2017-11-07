@@ -1,6 +1,9 @@
-
+<head>
+  <link rel="stylesheet" href="css/Tooltip.css">
+</head>
 
 {% for project in projects %}
+
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
       <div class="box box-widget widget-user-2">
@@ -14,27 +17,39 @@
           <!-- /.widget-user-image -->
           <h3 class="widget-user-username">{{project.title}}</h3>
           <h5 class="widget-user-desc">{{project.tagline}}</h5>
+          {% if project.sponsor %}
+          <span class="tooltip2 pull-right"><i class='glyphicon glyphicon-info-sign'></i>
+               <span class="tooltiptext2">This is a sponsored project</span>
+          </span>
+          {% endif %}
         </div><!-- /.box-header -->
         </a>
 
+
         <div class="box-footer no-padding">
           <ul class="nav nav-stacked">
-            <li><a href="#">Accepting Members <span class="pull-right badge bg-red">
+            <li><a href="#">Accepting Members
               {% if project.avail_mem %}
+              <span class="pull-right badge bg-green">
                   Yes
               {% else %}
+              <span class="pull-right badge bg-red">
                   No
               {% endif %}
             </span></a></li>
-            <li><a href="#">Sponsored <span class="pull-right badge bg-aqua">
+            <!-- <li><a href="#">Sponsored <span class="pull-right badge bg-aqua">
               {% if project.sponsor %}
                   Yes
               {% else %}
                   No
               {% endif %}
-            </span></a></li>
+            </span></a></li> -->
             <li><a href="#">Members
+                {% if project.avail_mem %}
                   <span class="pull-right badge bg-green">
+                {% else %}
+                   <span class="pull-right badge bg-red">
+                {% endif %}
                     {{ project.members.all.count }}
                   </span>
             </a></li>
@@ -43,6 +58,7 @@
         </div>
 
       </div><!-- /.box -->
+
     </a>
     </div>
     {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
@@ -55,4 +71,5 @@
           create one now!
       </a>
   </div>
+
 {% endfor %}

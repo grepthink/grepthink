@@ -62,14 +62,24 @@ INSTALLED_APPS = [
     'chartjs'
 ]
 
+# Sets emails for notifications of error when DEBUG=False
+ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
+
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
-#For Testing, comment out for production
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+isProd = config('PRODUCTION', default=False)
+
+if isProd:
+    pass
+    #For Testing, comment out for production
+    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -187,8 +197,9 @@ MEDIA_URL = '/media/'
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 ALLOWED_SIGNUP_DOMAINS = ['*']
 

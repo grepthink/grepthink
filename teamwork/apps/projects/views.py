@@ -604,7 +604,7 @@ def edit_project(request, slug):
         #                     project.save()
 
 
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
@@ -633,7 +633,7 @@ def edit_project(request, slug):
             for mem_obj in to_delete:
                 mem_obj.delete()
 
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
 
     # Transfer ownership of a project
@@ -676,7 +676,7 @@ def edit_project(request, slug):
             # Add the skill to the project (as a desired_skill)
             project.desired_skills.add(desired_skill)
             project.save()
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a desired skill from the project
     if request.POST.get('remove_desired_skill'):
