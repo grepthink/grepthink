@@ -7,18 +7,14 @@
 {{ page_description|default:_('404 Error') }}
 {% endblock page_description %}
 
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+<li class="active"><a href="/whoareyou"><i class="fa fa-dashboard"></i>404 Error</a></li>
+
+{% endblock crumb %}
+
 {% block content %}   
-
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        404 Error Page
-      </h1>
-      <ol class="breadcrumb">
-      <li class="active"><a href="/whoareyou"><i class="fa fa-dashboard"></i>404 Error</a></li>
-      </ol>
-    </section>
-
     <!-- Main content -->
     <section class="content">
       <div class="error-page">

@@ -4,21 +4,17 @@
 {% load i18n %}
 
 {% block page_description %}
-{{ page_description|default:_('500 Error') }}
+{{ page_description|default:_('500 Internal Server Error') }}
 {% endblock page_description %}
 
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+<li class="active"><a href="/whoareyou"><i class="fa fa-dashboard"></i>500 Error</a></li>
+
+{% endblock crumb %}
+
 {% block content %}   
-
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        500 Internal Server Error
-      </h1>
-      <ol class="breadcrumb">
-      <li class="active"><a href="/whoareyou"><i class="fa fa-dashboard"></i>500 Error</a></li>
-      </ol>
-    </section>
-
     <!-- Main content -->
     <section class="content">
       <div class="error-page">
