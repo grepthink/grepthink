@@ -88,7 +88,7 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 
-
+@login_required
 def view_one_project(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -186,19 +186,25 @@ def view_one_project(request, slug):
     else:
         user_role = 'GT'
 
+    fix = []
+    new_tsr_tuple = []
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        for i in assigned_tsrs:
-            for j in project.tsr.all():
-                if j in i.subs.all():
-                    tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+        for i in project.tsr.all():
+            new_tsr_tuple.append([i.evaluatee, i.ass.first(), i])
 
-        tsr_keys = tsr_tuple.keys()
-        tsr_items = tsr_tuple.items()
-        mem_count = len(members)
+        temp_tup = sorted(new_tsr_tuple, key=lambda x: (x[1].ass_number, x[0].id))
+
+        temp = ""
+        for j, k, l in sorted(new_tsr_tuple, key=lambda x: (x[1].ass_number, x[0].id)):
+            if temp != j:
+                temp = j
+                fix.append([temp, k, l, 1])
+            else:
+                fix.append(["", k, l, 0])
     else:
-        tsr_keys = None
-        tsr_items = None
-        mem_count = None
+        fix = None
+
+
 
 
     med = 100
@@ -209,12 +215,12 @@ def view_one_project(request, slug):
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
