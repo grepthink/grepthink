@@ -1,0 +1,23 @@
+ToDo
+
+tabs for each chatroom user is a part of.
+default show all tabs with blank screen
+
+Documentation:
+-of hand tests
+-of code functionality
+
+Write unit tests
+
+Sprint 3 tasks:
+Add a notification aspect to models. 
+    -1 notification for each chatroom with new messages
+    -additional notifications for each ping "@"
+    
+Add the notification to the bell icon in the top right of Grepthink page
+
+Parse a username after a ping (@) is referenced. Send a notification to that user.
+
+
+
+Add tabs and display all chatroom tabs on only one page.
