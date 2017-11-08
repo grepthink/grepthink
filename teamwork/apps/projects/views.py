@@ -242,7 +242,7 @@ def view_one_project(request, slug):
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
 
-#historical functions go here
+     #historical functions go here
     analysis_dicts={}
 
     for analysis_object in project.analysis.all():

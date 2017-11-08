@@ -75,11 +75,15 @@
             {% endif %}
 
 
-            <!--TEST TAB-->
+            <!--ANALYSIS TAB ADDITIONS BEGIN-->
             {% if request.user in staff or request.user.profile.isGT %}
-            <li class=""><a href="#tab_8" data-toggle="tab" aria-expanded="false">View Analysis</a></li>
+            <li class=""><a href="#tab_8" data-toggle="tab" aria-expanded="false">View Raw Analysis</a></li>
             {% endif %}
-            <!--TEST TAB-->
+
+            {% if request.user in staff or request.user.profile.isGT %}
+            <li class=""><a href="#tab_9" data-toggle="tab" aria-expanded="false">View Graphical Analysis</a></li>
+            {% endif %}
+            <!--ANALYIS TAB ADDITIONS END-->
 
 
             {% if user in project_members %}
@@ -635,27 +639,10 @@
 
 
 
-            <!--VIEW TSR Analysis TAB-->
+            <!--VIEW TSR ANALYSIS TAB-->
 
          
             <div class="tab-pane" id="tab_8">
-            <style>
-              table {
-                border-collapse: collapse;
-                width: 100%;
-              }
-
-              th, td {
-                text-align: left;
-                padding: 8px;
-              }
-              th {
-                background-color: #00A65A;
-                color: white;
-              }
-            </style>
-                
-                
                 <!--TEAM HEALTH PANEL: "STOCK TICKER"-->
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -707,7 +694,7 @@
                                                     {% endif %}
                                                     {% endif %}
                                                     {% endif %}
-                                                {% endfor %}
+                                           		 {% endfor %}
                                             {% endfor %}
                            
                                         </tr>
@@ -884,7 +871,182 @@
             </div>
 
 
-            <!--VIEW TSR ANALYSIS TAB END
+            <!--VIEW TSR ANALYSIS TAB END -->
+           
+
+
+            <!--VIEW TSR ANALYSIS TAB gRAPHICS BEGINE-->
+			<style> 
+				input[type=button], input[type=submit], input[type=reset] {
+    			background-color: #4CAF50;
+    			border: none;
+    			color: white;
+    			padding: 16px 32px;
+    			text-decoration: none;
+    			margin: 4px 2px;
+    			cursor: pointer;
+				}
+			</style>
+         
+            <div class="tab-pane" id="tab_9">
+                <!--TEAM HEALTH PANEL: "STOCK TICKER"-->
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Team Health</h3>
+                        <div class="box-tools">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                    </div>
+                    </div>
+                    <div class="box-body no-padding">
+                        <ul class="nav nav-pills nav-stacked">
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th style="width:3%; text-align:center;">Student</th>
+                                        <th style="width:2%; text-align:center;">Running Average</th>
+                                        <th style="width:1%; text-align:center;">Status</th>
+                                        <th style="width:10%; text-align:center;">Tyler's Stuff</th>
+                                    </tr>
+                                    {% for member in members %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'profile' member.username %}">
+                                                    {{member.profile.name}}</a>
+                                            </td>
+                                            {% for analysis_ass in all_analysis %}
+                                                {% for analysis_piece in analysis_ass.1 %}
+                                                    {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
+                                                    {% if member == analysis_piece.0.associated_member %}
+                                                    {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
+                                                        <td>
+                                                            {{analysis_piece.0.analysis_output}}
+                                                        </td>
+                                                        {% widthratio 100 members|length 1 as ideal_average_value %}
+                                                        {% widthratio ideal_average_value 4 3 as modified_average_value %}
+                                                        {% if analysis_piece.0.analysis_output >= ideal_average_value %}
+                                                            <td>
+                                                                <div style="color:green">Good</div>
+                                                            </td>
+                                                        {% elif analysis_piece.0.analysis_output >= modified_average_value %}     
+                                                            <td>
+                                                                <div style="color:#ff8040">Warning</div>
+                                                            </td>
+                                                        {% else %}
+                                                            <td>
+                                                                <div style="color:red">Bad</div>
+                                                            </td>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endif %}
+                                           		 {% endfor %}
+                                            {% endfor %}
+                           
+                                        </tr>
+                                    {% endfor %}                                              
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+                </div>
+                
+                
+                
+              <!--CURRENTLY HARDCODE PROTOTYPE: NOT FUNCTIONAL-->
+                <form action = "">
+                	 <h3 style=" position:relative; left:340px; top:35px;">TSR Number</h3>
+              	    <select  style=" position:relative; left:485px;" name="TSR #">
+                    	<option value="1">1</option>
+ 				   		<option value="2">2</option>
+  						<option value="3">3</option>
+  						<option value="4">4</option>
+					</select>
+				</form>
+				<br><br>
+                <svg width="1000" height="375">
+                	<text x="40" y="15" fill="Black">Graph 1</text>
+                    <rect x="40" y="20" width="350" height="350" rx="20" ry="20" style = "fill:white;stroke:black;stroke-width:1" />
+
+ 					<text x="450" y="15" fill="Black">Graph 2</text>
+                    <rect x="450" y="20" width="500" height="325" style = "fill:white;stroke:black;stroke-width:1" />
+                </svg>
+
+                <form action = "">
+                	<h5 style=" position:relative; left:450px; top:35px">Member:</h5>
+              	    <select  style=" position:relative; left:525px; " name="Member">
+                    	<option value="joe">Joe</option>
+ 				   		<option value="dick">Richard</option>
+  						<option value="corn">Cornilius</option>
+  						<option value="audi">Audi</option>
+					</select>
+				</form>
+                
+                
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Tsr Analysis Flagged #1</h3>
+                  </div>
+
+                  <div class="box-body no-padding">
+                   <ul class="nav nav-pills nav-stacked">
+
+                            <table class="table table-hover table-striped">
+                                       <tbody>
+                                       <tr>
+                                         <th style=" width:1%; text-align:center;">Student</th>
+                                         <th style="width:20%; text-align:center;"> Flag Details</th>
+                                         <th style="width:20%; text-align:center;">  Suppress?</th>
+                                       </tr>
+                                       {% for m in members %}
+                                           <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                       {% for analysis_ass in all_analysis %}
+                                       {% for analysis_piece in analysis_ass.1 %}
+                                                 {% if m == analysis_piece.0.associated_member %}
+                                                 {% if analysis_piece.0.tsr_number == 1%}
+                                                 {% if analysis_piece.0.flag_tripped == True%}
+                                              
+                                                <td>
+                                                     <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                                    {{analysis_piece.0.associated_member.email}}</a>
+                                                </td>
+
+                                                <td style="text-align:center;">
+                                                 {{analysis_piece.0.flag_detail}}
+                                                </td>
+
+                                                <td style="text-align:center;">
+                                                    <form>
+                                           				<input type="checkbox" name="vehicle" >
+                                                    </form>
+                                                </td>
+                                       
+                                            </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                      
+                                            {% endif %}
+                                       {% endfor %}     
+                                       {% endfor %}
+                                       {% endfor %}
+                                       </tbody>
+                           </table>
+                           <form action="">
+                                 <input style="float:right"; type="submit" value="Submit" align="right">
+                                 <input style="float:right"; type="reset" value="Reset">
+                           </form>
+                         
+                   </ul>
+                 </div>
+
+                  <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+
+            </div>
+
+
+            <!--VIEW TSR ANALYSIS GRAPHICS TAB END -->
 
 
             <!-- /.tab-pane chat -->
