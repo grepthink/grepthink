@@ -632,7 +632,74 @@
                 color: white;
               }
             </style>
-
+                
+                
+                <!--TEAM HEALTH PANEL: "STOCK TICKER"-->
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Team Health</h3>
+                        <div class="box-tools">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                    </div>
+                    </div>
+                    <div class="box-body no-padding">
+                        <ul class="nav nav-pills nav-stacked">
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th style="width:3%; text-align:center;">Student</th>
+                                        <th style="width:2%; text-align:center;">Running Average</th>
+                                        <th style="width:1%; text-align:center;">Status</th>
+                                        <th style="width:10%; text-align:center;">Tyler's Stuff</th>
+                                    </tr>
+                                    {% for member in members %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'profile' member.username %}">
+                                                    {{member.profile.name}}</a>
+                                            </td>
+                                            {% for analysis_ass in all_analysis %}
+                                                {% for analysis_piece in analysis_ass.1 %}
+                                                    {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
+                                                    {% if member == analysis_piece.0.associated_member %}
+                                                    {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
+                                                        <td>
+                                                            {{analysis_piece.0.analysis_output}}
+                                                        </td>
+                                                        {% widthratio 100 members|length 1 as ideal_average_value %}
+                                                        {% widthratio ideal_average_value 4 3 as modified_average_value %}
+                                                        {% if analysis_piece.0.analysis_output >= ideal_average_value %}
+                                                            <td>
+                                                                <div style="color:green">Good</div>
+                                                            </td>
+                                                        {% elif analysis_piece.0.analysis_output >= modified_average_value %}     
+                                                            <td>
+                                                                <div style="color:#ff8040">Warning</div>
+                                                            </td>
+                                                        {% else %}
+                                                            <td>
+                                                                <div style="color:red">Bad</div>
+                                                            </td>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                           
+                                        </tr>
+                                    {% endfor %}                                              
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+                </div>
+                
+                
+                
+                
+                
                 {% for ass in assigned_tsrs %}
                 <div class="box box-solid">
                   <div class="box-header with-border">
