@@ -469,10 +469,11 @@ class Project(models.Model):
 
         mem = list(user.membership.all())
 
+        claimed = list(user.ta.all())
 
         created = list(user.project_creator.all())
 
-        projects = list(set(mem + created))
+        projects = list(set(mem + created + claimed))
 
         return projects
 

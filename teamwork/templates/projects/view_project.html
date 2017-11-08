@@ -146,63 +146,85 @@
                     {{ project.get_content_as_markdown|safe }}
                 </div>
                 <div>
-                    <p>
-                        <strong>Project Owner</strong>
-                        <a href="{% url 'profile' project_owner.user.username %}">
-                        {% if project_owner.isGT %}
-                            <span class="label label-success">
-                        {% elif project_owner.isProf %}
+                    <div class="box box-success collapsed-box">
+                        <div class="box-header with-border">
+                            <strong>Project Owner</strong>
+                            &nbsp;
+                            <a href="{% url 'profile' project_owner.user.username %}">
+                            {% if project_owner.isGT %}
+                                <span class="label label-success">
+                            {% elif project_owner.isProf %}
+                                <span class="label label-warning">
+                            {% else %}
+                                <span class="label label-info">
+                            {% endif %}
+                                {{ project.creator.username }}
+                            </span></a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Desired Skills</strong>
+                            &nbsp;
+                            {% if project.desired_skills != none %}
+                            {% for skill in project.desired_skills.all %}
                             <span class="label label-warning">
-                        {% else %}
-                            <span class="label label-info">
-                        {% endif %}
-                            {{ project.creator.username }}
-                        </span></a>
-                    </p>
-                    <p>
-                        <strong>Scrum Master</strong>
-                        <a href="{% url 'profile' project.scrum_master.username %}">
-                            <span class="label label-info">
-                                {{ project.scrum_master.username }}
+                                {{ skill.skill }}
                             </span>
-                        </a>
-                    </p>
-                    <p>
-                        <strong>Teacher Assistant</strong>
-                        <a href="{% url 'profile' project.ta.username %}">
-                            <span class="label label-info">
-                                {{ project.ta.username }}
+                            &nbsp;
+                            {% endfor %}
+                            {% endif %}
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">More Info</button>
+                            </div>
+                            <!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body" style="display: none;">
+                            <strong>Teacher Assistant</strong>
+                            &nbsp;
+                            <a href="{% url 'profile' project.ta.username %}">
+                                <span class="label label-info">
+                                    {{ project.ta.username }}
+                                </span>
+                            </a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Members</strong>
+                            &nbsp;
+                            {% for mem in project.members.all %}
+                            {% if mem.username != null %}
+                            <a href="{% url 'profile' mem.username %}">
+                            <span class="label label-primary">
+                                {{ mem.username }}
                             </span>
-                        </a>
-                    </p>
-                    <p><strong>Members</strong>
-                        {% for mem in project.members.all %}
-                        {% if mem.username != null %}
-                        <a href="{% url 'profile' mem.username %}">
-                        <span class="label label-primary">
-                            {{ mem.username }}
-                        </span>
-                        </a>
-                        {% endif %}
-                        {% endfor %}
-                    </p>
-                    <p><strong>Desired Skills</strong>
-                        {% if project.desired_skills != none %}
-                        {% for skill in project.desired_skills.all %}
-                        <span class="label label-warning">
-                            {{ skill.skill }}
-                        </span>
-                        {% endfor %}
-                        {% endif %}
-                    </p>
-
-                    <p><strong>Meeting Location</strong>
-                            {{ project.ta_location }}
-                    </p>
-
-                    <p><strong>Meeting Time</strong>
-                            {{ project.ta_time }}
-                    </p>
+                            </a>
+                            &nbsp;
+                            {% endif %}
+                            {% endfor %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Scrum Master</strong>
+                            &nbsp;
+                            <a href="{% url 'profile' project.scrum_master.username %}">
+                                <span class="label label-info">
+                                    {{ project.scrum_master.username }}
+                                </span>
+                            </a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Meeting Location</strong>
+                            &nbsp;
+                            {% if project.ta_location == "" %}
+                                N/A
+                            {% else %}
+                                {{ project.ta_location }}
+                            {% endif %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Meeting Time</strong>
+                            &nbsp;
+                            {% if project.ta_time == "" %}
+                                N/A
+                            {% else%}
+                                {{ project.ta_time }}
+                            {% endif %}
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
                 </div>
             </div>
 
@@ -1000,7 +1022,7 @@
     <div class="box-header with-border">
         <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
         <div class="box-tools">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
         </div>
     </div>
 
@@ -1010,14 +1032,14 @@
                 <tbody>
                 <tr>
                   <th>Email Address</th>
-                  <th style="width:50%">Request Date</th>
+                  <!-- <th style="width:50%">Request Date</th> -->
                   <th style="width: 40px"></th>
                   <th style="width: 40px"></th>
                 </tr>
                 {% for stud in pending_members %}
                     <tr>
                         <td> <a href="{% url 'profile' stud.username %}"> {{ stud.email }} </a> </td>
-                        <td> Todo </td>
+                        <!-- <td> Todo </td> -->
                         <td> <a href="{% url 'add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
                         <td> <a href="{% url 'reject_member' project.slug stud.username %}"><button type="button" class="btn btn-block btn-danger btn-xs">Reject</button> </td>
                     </tr>

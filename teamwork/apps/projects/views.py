@@ -177,14 +177,24 @@ def view_one_project(request, slug):
 
     tsr_tuple={}
 
-    for i in assigned_tsrs:
-        for j in project.tsr.all():
-            if j in i.subs.all():
-                tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
 
-    tsr_keys = tsr_tuple.keys()
-    tsr_items = tsr_tuple.items()
-    mem_count = len(members)
+    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+        for i in assigned_tsrs:
+            for j in project.tsr.all():
+                if j in i.subs.all():
+                    tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+
+        tsr_keys = tsr_tuple.keys()
+        tsr_items = tsr_tuple.items()
+        mem_count = len(members)
+    else:
+        tsr_keys = None
+        tsr_items = None
+        mem_count = None
 
 
     med = 100
@@ -608,7 +618,7 @@ def edit_project(request, slug):
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
         else:
             messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project")
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
@@ -637,7 +647,7 @@ def edit_project(request, slug):
             for mem_obj in to_delete:
                 mem_obj.delete()
 
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
 
     # Transfer ownership of a project
@@ -680,7 +690,7 @@ def edit_project(request, slug):
             # Add the skill to the project (as a desired_skill)
             project.desired_skills.add(desired_skill)
             project.save()
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a desired skill from the project
     if request.POST.get('remove_desired_skill'):
