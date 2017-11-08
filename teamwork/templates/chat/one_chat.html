@@ -101,11 +101,12 @@
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                    "<form>Your message<input><button>Send</button></form>" +
+                                    "<form>" +
                                     "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
                                     "<span class=\"input-group-btn\">" +
                                               "<button type=\"button\" class=\"btn btn-success btn-flat\">Send</button>" +
                                               "</span>" +
+									"</form>"+
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
@@ -146,12 +147,12 @@
                                         "</div>";
                     var ok_msg = "";
                     // Displays the message payload
-                            ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.username + ": </span>" +
-                                    "<span class='body'>" + data.message + "    </span>" +
-                                    "<span class='date'>" + data.date + "</span>" +
-                                    "</div>";
-                    msgdiv.append(ok_msg);
+                    //        ok_msg = "<div class='message'>" +
+                    //                "<span class='username'>" + data.username + ": </span>" +
+                    //                "<span class='body'>" + data.message + "    </span>" +
+                    //                "<span class='date'>" + data.date + "</span>" +
+                    //                "</div>";
+                    // msgdiv.append(ok_msg);
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
@@ -168,12 +169,12 @@
                                             "</div>";
                         var ok_msg = "";
                         // Displays the message payload
-                            ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.messages[i].username + ": </span>" +
-                                    "<span class='body'>" + data.messages[i].message + "    </span>" +
-                                    "<span class='date'>" + data.messages[i].date + "</span>" +
-                                    "</div>";
-                        msgdiv.append(ok_msg);
+                            //ok_msg = "<div class='message'>" +
+                              //      "<span class='username'>" + data.messages[i].username + ": </span>" +
+                                //    "<span class='body'>" + data.messages[i].message + "    </span>" +
+                                  //  "<span class='date'>" + data.messages[i].date + "</span>" +
+                                    //"</div>";
+                        //msgdiv.append(ok_msg);
                     }
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
