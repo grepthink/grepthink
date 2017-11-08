@@ -189,18 +189,15 @@ def view_one_project(request, slug):
     fix = []
     new_tsr_tuple = []
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        for i in project.tsr.all():
-            new_tsr_tuple.append([i.evaluatee, i.ass.first(), i])
-
-        temp_tup = sorted(new_tsr_tuple, key=lambda x: (x[1].ass_number, x[0].id))
-
+        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
         temp = ""
-        for j, k, l in sorted(new_tsr_tuple, key=lambda x: (x[1].ass_number, x[0].id)):
-            if temp != j:
-                temp = j
-                fix.append([temp, k, l, 1])
+
+        for j in temp_tup:
+            if temp != j.evaluatee:
+                temp = j.evaluatee
+                fix.append([temp, j.ass.first(), j, 1])
             else:
-                fix.append(["", k, l, 0])
+                fix.append(["", j.ass.first(), j, 0])
     else:
         fix = None
 
