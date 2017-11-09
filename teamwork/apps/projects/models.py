@@ -142,8 +142,7 @@ class Project(models.Model):
         related_name='scrum_master',
         on_delete=models.CASCADE)
     
-    #Temporary foreign key to a chatroom model, subject to change cause
-    #it makes migrations difficult
+    #Empty chatroom model created to connect a chatroom to a project
     chatroom = Chatroom()
     """
     chatroom = models.ForeignKey(

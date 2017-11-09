@@ -1,13 +1,13 @@
-//Adds the chatroom links and is supposed to display the chat room
-//Temporary chat creation functions
 $(function () {
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
 
-            var webSocketBridge = new channel.WebSocketBridge();
+            var webSocketBridge = new channels.WebSocketBridge();
             webSocketBridge.connect(ws_path);
-            // Handle incoming messages
+
+            //When the websocket receives a payload it needs to decide what type it is
+            //then handle it.
             webSocketBridge.listen(function(data) {
                 // Decode the JSON
                 console.log("Got websocket message", data);
@@ -16,14 +16,74 @@ $(function () {
                     alert(data.error);
                     return;
                 }
-                // Handle joining
+                // When you join this creates the room
                 if (data.join) {
                     console.log("Joining room " + data.join);
                     var roomdiv = $(
+                            "<div class=\"box box-success direct-chat direct-chat-success\">" +
+                              "<div class=\"box-header with-border\">" +
+                                "<h3 class=\"box-title\">"+data.title+"</h3>" +
+                                "<div class=\"box-tools pull-right\">" +
+                                  "<span data-toggle=\"tooltip\" title=\"00 New Messages\" class=\"badge bg-green\">00</span>" +
+                                  "<button class=\"btn btn-box-tool\" data-widget=\"collapse\"><i class=\"fa fa-minus\"></i></button>" +
+                                "</div>" +
+                              "</div>" +
+                              "<div class=\"box-body\">" +
+                                "<!-- Conversations are loaded here -->" +
+                                "<div class=\"direct-chat-messages\">" +
+
+
+                                  "<!-- Message. Default to the left -->" +
+                                    "<div id= \"one_msg\" class=\"direct-chat-msg\">" +
+                                      "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
+                                        // This is where message info like name and time will appear
+                                        //"<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
+                                        //"<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
+                                      "</div>" +
+                                      "<!-- /.direct-chat-info -->" +
+                                      "<div id=\"msg_text\" class=\"direct-chat-text\">" +
+                                        // This is where Message text will appear
+                                      "</div>" +
+                                      "<!-- /.direct-chat-text -->" +
+                                    "</div>" +
+                                    "<!-- /.direct-chat-msg -->" +
+                                    /*
+                                    "<!-- Message to the right -->" +
+                                    "<div class=\"direct-chat-msg right\">" +
+                                      "<div class=\"direct-chat-info clearfix\">" +
+                                        "<span class=\"direct-chat-name pull-right\">INSERT_USER_2_HERE</span>" +
+                                        "<span class=\"direct-chat-timestamp pull-left\">INSERT_TIME_2_HERE</span>" +
+                                      "</div>" +
+                                      "<!-- /.direct-chat-info -->" +
+                                      "<div class=\"direct-chat-text\">" +
+                                        "INSERT_TEXT_2_HERE" +
+                                      "</div>" +
+                                      "<!-- /.direct-chat-text -->" +
+                                    "</div>" +
+                                    "<!-- /.direct-chat-msg -->" +
+                                    */
+                                  "</div>" +
+                                  "<!--/.direct-chat-messages-->" +
+
+                                "</div>" +
+                                "<!-- /.box-body -->" +
+                                "<div class=\"box-footer\">" +
+                                  "<div class=\"input-group\">" +
+                                    "<div class='messages'></div>" +
+                                    "<form>Your message<input><button>Send</button></form>" +
+                                    "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
+                                    "<span class=\"input-group-btn\">" +
+                                              "<button type=\"button\" class=\"btn btn-success btn-flat\">Send</button>" +
+                                              "</span>" +
+                                  "</div>" +
+                                "</div>" +
+                                "<!-- /.box-footer-->" +
+                              "</div>" +
+                              "<!--/.direct-chat -->" +
+
                             "<div class='room' id='room-" + data.join + "'>" +
-                            "<h2>" + data.title + "</h2>" +
-                            "<div class='messages'></div>" +
-                            "<form><input><button>Send</button></form>" +
+                              "<div class='messages'></div>" +
+                              //"<form>Your message<input><button>Send</button></form>" +
                             "</div>"
                     );
                     // Hook up send button to send a message
@@ -37,22 +97,53 @@ $(function () {
                         return false;
                     });
                     $("#chats").append(roomdiv);
-                    // Handle leaving
+                 //Removes the room when click the room link again
                 } else if (data.leave) {
                     console.log("Leaving room " + data.leave);
                     $("#room-" + data.leave).remove();
                     // Handle getting a message
-                } else if (data.message || data.msg_type != 0) {
-                    var msgdiv = $("#room-" + data.room + " .messages");
+                } else if (data.message) {
+                    var msgdiv = $("#room-" + data.chatroom + " .messages");
+                    one_msg = document.getElementById("one_msg");
+                    one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
+                                        // This is where message info like name and time will appear
+                                        "<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
+                                        "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
+                                        "</div>" +
+                                        "<div id=\"msg_text\" class=\"direct-chat-text\">" +
+                                        data.message +
+                                        "</div>";
                     var ok_msg = "";
-                    // msg types are defined in chat/settings.py
-                    // Only for demo purposes is hardcoded, in production scenarios, consider call a service.
-                    ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.username + "</span>" +
-                                    "<span class='body'>" + data.message + "</span>" +
+                    // Displays the message payload
+                            ok_msg = "<div class='message'>" +
+                                    "<span class='username'>" + data.username + ": </span>" +
+                                    "<span class='body'>" + data.message + "    </span>" +
+                                    "<span class='date'>" + data.date + "</span>" +
                                     "</div>";
-
                     msgdiv.append(ok_msg);
+
+                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                }else if (data.messages) {
+                    for (var i =0;i<data.messages.length;i++){
+                        var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
+                        one_msg = document.getElementById("one_msg");
+                        one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
+                                            // This is where message info like name and time will appear
+                                            "<span class=\"direct-chat-name pull-left\">"+data.messages[i].username+"</span>" +
+                                            "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
+                                            "</div>" +
+                                            "<div id=\"msg_text\" class=\"direct-chat-text\">" +
+                                            data.messages[i].message +
+                                            "</div>";
+                        var ok_msg = "";
+                        // Displays the message payload
+                            ok_msg = "<div class='message'>" +
+                                    "<span class='username'>" + data.messages[i].username + ": </span>" +
+                                    "<span class='body'>" + data.messages[i].message + "    </span>" +
+                                    "<span class='date'>" + data.messages[i].date + "</span>" +
+                                    "</div>";
+                        msgdiv.append(ok_msg);
+                    }
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
@@ -65,31 +156,25 @@ $(function () {
                 return $("#room-" + roomId).length > 0;
             };
 
-            // Room join/leave
-            $("li.room-link").click(function () {
-                roomId = $(this).attr("data-room-id");
-                if (inRoom(roomId)) {
-                    // Leave room
-                    $(this).removeClass("joined");
-                    webSocketBridge.send({
-                        "command": "leave",
-                        "room": roomId
-                    });
-                } else {
-                    // Join room
-                    $(this).addClass("joined");
-                    webSocketBridge.send({
-                        "command": "join",
-                        "room": roomId
-                    });
-                }
-            });
-
             // Helpful debugging
             webSocketBridge.socket.onopen = function () {
                 console.log("Connected to chat socket");
+                roomId = $("li.room-link").attr("data-room-id");
+                // Initial message payload sent when you join a room
+                $("li.room-link").addClass("joined");
+                webSocketBridge.send({
+                    "command": "join",
+                    "room": roomId
+                });
             };
             webSocketBridge.socket.onclose = function () {
                 console.log("Disconnected from chat socket");
+                roomId = $("li.room-link").attr("data-room-id");
+                // Payload sent when you leave a room
+                $("li.room-link").removeClass("joined");
+                webSocketBridge.send({
+                    "command": "leave",
+                    "room": roomId
+                });
             }
         });

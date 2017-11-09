@@ -13,6 +13,7 @@ from django.urls import reverse
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import Alert
+from teamwork.apps.profiles.views import view_profile
 from teamwork.apps.core.helpers import *
 from teamwork.apps.courses.views import view_one_course
 from teamwork.apps.profiles.views import view_alerts
@@ -61,3 +62,10 @@ def view_one_chat(request, slug):
             'user': user})
     else:
         return view_chats(request)
+        
+#Finds if the username exists and returns the page for the user profile
+#Assumes that the username is without the @ sign        
+def find_user_profile(request, username):
+    if User.Objects.filter(name=username).exists():
+        return view_profile(request, username)
+    return #something null

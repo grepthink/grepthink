@@ -231,7 +231,7 @@ def leave_project(request, slug):
         # check if user that is being removed was Scrum Master
         if f_user == project.scrum_master:
             project.scrum_master = remaining.first().user
-        if Chatroom.objects.filter(name=project.title).exists():
+        if Chatroom.objects.filter(name="-"+project.title).exists():
                 project.chatroom.user.remove(f_user)
         project.save()
         messages.info(request, "You have left {0}".format(project))
@@ -435,7 +435,7 @@ def create_project(request):
             
             #Creates a chatroom with the title of the project and adds the creator
             #chatroom = Chatroom()
-            project.chatroom.name = project.title
+            project.chatroom.name = "-"+project.title
             project.chatroom.save()
             project.chatroom.user.add(user)
             #project.chatroom = chatroom
@@ -526,7 +526,7 @@ def edit_project(request, slug):
     if request.POST.get('delete_project'):
         # Check that the current user is the project owner
         if request.user == project.creator:
-            if Chatroom.objects.filter(name=project.title).exists():
+            if Chatroom.objects.filter(name="-"+project.title).exists():
                 project.chatroom.delete()
             project.delete()
         else:
@@ -627,7 +627,7 @@ def edit_project(request, slug):
             # check if user that is being removed was Scrum Master
             if f_user == project.scrum_master:
                 project.scrum_master = remaining.first().user
-            if Chatroom.objects.filter(name=project.title).exists():
+            if Chatroom.objects.filter(name="-"+project.title).exists():
                 project.chatroom.user.remove(f_user)
             project.save()
             messages.info(request, "{0} has been removed from the project".format(f_username))
@@ -1262,7 +1262,7 @@ def add_member(request, slug, uname):
         if mem_to_add in pending_members:
             for mem in pending_members:
                 if mem == mem_to_add:
-                    if Chatroom.objects.filter(name=project.title).exists():
+                    if Chatroom.objects.filter(name="-"+project.title).exists():
                         project.chatroom.user.add(mem)
                         project.chatroom.save()
                     project.pending_members.remove(mem)
