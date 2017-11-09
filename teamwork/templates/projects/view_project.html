@@ -663,58 +663,84 @@
                         <div class="box-tools">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                             </button>
+                        </div>
                     </div>
-                    </div>
-                    <div class="box-body no-padding">
-                        <ul class="nav nav-pills nav-stacked">
-                            <table class="table table-hover">
-                                <tbody>
-                                    <tr>
-                                        <th style="width:3%; text-align:center;">Student</th>
-                                        <th style="width:2%; text-align:center;">Running Average</th>
-                                        <th style="width:1%; text-align:center;">Status</th>
-                                        <th style="width:10%; text-align:center;">Tyler's Stuff</th>
-                                    </tr>
-                                    {% for member in members %}
-                                        <tr>
-                                            <td>
-                                                <a href="{% url 'profile' member.username %}">
-                                                    {{member.profile.name}}</a>
-                                            </td>
-                                            {% for analysis_ass in all_analysis %}
-                                                {% for analysis_piece in analysis_ass.1 %}
-                                                    {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
-                                                    {% if member == analysis_piece.0.associated_member %}
-                                                    {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
-                                                        <td>
-                                                            {{analysis_piece.0.analysis_output}}
+                    <div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width:30%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>          
+                                                <tr>
+                                                    <th text-align:center;">Student</th>
+                                                    <th text-align:center;">Average Contribution</th>
+                                                    <th text-align:center;">Status</th>
+                                                </tr>
+                                                {% for member in members %}
+                                                    <tr>
+                                                        <td style="width:40%">
+                                                            <a href="{% url 'profile' member.username %}">
+                                                                {{member.profile.name}}</a>
                                                         </td>
-                                                        {% widthratio 100 members|length 1 as ideal_average_value %}
-                                                        {% widthratio ideal_average_value 4 3 as modified_average_value %}
-                                                        {% if analysis_piece.0.analysis_output >= ideal_average_value %}
-                                                            <td>
-                                                                <div style="color:green">Good</div>
-                                                            </td>
-                                                        {% elif analysis_piece.0.analysis_output >= modified_average_value %}     
-                                                            <td>
-                                                                <div style="color:#ff8040">Warning</div>
-                                                            </td>
-                                                        {% else %}
-                                                            <td>
-                                                                <div style="color:red">Bad</div>
-                                                            </td>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    {% endif %}
-                                                    {% endif %}
+                                                        {% for analysis_ass in all_analysis %}
+                                                            {% for analysis_piece in analysis_ass.1 %}
+                                                                {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
+                                                                {% if member == analysis_piece.0.associated_member %}
+                                                                {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
+                                                                    <td style="width:35%">
+                                                                        {{analysis_piece.0.analysis_output}}
+                                                                    </td>
+                                                                    {% widthratio 100 members|length 1 as ideal_average_value %}
+                                                                    {% widthratio ideal_average_value 4 3 as modified_average_value %}
+                                                                    {% if analysis_piece.0.analysis_output >= ideal_average_value %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:green">Good</div>
+                                                                        </td>
+                                                                    {% elif analysis_piece.0.analysis_output >= modified_average_value %}     
+                                                                        <td style="width:25%">
+                                                                            <div style="color:#ff8040">Warning</div>
+                                                                        </td>
+                                                                    {% else %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:red">Bad</div>
+                                                                        </td>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    </tr>
                                                 {% endfor %}
-                                            {% endfor %}
-                           
-                                        </tr>
-                                    {% endfor %}                                              
-                                </tbody>
-                            </table>
-                        </ul>
+                                            </tbody>
+                                        </table>
+                                    </td>  
+                                    <td style="width:30%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <th id="team_status" text-align:center;">Team Status</th>
+                                                    <th id="NLP_output" text-align:center;">NLP Simple Output</th>
+                                                </tr>
+                                                <tr>
+                                                    {% if health_report <= health_ideal %}
+                                                    <td headers="team_status" style="width:40%;height:100px">
+                                                        <div style="color:green">No serious problems detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_report > health_ideal %}
+                                                    <td headers="team_status" style="width:40%;height:100px">
+                                                        <div style="color:red">Problems detected. Intervention recommended.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                </tr>   
+                                            </tbody>
+                                        </table>
+                                    </td>   
+                                </tr>                                    
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 

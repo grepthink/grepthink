@@ -212,13 +212,14 @@ def view_one_project(request, slug):
     
     # Constants defined for weighing Analysis objects. Used for Team Health overall.
     # Numbers used inspired by Fibonacci Sequence.
-    local_similarity_weight = 2
+    local_similarity_weight = 1
     outlier_weight = 5
-    wordcount_weight = 3
-    historical_similarity_weight = 8
+    wordcount_weight = 1
+    historical_similarity_weight = 2
     averages_weight = 5
 
     health_report_total = 0
+    health_ideal = (outlier_weight ^ 2) + wordcount_weight * len(members)
     #checks the course for each assignment of type tsr and goes through each to get the assignment number and associated analysis
     for each_assigned_tsr in assigned_tsrs: 
        
@@ -229,7 +230,7 @@ def view_one_project(request, slug):
          #if it exists, skip over analysis generation completely, if not go through with next check
          if not existing_analysis.exists():
              completed_tsrs_per_ass_number = project.tsr.filter(ass_number = assigned_tsr_number)
-
+             #TODO: check if completed_tsrs_per_ass_number exists / is not empty (NoneType)
              if mem_count == (len(completed_tsrs_per_ass_number)/mem_count):
                  tsr_exists = {}
                  
@@ -278,7 +279,8 @@ def view_one_project(request, slug):
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
-        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_report': health_report_total})
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_report': health_report_total,
+        'health_ideal':health_ideal})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
