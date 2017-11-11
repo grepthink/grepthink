@@ -88,6 +88,9 @@ def create_chat(request):
             room.save()
             room.user = form.cleaned_data.get('user')
             room.save()
+            return redirect(view_chats)
+        else:
+            return redirect(view_chats)
     else:
         form = CreateChatForm(request.user.id)
     return render(request, 'chat/create_chat.html', {'page_name': page_name,
