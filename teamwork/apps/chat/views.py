@@ -85,7 +85,8 @@ def create_chat(request):
             room = Chatroom()
 
             room.name = form.cleaned_data.get('name')
-
+            room.save()
+            room.user = form.cleaned_data.get('user')
             room.save()
     else:
         form = CreateChatForm(request.user.id)
