@@ -24,20 +24,20 @@ class Chatroom(models.Model):
     @property
     def websocket_group(self):
         return Group("Room-" +str(self.id))
-    
+
     #Saves the Chattext model with metadata and sends the payload to the websocket
     def send_message(self,message,user):
 
         text = Chattext(room=self,author=user)
         text.content = message
         text.save()
-        
+
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
         message = {
-            'chatroom':str(self.id), 
-            'message':message, 
-            'username':user.username, 
+            'chatroom':str(self.id),
+            'message':message,
+            'username':user.username,
             'date': text.date.strftime("%I:%M %p")
             }
 
@@ -46,7 +46,7 @@ class Chatroom(models.Model):
             {
                 "text":json.dumps(message)
             })
-        
+
 
     #When a chat is initially loaded, gets the last 10 messages saved, in theory.
     #Called from consumers
@@ -56,11 +56,11 @@ class Chatroom(models.Model):
     #maybe should catch error here, but oh well
     def get_chat_next(self,number):
         return self.chat.all()[number:number+10]
-    
+
     #Takes in a username and searches for the user, then adds them to the chatroom
     def add_user_to_chat(self,user):
         return
-        
+
     #Removes the selected user from the chat
     def remove_user(self,user):
         return
@@ -72,8 +72,8 @@ class Chatroom(models.Model):
 def send_text_to_one(user,chattext):
     message = {
         'chatroom':str(chattext.room.id),
-        'message':chattext.content, 
-        'username':chattext.author.username, 
+        'message':chattext.content,
+        'username':chattext.author.username,
         'date': chattext.date.strftime("%I:%M %p")
         }
     Group("User-"+str(user.id)).send(
@@ -88,34 +88,30 @@ def send_texts_to_one(user,messages):
         )
 
 class Chattext(models.Model):
-    
+
     room = models.ForeignKey(
         Chatroom,
         related_name='chat',
         on_delete=models.CASCADE)
-        
+
     #need to change this to deleted user later, for now it's fine
     author = models.ForeignKey(
         User,
         related_name='author_char',
         on_delete=models.CASCADE)
-        
+
     date = models.DateTimeField(
         auto_now_add=True,
         editable=True)
-        
+
     content = models.CharField(
         max_length=2000,
         default="")
-        
+
 
     class Meta:
         verbose_name = "Project Chat"
         ordering = ("-date", )
-        
+
     def __str__(self):
         return '(0) - (1) - (2)'.format(self.author.username, self.content)
-    
-    
-
-

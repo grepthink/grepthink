@@ -25,6 +25,14 @@
         {% endfor %}
     </ul>
 
+    <div class="pull-left">
+      <a href="{% url 'create_chat' %}">
+          <button class="btn btn-success" type="button">
+              Create Chatroom
+          </button>
+      </a>
+    </div>
+
     <div id="chats">
     </div>
 {% endblock content%}

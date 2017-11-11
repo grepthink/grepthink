@@ -142,6 +142,8 @@ urlpatterns = [
         # CHAT
         # View all Chats
         url(r'^chat/$', chat_views.view_chats, name='view_chats'),
+        # Create a Chatroom
+        url(r'^chat/create/$', chat_views.create_chat, name='create_chat'),
         # View Individual Chats
         url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
 

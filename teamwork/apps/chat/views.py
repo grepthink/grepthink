@@ -20,7 +20,7 @@ from teamwork.apps.profiles.views import view_alerts
 from teamwork.apps.chat.models import *
 
 from teamwork.apps.courses.forms import EmailRosterForm
-#from .forms import *
+from .forms import *
 from .models import *
 
 from itertools import chain
@@ -62,9 +62,37 @@ def view_one_chat(request, slug):
             'user': user})
     else:
         return view_chats(request)
-        
+
+@login_required
+def create_chat(request):
+    """
+    Public method that creates a form and renders the request to create_project.html
+    """
+    # Populate page info with new project headers/title
+    page_name = "Create Chatroom"
+    page_description = "Post a new Chatroom"
+    title = "Create Chatroom"
+
+    # Get the current user, once and only once.
+    user = request.user
+
+    # profile = Profile.objects.get(user=user)
+    profile = user.profile
+
+    if request.method == 'POST':
+        form = CreateChatForm(user.id, request.POST)
+        if form.is_valid():
+            room = Chatroom()
+
+            room.name = form.cleaned_data.get('name')
+
+            room.save()
+    else:
+        form = CreateChatForm(request.user.id)
+    return render(request, 'chat/create_chat.html', {'page_name': page_name,
+        'page_description': page_description, 'title': title, 'form': form})
 #Finds if the username exists and returns the page for the user profile
-#Assumes that the username is without the @ sign        
+#Assumes that the username is without the @ sign
 def find_user_profile(request, username):
     if User.Objects.filter(name=username).exists():
         return view_profile(request, username)
