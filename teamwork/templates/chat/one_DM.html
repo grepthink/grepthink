@@ -1,29 +1,40 @@
-$(function () {
-            function parseAtSign(msg){
-                var split_message = msg.split(" ");
-                var finished_message = "";
-                for(var i = 0; i < split_message.length; i++){
-                    if(split_message[i].charAt(0) === "@"){
-                        finished_message = finished_message.concat(
-                            "<a href=\"{% url 'find_user_profile' " +
-                            split_message[i] +
-                            " %}\">" +
-                            split_message[i] +
-                            " </a>");
-                    }
-                    else{
-                        finished_message = finished_message.concat(split_message[i]+" ");
-                    }
-                }
-                return finished_message;
-            }
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}GT Chat {{ name }}{% endblock %}
+{% block header_text %}GT Chat {{ name }}{% endblock %}
+
+{% block crumb %}
+
+{# Breadcrumb for All Chats #}
+<li><a href="{% url 'view_DM' %}"> All Chat </a></li>
+
+{# Breadcrumb for the current Chatroom I'm in #}
+<li><a href="{% url 'view_one_DMt' slug=room.name %}"> DM {{ name }} </a></li>
+
+{% endblock crumb %}
+
+<!-- quick fix, change to content to show page properly -->
+{% block content %}
+    <ul class="room">
+       <li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
+    </ul>
+
+    <div id="chats">
+    </div>
+
+
+<!--Links the rooms but the chatroom does not show up. Messages are being sent-->
+    <script src="{% static "js/jquery-2.2.3.min.js" %}" type="text/javascript"></script>
+    <script src="{% static "channels/js/websocketbridge.js" %}" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
-
             var webSocketBridge = new channels.WebSocketBridge();
             webSocketBridge.connect(ws_path);
-
             //When the websocket receives a payload it needs to decide what type it is
             //then handle it.
             webSocketBridge.listen(function(data) {
@@ -49,8 +60,6 @@ $(function () {
                               "<div class=\"box-body\">" +
                                 "<!-- Conversations are loaded here -->" +
                                 "<div class=\"direct-chat-messages\">" +
-
-
                                   "<!-- Message. Default to the left -->" +
                                     "<div id= \"one_msg\" class=\"direct-chat-msg\">" +
                                       "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
@@ -82,7 +91,6 @@ $(function () {
                                     */
                                   "</div>" +
                                   "<!--/.direct-chat-messages-->" +
-
                                 "</div>" +
                                 "<!-- /.box-body -->" +
                                 "<div class=\"box-footer\">" +
@@ -99,7 +107,6 @@ $(function () {
                                 "<!-- /.box-footer-->" +
                               "</div>" +
                               "<!--/.direct-chat -->" +
-
                             "<div class='room' id='room-" + data.join + "'>" +
                               "<div class='messages'></div>" +
                               //"<form>Your message<input><button>Send</button></form>" +
@@ -123,7 +130,6 @@ $(function () {
                     // Handle getting a message
                 } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
-                    user_message = parseAtSign(data.message);
                     one_msg = document.getElementById("one_msg");
                     one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
                                         // This is where message info like name and time will appear
@@ -131,14 +137,20 @@ $(function () {
                                         "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
                                         "</div>" +
                                         "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                        user_message +
+                                        data.message +
                                         "</div>";
-
+                    var ok_msg = "";
+                    // Displays the message payload
+                    //        ok_msg = "<div class='message'>" +
+                    //                "<span class='username'>" + data.username + ": </span>" +
+                    //                "<span class='body'>" + data.message + "    </span>" +
+                    //                "<span class='date'>" + data.date + "</span>" +
+                    //                "</div>";
+                    // msgdiv.append(ok_msg);
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
-                    for (var i =0;i < data.messages.length;i++){
+                    for (var i =0;i<data.messages.length;i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
-                        user_message = parseAtSign(data.messages[i].message);
                         one_msg = document.getElementById("one_msg");
                         one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
                                             // This is where message info like name and time will appear
@@ -146,21 +158,26 @@ $(function () {
                                             "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
                                             "</div>" +
                                             "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                            user_message +
+                                            data.messages[i].message +
                                             "</div>";
+                        var ok_msg = "";
+                        // Displays the message payload
+                            //ok_msg = "<div class='message'>" +
+                              //      "<span class='username'>" + data.messages[i].username + ": </span>" +
+                                //    "<span class='body'>" + data.messages[i].message + "    </span>" +
+                                  //  "<span class='date'>" + data.messages[i].date + "</span>" +
+                                    //"</div>";
+                        //msgdiv.append(ok_msg);
                     }
-
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");
                 }
             });
-
             // Says if we joined a room or not by if there's a div for it
             inRoom = function (roomId) {
                 return $("#room-" + roomId).length > 0;
             };
-
             // Helpful debugging
             webSocketBridge.socket.onopen = function () {
                 console.log("Connected to chat socket");
@@ -183,3 +200,5 @@ $(function () {
                 });
             }
         });
+    </script>
+{% endblock content%}

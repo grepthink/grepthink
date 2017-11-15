@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}GT DM{% endblock %}
+{% block header_text %}GT DM{% endblock %}
+
+{% block crumb %}
+
+{# Breadcrumb for All Chats #}
+<li><a href="{% url 'view_DM' %}"> DM </a></li>
+
+{% endblock crumb %}
+
+{% block content %}
+
+  <ul class="rooms">
+        {% for room in rooms %}
+            <li>
+            <a href="{% url 'view_one_DM' slug=room.name %}" class="alert-link">
+            {{ room }}
+            </li>
+            <!--<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>-->
+        {% empty %}
+            <p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
+        {% endfor %}
+    </ul>
+
+    <div class="pull-left">
+      <a href="{% url 'create_chat' %}">
+          <button class="btn btn-success" type="button">
+              Create Chatroom
+          </button>
+      </a>
+    </div>
+
+
+
+<div id="DM">
+</div>
+{% endblock content%}

@@ -146,7 +146,9 @@ urlpatterns = [
         url(r'^chat/create/$', chat_views.create_chat, name='create_chat'),
         # View Individual Chats
         url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
-
+        # View a profile through the @sign
+        url(r'^chat/(?P<slug>[^/]+)/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
+        
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
