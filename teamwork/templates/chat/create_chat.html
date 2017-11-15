@@ -112,6 +112,7 @@ $(document).ready(function() {
         {{ form.non_field_errors }}
 
         <div class="form-group">
+            {{ name_error }}<br />
             {{ form.name.errors }}
             <label for="{{ form.name.id_for_label }}" class="control-label">
             Chat Name:
@@ -130,10 +131,6 @@ $(document).ready(function() {
 
     </div> <!-- Box 1 -->
 
-  </div> <!-- Col 1 -->
-
-
-  <div class="col-md-6">
     <div class="box box-primary">
       <div class="box-footer">
           <div class="pull-left">

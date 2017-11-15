@@ -65,6 +65,10 @@ class Chatroom(models.Model):
 
     #Removes the selected user from the chat
     def remove_user(self,user):
+        if(self.user.filter(username=user.username).count()>0):
+            self.user.remove(user)
+        if(self.user.all().count()==0):
+            self.delete()
         return
 
     def __str__(self):

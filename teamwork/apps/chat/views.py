@@ -87,7 +87,15 @@ def create_chat(request):
         if form.is_valid():
             room = Chatroom()
 
+            all_rooms = Chatroom.objects.all()
             room.name = form.cleaned_data.get('name')
+            for one_room in all_rooms:
+                #print(room.name+"\n")
+                #print(one_room.name+"\n")
+                if room.name == one_room.name:
+                    name_error = "Room already exists with that name, choose a unique name"
+                    return render(request, 'chat/create_chat.html', {'page_name': page_name,
+                        'page_description': page_description, 'title': title, 'form': form, 'name_error': name_error})
             room.save()
             room.user = form.cleaned_data.get('user')
             room.save()
@@ -96,8 +104,10 @@ def create_chat(request):
             return redirect(view_chats)
     else:
         form = CreateChatForm(request.user.id)
+    
+    name_error = "Choose a unique name"
     return render(request, 'chat/create_chat.html', {'page_name': page_name,
-        'page_description': page_description, 'title': title, 'form': form})
+        'page_description': page_description, 'title': title, 'form': form, "name_error": name_error})
         
 #Finds if the username exists and returns the page for the user profile
 #<<<<<<< HEAD
