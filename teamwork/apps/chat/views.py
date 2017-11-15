@@ -95,9 +95,15 @@ def create_chat(request):
         form = CreateChatForm(request.user.id)
     return render(request, 'chat/create_chat.html', {'page_name': page_name,
         'page_description': page_description, 'title': title, 'form': form})
+        
 #Finds if the username exists and returns the page for the user profile
-#Assumes that the username is without the @ sign
-def find_user_profile(request, username):
-    if User.Objects.filter(name=username).exists():
-        return view_profile(request, username)
-    return #something null
+#Assumes that the username is without the @ sign, fk u trevor - trevor
+def find_user_profile(request, username, slug):
+    #For some reason receives input as {% url 'find_user_profile' @name %}
+    #Splits the string and the 4th index is the username
+    #[1:] gets everything after the @ sign as the username and searches
+    #SHOULD REPLACE THIS IS UGLY AS HELL
+    user = username.split(" ")[3][1:]
+    if User.objects.filter(username=user).exists():
+        return view_profile(request, user)
+    return redirect(view_one_chat, slug)

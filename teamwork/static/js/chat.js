@@ -1,4 +1,22 @@
 $(function () {
+            function parseAtSign(msg){
+                var split_message = msg.split(" ");
+                var finished_message = "";
+                for(var i = 0; i < split_message.length; i++){
+                    if(split_message[i].charAt(0) === "@"){
+                        finished_message = finished_message.concat(
+                            "<a href=\"{% url 'find_user_profile' " +
+                            split_message[i] +
+                            " %}\">" +
+                            split_message[i] +
+                            " </a>");
+                    }
+                    else{
+                        finished_message = finished_message.concat(split_message[i]+" ");
+                    }
+                }
+                return finished_message;
+            }
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
@@ -70,11 +88,12 @@ $(function () {
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                    "<form>Your message<input><button>Send</button></form>" +
+                                    "<form>" +
                                     "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
                                     "<span class=\"input-group-btn\">" +
                                               "<button type=\"button\" class=\"btn btn-success btn-flat\">Send</button>" +
                                               "</span>" +
+									"</form>"+
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
@@ -104,6 +123,7 @@ $(function () {
                     // Handle getting a message
                 } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
+                    user_message = parseAtSign(data.message);
                     one_msg = document.getElementById("one_msg");
                     one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
                                         // This is where message info like name and time will appear
@@ -111,21 +131,14 @@ $(function () {
                                         "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
                                         "</div>" +
                                         "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                        data.message +
+                                        user_message +
                                         "</div>";
-                    var ok_msg = "";
-                    // Displays the message payload
-                            ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.username + ": </span>" +
-                                    "<span class='body'>" + data.message + "    </span>" +
-                                    "<span class='date'>" + data.date + "</span>" +
-                                    "</div>";
-                    msgdiv.append(ok_msg);
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
-                    for (var i =0;i<data.messages.length;i++){
+                    for (var i =0;i < data.messages.length;i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
+                        user_message = parseAtSign(data.messages[i].message);
                         one_msg = document.getElementById("one_msg");
                         one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
                                             // This is where message info like name and time will appear
@@ -133,16 +146,8 @@ $(function () {
                                             "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
                                             "</div>" +
                                             "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                            data.messages[i].message +
+                                            user_message +
                                             "</div>";
-                        var ok_msg = "";
-                        // Displays the message payload
-                            ok_msg = "<div class='message'>" +
-                                    "<span class='username'>" + data.messages[i].username + ": </span>" +
-                                    "<span class='body'>" + data.messages[i].message + "    </span>" +
-                                    "<span class='date'>" + data.messages[i].date + "</span>" +
-                                    "</div>";
-                        msgdiv.append(ok_msg);
                     }
 
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
