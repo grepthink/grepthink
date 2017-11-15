@@ -2,6 +2,8 @@ import json
 from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
+from django.urls import reverse
+from teamwork.apps.profiles.models import Alert
 
 #https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 #USE THE LINK ABOVE FOR TIME FORMATS
@@ -86,6 +88,24 @@ def send_texts_to_one(user,messages):
         {
             "text":json.dumps({'messages':messages})}
         )
+def send_chat_invite(send_user,receive_user,chatroom):
+    Alert.objects.create(
+            sender=send_user,
+            to=recieve_user,
+            msg="You were added to " + chatroom.name,
+            url=reverse('view_chats'),
+            read=False,
+            )
+
+def send_chat_alert(send_user,receive_user,chatroom):
+    print("here")
+    Alert.objects.create(
+            sender=send_user,
+            to=receive_user,
+            msg="A person wants you to see this in " + chatroom.name,
+            url=reverse('view_chats'),
+            read=False,
+            )
 
 class Chattext(models.Model):
 
