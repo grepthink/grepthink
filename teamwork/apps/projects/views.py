@@ -257,17 +257,16 @@ def view_one_project(request, slug):
 
     for analysis_object in project.analysis.all():
             analysis_dicts.setdefault(analysis_object.analysis_type, []).append([analysis_object])
-            if analysis_object.flag_tripped:
-                if analysis_object.analysis_type == "Historically Similar Scores":
-                    health_report_total += historical_similarity_weight
-                elif analysis_object.analysis_type == "Outlier Scores":
-                    health_report_total += outlier_weight
-                elif analysis_object.analysis_type == "Word Count":
-                    health_report_total += wordcount_weight
-                elif analysis_object.analysis_type == "Similarity for Given Evaluations":
-                    health_report_total += local_similarity_weight
-                elif analysis_object.analysis_type == "Averages for all Evaluations":
-                    health_report_total += averages_weight
+            if analysis_object.analysis_type == "Historically Similar Scores":
+                health_report_total += historical_similarity_weight
+            elif analysis_object.analysis_type == "Outlier Scores":
+                health_report_total += outlier_weight
+            elif analysis_object.analysis_type == "Word Count":
+                health_report_total += wordcount_weight
+            elif analysis_object.analysis_type == "Similarity for Given Evaluations":
+                health_report_total += local_similarity_weight
+            elif analysis_object.analysis_type == "Averages for all Evaluations":
+                health_report_total += averages_weight
 
 
     analysis_items = analysis_dicts.items()
@@ -1264,16 +1263,16 @@ def similarity_of_eval_history(project, asgn_number):
     for member in historic_similarities:
         hist_similar_count = 0
         #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Historically Similar Scores", historic_similarities[member])
-        analysis_object = setAnalysisData(project, analysis_data)
         
         for evaluatee in historic_similarities[member]:
             if historic_similarities[member][evaluatee] == True:
                 hist_similar_count += 1
 
-        #preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
+        #preconditions:( AnalysisObject, [String]flag_detail)
         if hist_similar_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d sets of similar scores over time." % (member, hist_similar_count)))
+            analysis_data = (asgn_number, member, "Historically Similar Scores", historic_similarities[member])
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, "%s has given %d sets of similar scores over time." % (member, hist_similar_count))
     return historic_similarities
     
 def giving_outlier_scores(project, asgn_number):
@@ -1299,17 +1298,17 @@ def giving_outlier_scores(project, asgn_number):
         low_count = 0
         high_count = 0
         #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Outlier Scores", outlier_scores[member])
-        analysis_object = setAnalysisData(project, analysis_data)
         
         for evaluatee in outlier_scores[member]:
             if outlier_scores[member][evaluatee] == 'Low':
                 low_count += 1
             elif outlier_scores[member][evaluatee] == 'High':
                 high_count += 1
-        #preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
+        #preconditions:( AnalysisObject, [String]flag_detail)
         if high_count > 0 or low_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d very low scores and %d very high scores." % (member, low_count, high_count)))
+            analysis_data = (asgn_number, member, "Outlier Scores", outlier_scores[member])
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, "%s has given %d very low scores and %d very high scores." % (member, low_count, high_count))
        
     return outlier_scores
     
@@ -1347,8 +1346,6 @@ def tsr_word_count(project, asgn_number):
 		                    
     for member in word_counts:
         #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Word Count", word_counts[member])
-        analysis_object = setAnalysisData(project, analysis_data)
         sparse_count = 0
         verbose_count = 0
         
@@ -1366,7 +1363,9 @@ def tsr_word_count(project, asgn_number):
                 verbose_count += 1
                 
         if sparse_count > 0 or verbose_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d sparse responses and %d verbose responses." % (member, sparse_count, verbose_count)))
+            analysis_data = (asgn_number, member, "Word Count", word_counts[member])
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, "%s has given %d sparse responses and %d verbose responses." % (member, sparse_count, verbose_count))
 		
     return word_counts
 
@@ -1407,12 +1406,12 @@ def similarity_for_given_evals(project, asgn_number):
         all_similarities[current_evaluator] = evaluator_similarities
 
     for member in all_similarities:
-        analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
-                         all_similarities[member])
-        analysis_flags = (has_atleast_one_identical(member, all_similarities),
-                          "%s has been giving very similar scores to other team members." % member)
-        analysis_object = setAnalysisData(project, analysis_data)
-        setFlag(analysis_object, analysis_flags)
+        if has_atleast_one_identical(member, all_similarities):
+            analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
+                             all_similarities[member])
+            analysis_flags = "%s has been giving very similar scores to other team members." % member
+            analysis_object = setAnalysisData(project, analysis_data)
+            setFlag(analysis_object, analysis_flags)
     return all_similarities
 
 def averages_for_all_evals(project, asgn_number):
@@ -1434,18 +1433,19 @@ def averages_for_all_evals(project, asgn_number):
              
         bounds = ideal_score_ranges(project)
         member_averages[current_evaluatee] = round(average_contribution / num_evals_considered, 1)
-        analysis_data = (asgn_number, current_evaluatee, "Averages for all Evaluations",
-                         member_averages[current_evaluatee])
-        analysis_object = setAnalysisData(project, analysis_data)
         # bounds[1] is the high bound.
         if member_averages[current_evaluatee] >= bounds[1]:
-            analysis_flag = (True,
-                             "%s has a higher than typical average score." % current_evaluatee)
+            analysis_data = (asgn_number, current_evaluatee, "Averages for all Evaluations",
+                         member_averages[current_evaluatee])
+            analysis_object = setAnalysisData(project, analysis_data)
+            analysis_flag = "%s has a higher than typical average score." % current_evaluatee
             setFlag(analysis_object, analysis_flag)
         # bounds[0] is the low bound.
         elif member_averages[current_evaluatee] <= bounds[0]:
-            analysis_flag = (False,
-                             "%s has a lower than typical average score." % current_evaluatee)
+            analysis_data = (asgn_number, current_evaluatee, "Averages for all Evaluations",
+                         member_averages[current_evaluatee])
+            analysis_object = setAnalysisData(project, analysis_data)
+            analysis_flag = "%s has a lower than typical average score." % current_evaluatee
             setFlag(analysis_object, analysis_flag)
     return member_averages
     
@@ -1468,8 +1468,7 @@ def setAnalysisData(project, analysisData):
 
 #the wrapper function :updates the piece of analysis with the correct flag information
 #preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
-def setFlag(analysis_object, flag_info):
-    analysis_object.flag_tripped = flag_info[0]
-    analysis_object.flag_detail = flag_info[1]
+def setFlag(analysis_object, flag_details):
+    analysis_object.flag_detail = flag_details
     analysis_object.save()
 

@@ -725,13 +725,13 @@
                                                 </tr>
                                                 <tr>
                                                     {% if health_report <= health_ideal %}
-                                                    <td headers="team_status" style="width:40%;height:100px">
-                                                        <div style="color:green">No serious problems detected.</div>
+                                                    <td headers="team_status" bgcolor="Chartreuse" style="width:40%;height:100px">
+                                                        <div>No serious problems detected.</div>
                                                     </td>
                                                     {% endif %}
                                                     {% if health_report > health_ideal %}
-                                                    <td headers="team_status" style="width:40%;height:100px">
-                                                        <div style="color:red">Problems detected. Intervention recommended.</div>
+                                                    <td headers="team_status" bgcolor="red" style="width:40%;height:100px">
+                                                        <div>Problems detected. Intervention recommended.</div>
                                                     </td>
                                                     {% endif %}
                                                 </tr>   
@@ -775,7 +775,6 @@
                                        {% for analysis_piece in analysis_ass.1 %}
                                                  {% if m == analysis_piece.0.associated_member %}
                                                  {% if analysis_piece.0.tsr_number == ass.ass_number%}
-                                                 {% if analysis_piece.0.flag_tripped == True%}
                                               
                                                 <td>
                                                      <a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
@@ -787,7 +786,6 @@
                                                 </td>
                                        
                                              </tr>
-                                            {% endif %}
                                             {% endif %}
                                             {% endif %}
                                        {% endfor %}     
