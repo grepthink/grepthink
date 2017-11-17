@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+{% endblock stylesheets %}
+
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+{% endblock javascript %}
+
+{% block crumb %}
+
+{# Breadcrumb for Leaving Chats #}
+<li><a href="{% url 'leave_chat' slug=room.name %}"> Leave Chatroom </a></li>
+
+{% endblock crumb %}
+
+{% block content %}
+<div class = "row">
+
+<form action="{% url 'leave_chat' slug=room.name %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
+
+  <div class="col-md-6">
+    <div class="box box-success">
+      <div class="box-header with-border">
+        <h3 class="box-title">Leave Chatroom</h3>
+      </div>
+      <div class="box-body">
+        {% csrf_token %}
+        Are you sure you want to PERMANENTLY leave this Chatroom<br />
+        <div class="pull-left">
+          <a href="{% url 'view_chats' %}">
+              <button class="btn btn-danger" type="button">
+                  No
+              </button>
+          </a>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
+                Yes
+            </button>
+
+        </div>
+      </div> <!-- Box 1 Body -->
+    </div> <!-- Box 1 -->
+
+  </div> <!-- Col 3 -->
+
+
+</form>
+
+</div> <!-- Row -->
+
+{% endblock content %}

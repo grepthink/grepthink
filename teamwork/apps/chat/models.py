@@ -63,7 +63,10 @@ class Chatroom(models.Model):
         return self.chat.all()[number:number+10]
 
     #Takes in a username and searches for the user, then adds them to the chatroom
-    def add_user_to_chat(self,user):
+    def add_user_to_chat(self,username_token):
+        if User.objects.filter(username=username_token).exists():
+            new_user = User.objects.get(username=username_token)
+            self.user.add(new_user)
         return
 
     #Removes the selected user from the chat
