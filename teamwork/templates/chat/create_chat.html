@@ -93,9 +93,10 @@ $(document).ready(function() {
             {{ form.name }}
         </div>
         <div class="form-group">
+            Add a list of usernames separated by ", " (For ex: "user1, user2, ...")<br />
             {{ form.user.errors }}
             <label for="{{ form.user.id_for_label }}" class="control-label">
-            Username:
+            Usernames:
             </label>
             {{ form.user }}
         </div>

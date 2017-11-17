@@ -29,11 +29,11 @@ class CreateChatForm(forms.ModelForm):
 
         user_creator = User.objects.get(id=uid)
 
-        name = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255)
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255)
 
-        user = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=75)
+    user = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255)
 
     class Meta:
         model = Chatroom

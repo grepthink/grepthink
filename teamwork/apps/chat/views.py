@@ -100,7 +100,10 @@ def create_chat(request):
                     return render(request, 'chat/create_chat.html', {'page_name': page_name,
                         'page_description': page_description, 'title': title, 'form': form, 'name_error': name_error})
             room.save()
-            room.user = form.cleaned_data.get('user')
+            user_input_field = form.cleaned_data.get('user')
+            all_usernames = user_input_field.split(", ")
+            for name in all_usernames:
+                room.add_user_to_chat(name)
             room.save()
             return redirect(view_chats)
         else:
