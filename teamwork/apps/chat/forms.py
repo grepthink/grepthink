@@ -34,6 +34,7 @@ class CreateChatForm(forms.ModelForm):
 
         user = forms.CharField(
             widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=75)
+
     class Meta:
         model = Chatroom
         fields = [

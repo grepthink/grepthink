@@ -97,60 +97,31 @@ $(document).ready(function() {
 {% block content %}
 <div class = "row">
 
-<form action="{% url 'create_chat' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
+<form action="{% url 'leave_chat' slug=room.name %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
 
   <div class="col-md-6">
     <div class="box box-success">
       <div class="box-header with-border">
-        <h3 class="box-title">Create Chatroom</h3>
+        <h3 class="box-title">Leave Chatroom</h3>
       </div>
       <div class="box-body">
-
         {% csrf_token %}
-        {{ form.status }}
-
-        {{ form.non_field_errors }}
-
-        <div class="form-group">
-            {{ name_error }}<br />
-            {{ form.name.errors }}
-            <label for="{{ form.name.id_for_label }}" class="control-label">
-            Chat Name:
-            </label>
-            {{ form.name }}
-        </div>
-        <div class="form-group">
-            {{ form.user.errors }}
-            <label for="{{ form.user.id_for_label }}" class="control-label">
-            Username:
-            </label>
-            {{ form.user }}
-        </div>
-
-      </div> <!-- Box 1 Body -->
-
-    </div> <!-- Box 1 -->
-
-    <div class="box box-success">
-      <div class="box-footer">
-          <div class="pull-left">
-            <a href="{% url 'view_chats' %}">
-                <button class="btn btn-danger" type="button">
-                    Cancel
-                </button>
-            </a>
-          </div>
-          <div class="pull-right">
-              <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
-                  Create Chatroom
+        Are you sure you want to PERMANENTLY leave this Chatroom<br />
+        <div class="pull-left">
+          <a href="{% url 'view_chats' %}">
+              <button class="btn btn-danger" type="button">
+                  No
               </button>
+          </a>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
+                Yes
+            </button>
 
-          </div>
-      </div>
-
-    </div> <!-- Box 3 -->
-
-    </form>
+        </div>
+      </div> <!-- Box 1 Body -->
+    </div> <!-- Box 1 -->
 
   </div> <!-- Col 3 -->
 

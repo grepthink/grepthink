@@ -144,11 +144,13 @@ urlpatterns = [
         url(r'^chat/$', chat_views.view_chats, name='view_chats'),
         # Create a Chatroom
         url(r'^chat/create/$', chat_views.create_chat, name='create_chat'),
+        # Leave a Chatroom
+        url(r'^chat/leave/(?P<slug>[^/]+)/$', chat_views.leave_chat, name='leave_chat'),
         # View Individual Chats
         url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
         # View a profile through the @sign
         url(r'^chat/(?P<slug>[^/]+)/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
-        
+
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches

@@ -56,12 +56,15 @@ def view_one_chat(request, slug):
     user_rooms = request.user.rooms.all()
     if(room in user_rooms):
         title = "GT Chat"
+        page_name = slug
+        page_description = "Chatroom"
         name = slug
         user = request.user
         #messages = room.get_chat_init()
 
         return render(request, 'chat/one_chat.html',{
-            'title': title, 'room': room, 'name': name,
+            'title': title, 'page_name': page_name,
+            'page_description' : page_description, 'room': room, 'name': name,
             'user': user})
     else:
         return view_chats(request)
@@ -104,11 +107,27 @@ def create_chat(request):
             return redirect(view_chats)
     else:
         form = CreateChatForm(request.user.id)
-    
+
     name_error = "Choose a unique name"
     return render(request, 'chat/create_chat.html', {'page_name': page_name,
         'page_description': page_description, 'title': title, 'form': form, "name_error": name_error})
-        
+
+@login_required
+def leave_chat(request, slug):
+    page_name = "Leave Chatroom"
+    page_description = "Leave a Chatroom"
+    title = "Leave Chatroom"
+    room = get_object_or_404(Chatroom, name=slug)
+
+    # Get the current user, once and only once.
+    user = request.user
+    if request.method == 'POST':
+        room.remove_user(user)
+        return redirect(view_chats)
+
+    return render(request, 'chat/leave_chat.html', {'page_name': page_name,
+        'page_description': page_description, 'title': title, 'room': room})
+
 #Finds if the username exists and returns the page for the user profile
 #Assumes that the username is without the @ sign, fk u trevor - trevor
 def find_user_profile(request, username, slug):
