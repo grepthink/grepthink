@@ -146,6 +146,8 @@ urlpatterns = [
         url(r'^chat/create/$', chat_views.create_chat, name='create_chat'),
         # Leave a Chatroom
         url(r'^chat/leave/(?P<slug>[^/]+)/$', chat_views.leave_chat, name='leave_chat'),
+        # Invite a user to a Chatroom
+        url(r'^chat/invite/(?P<slug>[^/]+)/$', chat_views.invite_chat, name='invite_chat'),
         # View Individual Chats
         url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
         # View a profile through the @sign

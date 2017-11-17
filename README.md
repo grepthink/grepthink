@@ -42,3 +42,4 @@ for existing chats matching the project title name, which may cause other errors
 11-14/15-17 - Hugh: alert function added, remove function added, just need to test and call<br />
 11-15-17 2:58pm - Anjali: Edit Chat main page. Now has tabs on the top of the page rather than side.<br />
 11-16-17 8:00pm - Sean: Added button and verification to leave a chatroom. Create chat now has you list the users you want to add instead of seeing every user on the website. Any users that do not exist cannot be added to the chatroom.<br />
+11-17-17 12:00pm - Sean: Added button and form to invite users to an already created room. Invite currently adds them without their approval.<br />

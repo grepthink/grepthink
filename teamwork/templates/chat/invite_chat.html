@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+{% endblock stylesheets %}
+
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+
+
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/select_members/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for members to add",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
+});
+
+</script>
+
+{% endblock javascript %}
+
+{% block crumb %}
+
+{# Breadcrumb for Creating Chats #}
+<li><a href="{% url 'invite_chat' slug=room.name %}"> Invite Chat </a></li>
+
+{% endblock crumb %}
+
+{% block content %}
+<div class = "row">
+
+<form action="{% url 'invite_chat' slug=room.name %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
+
+  <div class="col-md-6">
+    <div class="box box-success">
+      <div class="box-header with-border">
+        <h3 class="box-title">Invite to Chatroom</h3>
+      </div>
+      <div class="box-body">
+
+        {% csrf_token %}
+        {{ form.status }}
+
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            Add a list of usernames separated by ", " (For ex: "user1, user2, ...")<br />
+            {{ form.user.errors }}
+            <label for="{{ form.user.id_for_label }}" class="control-label">
+            Usernames:
+            </label>
+            {{ form.user }}
+        </div>
+
+      </div> <!-- Box 1 Body -->
+
+    </div> <!-- Box 1 -->
+
+    <div class="box box-success">
+      <div class="box-footer">
+          <div class="pull-left">
+            <a href="{% url 'view_chats' %}">
+                <button class="btn btn-danger" type="button">
+                    Cancel
+                </button>
+            </a>
+          </div>
+          <div class="pull-right">
+              <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
+                  Invite Users
+              </button>
+
+          </div>
+      </div>
+
+    </div> <!-- Box 3 -->
+
+    </form>
+
+  </div> <!-- Col 3 -->
+
+
+</form>
+
+</div> <!-- Row -->
+
+{% endblock content %}

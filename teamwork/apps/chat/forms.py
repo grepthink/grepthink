@@ -41,6 +41,22 @@ class CreateChatForm(forms.ModelForm):
             'name', 'user'
         ]
 
+class InviteChatForm(forms.ModelForm):
+
+    def __init__(self, uid, *args, **kwargs):
+        super(InviteChatForm, self).__init__(*args, **kwargs)
+
+        user_creator = User.objects.get(id=uid)
+
+    user = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255)
+
+    class Meta:
+        model = Chatroom
+        fields = [
+            'user'
+        ]
+
 def validate_url(url):
     url_form_field = URLField()
     try:

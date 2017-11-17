@@ -116,6 +116,37 @@ def create_chat(request):
         'page_description': page_description, 'title': title, 'form': form, "name_error": name_error})
 
 @login_required
+def invite_chat(request, slug):
+    page_name = "Invite to Chatroom"
+    page_description = "Invite a user to a Chatroom"
+    title = "Invite to Chatroom"
+    room = get_object_or_404(Chatroom, name=slug)
+
+    
+    # Get the current user, once and only once.
+    user = request.user
+    
+    if request.method == 'POST':
+        form = InviteChatForm(user.id, request.POST)
+        if form.is_valid():
+            #print("Form IS valid")
+            user_input_field = form.cleaned_data.get('user')
+            all_usernames = user_input_field.split(", ")
+            for name in all_usernames:
+                room.add_user_to_chat(name)
+            room.save()
+            return redirect(view_chats)
+        else:
+            #print("Form IS NOT valid")
+            return redirect(view_chats)
+    else:
+        form = InviteChatForm(request.user.id)
+
+    return render(request, 'chat/invite_chat.html', {'page_name': page_name,
+    'page_description': page_description, 'title': title, 'form': form, 'room': room})
+
+
+@login_required
 def leave_chat(request, slug):
     page_name = "Leave Chatroom"
     page_description = "Leave a Chatroom"
