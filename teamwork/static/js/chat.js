@@ -49,7 +49,7 @@ $(function () {
                               "</div>" +
                               "<div class=\"box-body\">" +
                                 "<!-- Conversations are loaded here -->" +
-                                "<div id=\"msg_box\" class=\"direct-chat-messages\">" +
+                                "<div class=\"direct-chat-messages\">" +
 
 
                                   "<!-- Message. Default to the left -->" +
@@ -135,9 +135,9 @@ $(function () {
                                         user_message +
                                         "</div>";
 
-                    var msg_box_div = document.getElementById("msg_box");
-                    msg_box_div.scrollTop = msg_box_div.scrollHeight;
-                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                    //var msg_box_div = document.getElementById("msg_box");
+                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
+                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
                     for (var i =0;i < data.messages.length;i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
@@ -152,9 +152,9 @@ $(function () {
                                             user_message +
                                             "</div>";
                     }
-                    var msg_box_div = document.getElementById("msg_box");
-                    msg_box_div.scrollTop = msg_box_div.scrollHeight;
-                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                    //var msg_box_div = document.getElementById("msg_box");
+                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
+                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");
                 }
