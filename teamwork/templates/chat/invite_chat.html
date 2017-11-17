@@ -63,14 +63,14 @@ $(document).ready(function() {
 {% block crumb %}
 
 {# Breadcrumb for Creating Chats #}
-<li><a href="{% url 'invite_chat' slug=room.name %}"> Invite Chat </a></li>
+<li><a href="{% url 'invite_chat' slug=room.id %}"> Invite Chat </a></li>
 
 {% endblock crumb %}
 
 {% block content %}
 <div class = "row">
 
-<form action="{% url 'invite_chat' slug=room.name %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
+<form action="{% url 'invite_chat' slug=room.id %}" method="post" role="form" class="clearfix" enctype="multipart/form-data" onSubmit="document.getElementById('submit').disabled=true;">
 
   <div class="col-md-6">
     <div class="box box-success">

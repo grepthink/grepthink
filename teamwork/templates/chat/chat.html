@@ -37,7 +37,7 @@
 
                 {% for room in rooms %}
                 <li>
-                <a href="{% url 'view_one_chat' slug=room.name %}" class="alert-link">
+                <a href="{% url 'view_one_chat' slug=room.id %}" class="alert-link">
                 {{ room }}
                 <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="true"> </a> </li>
                 </li>
@@ -72,7 +72,7 @@
 
                 {% for room in rooms %}
                 <li>
-                <a href="{% url 'view_one_chat' slug=room.name %}" class="alert-link">
+                <a href="{% url 'view_one_chat' slug=room.id %}" class="alert-link">
                 {{ room }}
                 <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="true"> </a> </li>
                 </li>
