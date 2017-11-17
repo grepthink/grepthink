@@ -41,4 +41,4 @@ for existing chats matching the project title name, which may cause other errors
 11-14-17 10:24pm - Trevor: @ sign is now parsed and creates a link when found to a user profile or redirects to the chat. There might be better ways of doing it 'some people say' but this can be left as is I guess.<br />
 11-14/15-17 - Hugh: alert function added, remove function added, just need to test and call<br />
 11-15-17 2:58pm - Anjali: Edit Chat main page. Now has tabs on the top of the page rather than side.<br />
-11-16-17 8:00pm - Sean: Added button and verification to leave a chatroom.
+11-16-17 8:00pm - Sean: Added button and verification to leave a chatroom.<br />
