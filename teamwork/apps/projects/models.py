@@ -142,8 +142,7 @@ class Project(models.Model):
         related_name='scrum_master',
         on_delete=models.CASCADE)
     
-    #Empty chatroom model created to connect a chatroom to a project
-    chatroom = Chatroom()
+    #IM AN IDIOT WHO MAKES AN EMPTY CHATROOM MODEL IN HERE UGHHHHHHH
     """
     chatroom = models.ForeignKey(
         Chatroom,
