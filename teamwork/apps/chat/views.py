@@ -52,13 +52,13 @@ def view_chats(request):
 
 @login_required
 def view_one_chat(request, slug):
-    room = get_object_or_404(Chatroom, name=slug)
+    room = get_object_or_404(Chatroom, id=slug)
     user_rooms = request.user.rooms.all()
     if(room in user_rooms):
         title = "GT Chat"
-        page_name = slug
+        page_name = room.name
         page_description = "Chatroom"
-        name = slug
+        name = room.name
         user = request.user
         #messages = room.get_chat_init()
 
@@ -120,7 +120,7 @@ def invite_chat(request, slug):
     page_name = "Invite to Chatroom"
     page_description = "Invite a user to a Chatroom"
     title = "Invite to Chatroom"
-    room = get_object_or_404(Chatroom, name=slug)
+    room = get_object_or_404(Chatroom, id=slug)
 
     
     # Get the current user, once and only once.
@@ -151,7 +151,7 @@ def leave_chat(request, slug):
     page_name = "Leave Chatroom"
     page_description = "Leave a Chatroom"
     title = "Leave Chatroom"
-    room = get_object_or_404(Chatroom, name=slug)
+    room = get_object_or_404(Chatroom, id=slug)
 
     # Get the current user, once and only once.
     user = request.user
