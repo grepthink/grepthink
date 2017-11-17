@@ -1,4 +1,5 @@
 $(function () {
+            //Parses messages for the @ sign and makes them a link
             function parseAtSign(msg){
                 var split_message = msg.split(" ");
                 var finished_message = "";

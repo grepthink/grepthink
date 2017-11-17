@@ -142,16 +142,6 @@ def create_chat(request):
         'page_description': page_description, 'title': title, 'form': form, "name_error": name_error})
         
 #Finds if the username exists and returns the page for the user profile
-#<<<<<<< HEAD
-#Assumes that the username is without the @ sign
-
-def find_user_profile(request, username):
-    if User.Objects.filter(name=username).exists():
-        return view_profile(request, username)
-    return #something null
-
-
-#=======
 #Assumes that the username is without the @ sign, fk u trevor - trevor
 def find_user_profile(request, username, slug):
     #For some reason receives input as {% url 'find_user_profile' @name %}
@@ -162,4 +152,3 @@ def find_user_profile(request, username, slug):
     if User.objects.filter(username=user).exists():
         return view_profile(request, user)
     return redirect(view_one_chat, slug)
-#>>>>>>> fcf1af31bff9c3f9ab91ddd01d5338bd262476a3
