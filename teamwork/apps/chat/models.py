@@ -18,6 +18,9 @@ class Chatroom(models.Model):
     user = models.ManyToManyField(
         User,
         related_name = 'rooms')
+        
+    hasProject = models.BooleanField(
+        default = False)
 
     class Meta:
         ordering = ('name',)

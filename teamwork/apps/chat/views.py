@@ -118,5 +118,5 @@ def find_user_profile(request, username, slug):
     #SHOULD REPLACE THIS IS UGLY AS HELL
     user = username.split(" ")[3][1:]
     if User.objects.filter(username=user).exists():
-        return view_profile(request, user)
+        return redirect(view_profile, user)
     return redirect(view_one_chat, slug)
