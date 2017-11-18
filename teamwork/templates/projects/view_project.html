@@ -983,6 +983,7 @@
                 
               <!--CURRENTLY HARDCODE PROTOTYPE: NOT FUNCTIONAL-->
               <input type="hidden" id="tsr_numbers" name="variable" value="{{tsr_numbers}}">
+              <input type="hidden" id="colors" value="{{colors_array}}">
               {% for tsr_number in tsr_numbers %}
               {% for member_average in member_averages %}
                 <input type="hidden" id="{{tsr_number}}" name="variable" value="{{member_average}}">

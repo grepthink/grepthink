@@ -1,3 +1,4 @@
+var my_colors = JSON.parse(document.getElementById('colors').value)
 function makeBarChart() {
     let tsr_numbers_array = JSON.parse(document.getElementById('tsr_numbers').value)
     let current_student = document.getElementById('Member').value
@@ -104,13 +105,12 @@ function make_historical_barchart() {
     for(let i = 0; i < last_element; i++) {
         barChartData.datasets.push(
         {
-            fillColor: 'red',
+            fillColor: my_colors[i],
             strokeColor: 'black',
             borderWidth: 1,
             data: historical_averages[i]
         }
         )
-        console.log(i);
     }
 
     let ctx = document.getElementById("historical_student_contribution").getContext("2d");

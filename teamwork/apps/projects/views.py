@@ -271,6 +271,8 @@ def view_one_project(request, slug):
 
     member_averages = []
     tsr_numbers = []
+    colors_array = ["#FFE4B2", "#FFB2B2", "#B2D8B2", "#800000", "#B2B2FF",
+    "#D8B2D8", "#9DEAE7", "#549ED6"]
     highest_tsr_number = 0
     for tsr in assigned_tsrs:
         if highest_tsr_number < tsr.ass_number:
@@ -297,7 +299,7 @@ def view_one_project(request, slug):
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
-        'member_averages': member_averages, 'tsr_numbers':tsr_numbers})
+        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'colors_array':json.dumps(colors_array)})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
