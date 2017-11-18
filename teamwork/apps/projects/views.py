@@ -269,6 +269,20 @@ def view_one_project(request, slug):
             elif analysis_object.analysis_type == "Averages for all Evaluations":
                 health_report_total += averages_weight
 
+    member_averages = []
+    tsr_numbers = []
+    highest_tsr_number = 0
+    for tsr in assigned_tsrs:
+        if highest_tsr_number < tsr.ass_number:
+            highest_tsr_number = tsr.ass_number
+    for x in range(1, highest_tsr_number + 1):
+        averages_dict = averages_for_all_evals(project, x)
+        averages_floats = []
+        for member in averages_dict:
+            averages_floats.append(float(averages_dict[member]))
+        member_averages.append(averages_floats)
+        tsr_numbers.append(x)
+
     if health_report_total < health_ideal:
         health_flag = 0
     elif health_report_total >= health_ideal:
@@ -282,7 +296,8 @@ def view_one_project(request, slug):
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
-        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag})
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
+        'member_averages': member_averages, 'tsr_numbers':tsr_numbers})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -1229,7 +1244,6 @@ def email_project(request, slug):
         'title':title
     })
 
-    
 def similarity_of_eval_history(project, asgn_number):
     """
     Helper function that returns a dictionary of dictionaries
