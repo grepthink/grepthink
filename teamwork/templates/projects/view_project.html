@@ -724,12 +724,17 @@
                                                     <th id="NLP_output" text-align:center;">NLP Simple Output</th>
                                                 </tr>
                                                 <tr>
-                                                    {% if health_report <= health_ideal %}
+                                                    {% if health_flag == 0 %}
                                                     <td headers="team_status" bgcolor="Chartreuse" style="width:40%;height:100px">
                                                         <div>No serious problems detected.</div>
                                                     </td>
                                                     {% endif %}
-                                                    {% if health_report > health_ideal %}
+                                                    {% if health_flag == 1 %}
+                                                    <td headers="team_status" bgcolor="khaki" style="width:40%;height:100px">
+                                                        <div>Suspicious behavior detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_flag == 2 %}
                                                     <td headers="team_status" bgcolor="red" style="width:40%;height:100px">
                                                         <div>Problems detected. Intervention recommended.</div>
                                                     </td>

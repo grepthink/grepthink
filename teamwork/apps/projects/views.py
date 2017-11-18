@@ -220,6 +220,8 @@ def view_one_project(request, slug):
 
     health_report_total = 0
     health_ideal = (outlier_weight ^ 2) + wordcount_weight * len(members)
+    # 0 is good, 1 is warning, 2 is bad
+    health_flag = 0
     #checks the course for each assignment of type tsr and goes through each to get the assignment number and associated analysis
     for each_assigned_tsr in assigned_tsrs: 
        
@@ -251,7 +253,10 @@ def view_one_project(request, slug):
 
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
-
+    if health_report_total < health_ideal:
+        health_flag = 0
+    elif health_report_total >= health_ideal:
+        health_flag = 2
 #historical functions go here
     analysis_dicts={}
 
@@ -278,8 +283,7 @@ def view_one_project(request, slug):
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
-        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_report': health_report_total,
-        'health_ideal':health_ideal})
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
