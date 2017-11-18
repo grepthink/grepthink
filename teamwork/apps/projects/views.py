@@ -253,11 +253,7 @@ def view_one_project(request, slug):
 
                  else:
                      messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
-    if health_report_total < health_ideal:
-        health_flag = 0
-    elif health_report_total >= health_ideal:
-        health_flag = 2
-#historical functions go here
+     #historical functions go here
     analysis_dicts={}
 
     for analysis_object in project.analysis.all():
@@ -273,7 +269,10 @@ def view_one_project(request, slug):
             elif analysis_object.analysis_type == "Averages for all Evaluations":
                 health_report_total += averages_weight
 
-
+    if health_report_total < health_ideal:
+        health_flag = 0
+    elif health_report_total >= health_ideal:
+        health_flag = 2
     analysis_items = analysis_dicts.items()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
