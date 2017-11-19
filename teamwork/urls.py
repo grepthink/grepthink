@@ -152,14 +152,6 @@ urlpatterns = [
         url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
         # View a profile through the @sign
         url(r'^chat/(?P<slug>[^/]+)/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
-<<<<<<< HEAD
-       
-	###DM
-	url(r'^chat/$', chat_views.view_DM, name='view_DM'),
-	url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
- 	
-=======
->>>>>>> 0adf65045d16be02c1b3593c8a9a7abe9324e782
 
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
