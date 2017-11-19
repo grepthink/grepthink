@@ -1,4 +1,5 @@
 $(function () {
+            //Parses messages for the @ sign and makes them a link
             function parseAtSign(msg){
                 var split_message = msg.split(" ");
                 var finished_message = "";
@@ -93,7 +94,7 @@ $(function () {
                                     "<span class=\"input-group-btn\">" +
                                               "<button type=\"button\" class=\"btn btn-success btn-flat\">Send</button>" +
                                               "</span>" +
-									"</form>"+
+                                        "</form>"+
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
@@ -134,6 +135,8 @@ $(function () {
                                         user_message +
                                         "</div>";
 
+                    //var msg_box_div = document.getElementById("msg_box");
+                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
                     for (var i =0;i < data.messages.length;i++){
@@ -149,7 +152,8 @@ $(function () {
                                             user_message +
                                             "</div>";
                     }
-
+                    //var msg_box_div = document.getElementById("msg_box");
+                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");

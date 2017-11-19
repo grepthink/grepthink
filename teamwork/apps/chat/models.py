@@ -18,6 +18,9 @@ class Chatroom(models.Model):
     user = models.ManyToManyField(
         User,
         related_name = 'rooms')
+        
+    hasProject = models.BooleanField(
+        default = False)
 
     class Meta:
         ordering = ('name',)
@@ -59,14 +62,42 @@ class Chatroom(models.Model):
     def get_chat_next(self,number):
         return self.chat.all()[number:number+10]
 
+    #Find a chatroom by name only, returns a chatroom or None
+    def get_chatroom_by_name(self, room_name):
+        try:
+            chatroom = Chatroom.objects.get(name=room_name)
+            return chatroom
+        except ObjectDoesNotExist:
+            return None
+
+    def get_chatroom_with_project(self, room_name):
+        try:
+            chatroom = Chatroom.objects.get(name=room_name,hasProject=True)
+            return chatroom
+        except ObjectDoesNotExist:
+            return None
+
+    def get_chatroom_by_id(self, room_id):
+        try:
+            chatroom = Chatroom.objects.get(id=room_id)
+            return chatroom
+        except ObjectDoesNotExist:
+            return None
+
+        
     #Takes in a username and searches for the user, then adds them to the chatroom
-    def add_user_to_chat(self,user):
+    def add_user_to_chat(self,username_token):
+        if User.objects.filter(username=username_token).exists():
+            new_user = User.objects.get(username=username_token)
+            self.user.add(new_user)
+            self.save()
         return
 
     #Removes the selected user from the chat
     def remove_user(self,user):
         if(self.user.filter(username=user.username).count()>0):
             self.user.remove(user)
+            self.save()
         if(self.user.all().count()==0):
             self.delete()
         return

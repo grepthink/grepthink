@@ -215,7 +215,7 @@ def leave_project(request, slug):
     to_delete = Membership.objects.filter(user=f_user, project=project)
 
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
-
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,f_user)
 
     if (f_user not in members):
         messages.warning(request, "You cannot leave a project you are not a member of!")
@@ -231,8 +231,8 @@ def leave_project(request, slug):
         # check if user that is being removed was Scrum Master
         if f_user == project.scrum_master:
             project.scrum_master = remaining.first().user
-        if Chatroom.objects.filter(name="-"+project.title).exists():
-                project.chatroom.user.remove(f_user)
+        if chatroom is not None:
+                chatroom.remove_user(f_user)
         project.save()
         messages.info(request, "You have left {0}".format(project))
 
@@ -435,10 +435,12 @@ def create_project(request):
             
             #Creates a chatroom with the title of the project and adds the creator
             #chatroom = Chatroom()
-            project.chatroom.name = "-"+project.title
-            project.chatroom.save()
-            project.chatroom.user.add(user)
-            #project.chatroom = chatroom
+            chatroom = Chatroom(
+                                name=project.title,
+                                hasProject=True)
+            chatroom.save()
+            chatroom.add_user_to_chat(request.user)
+            
             
             # Course the project is in
             in_course = form.cleaned_data.get('course')
@@ -509,6 +511,7 @@ def edit_project(request, slug):
     course = project.course.first()
     project_owner = project.creator.profile
     members = project.members.all()
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     # Populate page info with edit project title/name
     page_name = "Edit Project"
@@ -526,8 +529,8 @@ def edit_project(request, slug):
     if request.POST.get('delete_project'):
         # Check that the current user is the project owner
         if request.user == project.creator:
-            if Chatroom.objects.filter(name="-"+project.title).exists():
-                project.chatroom.delete()
+            if chatroom is not None:
+                chatroom.delete()
             project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')
@@ -627,8 +630,8 @@ def edit_project(request, slug):
             # check if user that is being removed was Scrum Master
             if f_user == project.scrum_master:
                 project.scrum_master = remaining.first().user
-            if Chatroom.objects.filter(name="-"+project.title).exists():
-                project.chatroom.user.remove(f_user)
+            if chatroom is not None:
+                chatroom.remove_user(f_user)
             project.save()
             messages.info(request, "{0} has been removed from the project".format(f_username))
 
@@ -1246,6 +1249,7 @@ def add_member(request, slug, uname):
     mem_to_add = User.objects.get(username=uname)
     mem_courses = Course.get_my_courses(mem_to_add)
     curr_members = Membership.objects.filter(project=project)
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     # ensure user is a member of the course && not a member of the project
     if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
@@ -1262,9 +1266,8 @@ def add_member(request, slug, uname):
         if mem_to_add in pending_members:
             for mem in pending_members:
                 if mem == mem_to_add:
-                    if Chatroom.objects.filter(name="-"+project.title).exists():
-                        project.chatroom.user.add(mem)
-                        project.chatroom.save()
+                    if chatroom is not None:
+                        chatroom.add_user_to_chat(mem)
                     project.pending_members.remove(mem)
                     project.save()
 
