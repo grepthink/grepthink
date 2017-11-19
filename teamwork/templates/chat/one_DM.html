@@ -11,7 +11,7 @@
 <li><a href="{% url 'view_DM' %}"> All Chat </a></li>
 
 {# Breadcrumb for the current Chatroom I'm in #}
-<li><a href="{% url 'view_one_DMt' slug=room.name %}"> DM {{ name }} </a></li>
+<li><a href="{% url 'view_one_DM' slug=room.name %}"> DM {{ name }} </a></li>
 
 {% endblock crumb %}
 
@@ -21,7 +21,7 @@
        <li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>
     </ul>
 
-    <div id="chats">
+    <div id="DM">
     </div>
 
 

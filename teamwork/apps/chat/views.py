@@ -33,14 +33,63 @@ def _chats(request, rooms):
     page = request.GET.get('page')
 
     # Populate with page name and title
-    page_name = "My Chats"
+    page_name = "My Chat"
     page_description = "Chat List"
-    title = "My Chats"
+    title = "My Chat"
 
     return render(request, 'chat/chat.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'rooms': rooms})
 
+
+
+def _DM(request, rooms):
+    page = request.GET.get('page')
+
+    # Populate with page name and title
+    page_name = "My DM"
+    page_description = "DM List"
+    title = "My DM"
+
+    return render(request, 'chat/DM.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title,
+        'rooms': rooms})
+
+@login_required
+def view_DM(request):
+    my_DM = request.user.rooms.all()
+    return _DM(request, my_DM)
+
+
+
+
+@login_required
+def view_one_DM(request, slug):
+    room = get_object_or_404(Chatroom, name=slug)
+    user_rooms = request.user.rooms.all()
+    if(room in user_rooms):
+        title = "GT DM"
+        name = slug
+        user = request.user
+        #messages = room.get_chat_init()
+
+        return render(request, 'chat/one_DM.html',{
+            'title': title, 'room': room, 'name': name,
+            'user': user})
+    else:
+        return view_DM(request)
+
+
+
+"""
+@login_required
+def dm(request):
+   dm = get_object_or_404(Chatroom, name=slug)
+   #dm.chatroom.name = "-"
+   dm.chatroom.save()
+   dm.chatroom.user.add(user)
+   return one_chat(request, slug)
+"""
 @login_required
 def view_chats(request):
     #rooms = Chatroom.objects.order_by("name")
@@ -108,6 +157,22 @@ def create_chat(request):
     name_error = "Choose a unique name"
     return render(request, 'chat/create_chat.html', {'page_name': page_name,
         'page_description': page_description, 'title': title, 'form': form, "name_error": name_error})
+
+def DM_chat(request):
+    room = get_object_or_404(Chatroom, name=slug)
+    user_rooms = request.user.rooms.all()
+    if(room in user_rooms):
+        title = "GT Chat"
+        name = slug
+        user = request.user
+        
+
+        return render(request, 'chat/DM.html',{
+            'title': title, 'room': room, 'name': name,
+            'user': user})
+    else:
+        return view_chats(request)
+
         
 #Finds if the username exists and returns the page for the user profile
 #<<<<<<< HEAD
