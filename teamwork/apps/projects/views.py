@@ -277,19 +277,21 @@ def view_one_project(request, slug):
     for tsr in assigned_tsrs:
         if highest_tsr_number < tsr.ass_number:
             highest_tsr_number = tsr.ass_number
-    for x in range(1, highest_tsr_number + 1):
-        averages_dict = averages_for_all_evals(project, x)
+    for current_tsr_number in range(1, highest_tsr_number + 1):
+        averages_dict = averages_for_all_evals(project, current_tsr_number)
         averages_floats = []
         for member in averages_dict:
             averages_floats.append(float(averages_dict[member]))
         member_averages.append(averages_floats)
-        tsr_numbers.append(x)
+        tsr_numbers.append(current_tsr_number)
 
     if health_report_total < health_ideal:
         health_flag = 0
     elif health_report_total >= health_ideal:
         health_flag = 2
     analysis_items = analysis_dicts.items()
+
+    contributions_of_members = get_contributions_of_members(project)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
@@ -299,7 +301,8 @@ def view_one_project(request, slug):
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
-        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'colors_array':json.dumps(colors_array)})
+        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'colors_array':json.dumps(colors_array),
+        'contributions_of_members': json.dumps(contributions_of_members)})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -1245,6 +1248,25 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
+
+def get_contributions_of_members(project):
+    contribution_per_member = []
+    members = project.members.all()
+
+    for current_evaluatee in members:
+        all_tsrs_received = []
+        evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
+        recent_tsr_number = int(evaluatee_tsrs[-1].ass_number)
+
+        for tsr_number in range(1, recent_tsr_number + 1):
+            current_percent_contributions = []
+
+            for current_tsr in evaluatee_tsrs:
+                if int(current_tsr.ass_number) == tsr_number:
+                    current_percent_contributions.append(float(current_tsr.percent_contribution))
+            all_tsrs_received.append(current_percent_contributions)
+        contribution_per_member.append(all_tsrs_received)
+    return contribution_per_member
 
 def similarity_of_eval_history(project, asgn_number):
     """

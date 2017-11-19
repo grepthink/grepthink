@@ -1,14 +1,22 @@
-var my_colors = JSON.parse(document.getElementById('colors').value)
+//Used the following answer for making random colors:
+//https://stackoverflow.com/a/1484514
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 function makeBarChart() {
-    let tsr_numbers_array = JSON.parse(document.getElementById('tsr_numbers').value)
-    let current_student = document.getElementById('Member').value
+    let member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
+    let tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
+    let current_student = document.getElementById('Member').value;
+    let current_student_index = document.getElementById('Member').selectedIndex;
     var local_labels = [];
     for(let i = 0; i < (document.getElementById('Member').options.length); i++) {
-        member_name = document.getElementById('Member').options[i].text;
-
-        if(member_name !== current_student) {
-            local_labels.push(document.getElementById('Member').options[i].text);
-        }
+        local_labels.push(document.getElementById('Member').options[i].text);
     }
     //var other_members = (document.getElementById('other_members').value).split(",");
     //var other_member_contributions = (document.getElementById('other_member_contributions').value).split(",")
@@ -46,10 +54,10 @@ function makeBarChart() {
     let barChartData = {
         labels: local_labels,
         datasets: [{
-            fillColor: 'green',
+            fillColor: getRandomColor(),
             strokeColor: 'black',
             borderWidth: 1,
-            data: [35, 35, 30, 40]
+            data: member_contributions[tsr_number][current_student_index]
         }]
     };
 
@@ -105,7 +113,7 @@ function make_historical_barchart() {
     for(let i = 0; i < last_element; i++) {
         barChartData.datasets.push(
         {
-            fillColor: my_colors[i],
+            fillColor: getRandomColor(),
             strokeColor: 'black',
             borderWidth: 1,
             data: historical_averages[i]

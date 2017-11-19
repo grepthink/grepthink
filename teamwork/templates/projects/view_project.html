@@ -984,6 +984,7 @@
               <!--CURRENTLY HARDCODE PROTOTYPE: NOT FUNCTIONAL-->
               <input type="hidden" id="tsr_numbers" name="variable" value="{{tsr_numbers}}">
               <input type="hidden" id="colors" value="{{colors_array}}">
+              <input type="hidden" id="contributions_of_members" value="{{contributions_of_members}}">
               {% for tsr_number in tsr_numbers %}
               {% for member_average in member_averages %}
                 <input type="hidden" id="{{tsr_number}}" name="variable" value="{{member_average}}">
@@ -1003,7 +1004,7 @@
                         </td>
                         <td>
                             <h3>TSR Number</h3>
-                             <select onchange="makeBarChart(this)" src="{% static 'js/student_contribution_received.js' %}" name="TSR #">
+                             <select onchange="makeBarChart(this)" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
                                 {% for tsr_number in tsr_numbers %}
                                 <option value="{{tsr_number}}">{{tsr_number}}</option>
                                 {% endfor %}
