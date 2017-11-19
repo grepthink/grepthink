@@ -11,7 +11,7 @@
 <li><a href="{% url 'view_DM' %}"> All Chat </a></li>
 
 {# Breadcrumb for the current Chatroom I'm in #}
-<li><a href="{% url 'view_one_DM' slug=room.name %}"> DM {{ name }} </a></li>
+<li><a href="{% url 'view_one_DM' slug=room.id %}"> DM {{ room }} </a></li>
 
 {% endblock crumb %}
 
