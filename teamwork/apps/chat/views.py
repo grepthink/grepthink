@@ -173,5 +173,7 @@ def find_user_profile(request, username, slug):
     #SHOULD REPLACE THIS IS UGLY AS HELL
     user = username.split(" ")[3][1:]
     if User.objects.filter(username=user).exists():
+        # temp code to turn on notifications
+        send_chat_simple(request.user,User.objects.get(username=user))
         return redirect(view_profile, user)
     return redirect(view_one_chat, slug)
