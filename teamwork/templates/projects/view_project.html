@@ -998,7 +998,12 @@
                             <h3>Member:</h3>
                             <select onchange="makeBarChart(this)" src="{% static 'js/student_contribution_received.js' %}" id="Member">
                                 {% for member in members %}
-                                <option value="{{member.profile.name}}">{{member.profile.name}}</option>
+                                {% if member.profile.name != "" %}
+                                    <option value="{{member.profile.name}}">{{member.profile.name}}</option>
+                                {% endif %}
+                                {% if member.profile.name == "" %}
+                                    <option value="{{member.profile.user}}">{{member.profile.user}}</option>
+                                {% endif %}
                                 {% endfor %}
                             </select>
                         </td>
