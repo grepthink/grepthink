@@ -176,3 +176,39 @@ def find_user_profile(request, username, slug):
         # temp code to turn on notifications
         return redirect(view_profile, user)
     return redirect(view_one_chat, slug)
+
+
+def _DM(request, rooms):
+    page = request.GET.get('page')
+    page_name = "My DM"
+    page_description = "DM List"
+    title = "My DM"
+    return render(request, 'chat/DM.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title,
+        'rooms': rooms})
+
+@login_required
+def view_DM(request):
+    my_rooms = request.user.rooms.all()
+    return _DM(request, my_rooms)
+
+@login_required
+def view_one_DM(request, slug):
+    room = get_object_or_404(Chatroom, id=slug)
+    user_rooms = request.user.rooms.all()
+    if(room in user_rooms):
+        title = "GT DM"
+        page_name = "DM"
+        page_description = "DM messages"
+        name = room.name
+        user = request.user
+
+        return render(request, 'chat/one_DM.html',{
+            'title': title, 'page_name': page_name,
+            'page_description' : page_description, 'room': room, 'name': name,
+            'user': user})
+    else:
+        return view_DM(request)
+
+
+
