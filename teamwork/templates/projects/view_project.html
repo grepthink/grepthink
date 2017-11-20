@@ -927,7 +927,7 @@
                             </button>
                     </div>
                     </div>
-                    <div class="box-body no-padding">
+   <!--                  <div class="box-body no-padding">
                         <ul class="nav nav-pills nav-stacked">
                             <table class="table table-hover">
                                 <tbody>
@@ -976,7 +976,7 @@
                                 </tbody>
                             </table>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
                 
                 
@@ -995,8 +995,16 @@
                 <table>
                     <tr>
                         <td>
+                            <h3>TSR Number</h3>
+                             <select onchange="makeBarChart()" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
+                                {% for tsr_number in tsr_numbers %}
+                                <option value="{{tsr_number}}">{{tsr_number}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
                             <h3>Member:</h3>
-                            <select onchange="makeBarChart(this)" src="{% static 'js/student_contribution_received.js' %}" id="Member">
+                            <select onchange="make_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
                                 {% for member in members %}
                                 {% if member.profile.name != "" %}
                                     <option value="{{member.profile.name}}">{{member.profile.name}}</option>
@@ -1007,17 +1015,9 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td>
-                            <h3>TSR Number</h3>
-                             <select onchange="makeBarChart(this)" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
-                                {% for tsr_number in tsr_numbers %}
-                                <option value="{{tsr_number}}">{{tsr_number}}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
                     </tr>
                     <tr>
-                        <th>Student's Contribution Scores Received</th>
+                        <th>Students' Contribution Scores Received</th>
                         <th>Historical Averages</th>
                     </tr>
                     <tr>
