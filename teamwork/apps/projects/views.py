@@ -89,7 +89,7 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 
-
+@login_required
 def view_one_project(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -182,14 +182,27 @@ def view_one_project(request, slug):
 
     tsr_tuple={}
 
-    for i in assigned_tsrs:
-        for j in project.tsr.all():
-            if j in i.subs.all():
-                tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
 
-    tsr_keys = tsr_tuple.keys()
-    tsr_items = tsr_tuple.items()
-    mem_count = len(members)
+    fix = []
+    new_tsr_tuple = []
+    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
+        temp = ""
+
+        for j in temp_tup:
+            if temp != j.evaluatee:
+                temp = j.evaluatee
+                fix.append([temp, j.ass.first(), j, 1])
+            else:
+                fix.append(["", j.ass.first(), j, 0])
+    else:
+        fix = None
+
+
 
 
     med = 100
@@ -200,12 +213,12 @@ def view_one_project(request, slug):
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -609,7 +622,7 @@ def edit_project(request, slug):
         #                     project.save()
 
 
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a user from the project
     if request.POST.get('remove_user'):
@@ -639,7 +652,7 @@ def edit_project(request, slug):
             for mem_obj in to_delete:
                 mem_obj.delete()
 
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
 
     # Transfer ownership of a project
@@ -682,7 +695,7 @@ def edit_project(request, slug):
             # Add the skill to the project (as a desired_skill)
             project.desired_skills.add(desired_skill)
             project.save()
-        return redirect(edit_project, slug)
+        return redirect(view_one_project, project.slug)
 
     # Remove a desired skill from the project
     if request.POST.get('remove_desired_skill'):
