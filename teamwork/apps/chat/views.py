@@ -103,7 +103,7 @@ def create_chat(request):
             user_input_field = form.cleaned_data.get('user')
             all_usernames = user_input_field.split(", ")
             for name in all_usernames:
-                room.add_user_to_chat(name)
+                room.add_user_to_chat(user, name)
             room.save()
             if(room.user.all().count()==0):
                 room.delete()
@@ -135,7 +135,7 @@ def invite_chat(request, slug):
             user_input_field = form.cleaned_data.get('user')
             all_usernames = user_input_field.split(", ")
             for name in all_usernames:
-                room.add_user_to_chat(name)
+                room.add_user_to_chat(user, name)
             room.save()
             return redirect(view_chats)
         else:
