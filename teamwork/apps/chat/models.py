@@ -37,6 +37,16 @@ class Chatroom(models.Model):
         text.content = message
         text.save()
 
+        #sends an alert on @
+        if '@' in message:
+            for substring in (message.split(' ')):
+                if substring.startswith('@'):
+                    pointed_user = substring[1:]
+                    if User.objects.filter(username=user).exists():
+                        send_chat_alert(user,User.objects.get(username=pointed_user),self)
+                        
+                      
+
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
         message = {
