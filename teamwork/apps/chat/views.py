@@ -59,13 +59,13 @@ def view_one_chat(request, slug):
         page_name = room.name
         page_description = "Chatroom"
         name = room.name
-        user = request.user
+        current_user = str(request.user)
         #messages = room.get_chat_init()
 
         return render(request, 'chat/one_chat.html',{
             'title': title, 'page_name': page_name,
             'page_description' : page_description, 'room': room, 'name': name,
-            'user': user})
+            'current_user': current_user})
     else:
         return view_chats(request)
 
@@ -105,6 +105,8 @@ def create_chat(request):
             for name in all_usernames:
                 room.add_user_to_chat(name)
             room.save()
+            if(room.user.all().count()==0):
+                room.delete()
             return redirect(view_chats)
         else:
             return redirect(view_chats)
@@ -122,10 +124,10 @@ def invite_chat(request, slug):
     title = "Invite to Chatroom"
     room = get_object_or_404(Chatroom, id=slug)
 
-    
+
     # Get the current user, once and only once.
     user = request.user
-    
+
     if request.method == 'POST':
         form = InviteChatForm(user.id, request.POST)
         if form.is_valid():

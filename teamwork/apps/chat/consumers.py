@@ -15,7 +15,7 @@ def ws_connect(message):
     message.reply_channel.send({'accept':True})
     Group("User-"+str(message.user.id)).add(message.reply_channel)
     message.channel_session['chatrooms'] = []
-    
+
 
 #no idea what to change here, but something need to be changed
 #Basically unloads the message payload for now and sends it into the chat
@@ -33,7 +33,7 @@ def ws_disconnect(message):
             room.websocket_group.discard(message.reply_channel)
         except Room.DoesNotExist:
             pass
-        
+
 #assuming logged in, will catch that later
 #this is how I assume it should work, rest is like the example
 #not tested! maybe not used
@@ -83,14 +83,14 @@ def chat_join(message):
     message.channel_session['rooms'] = list(
         set(message.channel_session['chatrooms'])
         .union([room.id]))
-        
+
     message.reply_channel.send({
         "text": json.dumps({
             "join": str(room.id),
             "title": room.name,
         }),
     })
-    
+
     chat_messages = room.get_chat_init()
     number_of_messages = len(chat_messages)
     starting_point = 0
@@ -102,31 +102,31 @@ def chat_join(message):
     for index in range(starting_point,0,-1):
         text = {
             'chatroom':str(chat_messages[index].room.id),
-            'message':chat_messages[index].content, 
-            'username':chat_messages[index].author.username, 
+            'message':chat_messages[index].content,
+            'username':chat_messages[index].author.username,
             'date':chat_messages[index].date.strftime("%I:%M %p")
             }
-        messages.append( text)    
+        messages.append( text)
     send_texts_to_one(message.user, messages)
 
-    
+
 @channel_session_user
 @catch_client_error
 def chat_leave(message):
     room = get_room_or_error(message["room"],message.user)
-    
+
     message.user.rooms.remove(room)
     room.websocket_group.discard(message.reply_channel)
     message.channel_session['rooms'] = list(
         set(message.channel_session['rooms'])
         .difference([room.id]))
-        
+
     message.reply_channel.send({
         "text": json.dumps({
             "leave": str(room.id),
         }),
     })
-    
+
 @channel_session_user
 @catch_client_error
 def chat_send(message):

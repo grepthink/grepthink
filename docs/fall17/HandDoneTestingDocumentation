@@ -1,0 +1,15 @@
+Tests Done by Hand:
+Sean:
+    -Create Chatroom:
+        Input Unique Name with valid users: Successfully creates.
+        Input Non-Unique Name with valid users: Returns to create_chat with error message.
+        Input Unique Name with non-valid users: Adds every valid user, ignores non-valid
+        Input Non-Unique Name with non-valid users: Returns to create_chat with error message.
+
+    -Leave Chatroom:
+        When "No" selected: returns to show all chatrooms, user stays in room.
+        When "Yes" selected: Removes current user, returns to show all chatrooms.
+
+    -Invite to Chatroom:
+        Input valid names: Successfully adds valid users.
+        Input non-valid names: Ignores non-valid names, adds valid ones
