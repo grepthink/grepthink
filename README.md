@@ -43,3 +43,4 @@ for existing chats matching the project title name, which may cause other errors
 11-15-17 2:58pm - Anjali: Edit Chat main page. Now has tabs on the top of the page rather than side.<br />
 11-16-17 8:00pm - Sean: Added button and verification to leave a chatroom. Create chat now has you list the users you want to add instead of seeing every user on the website. Any users that do not exist cannot be added to the chatroom.<br />
 11-17-17 12:00pm - Sean: Added button and form to invite users to an already created room. Invite currently adds them without their approval.<br />
+11-19-17 10:40pm - Sean: AutoScrolls down to the last message sent in chat.js. Create chat won't create a room with no users (for example if you try to create with a bunch of non-valid usernames). Text bubbles correspond to the current user and other users (green & grep respectively).<br />

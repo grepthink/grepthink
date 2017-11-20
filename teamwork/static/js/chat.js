@@ -25,6 +25,7 @@ $(function () {
             var webSocketBridge = new channels.WebSocketBridge();
             webSocketBridge.connect(ws_path);
 
+            console.log("Current user is: "+current_user);
             //When the websocket receives a payload it needs to decide what type it is
             //then handle it.
             webSocketBridge.listen(function(data) {
@@ -43,58 +44,59 @@ $(function () {
                               "<div class=\"box-header with-border\">" +
                                 "<h3 class=\"box-title\">"+data.title+"</h3>" +
                                 "<div class=\"box-tools pull-right\">" +
-                                  "<span data-toggle=\"tooltip\" title=\"00 New Messages\" class=\"badge bg-green\">00</span>" +
                                   "<button class=\"btn btn-box-tool\" data-widget=\"collapse\"><i class=\"fa fa-minus\"></i></button>" +
                                 "</div>" +
                               "</div>" +
                               "<div class=\"box-body\">" +
                                 "<!-- Conversations are loaded here -->" +
-                                "<div class=\"direct-chat-messages\">" +
+                                "<div id= \"msg_box\" class=\"direct-chat-messages\">" +
 
-
+                                /*
                                   "<!-- Message. Default to the left -->" +
-                                    "<div id= \"one_msg\" class=\"direct-chat-msg\">" +
-                                      "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
-                                        // This is where message info like name and time will appear
+                                    "<div id= \"one_msg_left\" class=\"direct-chat-msg\">" +
+                                      "<div id=\"msg_info_left\" class=\"direct-chat-info clearfix\">" +
+                                        // This is where message info (from people other than current_user)
+                                        // such as name and time will appear
                                         //"<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
                                         //"<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
                                       "</div>" +
                                       "<!-- /.direct-chat-info -->" +
-                                      "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                        // This is where Message text will appear
+                                      "<div id=\"msg_text_left\" class=\"direct-chat-text\">" +
+                                        // This is where Message text will appear (except current_user, see below)
                                       "</div>" +
                                       "<!-- /.direct-chat-text -->" +
                                     "</div>" +
                                     "<!-- /.direct-chat-msg -->" +
-                                    /*
+                                    //
                                     "<!-- Message to the right -->" +
-                                    "<div class=\"direct-chat-msg right\">" +
-                                      "<div class=\"direct-chat-info clearfix\">" +
-                                        "<span class=\"direct-chat-name pull-right\">INSERT_USER_2_HERE</span>" +
-                                        "<span class=\"direct-chat-timestamp pull-left\">INSERT_TIME_2_HERE</span>" +
+                                    "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
+                                      "<div id= \"msg_info_right\" class=\"direct-chat-info clearfix\">" +
+                                        // The current_user's info will show up below.
+                                        //"<span class=\"direct-chat-name pull-right\">INSERT_USER_2_HERE</span>" +
+                                        //"<span class=\"direct-chat-timestamp pull-left\">INSERT_TIME_2_HERE</span>" +
                                       "</div>" +
                                       "<!-- /.direct-chat-info -->" +
-                                      "<div class=\"direct-chat-text\">" +
-                                        "INSERT_TEXT_2_HERE" +
+                                      "<div id=\"msg_text_right\" class=\"direct-chat-text\">" +
+                                        // current_user's message text will appear here.
                                       "</div>" +
                                       "<!-- /.direct-chat-text -->" +
                                     "</div>" +
                                     "<!-- /.direct-chat-msg -->" +
-                                    */
+                                    //
                                   "</div>" +
                                   "<!--/.direct-chat-messages-->" +
-
+                                  */
                                 "</div>" +
                                 "<!-- /.box-body -->" +
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                    "<form>" +
-                                    "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
-                                    "<span class=\"input-group-btn\">" +
-                                              "<button type=\"button\" class=\"btn btn-success btn-flat\">Send</button>" +
-                                              "</span>" +
-                                        "</form>"+
+                                      "<form>" +
+                                      "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
+                                      //"<span class=\"input-group-btn\">" +
+                                        "<button type=\"button\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
+                                      //"</span>" +
+                                      "</form>"+
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
@@ -125,36 +127,69 @@ $(function () {
                 } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
                     user_message = parseAtSign(data.message);
-                    one_msg = document.getElementById("one_msg");
-                    one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
-                                        // This is where message info like name and time will appear
-                                        "<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
-                                        "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
-                                        "</div>" +
-                                        "<div id=\"msg_text\" class=\"direct-chat-text\">" +
-                                        user_message +
-                                        "</div>";
-
-                    //var msg_box_div = document.getElementById("msg_box");
-                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
-                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
-                }else if (data.messages) {
-                    for (var i =0;i < data.messages.length;i++){
-                        var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
-                        user_message = parseAtSign(data.messages[i].message);
-                        one_msg = document.getElementById("one_msg");
-                        one_msg.innerHTML += "<div id=\"msg_info\" class=\"direct-chat-info clearfix\">" +
-                                            // This is where message info like name and time will appear
-                                            "<span class=\"direct-chat-name pull-left\">"+data.messages[i].username+"</span>" +
-                                            "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
+                    one_msg = document.getElementById("msg_box");
+                    if(current_user === data.message.username){
+                        //one_msg = document.getElementById("one_msg_right");
+                        one_msg.innerHTML += "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
+                                            "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +
+                                            "<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
+                                            "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
                                             "</div>" +
-                                            "<div id=\"msg_text\" class=\"direct-chat-text\">" +
+                                            "<div id=\"msg_text_right\" class=\"direct-chat-text\">" +
                                             user_message +
+                                            "</div>"+
                                             "</div>";
                     }
-                    //var msg_box_div = document.getElementById("msg_box");
-                    //msg_box_div.scrollTop = msg_box_div.scrollHeight;
-                    msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                    else{
+                        //one_msg = document.getElementById("one_msg_left");
+                        one_msg.innerHTML += "<div id= \"one_msg_left\" class=\"direct-chat-msg\">" +
+                                            "<div id=\"msg_info_left\" class=\"direct-chat-info clearfix\">" +
+                                            "<span class=\"direct-chat-name pull-left\">"+data.username+"</span>" +
+                                            "<span class=\"direct-chat-timestamp pull-right\">"+data.date+"</span>" +
+                                            "</div>" +
+                                            "<div id=\"msg_text_left\" class=\"direct-chat-text\">" +
+                                            user_message +
+                                            "</div>"+
+                                            "</div>";
+                    }
+                    var msg_box_div = document.getElementById("msg_box");
+                    msg_box_div.scrollTop = msg_box_div.scrollHeight;
+                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                }else if (data.messages) {
+                    for (var i = 0; i < data.messages.length; i++){
+                        var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
+                        user_message = parseAtSign(data.messages[i].message);
+                        one_msg = document.getElementById("msg_box");
+                        if(current_user === data.messages[i].username){
+                            //one_msg = document.getElementById("one_msg_right");
+                            one_msg.innerHTML += "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
+                                                "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.messages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_right\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>";
+                        }
+                        else{
+                            //one_msg = document.getElementById("one_msg_left");
+                            one_msg.innerHTML += "<div id= \"one_msg_left\" class=\"direct-chat-msg\">" +
+                                                "<div id=\"msg_info_left\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.messages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.messages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_left\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>";
+                        }
+                    }
+                    var msg_box_div = document.getElementById("msg_box");
+                    msg_box_div.scrollTop = msg_box_div.scrollHeight;
+                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");
                 }

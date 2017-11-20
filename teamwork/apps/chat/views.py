@@ -27,46 +27,6 @@ from itertools import chain
 import json
 
 
-def _DM(request, rooms):
-    page = request.GET.get('page')
-
-    # Populate with page name and title
-    page_name = "My DM"
-    page_description = "DM List"
-    title = "My DM"
-
-    return render(request, 'chat/DM.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'rooms': rooms})
-
-@login_required
-def view_DM(request):
-    
-    my_rooms = request.user.rooms.all()
-    return _DM(request, my_rooms)
-
-
-
-
-@login_required
-def view_one_DM(request, slug):
-    room = get_object_or_404(Chatroom, id=slug)
-    user_rooms = request.user.rooms.all()
-    if(room in user_rooms):
-        title = "GT Chat"
-        page_name = room.name
-        page_description = "Chatroom"
-        name = room.name
-        user = request.user
-        #messages = room.get_chat_init()
-
-        return render(request, 'chat/one_DM.html',{
-            'title': title, 'page_name': page_name,
-            'page_description' : page_description, 'room': room, 'name': name,
-            'user': user})
-    else:
-        return view_DM(request)
-
 
 # Create your views here.
 def _chats(request, rooms):
@@ -99,13 +59,13 @@ def view_one_chat(request, slug):
         page_name = room.name
         page_description = "Chatroom"
         name = room.name
-        user = request.user
+        current_user = str(request.user)
         #messages = room.get_chat_init()
 
         return render(request, 'chat/one_chat.html',{
             'title': title, 'page_name': page_name,
             'page_description' : page_description, 'room': room, 'name': name,
-            'user': user})
+            'current_user': current_user})
     else:
         return view_chats(request)
 
@@ -143,8 +103,10 @@ def create_chat(request):
             user_input_field = form.cleaned_data.get('user')
             all_usernames = user_input_field.split(", ")
             for name in all_usernames:
-                room.add_user_to_chat(name)
+                room.add_user_to_chat(user, name)
             room.save()
+            if(room.user.all().count()==0):
+                room.delete()
             return redirect(view_chats)
         else:
             return redirect(view_chats)
@@ -162,10 +124,10 @@ def invite_chat(request, slug):
     title = "Invite to Chatroom"
     room = get_object_or_404(Chatroom, id=slug)
 
-    
+
     # Get the current user, once and only once.
     user = request.user
-    
+
     if request.method == 'POST':
         form = InviteChatForm(user.id, request.POST)
         if form.is_valid():
@@ -173,7 +135,7 @@ def invite_chat(request, slug):
             user_input_field = form.cleaned_data.get('user')
             all_usernames = user_input_field.split(", ")
             for name in all_usernames:
-                room.add_user_to_chat(name)
+                room.add_user_to_chat(user, name)
             room.save()
             return redirect(view_chats)
         else:
@@ -211,6 +173,6 @@ def find_user_profile(request, username, slug):
     #SHOULD REPLACE THIS IS UGLY AS HELL
     user = username.split(" ")[3][1:]
     if User.objects.filter(username=user).exists():
+        # temp code to turn on notifications
         return redirect(view_profile, user)
     return redirect(view_one_chat, slug)
-

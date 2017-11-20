@@ -86,9 +86,10 @@ class Chatroom(models.Model):
 
         
     #Takes in a username and searches for the user, then adds them to the chatroom
-    def add_user_to_chat(self,username_token):
+    def add_user_to_chat(self,sender,username_token):
         if User.objects.filter(username=username_token).exists():
             new_user = User.objects.get(username=username_token)
+            send_chat_invite(sender,new_user,self)
             self.user.add(new_user)
             self.save()
         return
@@ -123,7 +124,7 @@ def send_texts_to_one(user,messages):
         {
             "text":json.dumps({'messages':messages})}
         )
-def send_chat_invite(send_user,receive_user,chatroom):
+def send_chat_invite(send_user,recieve_user,chatroom):
     Alert.objects.create(
             sender=send_user,
             to=recieve_user,
@@ -133,11 +134,19 @@ def send_chat_invite(send_user,receive_user,chatroom):
             )
 
 def send_chat_alert(send_user,receive_user,chatroom):
-    print("here")
     Alert.objects.create(
             sender=send_user,
             to=receive_user,
             msg="A person wants you to see this in " + chatroom.name,
+            url=reverse('view_chats'),
+            read=False,
+            )
+    
+def send_chat_simple(user, user2):
+    Alert.objects.create(
+            sender=user2,
+            to=user,
+            msg="A person wants you to see this in one of your chats",
             url=reverse('view_chats'),
             read=False,
             )
