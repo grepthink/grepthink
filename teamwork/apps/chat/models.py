@@ -66,11 +66,11 @@ class Chatroom(models.Model):
     #When a chat is initially loaded, gets the last 10 messages saved, in theory.
     #Called from consumers
     def get_chat_init(self):
-        return self.chat.all()[:10]
+        return self.chat.all()[:11]
 
     #maybe should catch error here, but oh well
     def get_chat_next(self,number):
-        return self.chat.all()[number:number+10]
+        return self.chat.all()[number:number+11]
 
     #Find a chatroom by name only, returns a chatroom or None
     def get_chatroom_by_name(self, room_name):
