@@ -178,6 +178,7 @@ def find_user_profile(request, username, slug):
     return redirect(view_one_chat, slug)
 
 
+
 def _DM(request, rooms):
     page = request.GET.get('page')
     page_name = "My DM"
@@ -189,8 +190,8 @@ def _DM(request, rooms):
 
 @login_required
 def view_DM(request):
-    my_rooms = request.user.rooms.all()
-    return _DM(request, my_rooms)
+    my_dmrooms = request.user.rooms.all()
+    return _DM(request, my_dmrooms)
 
 @login_required
 def view_one_DM(request, slug):
@@ -209,6 +210,5 @@ def view_one_DM(request, slug):
             'user': user})
     else:
         return view_DM(request)
-
 
 
