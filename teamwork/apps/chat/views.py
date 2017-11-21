@@ -104,6 +104,7 @@ def create_chat(request):
             all_usernames = user_input_field.split(", ")
             for name in all_usernames:
                 room.add_user_to_chat(user, name)
+            room.user.add(user)
             room.save()
             if(room.user.all().count()==0):
                 room.delete()
