@@ -1253,7 +1253,7 @@ def get_contributions_of_members(project):
 
     for current_evaluator in members:
         all_tsrs_received = []
-        evaluatee_tsrs = list(project.tsr.all().filter(evaluator=current_evaluator))
+        evaluatee_tsrs = list(project.tsr.all().filter(evaluator=current_evaluator).order_by('evaluatee'))
         if len(evaluatee_tsrs) == 0:
             return contribution_per_member
 

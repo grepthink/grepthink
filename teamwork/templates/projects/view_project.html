@@ -667,7 +667,7 @@
                                                 {% for member in members %}
                                                     <tr>
                                                         <td style="width:40%">
-                                                            <a href="{% url 'profile' member.username %}">
+                                                            <a style="color:" href="{% url 'profile' member.username %}">
                                                                 {{member.profile.name}}</a>
                                                         </td>
                                                         {% for analysis_ass in all_analysis %}
@@ -925,9 +925,102 @@
                         <div class="box-tools">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                             </button>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width:30%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>          
+                                                <tr>
+                                                    <th></th>
+                                                    <th text-align:center;">Student</th>
+                                                    <th text-align:center;">Average Contribution</th>
+                                                    <th text-align:center;">Status</th>
+                                                </tr>
+                                                {% for member in members %}
+                                                    <tr>
+                                                        <td id ="{{member.profile.name}}" style="width:5%"></td>
+                                                        <td style="width:40%">
+                                                            <a href="{% url 'profile' member.username %}">
+                                                                {{member.profile.name}}</a>
+                                                        </td>
+                                                        {% for analysis_ass in all_analysis %}
+                                                            {% for analysis_piece in analysis_ass.1 %}
+                                                                {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
+                                                                {% if member == analysis_piece.0.associated_member %}
+                                                                {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
+                                                                    <td style="width:35%">
+                                                                        {{analysis_piece.0.analysis_output}}
+                                                                    </td>
+                                                                    {% widthratio 100 members|length 1 as ideal_average_value %}
+                                                                    {% widthratio ideal_average_value 4 3 as modified_average_value %}
+                                                                    {% if analysis_piece.0.analysis_output >= ideal_average_value %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:green">Good</div>
+                                                                        </td>
+                                                                    {% elif analysis_piece.0.analysis_output >= modified_average_value %}     
+                                                                        <td style="width:25%">
+                                                                            <div style="color:#ff8040">Warning</div>
+                                                                        </td>
+                                                                    {% else %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:red">Bad</div>
+                                                                        </td>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </td>  
+                                    <td style="width:30%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <th id="team_status" text-align:center;">Team Status</th>
+                                                    <th id="NLP_output" text-align:center;">NLP Simple Output</th>
+                                                </tr>
+                                                <tr>
+                                                    {% if health_flag == 0 %}
+                                                    <td headers="team_status" bgcolor="Chartreuse" style="width:40%;height:100px">
+                                                        <div>No serious problems detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_flag == 1 %}
+                                                    <td headers="team_status" bgcolor="khaki" style="width:40%;height:100px">
+                                                        <div>Suspicious behavior detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_flag == 2 %}
+                                                    <td headers="team_status" bgcolor="red" style="width:40%;height:100px">
+                                                        <div>Problems detected. Intervention recommended.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                </tr>   
+                                            </tbody>
+                                        </table>
+                                    </td>   
+                                </tr>                                    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+<!--                 <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Team Health</h3>
+                        <div class="box-tools">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
                     </div>
                     </div>
-   <!--                  <div class="box-body no-padding">
+                    <div class="box-body no-padding">
                         <ul class="nav nav-pills nav-stacked">
                             <table class="table table-hover">
                                 <tbody>
@@ -976,8 +1069,8 @@
                                 </tbody>
                             </table>
                         </ul>
-                    </div> -->
-                </div>
+                    </div>
+                </div> -->
                 
                 
                 
@@ -995,7 +1088,7 @@
                 <table>
                     <tr>
                         <td>
-                            <h3>TSR Number</h3>
+                            <b>TSR Number</b>
                              <select onchange="makeBarChart()" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
                                 {% for tsr_number in tsr_numbers %}
                                 <option value="{{tsr_number}}">{{tsr_number}}</option>
@@ -1003,7 +1096,7 @@
                             </select>
                         </td>
                         <td>
-                            <h3>Member:</h3>
+                            <b>Member:</b>
                             <select onchange="make_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
                                 {% for member in members %}
                                 {% if member.profile.name != "" %}
@@ -1022,13 +1115,13 @@
                     </tr>
                     <tr>
                         <td>
-                            <div style="position: absolute; width: 140px, height: 140px;">
-                                <canvas id="local_student_contribution" style="border:1px solid #000000;" width="400" height="400"></canvas>
+                            <div style="position: absolute; width: 180px, height: 140px;">
+                                <canvas id="local_student_contribution" style="border-style: none solid #000000;" width="600" height="400"></canvas>
                             </div>
                         </td>
                         <td>
-                            <div style="position: absolute; width: 140px, height: 140px;">
-                                <canvas id="historical_student_contribution" style="border:1px solid #000000;" width="400" height="400"></canvas>
+                            <div style="position: absolute; width: 180px, height: 140px;">
+                                <canvas id="historical_student_contribution" style="border-style: none solid #000000;" width="600" height="400"></canvas>
                             </div>
                         </td>
                     </tr>

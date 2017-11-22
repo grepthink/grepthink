@@ -9,13 +9,21 @@ function getRandomColor() {
   return color;
 }
 
+var colors_array = [];
+var member_length = document.getElementById('Member').options.length;
+for(let i = 0; i < member_length; i++) {
+    colors_array.push(getRandomColor());
+}
+
 function makeBarChart() {
     let member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
     let tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
     let number_of_members = document.getElementById('Member').options.length
     var local_labels = [];
     for(let i = 0; i < number_of_members; i++) {
-        local_labels.push(document.getElementById('Member').options[i].text);
+        let current_member = document.getElementById('Member').options[i].text;
+        local_labels.push(current_member);
+        document.getElementById(current_member).style = "background-color:" + colors_array[i];
     }
     let barChartOptions = {
         //Boolean - Whether we should show a stroke on each segment
@@ -49,11 +57,6 @@ function makeBarChart() {
         animationEasing : "easeOutBounce",
     };
 
-    let data_sets = []
-    for(let i = 0; i < number_of_members; i++) {
-        
-    }
-
     let barChartData = {
         labels: local_labels,
         datasets: []
@@ -61,7 +64,7 @@ function makeBarChart() {
     for(let i = 0; i < number_of_members; i++) {
         barChartData.datasets.push(
         {
-            fillColor: getRandomColor(),
+            fillColor: colors_array[i],
             strokeColor: 'black',
             borderWidth: 1,
             data: member_contributions[i][tsr_number]
@@ -126,7 +129,7 @@ function make_historical_barchart() {
     let barChartData = {
             labels: historical_labels,
             datasets: [{
-                fillColor: getRandomColor(),
+                fillColor: colors_array[current_student_index],
                 strokeColor: 'black',
                 borderWidth: 1,
                 data: my_data_array
