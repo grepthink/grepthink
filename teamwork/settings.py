@@ -137,8 +137,8 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
- #Original Django Database Settings
- """
+#Original Django Database Settings
+"""
 else:
     DATABASES = {
         'default': {
@@ -146,7 +146,7 @@ else:
             'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
         }
     }
-    """
+"""
 """
 # Setup the database using dj based on the DATABASE_URL set in .env
 else:
