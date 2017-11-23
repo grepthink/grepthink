@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     # Disable Django's own staticfiles handling in favour of WhiteNoise, for
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
-    #'channels',
+    'channels',
 	# whitenoise nostatic might be rendered useles because of channels, look into that eventally
     'whitenoise.runserver_nostatic',
 	
@@ -70,7 +70,7 @@ INSTALLED_APPS = [
 ]
 
 # Sets emails for notifications of error when DEBUG=False
-ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
+#ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
