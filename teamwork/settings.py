@@ -176,7 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-redis_host = os.environ.get('REDIS_HOST', 'localhost')
+#redis_host = os.environ.get('REDIS_HOST', 'localhost')
 
 #Channel Layer definitions
 CHANNEL_LAYERS = {
@@ -184,11 +184,11 @@ CHANNEL_LAYERS = {
         # The current Backend is temporary and using a default one, but not suited for deploying.
 		# Setting up the redis requires running the redis server and having this set
 		# as the backend.
-		#"BACKEND": "asgi_redis.RedisLocalChannelLayer",
-		#"CONFIG": {
-        #   "hosts": [("redis-server-name", 6379)],
-        #},
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
+		"BACKEND": "asgi_redis.RedisChannelLayer",
+		"CONFIG": {
+           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+        #"BACKEND": "asgiref.inmemory.ChannelLayer",
 
        "ROUTING": "teamwork.routing.channel_routing",
     },
