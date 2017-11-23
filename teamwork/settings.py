@@ -139,7 +139,7 @@ if 'TRAVIS' in os.environ:
     }
 else:
     DATABASES = {
-        
+        #Will probably need to change the url to DATABASE_URL
         'default': dj_database_url.config(
             default=config('HEROKU_POSTGRESQL_MAROON_URL')
         )
