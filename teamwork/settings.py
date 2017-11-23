@@ -137,6 +137,13 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
+else:
+    DATABASES = {
+        
+        'default': dj_database_url.config(
+            default=config('HEROKU_POSTGRESQL_MAROON_URL')
+        )
+    }
 #Original Django Database Settings
 """
 else:
@@ -149,13 +156,7 @@ else:
 """
 
 # Setup the database using dj based on the DATABASE_URL set in .env
-else:
-    DATABASES = {
-        
-        'default': dj_database_url.config(
-            default=config('HEROKU_POSTGRESQL_MAROON_URL')
-        )
-    }
+
 
 
 
