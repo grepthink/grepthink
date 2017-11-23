@@ -137,6 +137,14 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
+ #Original Django Database Settings
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
+        }
+    }
 """
 # Setup the database using dj based on the DATABASE_URL set in .env
 else:
@@ -148,14 +156,7 @@ else:
     }
 
 
-""" #Original Django Database Settings
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
-    }
-}
-
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {
