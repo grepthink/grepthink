@@ -452,7 +452,7 @@ def create_project(request):
                                 name=project.title,
                                 hasProject=True)
             chatroom.save()
-            chatroom.add_user_to_chat(request.user)
+            chatroom.add_user(request.user)
             
             
             # Course the project is in
@@ -1280,7 +1280,7 @@ def add_member(request, slug, uname):
             for mem in pending_members:
                 if mem == mem_to_add:
                     if chatroom is not None:
-                        chatroom.add_user_to_chat(mem)
+                        chatroom.add_user(mem)
                     project.pending_members.remove(mem)
                     project.save()
 

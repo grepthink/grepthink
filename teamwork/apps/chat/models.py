@@ -103,6 +103,13 @@ class Chatroom(models.Model):
             self.user.add(new_user)
             self.save()
         return
+        
+    def add_user(self,user):
+        if User.objects.filter(username=user).exists():
+            new_user = User.objects.get(username=user)
+            self.user.add(new_user)
+            self.save()
+        return
 
     #Removes the selected user from the chat
     def remove_user(self,user):
