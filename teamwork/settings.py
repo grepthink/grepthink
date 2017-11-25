@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
 # Sets emails for notifications of error when DEBUG=False
 #ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
+ADMINS = config('ADMINS', default=[('Trevor Ching', 'ttching@ucsc.edu')])
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
@@ -188,6 +189,7 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
+        #This is the redis backend for localhost testing
         #"BACKEND": "asgiref.inmemory.ChannelLayer",
 
        "ROUTING": "teamwork.routing.channel_routing",
