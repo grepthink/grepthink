@@ -22,9 +22,11 @@ class Chatroom(models.Model):
     hasProject = models.BooleanField(
         default = False)
 
+    isDirectMessage = models.BooleanField(
+        default = False)
+
     class Meta:
         ordering = ('name',)
-
 
     @property
     def websocket_group(self):
@@ -190,8 +192,9 @@ class Chattext(models.Model):
     def __str__(self):
         return '(0) - (1) - (2)'.format(self.author.username, self.content)
 
+#because of Django limitation, you must change isdirectmessage to true on creation
 class DirectMessage(Chatroom):
-
+    
     @property
     def websocket_group(self):
         return Group("DM-" +str(self.id))

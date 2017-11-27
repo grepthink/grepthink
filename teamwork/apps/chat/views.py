@@ -44,9 +44,8 @@ def _chats(request, rooms):
 @login_required
 def view_chats(request):
     #rooms = Chatroom.objects.order_by("name")
-    my_rooms = request.user.rooms.all()
+    my_rooms = request.user.rooms.filter(isDirectMessage = False)
     return _chats(request, my_rooms)
-
 
 
 
@@ -179,6 +178,20 @@ def find_user_profile(request, username, slug):
     return redirect(view_one_chat, slug)
 
 
+@login_required
+def view_or_create_DM(request, username):
+    page_user = get_object_or_404(User, username=username)
+    #check database first
+    if(request.user.rooms.filter(user__id=page_user.id,isDirectMessage = True).count()==0 and page_user.username!=request.user.username):
+        room = DirectMessage()
+        room.isDirectMessage = True
+        room.name = "DM-"+request.user.username+page_user.username
+        room.save()
+        room.user.add(page_user)
+        room.user.add(request.user)
+    #rooms = Chatroom.objects.order_by("name")
+    my_rooms = request.user.rooms.filter(isDirectMessage = True)
+    return _DM(request, my_rooms)
 
 def _DM(request, rooms):
     page = request.GET.get('page')
@@ -191,21 +204,23 @@ def _DM(request, rooms):
 
 @login_required
 def view_DM(request):
-    my_dmrooms = request.user.rooms.all()
-    return _DM(request, my_dmrooms)
+    my_rooms = request.user.rooms.filter(isDirectMessage = True)
+    return _DM(request, my_rooms)
 
 @login_required
 def view_one_DM(request, slug):
+    print('here')
     room = get_object_or_404(Chatroom, id=slug)
+    print(room.name)
     user_rooms = request.user.rooms.all()
     if(room in user_rooms):
         title = "GT DM"
-        page_name = "DM"
+        page_name = room.name
         page_description = "DM messages"
         name = room.name
         user = request.user
 
-        return render(request, 'chat/one_DM.html',{
+        return render(request, 'chat/one_chat.html',{
             'title': title, 'page_name': page_name,
             'page_description' : page_description, 'room': room, 'name': name,
             'user': user})
