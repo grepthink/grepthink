@@ -166,7 +166,7 @@ def leave_chat(request, slug):
         'page_description': page_description, 'title': title, 'room': room})
 
 #Finds if the username exists and returns the page for the user profile
-#Assumes that the username is without the @ sign, fk u trevor - trevor
+#Assumes that the username is without the @ sign
 def find_user_profile(request, username, slug):
     #For some reason receives input as {% url 'find_user_profile' @name %}
     #Splits the string and the 4th index is the username
