@@ -1,4 +1,5 @@
 import json
+from django.contrib import auth
 from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
@@ -9,6 +10,14 @@ from teamwork.apps.profiles.models import Alert
 #USE THE LINK ABOVE FOR TIME FORMATS
 # Chatroom model which holds the chat room ID and the name
 class Chatroom(models.Model):
+    """
+    Chatroom: Datbase model for chatrooms
+    
+    Fields:
+        name: the name of the chatroom.
+        user: the users in the chatroom.
+        hasProject: if a chatroom is connected to a project
+    """
     #Name of the room
     name = models.CharField(
         max_length = 255,
@@ -47,7 +56,7 @@ class Chatroom(models.Model):
                     if User.objects.filter(username=user).exists():
                         send_chat_alert(user,User.objects.get(username=pointed_user),self)
                         
-                      
+                
 
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
@@ -162,9 +171,23 @@ def send_chat_simple(user, user2):
             url=reverse('view_chats'),
             read=False,
             )
-
+#Gets all the chatrooms a user is in
+def get_user_chatrooms(self):
+    return Chatroom.objects.filter(user=self)
+    
+auth.models.User.add_to_class('get_user_chatrooms', get_user_chatrooms)
+            
+            
 class Chattext(models.Model):
-
+    """
+    Chattext: Holds the text messages sent in a chatroom.
+    
+    FIelds:
+        room: The chatroom the message belongs in.
+        author: The user who sent the message.
+        date: The time the message was sent.
+        content: The message content the user sends.
+    """
     room = models.ForeignKey(
         Chatroom,
         related_name='chat',
