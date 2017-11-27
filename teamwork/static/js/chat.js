@@ -91,11 +91,17 @@ $(function () {
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                      "<form>" +
+                                      "<form>" 
+				   
+    				  
                                       "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
                                       //"<span class=\"input-group-btn\">" +
+				      
+				      
                                         "<button type=\"button\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
                                       //"</span>" +
+				      
+				  
                                       "</form>"+
                                   "</div>" +
                                 "</div>" +
