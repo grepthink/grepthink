@@ -209,9 +209,7 @@ def view_DM(request):
 
 @login_required
 def view_one_DM(request, slug):
-    print('here')
     room = get_object_or_404(Chatroom, id=slug)
-    print(room.name)
     user_rooms = request.user.rooms.all()
     if(room in user_rooms):
         title = "GT DM"

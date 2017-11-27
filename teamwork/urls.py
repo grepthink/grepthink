@@ -155,7 +155,7 @@ urlpatterns = [
 	# DM
 	url(r'^DM/$', chat_views.view_DM, name='view_DM'),
 	url(r'^DM/(?P<username>[^/]+)/$', chat_views.view_or_create_DM, name='view_or_create_DM'),
-	url(r'^DM/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
+	url(r'^DM/one/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
 
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
