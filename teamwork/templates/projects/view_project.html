@@ -1089,7 +1089,7 @@
                     <tr>
                         <td>
                             <b>TSR Number</b>
-                             <select onchange="makeBarChart()" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
+                             <select onchange="update_local_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
                                 {% for tsr_number in tsr_numbers %}
                                 <option value="{{tsr_number}}">{{tsr_number}}</option>
                                 {% endfor %}
@@ -1097,7 +1097,7 @@
                         </td>
                         <td>
                             <b>Member:</b>
-                            <select onchange="make_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
+                            <select onchange="update_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
                                 {% for member in members %}
                                 {% if member.profile.name != "" %}
                                     <option value="{{member.profile.name}}">{{member.profile.name}}</option>
@@ -1115,20 +1115,18 @@
                     </tr>
                     <tr>
                         <td>
-                            <div style="position: absolute; width: 180px, height: 140px;">
-                                <canvas id="local_student_contribution" style="border-style: none solid #000000;" width="600" height="400"></canvas>
+                            <div style="width: 75%;">
+                                <canvas id="local_student_contribution" style="border-style: none solid #000000;"></canvas>
                             </div>
                         </td>
                         <td>
-                            <div style="position: absolute; width: 180px, height: 140px;">
-                                <canvas id="historical_student_contribution" style="border-style: none solid #000000;" width="600" height="400"></canvas>
+                            <div style="width: 75%;">
+                                <canvas id="historical_student_contribution" style="border-style: none solid #000000;"></canvas>
                             </div>
                         </td>
                     </tr>
                 </table>
 				<br><br>
-                <svg width="1000" height="375">
-                </svg>
                 
                 <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
                 <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
