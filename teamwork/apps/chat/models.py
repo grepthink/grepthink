@@ -103,13 +103,6 @@ class Chatroom(models.Model):
             self.user.add(new_user)
             self.save()
         return
-        
-    def add_user(self,user):
-        if User.objects.filter(username=user).exists():
-            new_user = User.objects.get(username=user)
-            self.user.add(new_user)
-            self.save()
-        return
 
     #Removes the selected user from the chat
     def remove_user(self,user):
@@ -196,3 +189,20 @@ class Chattext(models.Model):
 
     def __str__(self):
         return '(0) - (1) - (2)'.format(self.author.username, self.content)
+
+class DirectMessage(Chatroom):
+
+    @property
+    def websocket_group(self):
+        return Group("DM-" +str(self.id))
+
+    #does nothing, and should do nothing
+    def add_user_to_chat(self,sender,username_token):
+        return
+    
+    #removing a user is deleting everything
+    def remove_user(self,user):
+        self.delete()
+        return
+
+    
