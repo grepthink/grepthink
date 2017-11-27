@@ -23,7 +23,7 @@
         <p class="text-muted text-center">{{page_user.email}}</p>
         <p class="text-muted text-center">{{page_user.username}}</p>
 	
-	<a href="{% url 'view_DM' %}"> private chat </a>
+	<a href="{% url 'view_or_create_DM' page_user.username%}"> private chat </a>
 
 		
 
