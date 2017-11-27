@@ -102,6 +102,13 @@ def view_one_project(request, slug):
     # Get the project owner for color coding stuff
     project_owner = project.creator.profile
     members = project.members.all().order_by('username')
+    member_names = []
+    for member in members:
+        name_length = len(member.profile.name.strip())
+        if name_length == 0:
+            member_names.append(member.profile.user)
+        else:
+            member_names.append(member.profile.name)
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -300,7 +307,8 @@ def view_one_project(request, slug):
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
-        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members)})
+        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members),
+        'member_names':member_names})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)

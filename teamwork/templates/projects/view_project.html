@@ -1098,13 +1098,8 @@
                         <td>
                             <b>Member:</b>
                             <select onchange="update_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
-                                {% for member in members %}
-                                {% if member.profile.name != "" %}
-                                    <option value="{{member.profile.name}}">{{member.profile.name}}</option>
-                                {% endif %}
-                                {% if member.profile.name == "" %}
-                                    <option value="{{member.profile.user}}">{{member.profile.user}}</option>
-                                {% endif %}
+                                {% for member in member_names %}
+                                    <option id="{{member}}">{{member}}</option>
                                 {% endfor %}
                             </select>
                         </td>
