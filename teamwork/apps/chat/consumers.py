@@ -57,6 +57,7 @@ def chat_init(message):
 
 #funtion to make a chat name,
 # need to discuss what to JSON
+#make is html, not used here
 def chat_make(message):
     room = Chatroon(name=message["name"])
     room.save()
@@ -124,7 +125,8 @@ def chat_leave(message):
 @channel_session_user
 @catch_client_error
 def chat_send(message):
-    if int(message['room']) not in message.channel_session['rooms']:
-        raise ClientError("ROOM_ACCESS_DENIED")
+    #temp disabling
+    #if int(message['room']) not in message.channel_session['rooms']:
+    #    raise ClientError("ROOM_ACCESS_DENIED")
     room = get_room_or_error(message["room"], message.user)
     room.send_message(message["message"], message.user)

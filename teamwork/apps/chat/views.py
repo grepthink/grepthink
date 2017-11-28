@@ -36,10 +36,12 @@ def _chats(request, rooms):
     page_name = "My Chats"
     page_description = "Chat List"
     title = "My Chats"
+    current_user = str(request.user)
 
     return render(request, 'chat/chat.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'rooms': rooms})
+        'rooms': rooms,
+        'current_user': current_user})
 
 @login_required
 def view_chats(request):
