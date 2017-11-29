@@ -18,6 +18,27 @@ $(function () {
                 }
                 return finished_message;
             }
+			
+            function parseImgLinks(msg){
+                var split_message = msg.split(" ");
+                var finished_message = "";
+                for(var i = 0; i < split_message.length; i++){
+                    if(split_message[i].endsWith(".png")||
+					split_message[i].endsWith(".gif")||
+					split_message[i].endsWith(".jpg")||
+					split_message[i].endsWith(".bmp")){
+                        finished_message = finished_message.concat(
+                            "<img src=\"" +
+                            split_message[i] +
+                            "\">" +
+                            " </img>");
+                    }
+                    else{
+                        finished_message = finished_message.concat(split_message[i]+" ");
+                    }
+                }
+                return finished_message;
+            }
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
@@ -144,7 +165,7 @@ $(function () {
                     // Handle getting a message
                 } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
-                    user_message = parseAtSign(data.message);
+                    user_message = parseImgLinks(parseAtSign(data.message));
                     one_msg = document.getElementById("msg_box"+data.chatroom);
                     if(current_user === data.message.username){
                         //one_msg = document.getElementById("one_msg_right");
@@ -176,7 +197,7 @@ $(function () {
                 }else if (data.oldmessages) {
                     for (var i = 0; i < data.oldmessages.length; i++){
                         var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
-                        user_message = parseAtSign(data.oldmessages[i].message);
+                        user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
                         one_msg = document.getElementById("msg_box"+data.oldmessages[i].chatroom);
                         if(current_user == data.oldmessages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
@@ -211,7 +232,7 @@ $(function () {
                 }else if (data.messages) {
                     for (var i = 0; i < data.messages.length; i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
-                        user_message = parseAtSign(data.messages[i].message);
+                        user_message =parseImgLinks(parseAtSign(data.messages[i].message));
                         one_msg = document.getElementById("msg_box"+data.messages[i].chatroom);
                         if(current_user == data.messages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
