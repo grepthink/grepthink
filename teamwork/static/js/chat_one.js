@@ -178,10 +178,12 @@ $(function () {
                     msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.oldmessages) {
+                    var one_msg = document.getElementById("msg_box"+data.oldmessages[0].chatroom);
+                    var initial_msgs = one_msg.innerHTML;
+                    one_msg.innerHTML = "";
                     for (var i = 0; i < data.oldmessages.length; i++){
                         //var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
-                        user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
-                        one_msg = document.getElementById("msg_box"+data.oldmessages[i].chatroom);
+                        var user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
                         one_msg.innerHTML += "<!-- chat item -->"+
                                             "<div class=\"item\">"+
                                             "<p class=\"message\">"+
@@ -194,9 +196,9 @@ $(function () {
                                             user_message +
                                             "</p><br />"+
                                             "</div>"+
-                                            "<!-- /.item -->"+
-                                            one_msg.innerHTML;
+                                            "<!-- /.item -->";
                     }
+                    one_msg.innerHTML += initial_msgs;
 
                         /*if(current_user == data.oldmessages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
