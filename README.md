@@ -44,9 +44,10 @@ for existing chats matching the project title name, which may cause other errors
 11-16-17 8:00pm - Sean: Added button and verification to leave a chatroom. Create chat now has you list the users you want to add instead of seeing every user on the website. Any users that do not exist cannot be added to the chatroom.<br />
 11-17-17 12:00pm - Sean: Added button and form to invite users to an already created room. Invite currently adds them without their approval.<br />
 11-19-17 10:40pm - Sean: AutoScrolls down to the last message sent in chat.js. Create chat won't create a room with no users (for example if you try to create with a bunch of non-valid usernames). Text bubbles correspond to the current user and other users (green & grep respectively).<br />
-11-25-17 12:03pm - Trevor: Got the website and chat working on a test server for Heroku. Created a different settings.py file that has all the settings for the Heroku server. 
+11-25-17 12:03pm - Trevor: Got the website and chat working on a test server for Heroku. Created a different settings.py file that has all the settings for the Heroku server.
 Changed the Database URL; Changed the Redis URL; added an asgi file for running the websocket workers; PROCFILE has the settings for launching the server on Heroku; I left the original
 settings.py so that we can still test stuff on localhost; Fixed some errors with adding members into chat; On the production server a Redis app needs to be installed with the web app;
 Might need to change the asgi file because its a basic one, I don't fully understand how it works yet; Same for the PROCFILE with the workers it runs.<br />
 11-28-17 - Hugh: chat fixed, enter and send works, all chats loaded, is possible to not receive so I might do a check loop or send a check message DM also almost done<br />
 11-28-17 - Hugh: message loading is done, direct messages are done, I'm done<br />
+11-28-17 - Sean: Can invite from Chat Tabs, reset the input form so that the text doesn't linger after you send it. Chat bubble changes. Profile Icons are not accurate.<br />
