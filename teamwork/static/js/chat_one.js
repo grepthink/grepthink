@@ -181,7 +181,7 @@ $(function () {
                     var one_msg = document.getElementById("msg_box"+data.oldmessages[0].chatroom);
                     var initial_msgs = one_msg.innerHTML;
                     one_msg.innerHTML = "";
-                    for (var i = 0; i < data.oldmessages.length; i++){
+                    for (var i = data.oldmessages.length-1; i >= 0; i--){
                         //var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
                         var user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
                         one_msg.innerHTML += "<!-- chat item -->"+
