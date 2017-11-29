@@ -57,6 +57,7 @@ def chat_init(message):
 
 #funtion to make a chat name,
 # need to discuss what to JSON
+#make is html, not used here
 def chat_make(message):
     room = Chatroon(name=message["name"])
     room.save()
@@ -92,22 +93,60 @@ def chat_join(message):
     })
 
     chat_messages = room.get_chat_init()
-    number_of_messages = len(chat_messages)
-    starting_point = 0
-    if number_of_messages <= 9 :
-        starting_point = number_of_messages - 1
-    else:
-        starting_point = 9
     messages = []
-    for index in range(starting_point,0,-1):
+    for index in range(len(chat_messages)-1,-1,-1):
         text = {
             'chatroom':str(chat_messages[index].room.id),
             'message':chat_messages[index].content,
             'username':chat_messages[index].author.username,
             'date':chat_messages[index].date.strftime("%I:%M %p")
             }
-        messages.append( text)
+        messages.append(text)
     send_texts_to_one(message.user, messages)
+
+@channel_session_user
+@catch_client_error
+def chat_send_old(message):
+    room = get_room_or_error(message["room"],message.user)
+    chat_messages = room.get_chat_next(message["number"])
+    messages = []
+    for index in range(0,len(chat_messages)):
+        text = {
+            'chatroom':str(chat_messages[index].room.id),
+            'message':chat_messages[index].content,
+            'username':chat_messages[index].author.username,
+            'date':chat_messages[index].date.strftime("%I:%M %p")
+            }
+        messages.append(text)
+    send_oldtexts_to_one(message.user, messages)
+#same as join, but more reliable for multiple rooms
+@channel_session_user
+@catch_client_error
+def chat_join_multiple(message):
+    roomArray = []
+    messagesArray = []
+    for roomNumber in message["rooms"]:
+        room = get_room_or_error(roomNumber,message.user)
+        room.websocket_group.add(message.reply_channel)
+        message.channel_session['rooms'] = list(
+            set(message.channel_session['chatrooms'])
+            .union([room.id]))
+        text = {
+            'join':str(room.id),
+            'title': room.name
+            }
+        roomArray.append(text)
+        chat_messages = room.get_chat_init()
+        for index in range(len(chat_messages)-1,-1,-1):
+            text = {
+                'chatroom':str(chat_messages[index].room.id),
+                'message':chat_messages[index].content,
+                'username':chat_messages[index].author.username,
+                'date':chat_messages[index].date.strftime("%I:%M %p")
+            }
+            messagesArray.append(text)
+    send_rooms_to_one(message.user,roomArray,messagesArray)
+
 
 
 @channel_session_user
@@ -130,7 +169,8 @@ def chat_leave(message):
 @channel_session_user
 @catch_client_error
 def chat_send(message):
-    if int(message['room']) not in message.channel_session['rooms']:
-        raise ClientError("ROOM_ACCESS_DENIED")
+    #temp disabling
+    #if int(message['room']) not in message.channel_session['rooms']:
+    #    raise ClientError("ROOM_ACCESS_DENIED")
     room = get_room_or_error(message["room"], message.user)
     room.send_message(message["message"], message.user)

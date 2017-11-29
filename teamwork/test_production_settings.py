@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     'channels',
-	# whitenoise nostatic might be rendered useles because of channels, look into that eventally
+	# Works on the heroku, but don't actually know if its 'working'
     'whitenoise.runserver_nostatic',
 	
     'django.contrib.staticfiles',
@@ -70,8 +70,7 @@ INSTALLED_APPS = [
 ]
 
 # Sets emails for notifications of error when DEBUG=False
-#ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
-ADMINS = config('ADMINS', default=[('Trevor Ching', 'ttching@ucsc.edu')])
+ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
@@ -155,11 +154,6 @@ else:
         }
     }
 """
-
-# Setup the database using dj based on the DATABASE_URL set in .env
-
-
-
 
 
 AUTH_PASSWORD_VALIDATORS = [

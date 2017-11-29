@@ -36,10 +36,12 @@ def _chats(request, rooms):
     page_name = "My Chats"
     page_description = "Chat List"
     title = "My Chats"
+    current_user = str(request.user)
 
     return render(request, 'chat/chat.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'rooms': rooms})
+        'rooms': rooms,
+        'current_user': current_user})
 
 @login_required
 def view_chats(request):
@@ -165,7 +167,7 @@ def leave_chat(request, slug):
         'page_description': page_description, 'title': title, 'room': room})
 
 #Finds if the username exists and returns the page for the user profile
-#Assumes that the username is without the @ sign, fk u trevor - trevor
+#Assumes that the username is without the @ sign
 def find_user_profile(request, username, slug):
     #For some reason receives input as {% url 'find_user_profile' @name %}
     #Splits the string and the 4th index is the username
@@ -201,6 +203,13 @@ def _DM(request, rooms):
     return render(request, 'chat/DM.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
         'rooms': rooms})
+
+@login_required
+def delete_DM(request, slug):
+    room = get_object_or_404(DirectMessage, id=slug)
+    if(request.user.rooms.filter(id=slug).count()>0):
+        room.remove_user(request.user)
+    return view_DM(request)
 
 @login_required
 def view_DM(request):

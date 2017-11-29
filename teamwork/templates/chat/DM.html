@@ -8,205 +8,49 @@
 {% block crumb %}
 
 {# Breadcrumb for All Chats #}
-<li><a href="{% url 'view_DM' %}"> All DM </a></li>
+
+<li><a href="{% url 'view_chats' %}"> All Chat </a></li>
 
 {% endblock crumb %}
 
 {% block content %}
-
-
-   
-
-<body>
-
-
-
-    <div class="nav-tabs-custom">
-        <ul class="nav nav-tabs">
-
+    <script>
+        // This variable is passed into chat.js so that it knows who requested the page
+        var current_user = "{{ current_user }}";
+        // This variable is passed into chat.js so that it knows the rooms
+        var array_of_rooms = []
+		var leaveURLBase = "{% url 'delete_DM' slug=9234523426 %}"
+    </script>
+<!-- Custom Tabs -->
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_0" data-toggle="tab">Welcome</a></li>
                 {% for room in rooms %}
-                <li>
-                <a href="{% url 'view_one_DM' slug=room.id %}" class="alert-link">
-                {{ room }}
-                <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="true"> </a> </li>
-                </li>
-                <!--<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>-->
-                {% empty %}
-                <p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
-
+                    <li class=""><a href="#tab_{{ room.id }}" data-toggle="tab">{{ room }}</a></li>
+					<script>array_of_rooms.push({{ room.id }});</script>
                 {% endfor %}
-                 </ul>
-            <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">
-
-            <a href="{% url 'create_chat' %}">
-            <button class="btn btn-success" type="button">
-              Create Chatroom
-            </button>
-            </a>
-            </a></li>
-
             </ul>
-
-
-
-
-        <div class="tab-content">
-
-            <!-- /.tab-pane chat -->
-            <div class="tab-pane" id="tab_1">
-                  <!-- DIRECT CHAT SUCCESS -->
-
-
-
-
-                {% for room in rooms %}
-                <li>
-                <a href="{% url 'view_one_DM' slug=room.name %}" class="alert-link">
-                {{ room }}
-                <li class=""><a href="#tab_1" data-toggle="tab" aria-expanded="true"> </a> </li>
-                </li>
-                <!--<li class="room-link" data-room-id="{{ room.id }}">{{ room }}</li>-->
-                {% empty %}
-                <p class="empty">No chat rooms defined. Maybe make some in the <a href="{% url 'admin:index' %}">admin</a>?</p>
-                
-                {% endfor %}
-
-                  
-                  <div class="box box-success direct-chat direct-chat-success" >
-                    <div class="box-header with-border">
-                     
-
-
-
-                      <div class="box-tools pull-right">
-                        <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="3 New Messages">3</span>
-
-                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-widget="chat-pane-toggle" data-original-title="Members">
-                          <i class="fa fa-comments"></i></button>
-
-                      </div>
-                    </div>
-                    <!-- /.box-header -->
-
-                    <div class="box-body">
-                      <!-- Conversations are loaded here -->
-                      <div class="direct-chat-messages" style="height: 400px">
-                        {% for msg in project_chat %}
-                            {% if msg.author == request.user %}
-                                <!-- Message  author pull to the right -->
-                                <div class="direct-chat-msg right">
-                                  <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-right">{{msg.author.username}}</span>
-                                    <span class="direct-chat-timestamp pull-left">{{msg.date}}</span>
-                                  </div>
-                                  <!-- /.direct-chat-info -->
-                                  {% if msg.author.profile.avatar %}
-                                    <img class="direct-chat-img pull-right" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
-                                  {% else %}
-                                    <img class="direct-chat-img pull-right" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
-                                  {% endif %}
-                                  <div class="direct-chat-text" style="word-wrap: break-word;">
-                                    {{msg.content}}
-                                  </div>
-                                  <!-- /.direct-chat-text -->
-                                </div>
-                                <!-- /.direct-chat-msg -->
-                            {% else %}
-                                <!-- Message non-author Default to the left -->
-                                <div class="direct-chat-msg">
-                                  <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-left">{{msg.author.username}}</span>
-                                    <span class="direct-chat-timestamp pull-right">{{msg.date}}</span>
-                                  </div>
-                                  <!-- /S.direct-chat-info -->
-
-                                  {% if msg.author.profile.avatar %}
-                                    <img class="direct-chat-img" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
-                                  {% else %}
-                                    <img class="direct-chat-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
-                                  {% endif %}
-                                  <div class="direct-chat-text" style="word-wrap: break-word;">
-                                    {{msg.content}}
-                                  </div>
-                                  <!-- /.direct-chat-text -->
-                                </div>
-                                <!-- /.direct-chat-msg -->
-                            {% endif%}
-
-                        {% empty %}
-                            <div align="center"><font color="grey" size="3">No messages</font></div>
-                        {% endfor %}
-
-                      </div>
-                      <!--/.direct-chat-messages-->
-
-                      <!-- Load Members -->
-                      <div class="direct-chat-contacts">
-                        <ul class="contacts-list">
-                            {% for mem in members %}
-                                <li>
-                                    <a href="{% url 'profile' mem.username %}">
-                                      {% if mem.profile.avatar %}
-                                        <img class="contacts-list-img" src="{{ mem.profile.avatar.url }}" alt="User Image">
-                                      {% else %}
-                                        <img class="contacts-list-img" src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm" alt="User Image">
-                                      {% endif %}
-
-                                      <div class="contacts-list-info">
-                                            <span class="contacts-list-name">
-                                              {{mem.username}}
-                                            </span>
-                                      </div>
-                                    </a>
-                                </li>
-                            {% empty %}
-                                <li>
-                                    <a href="#">
-                                      There are no current members on the team
-                                    </a>
-                                </li>
-                            {% endfor %}
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                      <!-- /.Members List -->
-                    </div>
-                    <!-- /.box-body -->
-
-                    <!-- box footer -->
-                    <div class="box-footer">
-                      <form action="#tab_7" method="POST">
-                      {% csrf_token %}
-                        <div class="input-group">
-                          <input type="text" name="content" placeholder="Type Message ..." class="form-control">
-                              <span class="input-group-btn">
-                                <button type="submit" class="btn btn-success btn-flat">Send</button>
-                              </span>
-                        </div>
-                      </form>
-                    </div>
-                    <!-- /.box-footer-->
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_0">
+                    Select DM from the above tabs, create them by going to a profile
                 </div>
+                {% for room in rooms %}
+                    <div class="tab-pane" id="tab_{{ room.id }}">
+                    </div>
+                {% endfor %}
             </div>
-     
+            <!-- /.tab-content -->
+          </div>
+          <!-- nav-tabs-custom -->
+	
 
-
-
-
-
-
-
-
-
-
-    </div>
-      
-</body>
-
-    <div id="DM">
-    </div>
-
-
+    <script src="{% static "js/jquery-2.2.3.min.js" %}" type="text/javascript"></script>
+    <script src="{% static "channels/js/websocketbridge.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/chat_one.js" %}" type="text/javascript"></script>
 
 {% endblock content%}
+
+
+
+
+

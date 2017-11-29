@@ -1,4 +1,5 @@
 import json
+from django.contrib import auth
 from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
@@ -9,6 +10,14 @@ from teamwork.apps.profiles.models import Alert
 #USE THE LINK ABOVE FOR TIME FORMATS
 # Chatroom model which holds the chat room ID and the name
 class Chatroom(models.Model):
+    """
+    Chatroom: Datbase model for chatrooms
+    
+    Fields:
+        name: the name of the chatroom.
+        user: the users in the chatroom.
+        hasProject: if a chatroom is connected to a project
+    """
     #Name of the room
     name = models.CharField(
         max_length = 255,
@@ -47,7 +56,7 @@ class Chatroom(models.Model):
                     if User.objects.filter(username=user).exists():
                         send_chat_alert(user,User.objects.get(username=pointed_user),self)
                         
-                      
+                
 
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
@@ -68,11 +77,11 @@ class Chatroom(models.Model):
     #When a chat is initially loaded, gets the last 10 messages saved, in theory.
     #Called from consumers
     def get_chat_init(self):
-        return self.chat.all()[:11]
+        return self.chat.all()[:10]
 
     #maybe should catch error here, but oh well
     def get_chat_next(self,number):
-        return self.chat.all()[number:number+11]
+        return self.chat.all()[number:number+10]
 
     #Find a chatroom by name only, returns a chatroom or None
     def get_chatroom_by_name(self, room_name):
@@ -136,6 +145,21 @@ def send_texts_to_one(user,messages):
         {
             "text":json.dumps({'messages':messages})}
         )
+#should remove repetition
+def send_oldtexts_to_one(user,messages):
+    Group("User-"+str(user.id)).send(
+        {
+            "text":json.dumps({'oldmessages':messages})}
+        )
+    
+def send_rooms_to_one(user,rooms,messages):
+    Group("User-"+str(user.id)).send(
+        {
+            "text":json.dumps({'rooms':rooms,
+                               'messages':messages})}
+        )
+
+#alert functions
 def send_chat_invite(send_user,recieve_user,chatroom):
     Alert.objects.create(
             sender=send_user,
@@ -162,9 +186,23 @@ def send_chat_simple(user, user2):
             url=reverse('view_chats'),
             read=False,
             )
-
+#Gets all the chatrooms a user is in
+def get_user_chatrooms(self):
+    return Chatroom.objects.filter(user=self)
+    
+auth.models.User.add_to_class('get_user_chatrooms', get_user_chatrooms)
+            
+            
 class Chattext(models.Model):
-
+    """
+    Chattext: Holds the text messages sent in a chatroom.
+    
+    FIelds:
+        room: The chatroom the message belongs in.
+        author: The user who sent the message.
+        date: The time the message was sent.
+        content: The message content the user sends.
+    """
     room = models.ForeignKey(
         Chatroom,
         related_name='chat',

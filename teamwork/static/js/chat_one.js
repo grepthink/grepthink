@@ -1,18 +1,8 @@
 $(function () {
-	///image displaying
-	    function imgparse(msg){
-		var output = "";
-		if(msg.endsWith(".jpg")== true || msg.endsWith(".jpeg")==true){
-			output = output.concat("<img src=msg>);
-		}
-		else return msg;
-		return output;
-	    }		
             //Parses messages for the @ sign and makes them a link
             function parseAtSign(msg){
                 var split_message = msg.split(" ");
                 var finished_message = "";
-		
                 for(var i = 0; i < split_message.length; i++){
                     if(split_message[i].charAt(0) === "@"){
                         finished_message = finished_message.concat(
@@ -21,6 +11,27 @@ $(function () {
                             " %}\">" +
                             split_message[i] +
                             " </a>");
+                    }
+                    else{
+                        finished_message = finished_message.concat(split_message[i]+" ");
+                    }
+                }
+                return finished_message;
+            }
+			
+            function parseImgLinks(msg){
+                var split_message = msg.split(" ");
+                var finished_message = "";
+                for(var i = 0; i < split_message.length; i++){
+                    if(split_message[i].endsWith(".png")||
+					split_message[i].endsWith(".gif")||
+					split_message[i].endsWith(".jpg")||
+					split_message[i].endsWith(".bmp")){
+                        finished_message = finished_message.concat(
+                            "<img src=\"" +
+                            split_message[i] +
+                            "\">" +
+                            " </img>");
                     }
                     else{
                         finished_message = finished_message.concat(split_message[i]+" ");
@@ -46,20 +57,22 @@ $(function () {
                     alert(data.error);
                     return;
                 }
-                // When you join this creates the room
-                if (data.join) {
-                    console.log("Joining room " + data.join);
-                    var roomdiv = $(
+				if (data.rooms){
+					console.log("Joining rooms");
+					for(var roomNum = 0;roomNum<data.rooms.length;roomNum++){
+						var leaveUrl = leaveURLBase.replace(/9234523426/, data.rooms[roomNum].join.toString());
+						var roomdiv = $(
                             "<div class=\"box box-success direct-chat direct-chat-success\">" +
                               "<div class=\"box-header with-border\">" +
-                                "<h3 class=\"box-title\">"+data.title+"</h3>" +
+                                "<h3 class=\"box-title\">"+data.rooms[roomNum].title+"</h3>" +
                                 "<div class=\"box-tools pull-right\">" +
                                   "<button class=\"btn btn-box-tool\" data-widget=\"collapse\"><i class=\"fa fa-minus\"></i></button>" +
                                 "</div>" +
                               "</div>" +
                               "<div class=\"box-body\">" +
+								"<button id=\"load_more_messages\" class=\"btn btn-success btn-flat\" data-MSGnumber=10 data-room-number="+data.rooms[roomNum].join+">Load more messages</button>"+
                                 "<!-- Conversations are loaded here -->" +
-                                "<div id= \"msg_box\" class=\"direct-chat-messages\">" +
+                                "<div id= \"msg_box"+data.rooms[roomNum].join+"\" class=\"direct-chat-messages\">" +
 
                                 /*
                                   "<!-- Message. Default to the left -->" +
@@ -101,49 +114,59 @@ $(function () {
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                      "<form>" 
-				   
-    				  
-                                      "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
+                                      "<form>" +
+                                      "<input type=\"text\" name=\"message\" data-room-number="+data.rooms[roomNum].join+" placeholder=\"Type Message ...\" class=\"form-control\">" +
                                       //"<span class=\"input-group-btn\">" +
-				      
-				      
-                                        "<button type=\"button\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
+                                        "<button type=\"submit\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
                                       //"</span>" +
-				      
-				  
                                       "</form>"+
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
+								"<a href=\""+leaveUrl+"\">"+
+								"<button class=\"btn btn-danger\" type=\"button\">"+
+								"Leave Chatroom"+
+								"</button>"+
+								"</a>"+
                               "</div>" +
-                              "<!--/.direct-chat -->" +
+                              "<!--/.direct-chat -->"
 
-                            "<div class='room' id='room-" + data.join + "'>" +
-                              "<div class='messages'></div>" +
+                            //"<div class='room' id='room-" + data.rooms[roomNum].join + "'>" +
+                              //"<div class='messages'></div>" +
                               //"<form>Your message<input><button>Send</button></form>" +
-                            "</div>"
-                    );
-                    // Hook up send button to send a message
-                    roomdiv.find("form").on("submit", function () {
-                        webSocketBridge.send({
-                            "command": "send",
-                            "room": data.join,
-                            "message": roomdiv.find("input").val()
-                        });
-                        roomdiv.find("input").val("");
-                        return false;
-                    });
-                    $("#chats").append(roomdiv);
+                            //"</div>"
+						);
+						$("#tab_"+data.rooms[roomNum].join).append(roomdiv);
+					}
+					//hook up all thesend buttons
+					$("form").submit( function(e) {
+						e.preventDefault();
+						webSocketBridge.send({
+							"command": "send",
+							"room": $(this).find("input").data().roomNumber,
+							"message": $(this).find("input").val()
+						});
+					});
+					$('button[id="load_more_messages"]').click(function(){
+						console.log("getting more messages")
+						webSocketBridge.send({
+							"command": "get_old",
+							"room": $(this).data().roomNumber,
+							"number": $(this).data().msgnumber
+						});
+						$(this).data().msgnumber+=10;
+					})
+						
+				}
                  //Removes the room when click the room link again
-                } else if (data.leave) {
+                if (data.leave) {
                     console.log("Leaving room " + data.leave);
                     $("#room-" + data.leave).remove();
                     // Handle getting a message
                 } else if (data.message) {
                     var msgdiv = $("#room-" + data.chatroom + " .messages");
-                    user_message = parseAtSign(data.message);
-                    one_msg = document.getElementById("msg_box");
+                    user_message = parseImgLinks(parseAtSign(data.message));
+                    one_msg = document.getElementById("msg_box"+data.chatroom);
                     if(current_user === data.message.username){
                         //one_msg = document.getElementById("one_msg_right");
                         one_msg.innerHTML += "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
@@ -168,15 +191,50 @@ $(function () {
                                             "</div>"+
                                             "</div>";
                     }
-                    var msg_box_div = document.getElementById("msg_box");
+                    var msg_box_div = document.getElementById("msg_box"+data.chatroom);
                     msg_box_div.scrollTop = msg_box_div.scrollHeight;
+                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                }else if (data.oldmessages) {
+                    for (var i = 0; i < data.oldmessages.length; i++){
+                        var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
+                        user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
+                        one_msg = document.getElementById("msg_box"+data.oldmessages[i].chatroom);
+                        if(current_user == data.oldmessages[i].username){
+                            //one_msg = document.getElementById("one_msg_right");
+                            one_msg.innerHTML = "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
+                                                "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.oldmessages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.oldmessages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_right\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>"+
+												one_msg.innerHTML;
+                        }
+                        else{
+                            //one_msg = document.getElementById("one_msg_left");
+                            one_msg.innerHTML = "<div id= \"one_msg_left\" class=\"direct-chat-msg\">" +
+                                                "<div id=\"msg_info_left\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.oldmessages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.oldmessages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_left\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>"+
+												one_msg.innerHTML;
+                        }
+                    }
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
                     for (var i = 0; i < data.messages.length; i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
-                        user_message = parseAtSign(data.messages[i].message);
-                        one_msg = document.getElementById("msg_box");
-                        if(current_user === data.messages[i].username){
+                        user_message =parseImgLinks(parseAtSign(data.messages[i].message));
+                        one_msg = document.getElementById("msg_box"+data.messages[i].chatroom);
+                        if(current_user == data.messages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
                             one_msg.innerHTML += "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
                                                 "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +
@@ -202,9 +260,9 @@ $(function () {
                                                 "</div>"+
                                                 "</div>";
                         }
+						var msg_box_div = document.getElementById("msg_box"+data.messages[i].chatroom);
+						msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     }
-                    var msg_box_div = document.getElementById("msg_box");
-                    msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 } else {
                     console.log("Cannot handle message!");
@@ -219,22 +277,25 @@ $(function () {
             // Helpful debugging
             webSocketBridge.socket.onopen = function () {
                 console.log("Connected to chat socket");
-                roomId = $("li.room-link").attr("data-room-id");
-                // Initial message payload sent when you join a room
-                $("li.room-link").addClass("joined");
-                webSocketBridge.send({
-                    "command": "join",
-                    "room": roomId
-                });
+				//array_of_rooms.forEach(function(element) {
+				//	webSocketBridge.send({
+                //    "command": "join",
+                //    "room": element
+				//	});
+				//});
+				webSocketBridge.send({
+                    "command": "join_many",
+                    "rooms": array_of_rooms
+					});
+				
             };
             webSocketBridge.socket.onclose = function () {
                 console.log("Disconnected from chat socket");
-                roomId = $("li.room-link").attr("data-room-id");
-                // Payload sent when you leave a room
-                $("li.room-link").removeClass("joined");
-                webSocketBridge.send({
+				array_of_rooms.forEach(function(element) {
+					webSocketBridge.send({
                     "command": "leave",
-                    "room": roomId
-                });
+                    "room": element
+					});
+				});
             }
         });
