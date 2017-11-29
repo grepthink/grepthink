@@ -182,7 +182,7 @@ $(function () {
                             "room": $(this).find("input").data().roomNumber,
                             "message": $(this).find("input").val()
                         });
-                        $("#send_msg")[0].reset();
+                        $(this).find("input").val("");
                     });
                     $('button[id="load_more_messages"]').click(function(){
                         console.log("getting more messages")
