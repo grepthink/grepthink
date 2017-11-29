@@ -145,6 +145,13 @@ def send_texts_to_one(user,messages):
         {
             "text":json.dumps({'messages':messages})}
         )
+    
+def send_rooms_to_one(user,rooms,messages):
+    Group("User-"+str(user.id)).send(
+        {
+            "text":json.dumps({'rooms':rooms,
+                               'messages':messages})}
+        )
 def send_chat_invite(send_user,recieve_user,chatroom):
     Alert.objects.create(
             sender=send_user,

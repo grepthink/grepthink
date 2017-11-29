@@ -104,6 +104,35 @@ def chat_join(message):
         messages.append(text)
     send_texts_to_one(message.user, messages)
 
+#same as join, but more reliable for multiple rooms
+@channel_session_user
+@catch_client_error
+def chat_join_multiple(message):
+    roomArray = []
+    messagesArray = []
+    for roomNumber in message["rooms"]:
+        room = get_room_or_error(roomNumber,message.user)
+        room.websocket_group.add(message.reply_channel)
+        message.channel_session['rooms'] = list(
+            set(message.channel_session['chatrooms'])
+            .union([room.id]))
+        text = {
+            'join':str(room.id),
+            'title': room.name
+            }
+        roomArray.append(text)
+        chat_messages = room.get_chat_init()
+        for index in range(len(chat_messages)-1,-1,-1):
+            text = {
+                'chatroom':str(chat_messages[index].room.id),
+                'message':chat_messages[index].content,
+                'username':chat_messages[index].author.username,
+                'date':chat_messages[index].date.strftime("%I:%M %p")
+            }
+            messagesArray.append(text)
+    send_rooms_to_one(message.user,roomArray,messagesArray)
+
+
 
 @channel_session_user
 @catch_client_error
