@@ -104,6 +104,21 @@ def chat_join(message):
         messages.append(text)
     send_texts_to_one(message.user, messages)
 
+@channel_session_user
+@catch_client_error
+def chat_send_old(message):
+    room = get_room_or_error(message["room"],message.user)
+    chat_messages = room.get_chat_next(message["number"])
+    messages = []
+    for index in range(0,len(chat_messages)):
+        text = {
+            'chatroom':str(chat_messages[index].room.id),
+            'message':chat_messages[index].content,
+            'username':chat_messages[index].author.username,
+            'date':chat_messages[index].date.strftime("%I:%M %p")
+            }
+        messages.append(text)
+    send_oldtexts_to_one(message.user, messages)
 #same as join, but more reliable for multiple rooms
 @channel_session_user
 @catch_client_error

@@ -39,6 +39,7 @@ $(function () {
 				if (data.rooms){
 					console.log("Joining rooms");
 					for(var roomNum = 0;roomNum<data.rooms.length;roomNum++){
+						var leaveUrl = leaveURLBase.replace(/9234523426/, data.rooms[roomNum].join.toString());
 						var roomdiv = $(
                             "<div class=\"box box-success direct-chat direct-chat-success\">" +
                               "<div class=\"box-header with-border\">" +
@@ -48,6 +49,7 @@ $(function () {
                                 "</div>" +
                               "</div>" +
                               "<div class=\"box-body\">" +
+								"<button id=\"load_more_messages\" class=\"btn btn-success btn-flat\" data-MSGnumber=10 data-room-number="+data.rooms[roomNum].join+">Load more messages</button>"+
                                 "<!-- Conversations are loaded here -->" +
                                 "<div id= \"msg_box"+data.rooms[roomNum].join+"\" class=\"direct-chat-messages\">" +
 
@@ -100,6 +102,11 @@ $(function () {
                                   "</div>" +
                                 "</div>" +
                                 "<!-- /.box-footer-->" +
+								"<a href=\""+leaveUrl+"\">"+
+								"<button class=\"btn btn-danger\" type=\"button\">"+
+								"Leave Chatroom"+
+								"</button>"+
+								"</a>"+
                               "</div>" +
                               "<!--/.direct-chat -->"
 
@@ -108,17 +115,6 @@ $(function () {
                               //"<form>Your message<input><button>Send</button></form>" +
                             //"</div>"
 						);
-						// Hook up send button to send a message
-						//roomdiv.find("form").submit(function (e) {
-						//	e.preventDefault()
-						//	webSocketBridge.send({
-						//		"command": "send",
-						//		"room": roomdiv.find("input").data().roomNumber,
-						//		"message": roomdiv.find("input").val()
-						//	});
-						//	roomdiv.find("input").val("");
-						//	return false;
-						//});
 						$("#tab_"+data.rooms[roomNum].join).append(roomdiv);
 					}
 					//hook up all thesend buttons
@@ -130,6 +126,15 @@ $(function () {
 							"message": $(this).find("input").val()
 						});
 					});
+					$('button[id="load_more_messages"]').click(function(){
+						console.log("getting more messages")
+						webSocketBridge.send({
+							"command": "get_old",
+							"room": $(this).data().roomNumber,
+							"number": $(this).data().msgnumber
+						});
+						$(this).data().msgnumber+=10;
+					})
 						
 				}
                  //Removes the room when click the room link again
@@ -168,12 +173,47 @@ $(function () {
                     var msg_box_div = document.getElementById("msg_box"+data.chatroom);
                     msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+                }else if (data.oldmessages) {
+                    for (var i = 0; i < data.oldmessages.length; i++){
+                        var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
+                        user_message = parseAtSign(data.oldmessages[i].message);
+                        one_msg = document.getElementById("msg_box"+data.oldmessages[i].chatroom);
+                        if(current_user == data.oldmessages[i].username){
+                            //one_msg = document.getElementById("one_msg_right");
+                            one_msg.innerHTML = "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
+                                                "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.oldmessages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.oldmessages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_right\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>"+
+												one_msg.innerHTML;
+                        }
+                        else{
+                            //one_msg = document.getElementById("one_msg_left");
+                            one_msg.innerHTML = "<div id= \"one_msg_left\" class=\"direct-chat-msg\">" +
+                                                "<div id=\"msg_info_left\" class=\"direct-chat-info clearfix\">" +
+                                                // This is where message info like name and time will appear
+                                                "<span class=\"direct-chat-name pull-left\">"+data.oldmessages[i].username+"</span>" +
+                                                "<span class=\"direct-chat-timestamp pull-right\">"+data.oldmessages[i].date+"</span>" +
+                                                "</div>" +
+                                                "<div id=\"msg_text_left\" class=\"direct-chat-text\">" +
+                                                user_message +
+                                                "</div>"+
+                                                "</div>"+
+												one_msg.innerHTML;
+                        }
+                    }
+                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.messages) {
                     for (var i = 0; i < data.messages.length; i++){
                         var msgdiv = $("#room-" + data.messages[i].chatroom + " .messages");
                         user_message = parseAtSign(data.messages[i].message);
                         one_msg = document.getElementById("msg_box"+data.messages[i].chatroom);
-                        if(current_user === data.messages[i].username){
+                        if(current_user == data.messages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
                             one_msg.innerHTML += "<div id= \"one_msg_right\" class=\"direct-chat-msg right\">" +
                                                 "<div id=\"msg_info_right\" class=\"direct-chat-info clearfix\">" +

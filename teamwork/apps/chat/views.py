@@ -205,11 +205,11 @@ def _DM(request, rooms):
         'rooms': rooms})
 
 @login_required
-def delete_DM(request, roomname):
-    room = get_object_or_404(DirectMessage, name=roomname)
-    if(request.user.rooms.filter(name=roomname).count()>0):
+def delete_DM(request, slug):
+    room = get_object_or_404(DirectMessage, id=slug)
+    if(request.user.rooms.filter(id=slug).count()>0):
         room.remove_user(request.user)
-    view_DM(request)
+    return view_DM(request)
 
 @login_required
 def view_DM(request):

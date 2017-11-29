@@ -48,3 +48,5 @@ for existing chats matching the project title name, which may cause other errors
 Changed the Database URL; Changed the Redis URL; added an asgi file for running the websocket workers; PROCFILE has the settings for launching the server on Heroku; I left the original
 settings.py so that we can still test stuff on localhost; Fixed some errors with adding members into chat; On the production server a Redis app needs to be installed with the web app;
 Might need to change the asgi file because its a basic one, I don't fully understand how it works yet; Same for the PROCFILE with the workers it runs.<br />
+11-28-17 - Hugh: chat fixed, enter and send works, all chats loaded, is possible to not receive so I might do a check loop or send a check message DM also almost done<br />
+11-28-17 - Hugh: message loading is done, direct messages are done, I'm done<br />
