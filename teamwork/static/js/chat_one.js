@@ -1,4 +1,46 @@
 $(function () {
+			//thank you stack overflow
+			//https://gist.github.com/dperini/729294
+			//idk wtf cause long regex
+			function validURL(str) {
+				var pattern = new RegExp(
+  "^" +
+    // protocol identifier
+    "(?:(?:https?|ftp)://)" +
+    // user:pass authentication
+    "(?:\\S+(?::\\S*)?@)?" +
+    "(?:" +
+      // IP address exclusion
+      // private & local networks
+      "(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
+      "(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
+      "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+      // IP address dotted notation octets
+      // excludes loopback network 0.0.0.0
+      // excludes reserved space >= 224.0.0.0
+      // excludes network & broacast addresses
+      // (first & last IP address of each class)
+      "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+      "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+      "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+    "|" +
+      // host name
+      "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+      // domain name
+      "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+      // TLD identifier
+      "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+      // TLD may end with dot
+      "\\.?" +
+    ")" +
+    // port number
+    "(?::\\d{2,5})?" +
+    // resource path
+    "(?:[/?#]\\S*)?" +
+  "$", "i"
+);
+				return pattern.test(str);
+			}
             //Parses messages for the @ sign and makes them a link
             function parseAtSign(msg){
                 var split_message = msg.split(" ");
@@ -24,15 +66,40 @@ $(function () {
                 var split_message = msg.split(" ");
                 var finished_message = "";
                 for(var i = 0; i < split_message.length; i++){
-                    if(split_message[i].endsWith(".png")||
-                    split_message[i].endsWith(".gif")||
-                    split_message[i].endsWith(".jpg")||
-                    split_message[i].endsWith(".bmp")){
-                        finished_message = finished_message.concat(
-                            "<img src=\"" +
-                            split_message[i] +
-                            "\">" +
-                            " </img>");
+					if(validURL(split_message[i])){
+						if(split_message[i].endsWith(".png")||
+							split_message[i].endsWith(".gif")||
+							split_message[i].endsWith(".jpg")||
+							split_message[i].endsWith(".bmp")){
+							finished_message = finished_message.concat(
+								"<img width=\"300\" height=\"300\" src=\"" +
+								split_message[i] +
+								"\">" +
+								" </img>");
+						}else if(split_message[i].endsWith(".gifv")){
+							finished_message = finished_message.concat(
+								"<video preload=\"auto\" autoplay=\"autoplay\" loop=\"loop\" width=\"300\" height=\"300\">" +
+								"<source src=\""+
+								split_message[i].replace(".gifv",".mp4")+
+								"\" type=\"video/mp4\"></source>" +
+								" </video>");
+						}else if(split_message[i].endsWith(".mp4")){
+							finished_message = finished_message.concat(
+								"<video preload=\"auto\" autoplay=\"autoplay\" loop=\"loop\" width=\"300\" height=\"300\">" +
+								"<source src=\""+
+								split_message[i]+
+								"\" type=\"video/mp4\"></source>" +
+								" </video>");
+						}else if(split_message[i].endsWith(".webm")){
+							finished_message = finished_message.concat(
+								"<video preload=\"auto\" autoplay=\"autoplay\" loop=\"loop\" width=\"300\" height=\"300\">" +
+								"<source src=\""+
+								split_message[i]+
+								"\" type=\"video/webm\"></source>" +
+								" </video>");
+						}else{
+							finished_message = finished_message.concat(split_message[i]+" ");
+						}
                     }
                     else{
                         finished_message = finished_message.concat(split_message[i]+" ");
@@ -116,7 +183,7 @@ $(function () {
                             "room": $(this).find("input").data().roomNumber,
                             "message": $(this).find("input").val()
                         });
-                        $("#send_msg")[0].reset();
+                        $(this).find("input").val("");
                     });
                     $('button[id="load_more_messages"]').click(function(){
                         console.log("getting more messages")
@@ -179,10 +246,12 @@ $(function () {
                     msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.oldmessages) {
-                    for (var i = 0; i < data.oldmessages.length; i++){
+                    var one_msg = document.getElementById("msg_box"+data.oldmessages[0].chatroom);
+                    var initial_msgs = one_msg.innerHTML;
+                    one_msg.innerHTML = "";
+                    for (var i = data.oldmessages.length-1; i >= 0; i--){
                         //var msgdiv = $("#room-" + data.oldmessages[i].chatroom + " .messages");
-                        user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
-                        one_msg = document.getElementById("msg_box"+data.oldmessages[i].chatroom);
+                        var user_message = parseImgLinks(parseAtSign(data.oldmessages[i].message));
                         one_msg.innerHTML += "<!-- chat item -->"+
                                             "<div class=\"item\">"+
                                             "<p class=\"message\">"+
@@ -195,9 +264,9 @@ $(function () {
                                             user_message +
                                             "</p><br />"+
                                             "</div>"+
-                                            "<!-- /.item -->"+
-                                            one_msg.innerHTML;
+                                            "<!-- /.item -->";
                     }
+                    one_msg.innerHTML += initial_msgs;
 
                         /*if(current_user == data.oldmessages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
