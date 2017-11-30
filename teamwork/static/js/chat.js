@@ -3,7 +3,7 @@ $(function () {
 	    function imgparse(msg){
 		var output = "";
 		if(msg.endsWith(".jpg")== true || msg.endsWith(".jpeg")==true){
-			output = output.concat("<img src=msg>);
+			output = output.concat("<img src=msg/>);
 		}
 		else return msg;
 		return output;
