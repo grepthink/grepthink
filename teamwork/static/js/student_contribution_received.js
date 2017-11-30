@@ -1,31 +1,30 @@
-//Used the following answer for making random colors:
-//https://stackoverflow.com/a/1484514
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
+var colors_array = [
+    "#CD5C5C", "#FFC0CB", "#FFA07A", "#FFD700",
+    "#E6E6FA", "#ADFF2F", "#00FFFF", "#FFDEAD",
+    "#FFF5EE", "#DCDCDC"
+];
 
-var colors_array = [];
-var member_length = document.getElementById('Member').options.length;
-for(let i = 0; i < member_length; i++) {
-    colors_array.push(getRandomColor());
+// Variables for local_barchart
+// ---------------------------------------------------------------------------------------------
+var member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
+var number_of_members = document.getElementById('Member').options.length
+var tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
+var local_labels = [];
+
+for(let i = 0; i < number_of_members; i++) {
+    let current_member = document.getElementById('Member').options[i].text;
+    local_labels.push(current_member);
+    document.getElementById(current_member).style = "background-color:" + colors_array[i];
 }
+// End of local_barchart variable initializations
+// ---------------------------------------------------------------------------------------------
 
 function make_local_barchart() {
-    let member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
-    let tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
-    let number_of_members = document.getElementById('Member').options.length
-    var local_labels = [];
-    for(let i = 0; i < number_of_members; i++) {
-        let current_member = document.getElementById('Member').options[i].text;
-        local_labels.push(current_member);
-        document.getElementById(current_member).style = "background-color:" + colors_array[i];
-    }
-
+/*
+* make_local_barchart generates a ChartJS horizontal barchart based on
+* what TSR number is selected on the page, then showing the results of contributions
+* received in that TSR for each member of a team from each other.
+*/
     let barChartData = {
         labels: local_labels,
         datasets: []
@@ -47,8 +46,6 @@ function make_local_barchart() {
         type: 'horizontalBar',
         data: barChartData,
         options: {
-            // Elements options apply to all of the options unless overridden in a dataset
-            // In this case, we are setting the border of each horizontal bar to be 2px wide
             elements: {
                 rectangle: {
                     borderWidth: 2,
@@ -73,15 +70,11 @@ function make_local_barchart() {
 }
 
 function update_local_barchart() {
-    let member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
-    let tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
-    let number_of_members = document.getElementById('Member').options.length
-    var local_labels = [];
-    for(let i = 0; i < number_of_members; i++) {
-        let current_member = document.getElementById('Member').options[i].text;
-        local_labels.push(current_member);
-        document.getElementById(current_member).style = "background-color:" + colors_array[i];
-    }
+/*
+* update_local_barchart resets the local_barchart data to reflect
+* the newly selected TSR number.
+*/
+    tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
 
     my_local_barchart.data.datasets = [];
     for(let i = 0; i < number_of_members; i++) {
@@ -97,21 +90,22 @@ function update_local_barchart() {
     window.my_local_barchart.update();
 }
 
+// Variables for historical_barchart
+// ---------------------------------------------------------------------------------------------
+var tsr_numbers_array = JSON.parse(document.getElementById('tsr_numbers').value)
+var current_student = document.getElementById('Member').value;
+var current_student_index = document.getElementById('Member').selectedIndex;
+var historical_averages = JSON.parse(document.getElementById('member_averages').value);
+var historical_labels = [];
+var member_historical_averages = [];
+for(let i = 0; i < tsr_numbers_array.length; i++) {
+    member_historical_averages.push(historical_averages[i][current_student_index]);
+    historical_labels.push("TSR #" + tsr_numbers_array[i]);
+}
+// End of historical_barchart variable initializations
+// ---------------------------------------------------------------------------------------------
+
 function make_historical_barchart() {
-    let tsr_numbers_array = JSON.parse(document.getElementById('tsr_numbers').value)
-    let current_student = document.getElementById('Member').value;
-    let current_student_index = document.getElementById('Member').selectedIndex;
-    let historical_labels = [];
-    for(let i = 0; i < tsr_numbers_array.length; i++) {
-        historical_labels.push("TSR #" + tsr_numbers_array[i]);
-    }
-    //let member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
-    let historical_averages = JSON.parse(document.getElementById('member_averages').value)
-    var last_element = tsr_numbers_array.pop();
-    let my_data_array = []
-    for(let i = 0; i < last_element; i++) {
-        my_data_array.push(historical_averages[i][current_student_index]);
-    }
     let barChartData = {
             labels: historical_labels,
             datasets: [{
@@ -119,7 +113,7 @@ function make_historical_barchart() {
                 backgroundColor: colors_array[current_student_index],
                 borderColor: 'black',
                 borderWidth: 1,
-                data: my_data_array
+                data: member_historical_averages
             }]
     };
 
@@ -154,18 +148,10 @@ function make_historical_barchart() {
 function update_historical_barchart() {
     my_historical_barchart.data = [];
 
-    let tsr_numbers_array = JSON.parse(document.getElementById('tsr_numbers').value)
-    let current_student = document.getElementById('Member').value;
-    let current_student_index = document.getElementById('Member').selectedIndex;
-    let historical_labels = [];
+    member_historical_averages = [];
+    current_student = document.getElementById('Member').value;
+    current_student_index = document.getElementById('Member').selectedIndex;
     for(let i = 0; i < tsr_numbers_array.length; i++) {
-        historical_labels.push("TSR #" + tsr_numbers_array[i]);
-    }
-
-    let historical_averages = JSON.parse(document.getElementById('member_averages').value)
-    var last_element = tsr_numbers_array.pop();
-    let member_historical_averages = [];
-    for(let i = 0; i < last_element; i++) {
         member_historical_averages.push(historical_averages[i][current_student_index]);
     }
     let barChartData = {

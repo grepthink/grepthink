@@ -942,11 +942,20 @@
                                                 </tr>
                                                 {% for member in members %}
                                                     <tr>
-                                                        <td id ="{{member.profile.name}}" style="width:5%"></td>
-                                                        <td style="width:40%">
-                                                            <a href="{% url 'profile' member.username %}">
-                                                                {{member.profile.name}}</a>
-                                                        </td>
+                                                        {% if member.profile.name != "" %}
+                                                            <td id ="{{member.profile.name}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.name}}</a>
+                                                            </td>
+                                                        {% endif %}
+                                                        {% if member.profile.name == "" %}
+                                                            <td id ="{{member.profile.user}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.user}}</a>
+                                                            </td>
+                                                        {% endif %}
                                                         {% for analysis_ass in all_analysis %}
                                                             {% for analysis_piece in analysis_ass.1 %}
                                                                 {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
@@ -989,17 +998,17 @@
                                                 </tr>
                                                 <tr>
                                                     {% if health_flag == 0 %}
-                                                    <td headers="team_status" bgcolor="Chartreuse" style="width:40%;height:100px">
+                                                    <td headers="team_status" style="color:chartreuse;width:40%;height:100px">
                                                         <div>No serious problems detected.</div>
                                                     </td>
                                                     {% endif %}
                                                     {% if health_flag == 1 %}
-                                                    <td headers="team_status" bgcolor="khaki" style="width:40%;height:100px">
+                                                    <td headers="team_status" style="color:khaki;width:40%;height:100px">
                                                         <div>Suspicious behavior detected.</div>
                                                     </td>
                                                     {% endif %}
                                                     {% if health_flag == 2 %}
-                                                    <td headers="team_status" bgcolor="red" style="width:40%;height:100px">
+                                                    <td headers="team_status" style="color:red;width:40%;height:100px">
                                                         <div>Problems detected. Intervention recommended.</div>
                                                     </td>
                                                     {% endif %}
@@ -1111,12 +1120,12 @@
                     <tr>
                         <td>
                             <div style="width: 75%;">
-                                <canvas id="local_student_contribution" style="border-style: none solid #000000;"></canvas>
+                                <canvas id="local_student_contribution" width="600px" height="600px" style="border-style: none solid #000000;"></canvas>
                             </div>
                         </td>
                         <td>
                             <div style="width: 75%;">
-                                <canvas id="historical_student_contribution" style="border-style: none solid #000000;"></canvas>
+                                <canvas id="historical_student_contribution" width="600px" height="600px" style="border-style: none solid #000000;"></canvas>
                             </div>
                         </td>
                     </tr>
