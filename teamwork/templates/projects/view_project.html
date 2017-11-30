@@ -666,10 +666,20 @@
                                                 </tr>
                                                 {% for member in members %}
                                                     <tr>
-                                                        <td style="width:40%">
-                                                            <a style="color:" href="{% url 'profile' member.username %}">
-                                                                {{member.profile.name}}</a>
-                                                        </td>
+                                                        {% if member.profile.name != "" %}
+                                                            <td id ="{{member.profile.name}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.name}}</a>
+                                                            </td>
+                                                        {% endif %}
+                                                        {% if member.profile.name == "" %}
+                                                            <td id ="{{member.profile.user}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.user}}</a>
+                                                            </td>
+                                                        {% endif %}
                                                         {% for analysis_ass in all_analysis %}
                                                             {% for analysis_piece in analysis_ass.1 %}
                                                                 {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
