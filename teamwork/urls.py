@@ -147,16 +147,18 @@ urlpatterns = [
         url(r'^chat/leave/(?P<slug>[^/]+)/$', chat_views.leave_chat, name='leave_chat'),
         # Invite a user to a Chatroom
         url(r'^chat/invite/(?P<slug>[^/]+)/$', chat_views.invite_chat, name='invite_chat'),
-        # View Individual Chats
-        url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
         # View a profile through the @sign
-        url(r'^chat/(?P<slug>[^/]+)/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
+        url(r'^chat/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
+        # View Individual Chats
+        #url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
+        
+        
 
-	# DM
-	url(r'^DM/$', chat_views.view_DM, name='view_DM'),
-	url(r'^DM/(?P<username>[^/]+)/$', chat_views.view_or_create_DM, name='view_or_create_DM'),
+        # DM
+        url(r'^DM/$', chat_views.view_DM, name='view_DM'),
+        url(r'^DM/(?P<username>[^/]+)/$', chat_views.view_or_create_DM, name='view_or_create_DM'),
         url(r'^DM/leave/(?P<slug>[^/]+)/$', chat_views.delete_DM, name='delete_DM'),
-	url(r'^DM/one/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
+        url(r'^DM/one/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
 
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),

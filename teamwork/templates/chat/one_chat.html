@@ -10,9 +10,6 @@
 {# Breadcrumb for All Chats #}
 <li><a href="{% url 'view_chats' %}"> All Chat </a></li>
 
-{# Breadcrumb for the current Chatroom I'm in #}
-<li><a href="{% url 'view_one_chat' slug=room.id %}"> Chat {{ name }} </a></li>
-
 {% endblock crumb %}
 
 <!-- quick fix, change to content to show page properly -->

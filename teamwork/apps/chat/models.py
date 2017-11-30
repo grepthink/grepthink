@@ -4,10 +4,13 @@ from django.db import models
 from channels import Group
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from teamwork.apps.profiles.models import Alert
 
 #https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 #USE THE LINK ABOVE FOR TIME FORMATS
+
+
 # Chatroom model which holds the chat room ID and the name
 class Chatroom(models.Model):
     """
@@ -53,8 +56,11 @@ class Chatroom(models.Model):
             for substring in (message.split(' ')):
                 if substring.startswith('@'):
                     pointed_user = substring[1:]
-                    if User.objects.filter(username=user).exists():
+                    try:
+                        User.objects.get(username=user)
                         send_chat_alert(user,User.objects.get(username=pointed_user),self)
+                    except ObjectDoesNotExist:
+                        continue
                         
                 
 
@@ -186,7 +192,9 @@ def send_chat_simple(user, user2):
             url=reverse('view_chats'),
             read=False,
             )
+            
 #Gets all the chatrooms a user is in
+#Used for loading all the chatrooms a user is in on the side tab
 def get_user_chatrooms(self):
     return Chatroom.objects.filter(user=self)
     
@@ -245,5 +253,6 @@ class DirectMessage(Chatroom):
     def remove_user(self,user):
         self.delete()
         return
+
 
     

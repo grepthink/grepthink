@@ -47,6 +47,7 @@ $(function () {
                 var finished_message = "";
                 for(var i = 0; i < split_message.length; i++){
                     if(split_message[i].charAt(0) === "@"){
+                        //This just works for some reason as a url
                         finished_message = finished_message.concat(
                             "<a href=\"{% url 'find_user_profile' " +
                             split_message[i] +
@@ -182,7 +183,7 @@ $(function () {
                             "room": $(this).find("input").data().roomNumber,
                             "message": $(this).find("input").val()
                         });
-                        $("#send_msg")[0].reset();
+                        $(this).find("input").val("");
                     });
                     $('button[id="load_more_messages"]').click(function(){
                         console.log("getting more messages")

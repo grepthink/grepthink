@@ -141,16 +141,6 @@ class Project(models.Model):
         User,
         related_name='scrum_master',
         on_delete=models.CASCADE)
-    
-    #IM AN IDIOT WHO MAKES AN EMPTY CHATROOM MODEL IN HERE UGHHHHHHH
-    """
-    chatroom = models.ForeignKey(
-        Chatroom,
-        related_name='chatroom',
-        on_delete=models.CASCADE,
-        default=None,
-        null=True)
-    """
 
     # Short project description
     tagline = models.TextField(
