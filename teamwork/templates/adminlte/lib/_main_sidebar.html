@@ -91,14 +91,7 @@
                     </a>
                         <ul class ="treeview-menu">
                             <li><a href="{% url 'view_chats' %}"></i>View All Chats</a></li>
-                            {% if user.get_user_chatrooms %}
-                            {% for room in user.get_user_chatrooms %}
-                                <li class="">
-                                    <a href="{% url 'view_one_chat' slug=room.id %}"><i class="fa fa-circle-o">
-                                    </i> {{room.name}}</a>
-                                </li>
-                            {% endfor %}
-                            {% endif %}
+                            
                         </ul>
                 </li>
 

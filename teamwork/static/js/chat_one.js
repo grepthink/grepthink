@@ -5,6 +5,7 @@ $(function () {
                 var finished_message = "";
                 for(var i = 0; i < split_message.length; i++){
                     if(split_message[i].charAt(0) === "@"){
+                        //This just works for some reason as a url
                         finished_message = finished_message.concat(
                             "<a href=\"{% url 'find_user_profile' " +
                             split_message[i] +
