@@ -149,10 +149,6 @@ urlpatterns = [
         url(r'^chat/invite/(?P<slug>[^/]+)/$', chat_views.invite_chat, name='invite_chat'),
         # View a profile through the @sign
         url(r'^chat/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
-        # View Individual Chats
-        #url(r'^chat/(?P<slug>[^/]+)/$', chat_views.view_one_chat, name='view_one_chat'),
-        
-        
 
         # DM
         url(r'^DM/$', chat_views.view_DM, name='view_DM'),

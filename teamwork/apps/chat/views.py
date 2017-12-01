@@ -49,27 +49,6 @@ def view_chats(request):
     my_rooms = request.user.rooms.filter(isDirectMessage = False)
     return _chats(request, my_rooms)
 
-
-
-@login_required
-def view_one_chat(request, slug):
-    room = get_object_or_404(Chatroom, id=slug)
-    user_rooms = request.user.rooms.all()
-    if(room in user_rooms):
-        title = "GT Chat"
-        page_name = room.name
-        page_description = "Chatroom"
-        name = room.name
-        current_user = str(request.user)
-        #messages = room.get_chat_init()
-
-        return render(request, 'chat/one_chat.html',{
-            'title': title, 'page_name': page_name,
-            'page_description' : page_description, 'room': room, 'name': name,
-            'current_user': current_user})
-    else:
-        return view_chats(request)
-
 @login_required
 def create_chat(request):
     """
