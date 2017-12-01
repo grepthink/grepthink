@@ -168,7 +168,7 @@ def leave_chat(request, slug):
 
 #Finds if the username exists and returns the page for the user profile
 #Assumes that the username is without the @ sign
-def find_user_profile(request, username, slug):
+def find_user_profile(request, username):
     #For some reason receives input as {% url 'find_user_profile' @name %}
     #Splits the string and the 4th index is the username
     #[1:] gets everything after the @ sign as the username and searches
@@ -177,7 +177,7 @@ def find_user_profile(request, username, slug):
     if User.objects.filter(username=user).exists():
         # temp code to turn on notifications
         return redirect(view_profile, user)
-    return redirect(view_one_chat, slug)
+    return redirect(view_chats)
 
 
 @login_required
@@ -205,11 +205,11 @@ def _DM(request, rooms):
         'rooms': rooms})
 
 @login_required
-def delete_DM(request, roomname):
-    room = get_object_or_404(DirectMessage, name=roomname)
-    if(request.user.rooms.filter(name=roomname).count()>0):
+def delete_DM(request, slug):
+    room = get_object_or_404(DirectMessage, id=slug)
+    if(request.user.rooms.filter(id=slug).count()>0):
         room.remove_user(request.user)
-    view_DM(request)
+    return view_DM(request)
 
 @login_required
 def view_DM(request):
