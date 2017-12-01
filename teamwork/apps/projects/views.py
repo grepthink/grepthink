@@ -430,7 +430,7 @@ def create_project(request):
         if form.is_valid():
             # Create an object for the input
             project  = Project()
-            
+
 
             # Fill all the simple fields and save project object.
             project.slug = form.cleaned_data.get('slug')
@@ -445,16 +445,16 @@ def create_project(request):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
             project.scrum_master = request.user
-            
+
             #Creates a chatroom with the title of the project and adds the creator
             #chatroom = Chatroom()
             chatroom = Chatroom(
                                 name=project.title,
                                 hasProject=True)
             chatroom.save()
-            chatroom.add_user(request.user)
-            
-            
+            chatroom.add_user_to_chat(request.user, request.user)
+
+
             # Course the project is in
             in_course = form.cleaned_data.get('course')
             # Init TA of Project ot be the Professor
@@ -1280,7 +1280,7 @@ def add_member(request, slug, uname):
             for mem in pending_members:
                 if mem == mem_to_add:
                     if chatroom is not None:
-                        chatroom.add_user(mem)
+                        chatroom.add_user_to_chat(mem, mem)
                     project.pending_members.remove(mem)
                     project.save()
 
