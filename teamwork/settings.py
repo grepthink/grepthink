@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     'channels',
-	# Works on the heroku, but don't actually know if its 'working'
+	# whitenoise nostatic might be rendered useles because of channels, look into that eventally
     'whitenoise.runserver_nostatic',
 	
     'django.contrib.staticfiles',
@@ -137,24 +137,25 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
+
+# Setup the database using dj based on the DATABASE_URL set in .env
 else:
     DATABASES = {
-        #Will probably need to change the url to DATABASE_URL
+        
         'default': dj_database_url.config(
-            default=config('HEROKU_POSTGRESQL_MAROON_URL')
+            default=config('DATABASE_URL')
         )
     }
-#Original Django Database Settings
-"""
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
-        }
-    }
-"""
 
+
+""" Original Django Database Settings
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -171,7 +172,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#redis_host = os.environ.get('REDIS_HOST', 'localhost')
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
 
 #Channel Layer definitions
 CHANNEL_LAYERS = {
@@ -179,12 +180,11 @@ CHANNEL_LAYERS = {
         # The current Backend is temporary and using a default one, but not suited for deploying.
 		# Setting up the redis requires running the redis server and having this set
 		# as the backend.
-		"BACKEND": "asgi_redis.RedisChannelLayer",
-		"CONFIG": {
-           "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
-        },
-        #This is the redis backend for localhost testing
-        #"BACKEND": "asgiref.inmemory.ChannelLayer",
+		#"BACKEND": "asgi_redis.RedisLocalChannelLayer",
+		#"CONFIG": {
+        #   "hosts": [("redis-server-name", 6379)],
+        #},
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
 
        "ROUTING": "teamwork.routing.channel_routing",
     },
