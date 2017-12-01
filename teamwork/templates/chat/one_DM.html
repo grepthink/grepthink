@@ -31,7 +31,7 @@
     <script type="text/javascript">
         $(function () {
             // Correctly decide between ws:// and wss://
-            var ws_path = "/chat/stream/";
+            var ws_path = "/DM/stream/";
             console.log("Connecting to " + ws_path);
             var webSocketBridge = new channels.WebSocketBridge();
             webSocketBridge.connect(ws_path);

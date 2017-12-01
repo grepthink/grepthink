@@ -15,7 +15,7 @@ from teamwork.apps.profiles.models import Alert
 class Chatroom(models.Model):
     """
     Chatroom: Datbase model for chatrooms
-    
+
     Fields:
         name: the name of the chatroom.
         user: the users in the chatroom.
@@ -30,7 +30,7 @@ class Chatroom(models.Model):
     user = models.ManyToManyField(
         User,
         related_name = 'rooms')
-        
+
     hasProject = models.BooleanField(
         default = False)
 
@@ -61,8 +61,8 @@ class Chatroom(models.Model):
                         send_chat_alert(user,User.objects.get(username=pointed_user),self)
                     except ObjectDoesNotExist:
                         continue
-                        
-                
+
+
 
         #Holds the message payload
         #Date time format is set as Hours:Minutes AM/PM
@@ -111,7 +111,7 @@ class Chatroom(models.Model):
         except ObjectDoesNotExist:
             return None
 
-        
+
     #Takes in a username and searches for the user, then adds them to the chatroom
     def add_user_to_chat(self,sender,username_token):
         if User.objects.filter(username=username_token).exists():
@@ -157,7 +157,7 @@ def send_oldtexts_to_one(user,messages):
         {
             "text":json.dumps({'oldmessages':messages})}
         )
-    
+
 def send_rooms_to_one(user,rooms,messages):
     Group("User-"+str(user.id)).send(
         {
@@ -183,7 +183,7 @@ def send_chat_alert(send_user,receive_user,chatroom):
             url=reverse('view_chats'),
             read=False,
             )
-    
+
 def send_chat_simple(user, user2):
     Alert.objects.create(
             sender=user2,
@@ -192,19 +192,19 @@ def send_chat_simple(user, user2):
             url=reverse('view_chats'),
             read=False,
             )
-            
+
 #Gets all the chatrooms a user is in
 #Used for loading all the chatrooms a user is in on the side tab
 def get_user_chatrooms(self):
     return Chatroom.objects.filter(user=self)
-    
+
 auth.models.User.add_to_class('get_user_chatrooms', get_user_chatrooms)
-            
-            
+
+
 class Chattext(models.Model):
     """
     Chattext: Holds the text messages sent in a chatroom.
-    
+
     FIelds:
         room: The chatroom the message belongs in.
         author: The user who sent the message.
@@ -240,7 +240,7 @@ class Chattext(models.Model):
 
 #because of Django limitation, you must change isdirectmessage to true on creation
 class DirectMessage(Chatroom):
-    
+
     @property
     def websocket_group(self):
         return Group("DM-" +str(self.id))
@@ -248,11 +248,8 @@ class DirectMessage(Chatroom):
     #does nothing, and should do nothing
     def add_user_to_chat(self,sender,username_token):
         return
-    
+
     #removing a user is deleting everything
     def remove_user(self,user):
         self.delete()
         return
-
-
-    

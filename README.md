@@ -51,3 +51,4 @@ Might need to change the asgi file because its a basic one, I don't fully unders
 11-28-17 - Hugh: chat fixed, enter and send works, all chats loaded, is possible to not receive so I might do a check loop or send a check message DM also almost done<br />
 11-28-17 - Hugh: message loading is done, direct messages are done, I'm done<br />
 11-28-17 - Sean: Can invite from Chat Tabs, reset the input form so that the text doesn't linger after you send it. Chat bubble changes. Profile Icons are not accurate.<br />
+11-30-17 - Sean: Added some testing files with Katalon under docs/fall17/tests/* ; Fixed a small bug with creating a chatroom with a project.<br />

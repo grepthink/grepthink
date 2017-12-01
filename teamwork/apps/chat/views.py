@@ -49,9 +49,10 @@ def view_chats(request):
     my_rooms = request.user.rooms.filter(isDirectMessage = False)
     return _chats(request, my_rooms)
 
+
+
 @login_required
 def view_one_chat(request, slug):
-    
     room = get_object_or_404(Chatroom, id=slug)
     user_rooms = request.user.rooms.all()
     if(room in user_rooms):
@@ -173,7 +174,6 @@ def find_user_profile(request, username):
     #[1:] gets everything after the @ sign as the username and searches
     #SHOULD REPLACE THIS IS UGLY AS HELL
     user = username.split(" ")[3][1:]
-    print(user)
     if User.objects.filter(username=user).exists():
         # temp code to turn on notifications
         return redirect(view_profile, user)
@@ -233,5 +233,3 @@ def view_one_DM(request, slug):
             'user': user})
     else:
         return view_DM(request)
-
-

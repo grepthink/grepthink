@@ -1,8 +1,18 @@
 $(function () {
+	///image displaying
+	    function imgparse(msg){
+		var output = "";
+		if(msg.endsWith(".jpg")== true || msg.endsWith(".jpeg")==true){
+			output = output.concat("<img src=msg/>);
+		}
+		else return msg;
+		return output;
+	    }		
             //Parses messages for the @ sign and makes them a link
             function parseAtSign(msg){
                 var split_message = msg.split(" ");
                 var finished_message = "";
+		
                 for(var i = 0; i < split_message.length; i++){
                     if(split_message[i].charAt(0) === "@"){
                         finished_message = finished_message.concat(
@@ -91,11 +101,17 @@ $(function () {
                                 "<div class=\"box-footer\">" +
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
-                                      "<form>" +
+                                      "<form>" 
+				   
+    				  
                                       "<input type=\"text\" name=\"message\" placeholder=\"Type Message ...\" class=\"form-control\">" +
                                       //"<span class=\"input-group-btn\">" +
+				      
+				      
                                         "<button type=\"button\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
                                       //"</span>" +
+				      
+				  
                                       "</form>"+
                                   "</div>" +
                                 "</div>" +
