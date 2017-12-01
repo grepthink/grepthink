@@ -163,7 +163,9 @@ def find_user_profile(request, username):
 def view_or_create_DM(request, username):
     page_user = get_object_or_404(User, username=username)
     #check database first
-    if(request.user.rooms.filter(name = "DM-"+request.user.username+page_user.username,isDirectMessage = True).count()==0 and page_user.username!=request.user.username):
+    if(request.user.rooms.filter(name = "DM-"+request.user.username+page_user.username,isDirectMessage = True).count()==0
+        and page_user.username!=request.user.username
+        and request.user.rooms.filter(name = "DM-"+page_user.username+request.user.username,isDirectMessage = True).count()==0):
         room = DirectMessage()
         room.isDirectMessage = True
         room.name = "DM-"+request.user.username+page_user.username
