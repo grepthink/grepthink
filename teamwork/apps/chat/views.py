@@ -172,7 +172,7 @@ def find_user_profile(request, username):
     #For some reason receives input as {% url 'find_user_profile' @name %}
     #Splits the string and the 4th index is the username
     #[1:] gets everything after the @ sign as the username and searches
-    #SHOULD REPLACE THIS IS UGLY AS HELL
+    #SHOULD REPLACE THIS IS UGLY AS HELL, NVM I CANT
     user = username.split(" ")[3][1:]
     if User.objects.filter(username=user).exists():
         # temp code to turn on notifications
