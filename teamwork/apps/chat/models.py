@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from teamwork.apps.profiles.models import Alert
+import hashlib
 
 #https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 #USE THE LINK ABOVE FOR TIME FORMATS
@@ -70,7 +71,9 @@ class Chatroom(models.Model):
             'chatroom':str(self.id),
             'message':message,
             'username':user.username,
-            'date': text.date.strftime("%I:%M %p")
+            'date': text.date.strftime("%I:%M %p"),
+            'gravitar':hashlib.md5(user.email.lower().encode('utf-8')).hexdigest()
+            
             }
 
         #Sends the message payload

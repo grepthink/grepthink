@@ -223,7 +223,7 @@ $(function () {
                     one_msg.innerHTML += "<!-- chat item -->"+
                                         "<div class=\"item\">"+
                                         "<p class=\"message\">"+
-                                        "<img src=\"https://image.flaticon.com/icons/svg/149/149071.svg\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
+                                        "<img src=\"https://www.gravatar.com/avatar/"+data.gravitar+"\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
                                         "&nbsp&nbsp&nbsp"+
                                         "<a href=\"#\" class=\"name\">"+
                                         "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.date+"</small>"+
@@ -275,7 +275,7 @@ $(function () {
                         one_msg.innerHTML += "<!-- chat item -->"+
                                             "<div class=\"item\">"+
                                             "<p class=\"message\">"+
-                                            "<img src=\"https://image.flaticon.com/icons/svg/149/149071.svg\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
+                                            "<img src=\"https://www.gravatar.com/avatar/"+data.oldmessages[i].gravitar+"\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
                                             "&nbsp&nbsp&nbsp"+
                                             "<a href=\"#\" class=\"name\">"+
                                             "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.oldmessages[i].date+"</small>"+
@@ -331,7 +331,7 @@ $(function () {
                         one_msg.innerHTML += "<!-- chat item -->"+
                                             "<div class=\"item\">"+
                                             "<p class=\"message\">"+
-                                            "<img src=\"https://image.flaticon.com/icons/svg/149/149071.svg\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
+                                            "<img src=\"https://www.gravatar.com/avatar/"+data.messages[i].gravitar+"\" class=\"img-circle\" alt=\"User Image\" height=\"42\" width=\"42\" style='float: left;'>"+
                                             "&nbsp&nbsp&nbsp"+
                                             "<a href=\"#\" class=\"name\">"+
                                             "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.messages[i].date+"</small>"+

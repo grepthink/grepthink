@@ -4,7 +4,7 @@ from channels.auth import channel_session_user_from_http, channel_session_user
 from .models import *
 from .utils import *
 import json
-
+import hashlib
 
 
 
@@ -34,41 +34,6 @@ def ws_disconnect(message):
         except Room.DoesNotExist:
             pass
 
-#assuming logged in, will catch that later
-#this is how I assume it should work, rest is like the example
-#not tested! maybe not used
-@channel_session_user
-def chat_init(message):
-    #make self session for one to one server replies
-    Group("User-"+str(message.user.id)).add(message.reply_channel)
-    #get rooms and add to session
-    for room in message.user.rooms.all():
-        room.websocket_group.add(message.reply_channel)
-        message.reply_channel.send({
-            "text": json.dumps({
-                "join":str(room.id),
-                "name":room.name,
-                })
-            })
-        #assuming webpages are not multithreaded silliness
-        #this should populate the client without http
-        for text in room.get_chat():
-            send_text_to_one(message.user,text)
-
-#funtion to make a chat name,
-# need to discuss what to JSON
-#make is html, not used here
-def chat_make(message):
-    room = Chatroon(name=message["name"])
-    room.save()
-    message.user.rooms.add(room)
-    room.websocket_group.add(message.reply_channel)
-    message.reply_channel.send({
-            "text": json.dumps({
-                "join":str(room.id),
-                "name":room.name,
-            })
-        })
 
 
 #Looks similir to chat_init, might be the same thing
@@ -99,7 +64,8 @@ def chat_join(message):
             'chatroom':str(chat_messages[index].room.id),
             'message':chat_messages[index].content,
             'username':chat_messages[index].author.username,
-            'date':chat_messages[index].date.strftime("%I:%M %p")
+            'date':chat_messages[index].date.strftime("%I:%M %p"),
+            'gravitar':hashlib.md5(chat_messages[index].author.email.lower().encode('utf-8')).hexdigest()
             }
         messages.append(text)
     send_texts_to_one(message.user, messages)
@@ -115,7 +81,8 @@ def chat_send_old(message):
             'chatroom':str(chat_messages[index].room.id),
             'message':chat_messages[index].content,
             'username':chat_messages[index].author.username,
-            'date':chat_messages[index].date.strftime("%I:%M %p")
+            'date':chat_messages[index].date.strftime("%I:%M %p"),
+            'gravitar':hashlib.md5(chat_messages[index].author.email.lower().encode('utf-8')).hexdigest()
             }
         messages.append(text)
     send_oldtexts_to_one(message.user, messages)
@@ -142,7 +109,8 @@ def chat_join_multiple(message):
                 'chatroom':str(chat_messages[index].room.id),
                 'message':chat_messages[index].content,
                 'username':chat_messages[index].author.username,
-                'date':chat_messages[index].date.strftime("%I:%M %p")
+                'date':chat_messages[index].date.strftime("%I:%M %p"),
+                'gravitar':hashlib.md5(chat_messages[index].author.email.lower().encode('utf-8')).hexdigest()
             }
             messagesArray.append(text)
     send_rooms_to_one(message.user,roomArray,messagesArray)
