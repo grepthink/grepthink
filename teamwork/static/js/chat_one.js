@@ -152,7 +152,7 @@ $(function () {
                                   "<div class=\"input-group\">" +
                                     "<div class='messages'></div>" +
                                       "<form id=\"send_msg\">" +
-                                      "<input type=\"text\" name=\"message\"width = /"300/" data-room-number="+data.rooms[roomNum].join+" placeholder=\"Type Message ...\" class=\"form-control\">" + 
+                                      "<input size=\"100\" type=\"text\" name=\"message\" data-room-number="+data.rooms[roomNum].join+" placeholder=\"Type Message ...\" class=\"form-control\">"  + 
                                       "<span class=\"input-group-btn\">" +
                                         "<button type=\"submit\" class=\"btn btn-success btn-flat\" onclick=\"submit\">Send</button>" +
                                       "</span>" +
