@@ -107,7 +107,19 @@ $(function () {
                 }
                 return finished_message;
             }
-
+			//text to speach function, any options are to be put in here
+			function text_to_speach(msg){
+				var spokenWordObject = new SpeechSynthesisUtterance(msg);
+				window.speechSynthesis.speak(spokenWordObject);
+			}
+			function websocket_get_rooms(){
+				
+                webSocketBridge.send({
+                    "command": "join_many",
+                    "rooms": array_of_rooms
+                    });
+			}
+			$("#reinit_rooms").click(websocket_get_rooms);
             // Correctly decide between ws:// and wss://
             var ws_path = "/chat/stream/";
             console.log("Connecting to " + ws_path);
@@ -173,7 +185,9 @@ $(function () {
                               "</div>" +
                               "<!--/.direct-chat -->"
                         );
-                        $("#tab_"+data.rooms[roomNum].join).append(roomdiv);
+						if($("#msg_box"+data.rooms[roomNum].join).length==0){
+							$("#tab_"+data.rooms[roomNum].join).append(roomdiv);
+						}
                     }
                     //hook up all thesend buttons
                     $("form").submit( function(e) {
@@ -194,6 +208,7 @@ $(function () {
                         });
                         $(this).data().msgnumber+=10;
                     })
+					
 
                 }
                  //Removes the room when click the room link again
@@ -213,9 +228,9 @@ $(function () {
                                         "<a href=\"#\" class=\"name\">"+
                                         "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.date+"</small>"+
                                         data.username+
-                                        "</a><br />&nbsp&nbsp&nbsp"+
+                                        "</a><br /><div class=\"text\">&nbsp&nbsp&nbsp"+
                                         user_message +
-                                        "</p><br />"+
+                                        "</div></p><br />"+
                                         "</div>"+
                                         "<!-- /.item -->";
                     /*if(current_user === data.message.username){
@@ -244,6 +259,11 @@ $(function () {
                     }*/
                     var msg_box_div = document.getElementById("msg_box"+data.chatroom);
                     msg_box_div.scrollTop = msg_box_div.scrollHeight;
+					
+					$("div.item").click(function(){
+						console.log($(this).find(".text").html())
+						text_to_speach($(this).find(".text").html().replace("&nbsp;&nbsp;&nbsp;",""));
+					})
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.oldmessages) {
                     var one_msg = document.getElementById("msg_box"+data.oldmessages[0].chatroom);
@@ -260,13 +280,18 @@ $(function () {
                                             "<a href=\"#\" class=\"name\">"+
                                             "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.oldmessages[i].date+"</small>"+
                                             data.oldmessages[i].username+
-                                            "</a><br />&nbsp&nbsp&nbsp"+
+                                            "</a><br /><div class=\"text\">&nbsp&nbsp&nbsp"+
                                             user_message +
-                                            "</p><br />"+
+                                            "</div></p><br />"+
                                             "</div>"+
                                             "<!-- /.item -->";
                     }
                     one_msg.innerHTML += initial_msgs;
+					
+					$("div.item").click(function(){
+						console.log($(this).find(".text").html())
+						text_to_speach($(this).find(".text").html().replace("&nbsp;&nbsp;&nbsp;",""));
+					})
 
                         /*if(current_user == data.oldmessages[i].username){
                             //one_msg = document.getElementById("one_msg_right");
@@ -311,15 +336,18 @@ $(function () {
                                             "<a href=\"#\" class=\"name\">"+
                                             "<small class=\"text-muted pull-right\"><i class=\"fa fa-clock-o\"></i>"+data.messages[i].date+"</small>"+
                                             data.messages[i].username+
-                                            "</a><br />&nbsp&nbsp&nbsp"+
+                                            "</a><br /><div class=\"text\">&nbsp&nbsp&nbsp "+
                                             user_message +
-                                            "</p><br />"+
+                                            "</div></p><br />"+
                                             "</div>"+
                                             "<!-- /.item -->";
                         var msg_box_div = document.getElementById("msg_box"+data.messages[i].chatroom);
                         msg_box_div.scrollTop = msg_box_div.scrollHeight;
                     }
-                    //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+					$("div.item").click(function(){
+						console.log($(this).find(".text").html())
+						text_to_speach($(this).find(".text").html().replace("&nbsp;&nbsp;&nbsp;",""));
+					})
                 } else {
                     console.log("Cannot handle message!");
                 }
@@ -339,10 +367,7 @@ $(function () {
                 //    "room": element
                 //	});
                 //});
-                webSocketBridge.send({
-                    "command": "join_many",
-                    "rooms": array_of_rooms
-                    });
+				websocket_get_rooms()
 
             };
             webSocketBridge.socket.onclose = function () {
