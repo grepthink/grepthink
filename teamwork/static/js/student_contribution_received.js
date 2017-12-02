@@ -1,9 +1,8 @@
 var colors_array = [
-    "#CD5C5C", "#FFC0CB", "#FFA07A", "#FFD700",
-    "#E6E6FA", "#ADFF2F", "#00FFFF", "#FFDEAD",
-    "#FFF5EE", "#DCDCDC"
+    "#CD5C5C", "#FFD700", "#ADFF2F", "#00FFFF",
+    "#FFC0CB", "#E6E6FA", "#704214", "#778BA5",
+    "#CB410B", "#BFC1C2"
 ];
-
 // Variables for local_barchart
 // ---------------------------------------------------------------------------------------------
 var member_contributions = JSON.parse(document.getElementById('contributions_of_members').value)
@@ -15,6 +14,7 @@ for(let i = 0; i < number_of_members; i++) {
     let current_member = document.getElementById('Member').options[i].text;
     local_labels.push(current_member);
     document.getElementById(current_member).style = "background-color:" + colors_array[i];
+    document.getElementById("raw_" + current_member).style = "background-color:" + colors_array[i];
 }
 // End of local_barchart variable initializations
 // ---------------------------------------------------------------------------------------------

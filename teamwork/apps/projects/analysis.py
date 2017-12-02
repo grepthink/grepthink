@@ -261,7 +261,7 @@ def numerical_averages_for_all_evals(project, asgn_number):
         for evaluation in evaluatee_tsrs:
             average_contribution += evaluation.percent_contribution
 
-        member_averages[current_evaluatee] = round(average_contribution / len(evaluatee_tsrs), 1)
+        member_averages[current_evaluatee.username] = round(average_contribution / len(evaluatee_tsrs), 1)
     return member_averages
 
 def calculate_member_averages(project, assigned_tsrs):

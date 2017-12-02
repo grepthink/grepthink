@@ -660,6 +660,7 @@
                                         <table class="table table-hover" style="float: left;">
                                             <tbody>          
                                                 <tr>
+                                                    <th></th>
                                                     <th text-align:center;">Student</th>
                                                     <th text-align:center;">Average Contribution</th>
                                                     <th text-align:center;">Status</th>
@@ -667,7 +668,7 @@
                                                 {% for member in members %}
                                                     <tr>
                                                         {% if member.profile.name != "" %}
-                                                            <td id ="{{member.profile.name}}" style="width:5%"></td>
+                                                            <td id ="raw_{{member.profile.name}}" style="width:5%"></td>
                                                             <td style="width:40%">
                                                                 <a href="{% url 'profile' member.username %}">
                                                                     {{member.profile.name}}</a>
