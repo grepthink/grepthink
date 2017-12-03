@@ -264,6 +264,11 @@ $(function () {
 						console.log($(this).find(".text").html())
 						text_to_speach($(this).find(".text").html().replace("&nbsp;&nbsp;&nbsp;",""));
 					})
+					$('button[id="load_more_messages"]').each(function(){
+						if($(this).data().roomNumber==data.chatroom){
+							$(this).data().msgnumber+=0
+						}
+					})
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
                 }else if (data.oldmessages) {
                     var one_msg = document.getElementById("msg_box"+data.oldmessages[0].chatroom);
@@ -348,6 +353,7 @@ $(function () {
 						console.log($(this).find(".text").html())
 						text_to_speach($(this).find(".text").html().replace("&nbsp;&nbsp;&nbsp;",""));
 					})
+					
                 } else {
                     console.log("Cannot handle message!");
                 }
