@@ -287,34 +287,26 @@ def calculate_member_averages(project, assigned_tsrs):
 def calculate_health_score(project):
     members = project.members.all().order_by('username')
 
-    local_similarity_weight = 1
     outlier_weight = 5
-    wordcount_weight = 1
-    historical_similarity_weight = 2
-    averages_weight = 5
 
     health_report_total = 0
-    health_ideal = (outlier_weight ^ 2) + wordcount_weight * len(members)
+    health_ideal = outlier_weight * len(members)
     # 0 is good, 1 is warning, 2 is bad
     health_flag = 0
     analysis_dicts = {}
 
     for analysis_object in project.analysis.all():
         analysis_dicts.setdefault(analysis_object.analysis_type, []).append([analysis_object])
-        if analysis_object.analysis_type == "Historically Similar Scores":
-            health_report_total += historical_similarity_weight
-        elif analysis_object.analysis_type == "Outlier Scores":
+        if analysis_object.analysis_type == "Outlier Scores":
             health_report_total += outlier_weight
-        elif analysis_object.analysis_type == "Word Count":
-            health_report_total += wordcount_weight
-        elif analysis_object.analysis_type == "Similarity for Given Evaluations":
-            health_report_total += local_similarity_weight
-        elif analysis_object.analysis_type == "Averages for all Evaluations":
-            health_report_total += averages_weight
 
+    # Adjust multiplier to change bounds for different health status flags.
+    health_status_multiplier = 1.3
     if health_report_total < health_ideal:
         health_flag = 0
-    elif health_report_total >= health_ideal:
+    elif health_report_total <= health_ideal*health_status_multiplier:
+        health_flag = 1
+    elif health_report_total > health_ideal*health_status_multiplier:
         health_flag = 2
     analysis_items = analysis_dicts.items()
 
