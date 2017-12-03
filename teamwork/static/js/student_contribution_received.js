@@ -9,12 +9,14 @@ var member_contributions = JSON.parse(document.getElementById('contributions_of_
 var number_of_members = document.getElementById('Member').options.length
 var tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
 var local_labels = [];
+var local_ideal_averages = [];
 
 for(let i = 0; i < number_of_members; i++) {
     let current_member = document.getElementById('Member').options[i].text;
     local_labels.push(current_member);
     document.getElementById(current_member).style = "background-color:" + colors_array[i];
-    document.getElementById("raw_" + current_member).style = "background-color:" + colors_array[i];
+    local_ideal_averages.push({x: Math.floor(100/number_of_members), y: local_labels[i]});
+    //document.getElementById("raw_" + current_member).style = "background-color:" + colors_array[i];
 }
 // End of local_barchart variable initializations
 // ---------------------------------------------------------------------------------------------
@@ -29,6 +31,17 @@ function make_local_barchart() {
         labels: local_labels,
         datasets: []
     };
+
+    barChartData.datasets.push({
+        type: "scatter",
+        label: "Average",
+        backgroundColor: 'black',
+        borderColor: 'black',
+        borderWidth: 0.005,
+        pointRadius: 5,
+        data: local_ideal_averages,
+        fill: false
+    });
 
     for(let i = 0; i < number_of_members; i++) {
         barChartData.datasets.push(
@@ -77,6 +90,18 @@ function update_local_barchart() {
     tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
 
     my_local_barchart.data.datasets = [];
+
+    my_local_barchart.data.datasets.push({
+        type: "scatter",
+        label: "Average",
+        backgroundColor: 'black',
+        borderColor: 'black',
+        borderWidth: 0.005,
+        pointRadius: 5,
+        data: local_ideal_averages,
+        fill: false
+    });
+
     for(let i = 0; i < number_of_members; i++) {
         my_local_barchart.data.datasets.push(
         {
@@ -98,9 +123,11 @@ var current_student_index = document.getElementById('Member').selectedIndex;
 var historical_averages = JSON.parse(document.getElementById('member_averages').value);
 var historical_labels = [];
 var member_historical_averages = [];
+var historical_ideal_averages = [];
 for(let i = 0; i < tsr_numbers_array.length; i++) {
     member_historical_averages.push(historical_averages[i][current_student_index]);
     historical_labels.push("TSR #" + tsr_numbers_array[i]);
+    historical_ideal_averages.push({x: historical_labels[i], y: Math.floor(100/number_of_members)});
 }
 // End of historical_barchart variable initializations
 // ---------------------------------------------------------------------------------------------
@@ -109,13 +136,24 @@ function make_historical_barchart() {
     let barChartData = {
             labels: historical_labels,
             datasets: [{
-                label: current_student,
-                backgroundColor: colors_array[current_student_index],
+                type: "scatter",
+                label: "Average",
+                backgroundColor: 'black',
                 borderColor: 'black',
-                borderWidth: 1,
-                data: member_historical_averages
+                borderWidth: 0.005,
+                pointRadius: 5,
+                data: historical_ideal_averages,
+                fill: false
             }]
     };
+
+    barChartData.datasets.push({
+        label: current_student,
+        backgroundColor: colors_array[current_student_index],
+        borderColor: 'black',
+        borderWidth: 1,
+        data: member_historical_averages
+    });
 
     var ctx = document.getElementById("historical_student_contribution").getContext("2d");
     window.my_historical_barchart = new Chart(ctx, {
@@ -157,13 +195,24 @@ function update_historical_barchart() {
     let barChartData = {
             labels: historical_labels,
             datasets: [{
-                label: current_student,
-                backgroundColor: colors_array[current_student_index],
+                type: "scatter",
+                label: "Average",
+                backgroundColor: 'black',
                 borderColor: 'black',
-                borderWidth: 1,
-                data: member_historical_averages
+                borderWidth: 0.005,
+                pointRadius: 5,
+                data: historical_ideal_averages,
+                fill: false
             }]
     };
+
+    barChartData.datasets.push({
+        label: current_student,
+        backgroundColor: colors_array[current_student_index],
+        borderColor: 'black',
+        borderWidth: 1,
+        data: member_historical_averages
+    });
     my_historical_barchart.data = barChartData;
     window.my_historical_barchart.update();
 }
