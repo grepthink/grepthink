@@ -99,34 +99,31 @@ class Tsr(models.Model):
 
 # Data structure for Analysis Tab
 class Analysis(models.Model):
-    """ 
+    """
     Analysis: A database model (object) for the analysis of TSR's and their flags
     """
-    #A number assigned based on the specific instance of a TSR assignment number 
-    tsr_number = models.PositiveIntegerField(default = 0)
+    #A number assigned based on the specific instance of a TSR assignment number
+    tsr_number = models.PositiveIntegerField(default=0)
     #associated user linked to particular piece of data
     associated_member = models.ForeignKey(User, on_delete=models.CASCADE,
-    related_name="associated_member", default=0)
+                                          related_name="associated_member", default=0)
     #type of analysis is inputted
     analysis_type = models.TextField()
     #actual result of analysis/numerical results
     analysis_output = models.TextField()
-    #flagged?
-    flag_tripped = models.BooleanField(default=False)
     #reason for flagging
     flag_detail = models.TextField()
+    #was flag suppressed by user?
+    flag_suppress = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return(("%d, %s, %s, %s, %s, %s"%(self.tsr_number, self.associated_member, self.analysis_type, self.analysis_output, self.flag_tripped,self.flag_detail)))
+        return "%d, %s, %s, %s, %s,%s" % (self.tsr_number, self.associated_member,
+                                       self.analysis_type, self.analysis_output, self.flag_detail, self.flag_suppress)
 
 
     def get_flag(self):
-        no_flag = 'No flag associated with this piece of analysis'
-        if self.flag_tripped:
-            return(("%s, %s, "%(self.flag_tripped, self.flag_detail)))
-        
-        return no_flag
+        return self.flag_detail
 
 class Project(models.Model):
     """

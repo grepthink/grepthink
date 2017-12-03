@@ -20,11 +20,10 @@ from teamwork.apps.profiles.views import view_alerts
 from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
 from .models import *
+from .analysis import *
 
 from itertools import chain
 import json
-import math
-import decimal
 
 def _projects(request, projects):
     """
@@ -101,7 +100,14 @@ def view_one_project(request, slug):
     resources = project.get_resources()
     # Get the project owner for color coding stuff
     project_owner = project.creator.profile
-    members = project.members.all()
+    members = project.members.all().order_by('username')
+    member_names = []
+    for member in members:
+        name_length = len(member.profile.name.strip())
+        if name_length == 0:
+            member_names.append(member.profile.user)
+        else:
+            member_names.append(member.profile.name)
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -120,7 +126,33 @@ def view_one_project(request, slug):
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
+        
+     
+      
+      
 
+    project_chat = reversed(project.get_chat())
+    if request.method == 'POST':
+        if 'mark_suppressed_confirmed' in request.POST:
+            mark_Suppressed(request,project)
+            return redirect(view_one_project, project.slug)
+
+        elif 'unsuppress_flags' in request.POST:
+            unsuppress_Tsr_Flags(request,project)
+            return redirect(view_one_project, project.slug)
+
+        form = ChatForm(request.user.id, slug, request.POST)
+        if form.is_valid():
+            # Create a chat object
+            chat = ProjectChat(author=request.user, project=project)
+            chat.content = form.cleaned_data.get('content')
+            chat.save()
+            return redirect(view_one_project, project.slug)
+       # else:
+            messages.info(request,'Errors in form')
+    #else:
+        # Send form for initial project creation
+    #    form = ChatForm(request.user.id, slug)
 
 
     user = request.user
@@ -129,7 +161,7 @@ def view_one_project(request, slug):
     # to reduce querys in templates -kp
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
-    project_members = project.members.all()
+    project_members = project.members.all().order_by('username')
 
     isProf = 0
     if request.user.profile.isProf:
@@ -139,22 +171,16 @@ def view_one_project(request, slug):
     if request.user in pending_members:
         requestButton = 0
 
-    project_chat = reversed(project.get_chat())
-    if request.method == 'POST':
-        form = ChatForm(request.user.id, slug, request.POST)
-        if form.is_valid():
-            # Create a chat object
-            chat = ProjectChat(author=request.user, project=project)
-            chat.content = form.cleaned_data.get('content')
-            chat.save()
-            return redirect(view_one_project, project.slug)
-        else:
-            messages.info(request,'Errors in form')
-    else:
-        # Send form for initial project creation
-        form = ChatForm(request.user.id, slug)
 
-    find_meeting(slug)
+    #if request.method == 'POST':
+        
+       # if 'mark_suppressed_confirmed' in request.POST:
+        #    mark_Suppressed(request,project)
+        #    return redirect(view_one_project, project.slug)
+      
+        #elif 'unsuppress_flags' in request.POST:
+         #   unsuppress_Tsr_Flags(request,project)
+          #  return redirect(view_one_project, project.slug)
 
     readable = ""
     if project.readable_meetings:
@@ -210,28 +236,29 @@ def view_one_project(request, slug):
     # TSR's completed. This means the correct amount of Tsr's for the assignment per project exist, with the correct matches to evaluator
     # and evaluatee
     
+    # Constants defined for weighing Analysis objects. Used for Team Health overall.
+    # Numbers used inspired by Fibonacci Sequence.
     #checks the course for each assignment of type tsr and goes through each to get the assignment number and associated analysis
     for each_assigned_tsr in assigned_tsrs: 
        
-         assigned_tsr_number = each_assigned_tsr.ass_number
-         existing_analysis = project.analysis.filter(tsr_number = assigned_tsr_number)
+        assigned_tsr_number = each_assigned_tsr.ass_number
+        existing_analysis = project.analysis.filter(tsr_number = assigned_tsr_number)
 
-         #check to see if an instance of the analysis for a specific tsr assigned does not exist for the project
-         #if it exists, skip over analysis generation completely, if not go through with next check
-         if not existing_analysis.exists():
-             completed_tsrs_per_ass_number = project.tsr.filter(ass_number = assigned_tsr_number)
-
-             if mem_count == (len(completed_tsrs_per_ass_number)/mem_count):
-                 tsr_exists = {}
+        #check to see if an instance of the analysis for a specific tsr assigned does not exist for the project
+        #if it exists, skip over analysis generation completely, if not go through with next check
+        if not existing_analysis.exists():
+            completed_tsrs_per_ass_number = project.tsr.filter(ass_number = assigned_tsr_number)
+            if len(members) != 0 and len(members) == (len(completed_tsrs_per_ass_number)/len(members)):
+                tsr_exists = {}
                  
-                 for each_member in members :
-                     tsr_per_evaluator = completed_tsrs_per_ass_number.filter(evaluator = each_member)
-                     
-                     for each_evaluatee in members:
-                         tsr_exists[str(each_member), str(each_evaluatee)] = tsr_per_evaluator.filter(evaluatee = each_evaluatee).exists()
+                for each_member in members :
+                    tsr_per_evaluator = completed_tsrs_per_ass_number.filter(evaluator = each_member)
+                    
+                    for each_evaluatee in members:
+                        tsr_exists[str(each_member), str(each_evaluatee)] = tsr_per_evaluator.filter(evaluatee = each_evaluatee).exists()
 
-                 num_distinct_tsrs = sum(tsr_exists.values())
-                 if  len(completed_tsrs_per_ass_number) == num_distinct_tsrs :
+                num_distinct_tsrs = sum(tsr_exists.values())
+                if len(completed_tsrs_per_ass_number) == num_distinct_tsrs:
                     #Put functions here
                     similarity_for_given_evals(project, assigned_tsr_number)
                     giving_outlier_scores(project, assigned_tsr_number)
@@ -239,29 +266,28 @@ def view_one_project(request, slug):
                     similarity_of_eval_history(project, assigned_tsr_number)
                     averages_for_all_evals(project, assigned_tsr_number)
 
-                 else:
-                     messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
+                else:
+                    messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
+     #historical functions go here
 
-#historical functions go here
-    analysis_dicts={}
-
-    for analysis_object in project.analysis.all():
-            analysis_dicts.setdefault(analysis_object.analysis_type, []).append([analysis_object])            
-
-    analysis_items = analysis_dicts.items()
+    member_averages, tsr_numbers = calculate_member_averages(project, assigned_tsrs)
+    contributions_of_members = get_contributions_of_members(project)
+    analysis_items, health_flag = calculate_health_score(project)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
+        'page_description': page_description, 'title' : title, 'members' : members,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
+        'updates': updates, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
-        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items})
+        'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
+        'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members),
+        'member_names':member_names})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
-    members = project.members.all()
+    members = project.members.all().order_by('username')
     pending_members = project.pending_members.all()
     f_user = request.user
     to_delete = Membership.objects.filter(user=f_user, project=project)
@@ -295,7 +321,7 @@ def leave_project(request, slug):
 
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
-    project_members = project.members.all()
+    project_members = project.members.all().order_by('username')
     pending_members = project.pending_members.all()
 
     if request.user in project_members:
@@ -551,7 +577,7 @@ def edit_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     course = project.course.first()
     project_owner = project.creator.profile
-    members = project.members.all()
+    members = project.members.all().order_by('username')
 
     # Populate page info with edit project title/name
     page_name = "Edit Project"
@@ -561,7 +587,7 @@ def edit_project(request, slug):
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator:
         pass
-    elif not request.user  in project.members.all():
+    elif not request.user  in project.members.all().order_by('username'):
         #redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
@@ -983,7 +1009,7 @@ def view_tsr(request, slug):
     title = "View TSR"
     project = get_object_or_404(Project, slug=slug)
     tsrs = list(project.tsr.all())
-    members = project.members.all()
+    members = project.members.all().order_by('username')
 
 	
     # put emails into list
@@ -1204,249 +1230,32 @@ def email_project(request, slug):
         'title':title
     })
 
-    
-def similarity_of_eval_history(project, asgn_number):
-    """
-    Helper function that returns a dictionary of dictionaries
-    reporting if each teammate's evaluations for team members are similar across all TSRs.
-    """
-    historic_similarities = {}
-    members = project.members.all()
-    marginofsimilarity = decimal.Decimal(0.1)
+
+#takes in a request, slug to identify the analysis where flag is suppressed and belongs to the specific tsr
+def unsuppress_Tsr_Flags(request, project):
+    suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
+    for flag in suppressed_analysis_flags:
+
+        flag.flag_suppress = False
+        flag.save()
+
+#@csrf_exempt
+def mark_Suppressed(request,project):
+    # checks flags in the suppressed_Items POST array. if there, changes suppression to true
+    #tsr_num = request.POST.get('tsr_number_input',None)
+    #project = get_object_or_404(Project, slug=slug)
+    suppressed_flags_array = request.POST.getlist('mark_suppressed[]')
+    print(suppressed_flags_array)
+    for flag_id in suppressed_flags_array :
+        updated_flag = project.analysis.get(id= flag_id)
+        updated_flag.flag_suppress = True
+        updated_flag.save()
+    #all_analysis = project.analysis.all()
+    #members = project.members.all().order_by('username')
+    #return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+ 
+   
 
 
-    for current_evaluator in members:
-        evaluator_similarities = {}
-        
-        for current_evaluatee in members:
-            evaluator_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee, evaluator=current_evaluator))
-            average_evaluation = 0
-            num_evals_considered = 0
-            for evaluation in evaluator_tsrs:
-                if evaluation.ass_number <= asgn_number:
-                    average_evaluation += evaluation.percent_contribution
-                    num_evals_considered += 1
-            
-            average_evaluation /= num_evals_considered
-            upper_bound = math.ceil(average_evaluation + (average_evaluation * marginofsimilarity))
-            lower_bound = math.floor(average_evaluation - (average_evaluation * marginofsimilarity))
 
-            for evaluation in evaluator_tsrs:
-                if evaluation.ass_number <= asgn_number:
-                    if lower_bound <= evaluation.percent_contribution <= upper_bound:
-                        evaluator_similarities[current_evaluatee] = True
-                    else:
-                        evaluator_similarities[current_evaluatee] = False
-        historic_similarities[current_evaluator] = evaluator_similarities
-    for member in historic_similarities:
-        hist_similar_count = 0
-        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Historically Similar Scores", historic_similarities[member])
-        analysis_object = setAnalysisData(project, analysis_data)
-        
-        for evaluatee in historic_similarities[member]:
-            if historic_similarities[member][evaluatee] == True:
-                hist_similar_count += 1
-
-        #preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
-        if hist_similar_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d sets of similar scores over time." % (member, hist_similar_count)))
-    return historic_similarities
-    
-def giving_outlier_scores(project, asgn_number):
-    """
-    Helper function that returns a dictionary of dictionaries of (member, low/high) pairs keyed
-    to evaluator.
-    """
-    outlier_scores = {}
-    members = project.members.all()
-    low_bound, high_bound = ideal_score_ranges(project)
-    for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
-        evaluator_outliers = {}
-        for evaluation in evaluator_tsrs:
-            evaluatee = evaluation.evaluatee
-            if evaluation.percent_contribution <= low_bound:
-                evaluator_outliers[evaluatee] = 'Low'
-            elif evaluation.percent_contribution >= high_bound:
-                evaluator_outliers[evaluatee] = 'High'
-        outlier_scores[current_evaluator] = evaluator_outliers
-    
-    for member in outlier_scores:
-        low_count = 0
-        high_count = 0
-        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Outlier Scores", outlier_scores[member])
-        analysis_object = setAnalysisData(project, analysis_data)
-        
-        for evaluatee in outlier_scores[member]:
-            if outlier_scores[member][evaluatee] == 'Low':
-                low_count += 1
-            elif outlier_scores[member][evaluatee] == 'High':
-                high_count += 1
-        #preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
-        if high_count > 0 or low_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d very low scores and %d very high scores." % (member, low_count, high_count)))
-       
-    return outlier_scores
-    
-def ideal_score_ranges(project):
-    members = project.members.all()
-    ideal_average = math.floor(100/len(members))
-    outlier_percentage = decimal.Decimal(0.5)
-    low_bound = math.floor(ideal_average - (ideal_average * outlier_percentage))
-    high_bound = math.ceil(ideal_average + (ideal_average * outlier_percentage))
-    return (low_bound, high_bound)
-
-def tsr_word_count(project, asgn_number):
-    """
-    Helper function that returns a dictionary of dictionaries of dictionaries of (pos/neg feedback, word count) pairs keyed
-    to evaluatee keyed to evaluator.
-    """
-    word_counts = {}
-    members = project.members.all()
-    sparse_limit = 5
-    verbose_limit = 20
-    
-    for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
-        evaluator_word_counts = {}
-        for evaluation in evaluator_tsrs:
-            evaluatee = evaluation.evaluatee
-            feedback_lengths = {}
-            pos_feedback = evaluation.positive_feedback.split(None)
-            neg_feedback = evaluation.negative_feedback.split(None)
-            feedback_lengths['pos_feedback'] = len(pos_feedback)
-            feedback_lengths['neg_feedback'] = len(neg_feedback)
-            evaluator_word_counts[evaluatee] = feedback_lengths
-        word_counts[current_evaluator] = evaluator_word_counts 
-		
-		                    
-    for member in word_counts:
-        #preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output))
-        analysis_data = (asgn_number, member, "Word Count", word_counts[member])
-        analysis_object = setAnalysisData(project, analysis_data)
-        sparse_count = 0
-        verbose_count = 0
-        
-        for evaluatee in word_counts[member]:
-            sparse_test = 0
-            verbose_test = 0
-            for feedback_type in word_counts[member][evaluatee]:
-                if word_counts[member][evaluatee][feedback_type] < sparse_limit:
-                    sparse_test += 1
-                elif word_counts[member][evaluatee][feedback_type] > verbose_limit:
-                    verbose_test += 1
-            if sparse_test == 2:
-                sparse_count += 1
-            elif verbose_test > 1:
-                verbose_count += 1
-                
-        if sparse_count > 0 or verbose_count > 0:
-            setFlag(analysis_object, (True, "%s has given %d sparse responses and %d verbose responses." % (member, sparse_count, verbose_count)))
-		
-    return word_counts
-
-def has_atleast_one_identical(member, total_report):
-    for name in total_report:
-        tuple_result = total_report[member][name]
-        if tuple_result[0]:
-            return True
-    return False
-
-def similarity_for_given_evals(project, asgn_number):
-    """
-    Helper function that returns a dictionary of dictionaries
-    reporting if each teammate's evaluations of him/herself and others 
-    are similar across a range of particular TSRs.
-    """
-    all_similarities = {}
-    members = project.members.all()
-    marginofsimilarity = decimal.Decimal(0.1)
-
-    for current_evaluator in members:
-        evaluator_tsrs = list(project.tsr.all().filter(ass_number=asgn_number, evaluator=current_evaluator))
-        evaluator_similarities = {}
-        average_contribution = 0
-
-        for evaluation in evaluator_tsrs:
-            average_contribution += evaluation.percent_contribution
-        average_contribution /= len(members)
-        upper_bound = math.ceil(average_contribution + (average_contribution * marginofsimilarity))
-        lower_bound = math.floor(average_contribution - (average_contribution * marginofsimilarity))
-
-        for evaluation in evaluator_tsrs:
-            evaluatee = evaluation.evaluatee
-            if lower_bound <= evaluation.percent_contribution <= upper_bound:
-                evaluator_similarities[evaluatee] = (True, evaluation.percent_contribution)
-            else:
-                evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
-        all_similarities[current_evaluator] = evaluator_similarities
-
-    for member in all_similarities:
-        analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
-                         all_similarities[member])
-        analysis_flags = (has_atleast_one_identical(member, all_similarities),
-                          "%s has been giving very similar scores to other team members." % member)
-        analysis_object = setAnalysisData(project, analysis_data)
-        setFlag(analysis_object, analysis_flags)
-    return all_similarities
-
-def averages_for_all_evals(project, asgn_number):
-    """
-    Helper function that returns a dictionary of averages for percent
-    contributions for each team member in a project.
-    """
-    member_averages = {}
-    members = project.members.all()
-
-    for current_evaluatee in members:
-        evaluatee_tsrs = list(project.tsr.all().filter(evaluatee=current_evaluatee))
-        average_contribution = 0
-        num_evals_considered = 0
-        for evaluation in evaluatee_tsrs:
-            if evaluation.ass_number <= asgn_number:
-                average_contribution += evaluation.percent_contribution
-                num_evals_considered += 1
-             
-        bounds = ideal_score_ranges(project)
-        member_averages[current_evaluatee] = round(average_contribution / num_evals_considered, 1)
-        analysis_data = (asgn_number, current_evaluatee, "Averages for all Evaluations",
-                         member_averages[current_evaluatee])
-        analysis_object = setAnalysisData(project, analysis_data)
-        # bounds[1] is the high bound.
-        if member_averages[current_evaluatee] >= bounds[1]:
-            analysis_flag = (True,
-                             "%s has a higher than typical average score." % current_evaluatee)
-            setFlag(analysis_object, analysis_flag)
-        # bounds[0] is the low bound.
-        elif member_averages[current_evaluatee] <= bounds[0]:
-            analysis_flag = (False,
-                             "%s has a lower than typical average score." % current_evaluatee)
-            setFlag(analysis_object, analysis_flag)
-    return member_averages
-    
-#the wrapper function : gets current project and data and saves it to correct project
-#preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output)
-def setAnalysisData(project, analysisData):
-    analysis = Analysis()
-    analysis.tsr_number = analysisData[0]
-    analysis.associated_member = analysisData[1]
-    analysis.analysis_type = analysisData[2]
-    analysis.analysis_output = analysisData[3]
-    analysis.save()
-                 
-    #saving in manytomany field project
-    project.analysis.add(analysis)
-    project.save()
-
-    return analysis
-
-
-#the wrapper function :updates the piece of analysis with the correct flag information
-#preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
-def setFlag(analysis_object, flag_info):
-    analysis_object.flag_tripped = flag_info[0]
-    analysis_object.flag_detail = flag_info[1]
-    analysis_object.save()
 
