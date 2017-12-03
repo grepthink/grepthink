@@ -466,8 +466,22 @@
                 </div>
             </div>
 
-            <!-- View TSR Tab -->
+             <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
+            <style>
+              table {
+                border-collapse: collapse;
+                width: 100%;
+              }
+              th, td {
+                text-align: left;
+                padding: 8px;
+              }
+              th {
+                background-color: #00A65A;
+                color: white;
+              }
+            </style>
                 {% for ass in assigned_tsrs %}
                 <div class="box box-solid">
                   <div class="box-header with-border">
@@ -616,6 +630,7 @@
 
 
             </div>   
+
 
             <!--VIEW TSR ANALYSIS TAB gRAPHICS BEGINE-->
 			<style> 
