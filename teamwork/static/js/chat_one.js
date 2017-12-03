@@ -266,7 +266,7 @@ $(function () {
 					})
 					$('button[id="load_more_messages"]').each(function(){
 						if($(this).data().roomNumber==data.chatroom){
-							$(this).data().msgnumber+=0
+							$(this).data().msgnumber+=1
 						}
 					})
                     //msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
