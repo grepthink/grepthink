@@ -3,6 +3,10 @@ import decimal
 from .models import Analysis
 
 def get_contributions_of_members(project):
+    """
+    Helper funciton that returns a list of lists with that scores an evaluatee got from thier evaluators 
+    """
+
     contribution_per_member = []
     members = project.members.all().order_by('username')
 
@@ -110,6 +114,9 @@ def giving_outlier_scores(project, asgn_number):
     return outlier_scores
     
 def ideal_score_ranges(project):
+    """
+    Helper function that returns a tuple with the low bound and the high bound
+    """
     members = project.members.all().order_by('username')
     ideal_average = math.floor(100/len(members))
     outlier_percentage = decimal.Decimal(0.5)
@@ -188,12 +195,16 @@ def similarity_for_given_evals(project, asgn_number):
         evaluator_similarities = {}
         average_contribution = 0
 
+        # calculates average_contribution, upper bound, and lower bound
         for evaluation in evaluator_tsrs:
             average_contribution += evaluation.percent_contribution
         average_contribution /= len(members)
         upper_bound = math.ceil(average_contribution + (average_contribution * marginofsimilarity))
         lower_bound = math.floor(average_contribution - (average_contribution * marginofsimilarity))
 
+        # if the evaluatee's percent contribution is between the bounds
+            # return that their contribution scores are consistent and their percent contribution
+        # if not, return that their contribution scores are not consistent and their percent contribution
         for evaluation in evaluator_tsrs:
             evaluatee = evaluation.evaluatee
             if lower_bound <= evaluation.percent_contribution <= upper_bound:
@@ -202,6 +213,7 @@ def similarity_for_given_evals(project, asgn_number):
                 evaluator_similarities[evaluatee] = (False, evaluation.percent_contribution)
         all_similarities[current_evaluator] = evaluator_similarities
 
+    # if the member has consistent scores, then reflect this in the analysis
     for member in all_similarities:
         if has_atleast_one_identical(member, all_similarities):
             analysis_data = (asgn_number, member, "Similarity for Given Evaluations",
@@ -265,6 +277,13 @@ def numerical_averages_for_all_evals(project, asgn_number):
     return member_averages
 
 def calculate_member_averages(project, assigned_tsrs):
+
+    """
+    Helper function that returns two lists, member_averages and tsr_numbers.
+    The first is a list of just the averages.
+    The second is a list of just the tsr numbers associated with the averages.
+    """
+
     members = project.members.all().order_by('username')
 
     member_averages = []
@@ -285,13 +304,19 @@ def calculate_member_averages(project, assigned_tsrs):
     return member_averages, tsr_numbers
 
 def calculate_health_score(project):
+    """
+    Helper function that returns analysis_items and health_flag.
+    Analysis_items is a list of the analysis objects
+    Health_flag is a number to reflect the overall team's health
+        0 is good, 1 is a warming, and 2 is bad
+    """
+
     members = project.members.all().order_by('username')
 
     outlier_weight = 5
 
     health_report_total = 0
     health_ideal = outlier_weight * len(members)
-    # 0 is good, 1 is warning, 2 is bad
     health_flag = 0
     analysis_dicts = {}
 
@@ -312,9 +337,12 @@ def calculate_health_score(project):
 
     return analysis_items, health_flag
 
-#the wrapper function : gets current project and data and saves it to correct project
-#preconditions:(project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output)
 def setAnalysisData(project, analysisData):
+    """
+    A function that gets the current project and data and initializes the data for the analysis object
+    Intended input format:
+        (project , ([int]tsr_number, [User]associated_member , [string]analysis_type, [string]analysis_output)
+    """
     analysis = Analysis()
     analysis.tsr_number = analysisData[0]
     analysis.associated_member = analysisData[1]
@@ -328,9 +356,11 @@ def setAnalysisData(project, analysisData):
 
     return analysis
 
-
-#the wrapper function :updates the piece of analysis with the correct flag information
-#preconditions:( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail))
 def setFlag(analysis_object, flag_details):
+    """
+    A function that gets the analysis_object and flag_details and updates the analysis object
+    Intended input format: 
+        ( AnalysisObject, ([boolean] flag_tripped, [String]flag_detail) )
+    """
     analysis_object.flag_detail = flag_details
     analysis_object.save()

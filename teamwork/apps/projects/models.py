@@ -97,16 +97,21 @@ class Tsr(models.Model):
 
         super(Tsr, self).save(*args, **kwargs)
 
-# Data structure for Analysis Tab
+
+# ============================================
+# Data structure for analysis tab
+# ============================================
 class Analysis(models.Model):
     """
     Analysis: A database model (object) for the analysis of TSR's and their flags
     """
     #A number assigned based on the specific instance of a TSR assignment number
     tsr_number = models.PositiveIntegerField(default=0)
+
     #associated user linked to particular piece of data
     associated_member = models.ForeignKey(User, on_delete=models.CASCADE,
                                           related_name="associated_member", default=0)
+
     #type of analysis is inputted
     analysis_type = models.TextField()
     #actual result of analysis/numerical results
@@ -124,6 +129,10 @@ class Analysis(models.Model):
 
     def get_flag(self):
         return self.flag_detail
+
+# ============================================
+# End of data structure for analysis tab
+# ============================================
 
 class Project(models.Model):
     """

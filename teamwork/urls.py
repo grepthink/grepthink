@@ -75,7 +75,7 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
 
-
+# for AJAX request when suppressing flags
         url(r'^project/(?P<slug>[^/]+)/ajax/mark_flags/$', project_views.mark_Suppressed, name='update_mark_suppress'),
 
         # COURSE

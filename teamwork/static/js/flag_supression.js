@@ -1,4 +1,8 @@
-//var tsr_number = parseInt(document.getElementById('TSR FLAG #').value) ;
+// ========================================================================================================
+// flag_suppression.js
+// ========================================================================================================
+
+// Django provided by the Django website to handle csrf tokens
 $.ajaxSetup({ 
      beforeSend: function(xhr, settings) {
          function getCookie(name) {
@@ -26,10 +30,10 @@ $.ajaxSetup({
 
 
 function update_flag_table() {
+    /**/
     var tsr_number= parseInt(document.getElementById('TSR FLAG #').value);
     $('#flag_table').show();
     var dataset = $('#flag_table tbody').find('tr');
-    /*dataset.show();*/
     dataset.each(function(index) {
         item = $(this);
         item.hide();
@@ -41,28 +45,7 @@ function update_flag_table() {
         else if (tsr_number == 0)
             item.show()  
         
-      });
-/* 
-    $.ajax({
-        url:''
-        method:''
-
-
-    })
-}
-
-function doFunction(e){       
-    e.preventDefault();
-    $.ajax({  //Call ajax function sending the option loaded
-        url: 'ajax/mark_flags/',
-        type: 'POST',
-         //This is the url of the ajax view where you make the search 
-        success: function(data) {
-            $('#flag_table_div').html(data);  // Get the results sended from ajax to here
-        }
-    });   
-*/
-
+    });
 }
 
 
