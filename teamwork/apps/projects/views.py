@@ -126,7 +126,33 @@ def view_one_project(request, slug):
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
+        
+     
+      
+      
 
+    project_chat = reversed(project.get_chat())
+    if request.method == 'POST':
+        if 'mark_suppressed_confirmed' in request.POST:
+            mark_Suppressed(request,project)
+            return redirect(view_one_project, project.slug)
+
+        elif 'unsuppress_flags' in request.POST:
+            unsuppress_Tsr_Flags(request,project)
+            return redirect(view_one_project, project.slug)
+
+        form = ChatForm(request.user.id, slug, request.POST)
+        if form.is_valid():
+            # Create a chat object
+            chat = ProjectChat(author=request.user, project=project)
+            chat.content = form.cleaned_data.get('content')
+            chat.save()
+            return redirect(view_one_project, project.slug)
+       # else:
+            messages.info(request,'Errors in form')
+    #else:
+        # Send form for initial project creation
+    #    form = ChatForm(request.user.id, slug)
 
 
     user = request.user
@@ -145,22 +171,16 @@ def view_one_project(request, slug):
     if request.user in pending_members:
         requestButton = 0
 
-    project_chat = reversed(project.get_chat())
-    if request.method == 'POST':
-        form = ChatForm(request.user.id, slug, request.POST)
-        if form.is_valid():
-            # Create a chat object
-            chat = ProjectChat(author=request.user, project=project)
-            chat.content = form.cleaned_data.get('content')
-            chat.save()
-            return redirect(view_one_project, project.slug)
-        else:
-            messages.info(request,'Errors in form')
-    else:
-        # Send form for initial project creation
-        form = ChatForm(request.user.id, slug)
 
-    find_meeting(slug)
+    #if request.method == 'POST':
+        
+       # if 'mark_suppressed_confirmed' in request.POST:
+        #    mark_Suppressed(request,project)
+        #    return redirect(view_one_project, project.slug)
+      
+        #elif 'unsuppress_flags' in request.POST:
+         #   unsuppress_Tsr_Flags(request,project)
+          #  return redirect(view_one_project, project.slug)
 
     readable = ""
     if project.readable_meetings:
@@ -255,11 +275,11 @@ def view_one_project(request, slug):
     analysis_items, health_flag = calculate_health_score(project)
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
+        'page_description': page_description, 'title' : title, 'members' : members,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
+        'updates': updates, 'course' : course, 'project_owner' : project_owner,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
         'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members),
@@ -1209,3 +1229,28 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
+
+
+#takes in a request, slug to identify the analysis where flag is suppressed and belongs to the specific tsr
+def unsuppress_Tsr_Flags(request, project):
+    suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
+    for flag in suppressed_analysis_flags:
+
+        flag.flag_suppress = False
+        flag.save()
+
+#@csrf_exempt
+def mark_Suppressed(request,project):
+    # checks flags in the suppressed_Items POST array. if there, changes suppression to true
+    #tsr_num = request.POST.get('tsr_number_input',None)
+    #project = get_object_or_404(Project, slug=slug)
+    suppressed_flags_array = request.POST.getlist('mark_suppressed[]')
+    print(suppressed_flags_array)
+    for flag_id in suppressed_flags_array :
+        updated_flag = project.analysis.get(id= flag_id)
+        updated_flag.flag_suppress = True
+        updated_flag.save()
+    #all_analysis = project.analysis.all()
+    #members = project.members.all().order_by('username')
+    #return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+ 

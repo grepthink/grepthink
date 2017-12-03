@@ -11,6 +11,7 @@ var tsr_number = parseInt(document.getElementById('TSR #').value) - 1;
 var local_labels = [];
 var local_ideal_averages = [];
 
+
 for(let i = 0; i < number_of_members; i++) {
     let current_member = document.getElementById('Member').options[i].text;
     local_labels.push(current_member);

@@ -113,11 +113,13 @@ class Analysis(models.Model):
     analysis_output = models.TextField()
     #reason for flagging
     flag_detail = models.TextField()
+    #was flag suppressed by user?
+    flag_suppress = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return "%d, %s, %s, %s, %s" % (self.tsr_number, self.associated_member,
-                                       self.analysis_type, self.analysis_output, self.flag_detail)
+        return "%d, %s, %s, %s, %s,%s" % (self.tsr_number, self.associated_member,
+                                       self.analysis_type, self.analysis_output, self.flag_detail, self.flag_suppress)
 
 
     def get_flag(self):

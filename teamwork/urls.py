@@ -75,6 +75,9 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
 
+
+        url(r'^project/(?P<slug>[^/]+)/ajax/mark_flags/$', project_views.mark_Suppressed, name='update_mark_suppress'),
+
         # COURSE
         # Delete individual assignment (based on slug)
         url(r'^assignment/(?P<slug>[^/]+)/delete/$', course_views.delete_assignment, name='delete_assignment'),
@@ -154,3 +157,5 @@ urlpatterns = [
         url(r'^alerts/readall/$', profile_views.archive_alerts, name="archive_alerts"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  
+
