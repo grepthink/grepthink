@@ -193,7 +193,7 @@ def view_one_project(request, slug):
     # ===================================================================================================================================
     # Analysis Tab Work 
     # 
-    # Makes sure that 1) the TSR has been completed by all members and 2) that an anlysis object does not already exist for it
+    # Makes sure that 1) the TSR has been completed by all members and 2) that an analysis object does not already exist for it
     # before making an analysis object.This means the correct amount of Tsr's for the assignment per project exist, with the correct 
     # matches to evaluator and evaluatee.
     #

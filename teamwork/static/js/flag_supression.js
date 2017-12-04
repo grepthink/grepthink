@@ -51,8 +51,8 @@ $.ajaxSetup({
     }
 });
 
-//updates the table to only show the data selected in the drop down menu
 function update_flag_table() {
+    //updates the table to only show the data selected in the drop down menu
     tsr_number = document.getElementById('TSR FLAG #').value; 
     if(!(isNaN(parseInt(tsr_number)))){
         tsr_number = parseInt(tsr_number);
@@ -73,8 +73,8 @@ function update_flag_table() {
       });
 }
 
-//prevents the page from refreshing when editing the flags, calls function in Django Project views
-function flag_table_refresh_edit(e){       
+function flag_table_refresh_edit(e){
+    //prevents the page from refreshing when editing the flags, calls function in Django Project views
     e.preventDefault();
     var listOfChecks = checkMarked();
     $.ajax({  //Call ajax function sending the option loaded
@@ -94,8 +94,8 @@ function flag_table_refresh_edit(e){
 
 }
 
-//prevents the page from refreshing when editing the flags, calls function in Django Project views
 function flag_table_reset(e){    
+    //prevents the page from refreshing when editing the flags, calls function in Django Project views
     tsr_number = document.getElementById('TSR FLAG #').value; 
     if(!(isNaN(parseInt(tsr_number)))){
         tsr_number = parseInt(tsr_number);
@@ -118,8 +118,8 @@ function flag_table_reset(e){
 
 }
 
-//Goes through all of the check boxes of MARK[] and returns the ones that are checked 
 function checkMarked() {
+    //Goes through all of the check boxes of MARK[] and returns the ones that are checked 
     var mark = document.getElementsByName("MARK[]");
     var markArr = [];
     for (var i=0; i < mark.length; i++) {

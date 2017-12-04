@@ -4,7 +4,7 @@ from .models import Analysis
 
 def get_contributions_of_members(project):
     """
-    Helper funciton that returns a list of lists with that scores an evaluatee got from thier evaluators 
+    Helper function that returns a list of lists with that scores an evaluatee got from thier evaluators 
     """
 
     contribution_per_member = []
@@ -174,6 +174,10 @@ def tsr_word_count(project, asgn_number):
     return word_counts
 
 def has_atleast_one_identical(member, total_report):
+    """
+    Helper function that makes sure that there is an instance in
+    total_report where an evaluator's response has been the same.
+    """
     for name in total_report:
         tuple_result = total_report[member][name]
         if tuple_result[0]:
@@ -308,7 +312,7 @@ def calculate_health_score(project):
     Helper function that returns analysis_items and health_flag.
     Analysis_items is a list of the analysis objects
     Health_flag is a number to reflect the overall team's health
-        0 is good, 1 is a warming, and 2 is bad
+        0 is good, 1 is a warning, and 2 is bad
     """
 
     members = project.members.all().order_by('username')
