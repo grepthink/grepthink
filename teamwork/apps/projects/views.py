@@ -126,34 +126,6 @@ def view_one_project(request, slug):
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
-        
-     
-      
-      
-
-    project_chat = reversed(project.get_chat())
-    if request.method == 'POST':
-        if 'mark_suppressed_confirmed' in request.POST:
-            mark_Suppressed(request,project)
-            return redirect(view_one_project, project.slug)
-
-        elif 'unsuppress_flags' in request.POST:
-            unsuppress_Tsr_Flags(request,project)
-            return redirect(view_one_project, project.slug)
-
-        form = ChatForm(request.user.id, slug, request.POST)
-        if form.is_valid():
-            # Create a chat object
-            chat = ProjectChat(author=request.user, project=project)
-            chat.content = form.cleaned_data.get('content')
-            chat.save()
-            return redirect(view_one_project, project.slug)
-       # else:
-            messages.info(request,'Errors in form')
-    #else:
-        # Send form for initial project creation
-    #    form = ChatForm(request.user.id, slug)
-
 
     user = request.user
     profile = Profile.objects.get(user=user)
@@ -171,16 +143,6 @@ def view_one_project(request, slug):
     if request.user in pending_members:
         requestButton = 0
 
-
-    #if request.method == 'POST':
-        
-       # if 'mark_suppressed_confirmed' in request.POST:
-        #    mark_Suppressed(request,project)
-        #    return redirect(view_one_project, project.slug)
-      
-        #elif 'unsuppress_flags' in request.POST:
-         #   unsuppress_Tsr_Flags(request,project)
-          #  return redirect(view_one_project, project.slug)
 
     readable = ""
     if project.readable_meetings:
@@ -1231,26 +1193,33 @@ def email_project(request, slug):
     })
 
 
-#takes in a request, slug to identify the analysis where flag is suppressed and belongs to the specific tsr
-def unsuppress_Tsr_Flags(request, project):
-    suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
-    for flag in suppressed_analysis_flags:
+#unsupresses flags of a certain tsr for flag table
+def unsuppress_Tsr_Flags(request, slug):
 
-        flag.flag_suppress = False
-        flag.save()
+    project = get_object_or_404(Project, slug=slug)
+    if request.is_ajax():
+        tsr_num = request.POST.get('tsr_number')
+        if (tsr_num == 'All'):
+            suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
+        else:
+            suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True) & Q(tsr_number__exact = tsr_num))
+        for flag in suppressed_analysis_flags:
+            flag.flag_suppress = False
+            flag.save()
+        all_analysis = project.analysis.all()
+        members = project.members.all().order_by('username')
+    return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
 
-#@csrf_exempt
-def mark_Suppressed(request,project):
-    # checks flags in the suppressed_Items POST array. if there, changes suppression to true
-    #tsr_num = request.POST.get('tsr_number_input',None)
-    #project = get_object_or_404(Project, slug=slug)
-    suppressed_flags_array = request.POST.getlist('mark_suppressed[]')
-    print(suppressed_flags_array)
-    for flag_id in suppressed_flags_array :
-        updated_flag = project.analysis.get(id= flag_id)
-        updated_flag.flag_suppress = True
-        updated_flag.save()
-    #all_analysis = project.analysis.all()
-    #members = project.members.all().order_by('username')
-    #return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+#changes check values on flag table to have suppressed as true
+def mark_Suppressed(request,slug):
+    if request.is_ajax():
+        suppressed_flags_array = request.POST.getlist('listOfChecks')
+        project = get_object_or_404(Project, slug=slug)
+        for flag_id in suppressed_flags_array :
+            updated_flag = project.analysis.get(id= flag_id)
+            updated_flag.flag_suppress = True
+            updated_flag.save()
+    all_analysis = project.analysis.all()
+    members = project.members.all().order_by('username')
+    return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
  
