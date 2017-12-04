@@ -586,7 +586,7 @@ def edit_project(request, slug):
                 subject = "GrepThink Project Invitation: " + project.title
                 content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
 
-                send_email(mem_to_add, request.user.email, subject, content)
+                #send_email(mem_to_add, request.user.email, subject, content)
                 added = True
 
         if added:
