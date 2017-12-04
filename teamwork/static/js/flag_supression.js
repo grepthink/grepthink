@@ -1,3 +1,8 @@
+// ========================================================================================================
+// flag_suppression.js
+// ========================================================================================================
+
+// Django provided by the Django website to handle csrf tokens
 var tsr_number = parseInt(document.getElementById('TSR FLAG #').value) ;
 // using jQuery
 function getCookie(name) {
@@ -54,7 +59,6 @@ function update_flag_table() {
     }
     $('#flag_table').show();
     var dataset = $('#flag_table tbody').find('tr');
-    /*dataset.show();*/
     dataset.each(function(index) {
         item = $(this);
         item.hide();
