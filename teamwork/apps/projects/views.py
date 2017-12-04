@@ -275,7 +275,7 @@ def request_join_project(request, slug):
         # TODO: create link that goes directly to accept or deny
         content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
         content = "{0}\n\n www.grepthink.com".format(content_text)
-        send_email(creator, "noreply@grepthink.com", subject, content)
+        #send_email(creator, "noreply@grepthink.com", subject, content)
         # notify user that their request has gone through successfully
         messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
 
