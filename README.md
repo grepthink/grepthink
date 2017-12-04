@@ -3,7 +3,7 @@ A project that builds off of [grepthink](https://github.com/grepthink/grepthink/
 
 Project Documentation and Planning Notes can be found [here.](https://drive.google.com/drive/folders/0B1R1qp5QghphYndneXQ5LVQ2d2s?usp=sharing)
 
-## Demo Instructions
+## Installation Instructions
 Prerequisite: Python 3 must be installed. You can get that [here](https://www.python.org/downloads/)
 
 1. Start by cloning our project with `git clone https://github.com/divark/tsrassistant.git`
