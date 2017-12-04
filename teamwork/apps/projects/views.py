@@ -228,7 +228,7 @@ def leave_project(request, slug):
     to_delete = Membership.objects.filter(user=f_user, project=project)
 
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
-    chatroom = Chatroom.get_chatroom_with_project(Chatroom,f_user)
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     if (f_user not in members):
         messages.warning(request, "You cannot leave a project you are not a member of!")
@@ -245,7 +245,7 @@ def leave_project(request, slug):
         if f_user == project.scrum_master:
             project.scrum_master = remaining.first().user
         if chatroom is not None:
-                chatroom.remove_user(f_user)
+            chatroom.remove_user(f_user)
         project.save()
         messages.info(request, "You have left {0}".format(project))
 
