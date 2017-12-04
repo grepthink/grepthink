@@ -723,12 +723,11 @@
                                             </tbody>
                                         </table>
                                     </td>  
-                                    <td style="width:30%">
+                                    <td style="width:15%">
                                         <table class="table table-hover" style="float: left;">
                                             <tbody>
                                                 <tr>
                                                     <th id="team_status" text-align:center;">Team Status</th>
-                                                    <th id="NLP_output" text-align:center;">NLP Simple Output</th>
                                                 </tr>
                                                 <tr>
                                                     {% if health_flag == 0 %}
@@ -737,7 +736,7 @@
                                                     </td>
                                                     {% endif %}
                                                     {% if health_flag == 1 %}
-                                                    <td headers="team_status" style="color:khaki;width:40%;height:100px">
+                                                    <td headers="team_status" style="color:orange;width:40%;height:100px">
                                                         <div>Suspicious behavior detected.</div>
                                                     </td>
                                                     {% endif %}
