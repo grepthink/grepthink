@@ -17,6 +17,7 @@ from teamwork.apps.projects.views import to_bits, from_bits
     returns: a sorted list of students from best score to worst
 """
 def sort(matchList):
+    print(matchList)
     matches = []
     topScores = sorted(matchList.values())
     for j in reversed(topScores):
@@ -47,7 +48,6 @@ def po_match(project):
     course = project.course.first()
 
     if course.limit_weights:
-        # print("po_match values overridden by course instructor")
         interestWeight = course.weigh_interest or 1
         knowWeight = course.weigh_know or 1
         learnWeight = course.weigh_learn or 1
@@ -59,27 +59,35 @@ def po_match(project):
 
     # Interest Matching
     interested = project.interest.all()
+    print(interested)
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        if i.user not in project.members.all() and project not in Project.get_created_projects(i.user):
+        # add if they do not have a membership to a project in this course
+        if Membership.objects.filter(user=i.user, project__course=course):
+            continue
+        else:
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
 
+    print(initial)
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
     # knows or wants to learn this skill. multiply by weight if necessary
     desired_skills = project.desired_skills.all()
     for i in desired_skills:
-        know = i.known.all()
+        # filter the users that know the skill to those actually in the course
+        know = i.known.filter(user__enrollment__in=[course])
         for j in know:
             cur_course = Course.get_my_courses(j.user)
             # if is to allow for updating   the score of users already counted
-            if j.user not in project.members.all() and project not in Project.get_created_projects(j.user):
+            if j.user in project.members.all() or project in Project.get_created_projects(j.user):
+                continue
+            else:
                 if j.user in initial:
                     initial[j.user][0] += (2 * knowWeight)
                     initial[j.user][2] += (2 * knowWeight)
                 # otherwise we add them to a backup list
-                elif course in cur_course:
+                else:
                     if j.user in backup:
                         # temp += (2 * knowWeight)
                         backup[j.user][0] += (2 * knowWeight)
@@ -87,14 +95,17 @@ def po_match(project):
                     else:
                         backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
 
-        learn = i.learn.all()
+        learn = i.learn.filter(user__enrollment__in=[course])
         for k in learn:
             cur_course = Course.get_my_courses(k.user)
-            if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
+            # if is to allow for updating   the score of users already counted
+            if k.user in project.members.all() or project in Project.get_created_projects(k.user):
+                continue
+            else:
                 if k.user in initial:
                     initial[k.user][0] += (1 * learnWeight)
                     initial[k.user][3] += (1 * learnWeight)
-                elif course in cur_course:
+                else:
                     if k.user in backup:
                         backup[k.user][0] += (1 * learnWeight)
                         backup[k.user][3] += (1 * learnWeight)
