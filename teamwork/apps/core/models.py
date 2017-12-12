@@ -17,7 +17,6 @@ from teamwork.apps.projects.views import to_bits, from_bits
     returns: a sorted list of students from best score to worst
 """
 def sort(matchList):
-    print(matchList)
     matches = []
     topScores = sorted(matchList.values())
     for j in reversed(topScores):
@@ -59,7 +58,6 @@ def po_match(project):
 
     # Interest Matching
     interested = project.interest.all()
-    print(interested)
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
@@ -69,7 +67,6 @@ def po_match(project):
         else:
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
 
-    print(initial)
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
     # knows or wants to learn this skill. multiply by weight if necessary
@@ -79,7 +76,7 @@ def po_match(project):
         know = i.known.filter(user__enrollment__in=[course])
         for j in know:
             cur_course = Course.get_my_courses(j.user)
-            # if is to allow for updating   the score of users already counted
+            # if is to allow for updating the score of users already counted
             if j.user in project.members.all() or project in Project.get_created_projects(j.user):
                 continue
             else:
