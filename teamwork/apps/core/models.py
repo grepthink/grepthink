@@ -77,7 +77,9 @@ def po_match(project):
         for j in know:
             cur_course = Course.get_my_courses(j.user)
             # if is to allow for updating the score of users already counted
-            if j.user in project.members.all() or project in Project.get_created_projects(j.user):
+            if Membership.objects.filter(user=j.user, project__course=course):
+                continue
+            elif j.user in project.members.all() or project in Project.get_created_projects(j.user):
                 continue
             else:
                 if j.user in initial:
@@ -96,7 +98,9 @@ def po_match(project):
         for k in learn:
             cur_course = Course.get_my_courses(k.user)
             # if is to allow for updating   the score of users already counted
-            if k.user in project.members.all() or project in Project.get_created_projects(k.user):
+            if Membership.objects.filter(user=k.user, project__course=course):
+                continue
+            elif k.user in project.members.all() or project in Project.get_created_projects(k.user):
                 continue
             else:
                 if k.user in initial:
