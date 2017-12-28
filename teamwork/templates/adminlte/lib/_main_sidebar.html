@@ -63,6 +63,8 @@
                             <span>Home</span>
                         </a>
                     </li>
+                       
+                 
 
                     <li>
                         <a href="{% url 'create_project' %}">
@@ -77,6 +79,24 @@
                             <span>My Projects</span>
                         </a>
                     </li>
+	
+<!------------- create chat; need to change url link and image -->
+                <li class="treeview active">
+                    <a href="{% url 'view_chats' %}">
+                        <i class="fa fa-comments"></i>
+                            <span>Chat</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                        <ul class ="treeview-menu">
+                            <li><a href="{% url 'view_chats' %}"></i>View All Chats</a></li>
+                            <li><a href="{% url 'view_DM' %}"></i>View Direct Messages</a></li>
+                        </ul>
+                </li>
+
+
+
                         <li>
                             <a href="{% url 'view_matches' %}">
                                 <i class="fa fa-handshake-o"></i>

@@ -1,0 +1,89 @@
+import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
+import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
+import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
+import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+import com.kms.katalon.core.checkpoint.Checkpoint as Checkpoint
+import com.kms.katalon.core.checkpoint.CheckpointFactory as CheckpointFactory
+import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as MobileBuiltInKeywords
+import com.kms.katalon.core.model.FailureHandling as FailureHandling
+import com.kms.katalon.core.testcase.TestCase as TestCase
+import com.kms.katalon.core.testcase.TestCaseFactory as TestCaseFactory
+import com.kms.katalon.core.testdata.TestData as TestData
+import com.kms.katalon.core.testdata.TestDataFactory as TestDataFactory
+import com.kms.katalon.core.testobject.ObjectRepository as ObjectRepository
+import com.kms.katalon.core.testobject.TestObject as TestObject
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WSBuiltInKeywords
+import com.kms.katalon.core.webui.driver.DriverFactory as DriverFactory
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUiBuiltInKeywords
+import internal.GlobalVariable as GlobalVariable
+import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
+import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as Mobile
+import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
+
+import com.thoughtworks.selenium.Selenium
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.WebDriver
+import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium
+import static org.junit.Assert.*
+import java.util.regex.Pattern
+import static org.apache.commons.lang3.StringUtils.join
+
+WebUI.openBrowser('https://www.katalon.com/')
+def driver = DriverFactory.getWebDriver()
+String baseUrl = "https://www.katalon.com/"
+selenium = new WebDriverBackedSelenium(driver, baseUrl)
+selenium.open("http://localhost:8000/")
+selenium.click("//li[4]/a/span")
+selenium.click("id=id_title")
+selenium.type("id=id_title", "projA")
+selenium.type("id=id_tagline", "projA")
+selenium.click("id=id_course_0")
+selenium.click("id=id_content")
+selenium.type("id=id_content", "projA")
+selenium.click("id=submit")
+selenium.click("link=View All Chats")
+selenium.click("link=projA")
+selenium.click("name=message")
+selenium.type("name=message", "Testing in new projA chatroom")
+selenium.click("xpath=(//button[@type='submit'])[2]")
+selenium.click("name=message")
+selenium.type("name=message", "it works!")
+selenium.submit("id=send_msg")
+selenium.click("//button[@type='button']")
+selenium.click("id=id_user")
+selenium.type("id=id_user", "a, b, c, d")
+selenium.click("id=submit")
+selenium.click("link=projA")
+selenium.click("link=Account")
+selenium.click("link=Sign out")
+selenium.click("id=username")
+selenium.type("id=username", "a")
+selenium.type("id=password", "123")
+selenium.click("//button[@type='submit']")
+selenium.click("link=View All Chats")
+selenium.click("link=projA")
+selenium.click("xpath=(//input[@name='message'])[2]")
+selenium.type("xpath=(//input[@name='message'])[2]", "I've been added as user a")
+selenium.click("xpath=(//button[@type='submit'])[3]")
+selenium.click("link=Account")
+selenium.click("link=Sign out")
+selenium.click("id=username")
+selenium.type("id=username", "c")
+selenium.type("id=password", "123")
+selenium.sendKeys("id=password", KEY_ENTER)
+selenium.click("link=View All Chats")
+selenium.click("link=projA")
+selenium.click("name=message")
+selenium.type("name=message", "user c was added")
+selenium.submit("id=send_msg")
+selenium.click("//li[2]/a/span")
+selenium.click("link=Sign out")
+selenium.click("id=username")
+selenium.type("id=username", "d")
+selenium.type("id=password", "123")
+selenium.sendKeys("id=password", KEY_ENTER)
+selenium.click("link=View All Chats")
+selenium.click("link=projA")
+selenium.click("name=message")
+selenium.type("name=message", "and d was added!")
+selenium.click("xpath=(//button[@type='submit'])[2]")

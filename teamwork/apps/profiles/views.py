@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from teamwork.apps.profiles.forms import SignUpForm
 from teamwork.apps.projects.models import *
 
+
 from .forms import *
 from .models import *
 from django.urls import reverse
@@ -469,3 +470,5 @@ def delete_alert(request, ident):
     if alert.to.id is user.id and alert.read is True:
         alert.delete()
     return redirect(view_alerts)
+
+
