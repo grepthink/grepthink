@@ -527,7 +527,7 @@ def edit_project(request, slug):
         return redirect(view_one_project, project.slug)
 
     if request.POST.get('delete_project'):
-        # Check that the current user is the project owner
+        # Check that the current user is the project owner, GT Override, or prof
         if request.user == project.creator:
             project.delete()
         else:
