@@ -798,6 +798,7 @@ def delete_course_update(request, slug, id):
 
     return redirect(view_one_course, course.slug)
 
+
 def lock_interest(request, slug):
     """
     Lock the interest for a course

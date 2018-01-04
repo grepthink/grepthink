@@ -53,6 +53,7 @@ def view_projects(request):
 
     return _projects(request, my_projects)
 
+@login_required
 def view_meetings(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -253,6 +254,7 @@ def leave_project(request, slug):
 
     return redirect(view_projects)
 
+@login_required
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
