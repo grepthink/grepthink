@@ -72,7 +72,7 @@ def view_one_course(request, slug):
 
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
-        if request.user in course.students.all() or request.user.profile.isProf:
+        if request.user in course.students.all() or (request.user==course.creator):
             user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
         else:
             # init user_role otherwise
@@ -81,7 +81,7 @@ def view_one_course(request, slug):
         user_role = 'GT'
 
     # TODO: get rid of isProf and use user_role
-    if request.user.profile.isProf:
+    if request.user==course.creator:
         isProf = 1
     else:
         isProf = 0
@@ -151,7 +151,7 @@ def view_stats(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==cur_course.creator:
         if not user_role=="ta":
             return redirect(view_one_course, cur_course.slug)
 
@@ -458,7 +458,7 @@ def edit_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user:
+    elif not course.creator == request.user:
         if not user_role=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only Professor can edit course')
@@ -619,7 +619,7 @@ def edit_assignment(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user:
+    elif not course.creator == request.user:
         if not user_role=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only a Professor or TA can Edit an Assignment')
@@ -668,7 +668,7 @@ def delete_course(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==course.creator:
         return redirect(view_one_course, course.slug)
 
     #Runs through each project and deletes them
@@ -696,7 +696,7 @@ def delete_assignment(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==course.creator:
         if not user_role == "ta":
             return redirect(view_one_course, course.slug)
 

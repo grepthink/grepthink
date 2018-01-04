@@ -135,7 +135,7 @@ def view_one_project(request, slug):
     project_members = project.members.all()
 
     isProf = 0
-    if request.user.profile.isProf:
+    if request.user==course.creator:
         isProf = 1
 
     requestButton = 1
