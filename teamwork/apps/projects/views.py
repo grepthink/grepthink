@@ -134,10 +134,6 @@ def view_one_project(request, slug):
     pending_count = len(pending_members)
     project_members = project.members.all()
 
-    isProf = 0
-    if request.user==course.creator:
-        isProf = 1
-
     requestButton = 1
     if request.user in pending_members:
         requestButton = 0
@@ -536,7 +532,7 @@ def edit_project(request, slug):
         print("deleting project")
         # Rights: GT, Professor, TA, Project Creator
         if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
-            project.delete()        
+            project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')
 
