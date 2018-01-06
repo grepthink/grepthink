@@ -520,8 +520,10 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
+    userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user == course.creator:
+    if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
         pass
     elif not request.user  in project.members.all():
         #redirect them with a message
@@ -533,11 +535,8 @@ def edit_project(request, slug):
     if request.POST.get('delete_project'):
         print("deleting project")
         # Rights: GT, Professor, TA, Project Creator
-        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT:
-            project.delete()
-        elif Enrollment.objects.filter(user=request.user, course=course).first().role == "ta":
-            # this is here so it doesn't have to call filter for every user, only for the case that they aren't GT, Course Creator, Project Creator
-            project.delete()
+        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
+            project.delete()        
         else:
             messages.warning(request,'Only project owner can delete project.')
 
