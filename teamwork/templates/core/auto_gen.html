@@ -18,19 +18,21 @@
 
 {% block content %}
 
+<div style="padding:15px">
+    <a href="{% url 'assign_auto' course.slug %}">
+        {% if flag %}
+            <button class="btn btn-success">
+        {% else %}
+            <button class="btn btn-success" title="Groups are full" disabled="">
+        {% endif %}
+            Set Roster
+        </button>
+    </a>
+</div>
+
 <section class="prof-matches">
-    <div class="row">
-        <div>
-            <a href="{% url 'assign_auto' course.slug %}">
-                {% if flag %}
-                    <button class="btn btn-success">
-                {% else %}
-                    <button class="btn btn-success" title="Groups are full" disabled="">
-                {% endif %}
-                    Set Roster
-                </button>
-            </a>
-        </div>
+
+
 {% for i in auto_gen %}
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
