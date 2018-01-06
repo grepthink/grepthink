@@ -526,9 +526,15 @@ def edit_project(request, slug):
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
 
+    print("WE IN HERE")
+    print(request.method)
     if request.POST.get('delete_project'):
-        # Check that the current user is the project owner
-        if request.user == project.creator:
+        print("deleting project")
+        # Rights: GT, Professor, TA, Project Creator
+        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT:
+            project.delete()
+        elif Enrollment.objects.filter(user=request.user, course=course).first().role == "ta":
+            # this is here so it doesn't have to call filter for every user, only for the case that they aren't GT, Course Creator, Project Creator
             project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')

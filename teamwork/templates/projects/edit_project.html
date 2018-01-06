@@ -357,7 +357,11 @@ $(document).ready(function() {
 
     </div> <!-- Box 3 -->
 
-  </form>
+
+
+
+
+
 
 </div> <!-- Col 3 -->
 
@@ -372,8 +376,8 @@ $(document).ready(function() {
                       sure you know what you are doing before pressing this button.
                   </p>
 
-                  {% csrf_token %}
-                      <button class="btn btn-danger" name="delete_project" value="delete_project">
+                  <!-- {% csrf_token %} -->
+                      <button class="btn btn-danger" name="delete_project" type="submit" value="delete_project">
                           <i class="fa fa-trash"></i>
                           Delete project
                       </button>
