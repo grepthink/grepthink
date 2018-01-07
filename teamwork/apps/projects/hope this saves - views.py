@@ -53,7 +53,6 @@ def view_projects(request):
 
     return _projects(request, my_projects)
 
-@login_required
 def view_meetings(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -88,8 +87,6 @@ def view_meetings(request, slug):
         'page_description': page_description, 'title' : title,
         'project': project, 'course' : course, 'json_events': meetings})
 
-
-@login_required
 def view_one_project(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -97,7 +94,7 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
     project = get_object_or_404(Project, slug=slug)
-
+    
     scrum_master = project.scrum_master
     updates = project.get_updates()
     resources = project.get_resources()
@@ -127,7 +124,31 @@ def view_one_project(request, slug):
         for j in i.subs.all():
             if j.evaluator == request.user:
                 asg_completed.append(i)
-                break
+                break      
+
+    project_chat = reversed(project.get_chat())
+    if request.method == 'POST':
+        if 'mark_suppressed_confirmed' in request.POST:
+            mark_Suppressed(request,project)
+            return redirect(view_one_project, project.slug)
+
+        elif 'unsuppress_flags' in request.POST:
+            unsuppress_Tsr_Flags(request,project)
+            return redirect(view_one_project, project.slug)
+
+        form = ChatForm(request.user.id, slug, request.POST)
+        if form.is_valid():
+            # Create a chat object
+            chat = ProjectChat(author=request.user, project=project)
+            chat.content = form.cleaned_data.get('content')
+            chat.save()
+            return redirect(view_one_project, project.slug)
+       # else:
+            messages.info(request,'Errors in form')
+    #else:
+        # Send form for initial project creation
+    #    form = ChatForm(request.user.id, slug)
+
 
     user = request.user
     profile = Profile.objects.get(user=user)
@@ -136,6 +157,10 @@ def view_one_project(request, slug):
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
     project_members = project.members.all().order_by('username')
+
+    isProf = 0
+    if request.user.profile.isProf:
+        isProf = 1
 
     requestButton = 1
     if request.user in pending_members:
@@ -167,22 +192,19 @@ def view_one_project(request, slug):
     else:
         user_role = 'GT'
 
-    fix = []
-    new_tsr_tuple = []
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
-        temp = ""
+        for i in assigned_tsrs:
+            for j in project.tsr.all():
+                if j in i.subs.all():
+                    tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
 
-        for j in temp_tup:
-            if temp != j.evaluatee:
-                temp = j.evaluatee
-                fix.append([temp, j.ass.first(), j, 1])
-            else:
-                fix.append(["", j.ass.first(), j, 0])
+        tsr_keys = tsr_tuple.keys()
+        tsr_items = tsr_tuple.items()
+        mem_count = len(members)
     else:
-        fix = None
-
-
+        tsr_keys = None
+        tsr_items = None
+        mem_count = None
 
 
     med = 100
@@ -190,13 +212,13 @@ def view_one_project(request, slug):
         med = int(100/len(members))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     today = datetime.now().date()
-
+    
 
     # ===================================================================================================================================
-    # Analysis Tab Work
-    #
-    # Makes sure that 1) the TSR has been completed by all members and 2) that an analysis object does not already exist for it
-    # before making an analysis object.This means the correct amount of Tsr's for the assignment per project exist, with the correct
+    # Analysis Tab Work 
+    # 
+    # Makes sure that 1) the TSR has been completed by all members and 2) that an anlysis object does not already exist for it
+    # before making an analysis object.This means the correct amount of Tsr's for the assignment per project exist, with the correct 
     # matches to evaluator and evaluatee.
     #
     # Constants defined for weighing Analysis objects and are used for Team Health overall.
@@ -204,21 +226,21 @@ def view_one_project(request, slug):
     # Checks the course for each assignment of type tsr and goes through each to get the assignment number and associated analysis
     # ===================================================================================================================================
 
-    for each_assigned_tsr in assigned_tsrs:
-
+    for each_assigned_tsr in assigned_tsrs: 
+       
         assigned_tsr_number = each_assigned_tsr.ass_number
         existing_analysis = project.analysis.filter(tsr_number = assigned_tsr_number)
 
         # if an instance of the analysis for a specific TSR does not exist, make one
-        # if it exists, check the next TSR
+        # if it exists, check the next TSR 
         if not existing_analysis.exists():
             completed_tsrs_per_ass_number = project.tsr.filter(ass_number = assigned_tsr_number)
             if len(members) != 0 and len(members) == (len(completed_tsrs_per_ass_number)/len(members)):
                 tsr_exists = {}
-
+                 
                 for each_member in members :
                     tsr_per_evaluator = completed_tsrs_per_ass_number.filter(evaluator = each_member)
-
+                    
                     for each_evaluatee in members:
                         tsr_exists[str(each_member), str(each_evaluatee)] = tsr_per_evaluator.filter(evaluatee = each_evaluatee).exists()
 
@@ -232,7 +254,7 @@ def view_one_project(request, slug):
 
                 else:
                     messages.warning(request, 'TSR' + str(assigned_tsr_number) + 'is not complete. All TSRs must be complete to generate analysis!')
-
+    
     # Analysis functions
 
     member_averages, tsr_numbers = calculate_member_averages(project, assigned_tsrs)
@@ -242,12 +264,12 @@ def view_one_project(request, slug):
     # End analysis functions
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
+        'page_description': page_description, 'title' : title, 'members' : members,
         'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'course' : course, 'project_owner' : project_owner, 'project_chat':project_chat,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys,
+        'updates': updates, 'course' : course, 'project_owner' : project_owner,
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
         'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members),
         'member_names':member_names})
@@ -286,7 +308,6 @@ def leave_project(request, slug):
 
     return redirect(view_projects)
 
-@login_required
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all().order_by('username')
@@ -552,22 +573,17 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
-    userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
-
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
+    if request.user.profile.isGT or request.user == course.creator:
         pass
     elif not request.user  in project.members.all().order_by('username'):
         #redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
 
-    print("WE IN HERE")
-    print(request.method)
     if request.POST.get('delete_project'):
-        print("deleting project")
-        # Rights: GT, Professor, TA, Project Creator
-        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
+        # Check that the current user is the project owner
+        if request.user == project.creator:
             project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')
@@ -984,7 +1000,7 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     members = project.members.all().order_by('username')
 
-
+	
     # put emails into list
     emails=list()
     for member in members:
@@ -1029,7 +1045,7 @@ def view_tsr(request, slug):
     if request.method == 'POST':
 
         return redirect(view_projects)
-
+    
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
 
 
@@ -1204,32 +1220,26 @@ def email_project(request, slug):
     })
 
 
-#unsupresses flags of a certain tsr for flag table
-def unsuppress_Tsr_Flags(request, slug):
+#takes in a request, slug to identify the analysis where flag is suppressed and belongs to the specific tsr
+def unsuppress_Tsr_Flags(request, project):
+    suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
+    for flag in suppressed_analysis_flags:
 
-    project = get_object_or_404(Project, slug=slug)
-    if request.is_ajax():
-        tsr_num = request.POST.get('tsr_number')
-        if (tsr_num == 'All'):
-            suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True))
-        else:
-            suppressed_analysis_flags = project.analysis.all().filter(Q(flag_suppress__exact = True) & Q(tsr_number__exact = tsr_num))
-        for flag in suppressed_analysis_flags:
-            flag.flag_suppress = False
-            flag.save()
-        all_analysis = project.analysis.all()
-        members = project.members.all().order_by('username')
-    return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+        flag.flag_suppress = False
+        flag.save()
 
-#changes check values on flag table to have suppressed as true
-def mark_Suppressed(request,slug):
-    if request.is_ajax():
-        suppressed_flags_array = request.POST.getlist('listOfChecks')
-        project = get_object_or_404(Project, slug=slug)
-        for flag_id in suppressed_flags_array :
-            updated_flag = project.analysis.get(id= flag_id)
-            updated_flag.flag_suppress = True
-            updated_flag.save()
-    all_analysis = project.analysis.all()
-    members = project.members.all().order_by('username')
-    return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+#@csrf_exempt
+def mark_Suppressed(request,project):
+    # checks flags in the suppressed_Items POST array. if there, changes suppression to true
+    #tsr_num = request.POST.get('tsr_number_input',None)
+    #project = get_object_or_404(Project, slug=slug)
+    suppressed_flags_array = request.POST.getlist('mark_suppressed[]')
+    print(suppressed_flags_array)
+    for flag_id in suppressed_flags_array :
+        updated_flag = project.analysis.get(id= flag_id)
+        updated_flag.flag_suppress = True
+        updated_flag.save()
+    #all_analysis = project.analysis.all()
+    #members = project.members.all().order_by('username')
+    #return render(request,'projects/flag_table.html', { 'all_analysis': all_analysis, 'members':members })
+ 

@@ -65,7 +65,6 @@
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
-            <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
             {% if user in project_members %}
             <li class=""><a href="#tab_5" data-toggle="tab"
                 aria-expanded="false">TSR</a></li>
@@ -73,6 +72,15 @@
             {% if request.user in staff or request.user.profile.isGT %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
+
+
+            <!-- Graphical Analysis Tab-->
+            {% if request.user in staff or request.user.profile.isGT %}
+            <li class=""><a href="#tab_9" data-toggle="tab" aria-expanded="false">Graphical Analysis</a></li>
+            {% endif %}
+            <!-- Graphical Analysis Tab-->
+
+
             {% if user in project_members %}
             <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li>
             {% endif %}
@@ -457,14 +465,13 @@
                 </div>
             </div>
 
-            <!-- View TSR Tab -->
+             <!-- View TSR Tab -->
             <div class="tab-pane" id="tab_6">
             <style>
-              table {
+                table {
                 border-collapse: collapse;
                 width: 100%;
               }
-
               th, td {
                 text-align: left;
                 padding: 8px;
@@ -566,7 +573,77 @@
                                          {{k.notes}}
                                        </td>
                                        </tr>
-                                       {% endif %}
+                                       <!--{{ tsrs|pprint }} see output_of_print_tsrs.txt-->
+                                       <br><br>
+                                       {% for m in members %}
+                                           <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                       {% for completed_tsrs in tsrs %}
+                                       <!--{{ completed_tsrs|pprint }} see output_of_tsr_subcontainer.txt-->
+                                       {% for eval in completed_tsrs.1 %}
+                                                {% if eval.1.evaluatee == m %}
+                                                {% if eval.2 == ass%}
+                                                <td>
+                                                     <a href="{% url 'profile' eval.1.evaluatee.username %}">
+                                                    {{eval.1.evaluatee.email}}</a>
+                                                </td>
+
+                                                <td>
+                                                    {% if eval.1.late %}
+                                                        <span class="tooltip2">
+                                                           <span class="tooltiptext2">Indicates Late Submission
+                                                           </span>
+                                                           <a href="{% url 'profile' eval.1.evaluator.username %}">
+
+                                                           <span style="color:red;">{{eval.1.evaluator.email}}</span></a>
+                                                        </span>
+                                                    {% else %}
+                                                    <a href="{% url 'profile' eval.1.evaluator.username %}">
+
+                                                    {{eval.1.evaluator.email}}</a>
+                                                    {% endif %}
+
+                                               </td>
+
+                                               <td style="text-align:center;">
+                                                 {% if contribute_levels.high < eval.1.percent_contribution%}
+                                                   <div style="color:blue">{{eval.1.percent_contribution}}</div>
+                                                 {% else %}
+                                                 {% if contribute_levels.low < eval.1.percent_contribution %}
+                                                   <div style="color:green">{{eval.1.percent_contribution}}</div>
+                                                 {%else%}
+                                                   <div style="color:red">{{eval.1.percent_contribution}}</div>
+                                                 {% endif %}
+                                                 {% endif %}
+                                                   <p>
+                                               </td>
+
+                                               <td style="text-align:justify;">
+                                                 {{eval.1.positive_feedback}}
+                                               </td>
+
+                                               <td style="text-align:justify;">
+                                                 {{eval.1.negative_feedback}}
+                                               </td>
+
+                                               <td style="text-align:justify; border-left-color: #CCCCCC; border-left-style: solid;">
+                                                 {{eval.1.tasks_completed}}
+                                               </td>
+                                               <td style="text-align:justify;">
+                                                 {{eval.1.performance_assessment}}
+                                               </td>
+                                               <td style="text-align:justify;">
+                                                 {{eval.1.notes}}
+                                               </td>
+                                             </tr>
+                                             {% endif %}
+                                             {% endif %}
+                                       {% endfor %}
+                                       {% endfor %}
+                                    {% endfor %}
+                                       </tbody>
+                           </table>
+                   </ul>
+                 </div>
 
                                      {% endfor %}
 
@@ -623,10 +700,265 @@
 
             </div>
 
+            <!-- ======================================================================================================================== -->
+            <!-- TSR graphical analysis tab begin-->
+            <!-- ======================================================================================================================== -->
+			<style>
+				input[type=button], input[type=submit], input[type=reset] {
+    			background-color: #4CAF50;
+    			border: none;
+    			color: white;
+    			padding: 16px 32px;
+    			text-decoration: none;
+    			margin: 4px 2px;
+    			cursor: pointer;
+				}
+			</style>
+
+            <!-- Team health panel with student, average contribution, and status -->
+                <!-- Student - displays the student's name. If they did not set their name, it displays their email/cruzid -->
+                <!-- Average contribution - displays that student's average contribution as given by all members throughout the TSRs -->
+                <!-- Status - displays "good", "warning", and "bad" in a gradiant from green to yellow to red respectively -->
+            <!-- NLP panel with team status and the NLP simple output-->
+            <div class="tab-pane" id="tab_9">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Team Health</h3>
+                        <div class="box-tools">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="width:30%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <th></th>
+                                                    <th text-align:center;">Student</th>
+                                                    <th text-align:center;">Average Contribution</th>
+                                                    <th text-align:center;">Status</th>
+                                                </tr>
+                                                {% for member in members %}
+                                                    <tr>
+                                                        {% if member.profile.name != "" %}
+                                                            <td id ="{{member.profile.name}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.name}}</a>
+                                                            </td>
+                                                        {% endif %}
+                                                        {% if member.profile.name == "" %}
+                                                            <td id ="{{member.profile.user}}" style="width:5%"></td>
+                                                            <td style="width:40%">
+                                                                <a href="{% url 'profile' member.username %}">
+                                                                    {{member.profile.user}}</a>
+                                                            </td>
+                                                        {% endif %}
+                                                        {% for analysis_ass in all_analysis %}
+                                                            {% for analysis_piece in analysis_ass.1 %}
+                                                                {% if analysis_piece.0.analysis_type == "Averages for all Evaluations" %}
+                                                                {% if member == analysis_piece.0.associated_member %}
+                                                                {% if analysis_piece.0.tsr_number == assigned_tsrs|length %}
+                                                                    <td style="width:35%">
+                                                                        {{analysis_piece.0.analysis_output}}
+                                                                    </td>
+                                                                    <!-- for widthratio x y 1, adjust x down to loosen lower bound for "good" -->
+                                                                    {% widthratio 93 members|length 1 as ideal_average_value %}
+                                                                    <!-- for widthratio ideal x y, fraction y/x of ideal gives lower bound for "warning" -->
+                                                                    {% widthratio ideal_average_value 5 4 as modified_average_value %}
+                                                                    {% if analysis_piece.0.analysis_output >= ideal_average_value %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:green">Good</div>
+                                                                        </td>
+                                                                    {% elif analysis_piece.0.analysis_output >= modified_average_value %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:#ff8040">Warning</div>
+                                                                        </td>
+                                                                    {% else %}
+                                                                        <td style="width:25%">
+                                                                            <div style="color:red">Bad</div>
+                                                                        </td>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width:15%">
+                                        <table class="table table-hover" style="float: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <th id="team_status" text-align:center;">Team Status</th>
+                                                </tr>
+                                                <tr>
+                                                    {% if health_flag == 0 %}
+                                                    <td headers="team_status" style="color:chartreuse;width:40%;height:100px">
+                                                        <div>No serious problems detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_flag == 1 %}
+                                                    <td headers="team_status" style="color:orange;width:40%;height:100px">
+                                                        <div>Suspicious behavior detected.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                    {% if health_flag == 2 %}
+                                                    <td headers="team_status" style="color:red;width:40%;height:100px">
+                                                        <div>Problems detected. Intervention recommended.</div>
+                                                    </td>
+                                                    {% endif %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
 
 
+              <!-- TSR analysis charts-->
+              <!-- Gives values to javascript for student_contribution_received.js to display the graphs -->
+              <input type="hidden" id="tsr_numbers" name="variable" value="{{tsr_numbers}}">
+              <input type="hidden" id="colors" value="{{colors_array}}">
+              <input type="hidden" id="contributions_of_members" value="{{contributions_of_members}}">
+              {% for tsr_number in tsr_numbers %}
+              {% for member_average in member_averages %}
+                <input type="hidden" id="{{tsr_number}}" name="variable" value="{{member_average}}">
+              {% endfor %}
+              {% endfor %}
+                <input type="hidden" id="member_averages" name="variable" value="{{member_averages}}">
+                <input type="hidden" id="other_member_contributions" name="variable" value="{{other_member_contributions}}">
+                <table>
+                    <tr>
+                        <td>
+                            <b>TSR Number</b>
+                             <select onchange="update_local_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="TSR #">
+                                {% for tsr_number in tsr_numbers %}
+                                <option value="{{tsr_number}}">{{tsr_number}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <b>Member:</b>
+                            <select onchange="update_historical_barchart()" src="{% static 'js/student_contribution_received.js' %}" id="Member">
+                                {% for member in member_names %}
+                                    <option id="{{member}}">{{member}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Students' Contribution Scores Received</th>
+                        <th>Historical Averages</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="width: 75%;">
+                                <canvas id="local_student_contribution" width="600px" height="600px" style="border-style: none solid #000000;"></canvas>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="width: 75%;">
+                                <canvas id="historical_student_contribution" width="600px" height="600px" style="border-style: none solid #000000;"></canvas>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+				<br><br>
 
+                <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+                <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+                <script type="text/javascript" src="{% static 'js/student_contribution_received.js' %}"></script>
+
+
+
+                <!-- TSR Flag Set Number-->
+                <!-- Displays flags to the user ordered by student evaluator, analysis type, and then TSR number. -->
+                <!-- The analysis types are from giving_outlier_scores(), tsr_word_count(), and similarity_of_eval_history(), respectively -->
+                <b>TSR Flag Set Number</b>
+                <select onchange="update_flag_table()" src="{% static 'js/flag_supression.js' %}" id="TSR FLAG #">
+                        <option value="All">All</option>
+                    {% for tsr_number in tsr_numbers reversed%}
+                        <option value="{{tsr_number}}">{{tsr_number}}</option>
+                    {% endfor %}
+                </select>
+               	<div id = "flag_table_div">
+                	<table class = "table table-hover" id = "flag_table" >
+                		<form action = '' method = 'POST'>
+                			{% csrf_token %}
+                			<thead>
+                    			<tr>
+                    				<th style="text-align:center;">TSR Number</th>
+                    				<th style="text-align:center;">Student</th>
+                        			<th style="text-align:center;">Flag Details</th>
+                        			<th style=" text-align:center;">Suppress?</th>
+                    			</tr>
+                			</thead>
+                    		<tbody>
+
+                    			{% for m in members %}
+                                {% for tsr_number in tsr_numbers%}
+                   					{% for analysis_ass in all_analysis %}
+                            			{% for analysis_piece in analysis_ass.1 %}
+                                			{% if m == analysis_piece.0.associated_member %}
+                                				{% if analysis_piece.0.flag_suppress == False %}
+                                					{% if analysis_piece.0.flag_detail %}
+                                                    {% if tsr_number == analysis_piece.0.tsr_number%}
+                                						<tr style= "background-color:white";>
+                                	    					<td style="text-align:center;">
+                                            					{{analysis_piece.0.tsr_number}}
+                                        					</td>
+                                        					<td>
+                                            					<a href="{% url 'profile' analysis_piece.0.associated_member.username %}">
+                                            						{{analysis_piece.0.associated_member.email}}</a>
+                                        					</td>
+                                        					<td style="text-align:center;">
+                                            					{{analysis_piece.0.flag_detail}}
+                                        					</td>
+                                                			<td style= "text-align:center;">
+                                                				<input type="checkbox" name="MARK[]" value="{{analysis_piece.0.id}}" id="mark_suppressed_{{analysis_piece.0.id}}">
+			                                                </td>
+            			                				</tr>
+                                                    {% endif %}
+                        			    			{% endif %}
+                            					{% endif %}
+                                    		{% endif %}
+                               			 {% endfor %}
+                            		{% endfor %}
+                        		{% endfor %}
+                                {% endfor %}
+                    		</tbody>
+					</table>
+            		<span class="pull-right">
+
+                    	<input type="submit" name="unsuppress_flags" value="Reset Flags" onclick = "flag_table_reset(event);" src="{% static 'js/flag_supression.js' %}" >
+                    	<input type="submit" name="mark_suppressed_confirmed" value="Submit" onclick = "flag_table_refresh_edit(event);" src="{% static 'js/flag_supression.js' %}">
+
+                	</span>
+                	<div class="clear"></div>
+
+                            </form>
+
+                </div>
+
+                 <script src ="{%static 'js/flag_supression.js' %}" type = "text/javascript"></script>
+
+            </div>
+
+        <!-- ======================================================================================================================== -->
+        <!-- TSR GRAPHICAL ANALYSIS TAB END -->
+        <!-- ======================================================================================================================== -->
 
 
             <!-- /.tab-pane chat -->

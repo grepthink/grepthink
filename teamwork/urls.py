@@ -75,6 +75,12 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
         url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
 
+        #mark flags as suppressed in the analysis table flag table
+        # for AJAX request when suppressing flags
+        url(r'^project/(?P<slug>[^/]+)/ajax/mark_flags/$', project_views.mark_Suppressed, name='update_mark_suppress'),
+        #reset all suppressed flags to unsupressed
+        url(r'^project/(?P<slug>[^/]+)/ajax/reset_flags/$', project_views.unsuppress_Tsr_Flags, name='reset_Flags'),
+
         # COURSE
         # Delete individual assignment (based on slug)
         url(r'^assignment/(?P<slug>[^/]+)/delete/$', course_views.delete_assignment, name='delete_assignment'),
@@ -154,3 +160,5 @@ urlpatterns = [
         url(r'^alerts/readall/$', profile_views.archive_alerts, name="archive_alerts"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  
+

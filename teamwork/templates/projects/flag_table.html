@@ -1,0 +1,53 @@
+<!-- flag_table.htm: loads the flag data  -->
+
+
+{% load static %}
+    <div id = "flag_table_div">
+        <table class = "table table-hover" id = "flag_table" >
+            <form action = '' method = 'POST'>
+                {% csrf_token %}
+                <thead>
+                    <tr>
+                        <th style="text-align:center;">TSR Number</th>
+                        <th style="text-align:center;">Student</th>
+                        <th style="text-align:center;">Flag Details</th>
+                        <th style=" text-align:center;">Suppress?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in members %}
+                        {% for analysis_ass in all_analysis %}
+                            {% if m == analysis_ass.associated_member %}
+                                {% if analysis_ass.flag_suppress == False %}
+                                    {% if analysis_ass.flag_detail %}
+                                        <tr style= "background-color:white";>
+                                            <td style="text-align:center;">
+                                                {{analysis_ass.tsr_number}}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'profile' analysis_ass.associated_member.username %}">
+                                                {{analysis_ass.associated_member.email}}</a>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                {{analysis_ass.flag_detail}}
+                                            </td>
+                                            <td style= "text-align:center;">
+                                                <input type="checkbox" name="MARK[]" value="{{analysis_ass.id}}" id="mark_suppressed_{{analysis_ass.id}}"> 
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                 {% endif %}
+                            {% endif %}   
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+        </table>
+        <span class="pull-right">
+            <input type="submit" name="unsuppress_flags" value="Reset Flags" onclick = "flag_table_reset(event);" src="{% static 'js/flag_supression.js' %}" >
+            <input type="submit" name="mark_suppressed_confirmed" value="Submit" onclick = "flag_table_refresh_edit(event);" src="{% static 'js/flag_supression.js' %}">
+        </span>
+        <div class="clear"></div>
+
+            </form>
+
+    </div>
