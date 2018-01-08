@@ -242,12 +242,12 @@ def view_one_project(request, slug):
     # End analysis functions
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
+        'page_description': page_description, 'title' : title, 'members' : members, 'temp_tup':fix,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'course' : course, 'project_owner' : project_owner, 'project_chat':project_chat,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys,
+        'updates': updates, 'course' : course, 'project_owner' : project_owner,
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings,
         'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs, 'all_analysis' : analysis_items, 'health_flag': health_flag,
         'member_averages': member_averages, 'tsr_numbers':tsr_numbers, 'contributions_of_members': json.dumps(contributions_of_members),
         'member_names':member_names})
