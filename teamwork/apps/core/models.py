@@ -142,7 +142,7 @@ def auto_ros(course):
         match_list.extend([(pro, p_match, len(p_match))])
 
     # Sort the list of projects from least interest to most
-    sorted_list = match_list.sort(key=lambda x: x[2])
+    sorted_list = sorted(match_list, key=lambda x: x[-1])
 
     # Mark all curent memebers as assigned before assigning
     for z in match_list:
@@ -153,23 +153,23 @@ def auto_ros(course):
     for x in match_list:
         temp_team = []
         # loop through the suggested members
-        for y in range(0, x[2]):
+        for y in range(0, x[-1]):
             temp_user = x[1][y]
             # exit loop if the team is full
             if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
                 break
             # skip the person if they have already been assigned
-            elif (temp_user in assigned) or (temp_user in x[0].members.all()):
+            elif temp_user[0] in assigned:
                 continue
             # do the actually assignment
             else:
                 # add the user to the suggested team
                 temp_team.append(temp_user)
                 # flag the user as assigned
-                assigned.append(temp_user)
+                assigned.append(temp_user[0])
+
         # add the project and team to the roster
         roster.append([x[0], temp_team])
-
 
     # Creates the membership objects, add the new students to respective teams
     # for p in roster:
