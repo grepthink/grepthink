@@ -12,3 +12,4 @@ django-chartjs
 sendgrid
 django-gravatar2
 xlwt
+Django==1.10.5

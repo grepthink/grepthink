@@ -81,6 +81,7 @@ def about(request):
     return render(request, 'core/about.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title})
 
+@login_required
 def search(request):
     """
     This works but...
@@ -169,7 +170,7 @@ def view_matches(request):
         'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
 
-
+@login_required
 def auto_gen(request, slug):
     """
     Generic view for serving a list of projects and potential teammate matches for
@@ -198,6 +199,7 @@ def auto_gen(request, slug):
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title, 'flag': flag})
 
+
 def assign_auto(request, slug):
     """
     Assign the students to auto-gen teams
@@ -212,6 +214,7 @@ def assign_auto(request, slug):
     return redirect(auto_gen, course.slug)
 
 
+@login_required
 def matchstats(request, slug, project_match_list):
     """
         Displays why a user was matched with said project.

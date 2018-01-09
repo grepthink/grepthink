@@ -18,6 +18,10 @@
 
 {% if not user.profile.isProf%}
 <section class="matches">
+    <p>
+        This page shows prospective students in each or your courses that would work well with your projects based
+        on their skills, schedule, and interest in that project.
+    </p>
     {% for p_match_tup in project_match_list %}
     {% if forloop.first %}<div class="row">{% endif %}
         <div class="col-md-4">
@@ -127,6 +131,10 @@
 {% else %}
 {# Professor match view #}
 <section class="prof-matches">
+    <p>
+        This page shows prospective students in each or your courses that would work well with a specific project based
+        on their skills, schedule, and interest in that project.
+    </p>
 {% for course in course_set %}
     <h2 class="page-header">{{course.name}}</h2>
     <div class="row">

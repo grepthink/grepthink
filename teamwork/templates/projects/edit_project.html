@@ -229,6 +229,23 @@ $(document).ready(function() {
          <div class="box-body">
              <!-- TEMPORARY -->
               <ul class="nav nav-pills nav-stacked">
+
+                  <!-- PROJECT OWNER DROPDOWN -->
+                  <div class="form-group">
+                      <label>
+                      Project Owner:
+                      </label>
+                      {{ form.project_owner }}
+                  </div>
+
+                  <!-- SCRUM MASTER DROPDOWN -->
+                  <div class="form-group">
+                      <label>
+                      Scrum Master:
+                      </label>
+                      {{ form.scrum_master }}
+                  </div>
+
                <table class="table table-hover">
                   <tbody>
                           <!-- <tr>
@@ -244,31 +261,27 @@ $(document).ready(function() {
                               <a href="{% url 'profile' mem.username %}">{{ mem.username }}</a>
                           </td>
                           <!-- promote to scrum master -->
-                          <td>
+                          <!-- <td>
                               {% if not mem == project.scrum_master %}
-                              <button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}"> Promote to Scrum Master
-                              </button>
+                              <button class="btn btn-default btn-sm" name="make_scrum" value="{{ mem.username }}">Scrum Master</button>
                               {% else %}
                               <label>Current Scrum Master</label>
                               {% endif %}
                           </td>
-                          <!-- promote to po -->
+
                           <td>
                               {% if not mem == project.creator %}
-                              <button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}"> Promote to Project Owner
-                              </button>
+                              <button class="btn btn-default btn-sm" name="promote_user" value="{{ mem.username }}">Project Owner</button>
                               {% else %}
                               <label>Project Owner</label>
                               {% endif %}
-                          </td>
+                          </td> -->
                           <!-- remove from project -->
                           <td>
                               {% if mem == user %}
-                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Leave Project
-                              </button>
+                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}">Leave Project</button>
                               {% else %}
-                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}"> Remove from Project
-                              </button>
+                              <button class="btn btn-default btn-sm" name="remove_user" value="{{ mem.username }}">Remove</button>
                               {% endif %}
                           </td>
                           </tr>
@@ -357,7 +370,11 @@ $(document).ready(function() {
 
     </div> <!-- Box 3 -->
 
-  </form>
+
+
+
+
+
 
 </div> <!-- Col 3 -->
 
@@ -372,8 +389,8 @@ $(document).ready(function() {
                       sure you know what you are doing before pressing this button.
                   </p>
 
-                  {% csrf_token %}
-                      <button class="btn btn-danger" name="delete_project" value="delete_project">
+                  <!-- {% csrf_token %} -->
+                      <button class="btn btn-danger" name="delete_project" type="submit" value="delete_project">
                           <i class="fa fa-trash"></i>
                           Delete project
                       </button>
