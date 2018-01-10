@@ -209,7 +209,7 @@ def assign_auto(request, slug):
 
     for p in auto:
         for mem in p[1]:
-            Membership.objects.create(user=mem, project=p[0], invite_reason='')
+            Membership.objects.create(user=mem[0], project=p[0], invite_reason='')
 
     return redirect(auto_gen, course.slug)
 

@@ -391,6 +391,7 @@ class ChatForm(forms.ModelForm):
         model = ProjectChat
         fields = ['content']
 
+# TSR Form
 class TSR(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         members = kwargs.pop('members')
