@@ -1004,8 +1004,8 @@ def export_interest(request, slug):
     """
     Exports the interest for each project to a csv
     """
-    page_name = "Export Course"
-    page_description = "Save the current course's projects and associated members in an excel spreadsheet"
+    page_name = "Export Course Interest"
+    page_description = "Save the current course's projects and associated Interests in an excel spreadsheet"
     title = "Export Course"
     course = get_object_or_404(Course, slug=slug)
     students = course.students.all()
