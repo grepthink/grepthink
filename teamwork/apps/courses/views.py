@@ -1011,7 +1011,7 @@ def export_interest(request, slug):
     students = course.students.all()
 
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="course_overview.xls"'
+    response['Content-Disposition'] = 'attachment; filename="project_interest.xls"'
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet(course.name)
