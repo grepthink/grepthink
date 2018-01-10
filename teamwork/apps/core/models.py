@@ -18,11 +18,13 @@ from teamwork.apps.projects.views import to_bits, from_bits
 """
 def sort(matchList):
     matches = []
+    tagged = []
     topScores = sorted(matchList.values())
     for j in reversed(topScores):
         for u, i in matchList.items():
-            if j == i:
+            if j == i and u not in tagged:
                 matches.append((u,i))
+                tagged.append(u)
     return matches
 
 
@@ -66,6 +68,7 @@ def po_match(project):
             continue
         else:
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
+
 
     # # Skill Matching
     # # loop through the desired skills can check the skills table to see who
@@ -149,34 +152,74 @@ def auto_ros(course):
         for mem in z[0].members.all():
             assigned.append(mem)
 
+    # # Now Generate suggested rosters
+    # for x in match_list:
+    #     temp_team = []
+    #     # loop through the suggested members
+    #     for y in range(0, x[-1]):
+    #         temp_user = x[1][y]
+    #         # exit loop if the team is full
+    #         if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
+    #             break
+    #         # skip the person if they have already been assigned
+    #         elif temp_user[0] in assigned:
+    #             continue
+    #         # do the actually assignment
+    #         else:
+    #             # add the user to the suggested team
+    #             temp_team.append(temp_user)
+    #             # flag the user as assigned
+    #             assigned.append(temp_user[0])
+    #
+    #     # add the project and team to the roster
+    #     roster.append([x[0], temp_team])
+
     # Now Generate suggested rosters
-    for x in match_list:
+    for x, y, z in match_list:
         temp_team = []
-        # loop through the suggested members
-        for y in range(0, x[-1]):
-            temp_user = x[1][y]
+
+        # Add as many 4s and 5s first
+        foursAndFives = [s for s in y if s[1][1] == 4 or s[1][1] == 5]
+        while(len(foursAndFives) > 0):
+            pick = random.choice(foursAndFives)
+            temp_user = pick[0]
+
             # exit loop if the team is full
-            if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
+            if len(temp_team) + len(x.members.all()) == x.teamSize:
                 break
-            # skip the person if they have already been assigned
-            elif temp_user[0] in assigned:
-                continue
+            elif temp_user in assigned:
+                foursAndFives.remove(pick)
             # do the actually assignment
             else:
                 # add the user to the suggested team
-                temp_team.append(temp_user)
-                # flag the user as assigned
-                assigned.append(temp_user[0])
+                temp_team.append(pick)
+                assigned.append(temp_user)
+
+        #if the team still needs more add 3s
+        if len(temp_team) + len(x.members.all()) < x.teamSize:
+            threes = [s for s in y if s[1][1] == 3]
+            while(len(threes) > 0):
+                pick = random.choice(threes)
+                temp_user = pick[0]
+                # exit loop if the team is full
+                if len(temp_team) + len(x.members.all()) == x.teamSize:
+                    break
+                elif temp_user in assigned:
+                    threes.remove(pick)
+                # do the actually assignment
+                else:
+                    # add the user to the suggested team
+                    temp_team.append(pick)
+                    assigned.append(temp_user)
 
         # add the project and team to the roster
-        roster.append([x[0], temp_team])
+        roster.append([x, temp_team])
 
     # Creates the membership objects, add the new students to respective teams
     # for p in roster:
     #     for mem in p[1]:
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
-
     return roster
 
 def by_schedule(user, project):
