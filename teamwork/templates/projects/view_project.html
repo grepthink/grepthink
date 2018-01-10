@@ -514,7 +514,7 @@
                                             &nbsp;
                                             {% else %}
                                              <a href="{% url 'profile' i.username %}">
-                                            {{i.email}}</a>
+                                            {{i.username}}</a>
                                             {% endif %}
                                         </td>
 
@@ -530,7 +530,7 @@
                                             {% else %}
                                             <a href="{% url 'profile' k.evaluator.username %}">
 
-                                            {{k.evaluator.email}}</a>
+                                            {{k.evaluator.username}}</a>
                                             {% endif %}
 
                                        </td>
@@ -599,7 +599,7 @@
                        </tr>
                     {% for avg in avgs %}
                      <tr>
-                       <td>{{ avg.0.email }}</td>
+                       <td>{{ avg.0.username }}</td>
                        <td>
                          {% if contribute_levels.high < avg.1 %}
                              <div style="color:blue">{{avg.1}}</div>
