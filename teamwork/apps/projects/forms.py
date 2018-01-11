@@ -276,8 +276,8 @@ class EditProjectForm(forms.ModelForm):
         required=False)
 
     # scrum_master and project_owner's queryset is set/overridden in init
-    scrum_master = forms.ModelChoiceField(queryset=User.objects.all())
-    project_owner = forms.ModelChoiceField(queryset=User.objects.all())
+    scrum_master = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    project_owner = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
 
     # # Project's Assigned Teacher Assistant
     # assigned_ta = models.ManyToManyField(
@@ -391,6 +391,7 @@ class ChatForm(forms.ModelForm):
         model = ProjectChat
         fields = ['content']
 
+# TSR Form
 class TSR(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         members = kwargs.pop('members')

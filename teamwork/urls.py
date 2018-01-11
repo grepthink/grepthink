@@ -123,6 +123,8 @@ urlpatterns = [
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
         url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        # Export Interest
+        url(r'^course/(?P<slug>[^/]+)/export_interest/$', course_views.export_interest, name='export_interest'),
         # Claim Projects (TA)
         url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
 

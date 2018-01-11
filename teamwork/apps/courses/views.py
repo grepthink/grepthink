@@ -1000,6 +1000,72 @@ def export_xls(request, slug):
     return response
 
 @login_required
+def export_interest(request, slug):
+    """
+    Exports the interest for each project to a csv
+    """
+    page_name = "Export Course Interest"
+    page_description = "Save the current course's projects and associated Interests in an excel spreadsheet"
+    title = "Export Course"
+    course = get_object_or_404(Course, slug=slug)
+    students = course.students.all()
+
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="project_interest.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet(course.name)
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    # header row
+    ws.write(row_num, 0, course.name, font_style)
+    ws.write(row_num, 1, course.term, font_style)
+    ws.write(row_num, 2, course.year, font_style)
+
+    projects = Project.objects.filter(course=course)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    interested_students = []
+
+    # PROJECT SECTION OF SPREADSHEET
+    for proj in projects:
+        row_num += 2
+        ws.write(row_num, 0, proj.title, font_style)
+        # Gets interest for current project
+        proj_interest = proj.interest.all()
+        row_num += 1
+        ws.write(row_num, 1, "USER")
+        ws.write(row_num, 2, "INTEREST")
+        ws.write(row_num, 3, "REASON")
+        for pi in proj_interest:
+            row_num += 1
+            ws.write(row_num, 1, pi.user.username)
+
+            if pi.user.username not in interested_students:
+                interested_students.append(pi.user.username)
+
+            ws.write(row_num, 2, pi.interest)
+            ws.write(row_num, 3, pi.interest_reason)
+
+    row_num += 3
+    ws.write(row_num, 0, "Students Who have not shown interest", font_style)
+    for stud in students:
+        if stud.username not in interested_students:
+            row_num += 1
+            ws.write(row_num, 1, stud.username)
+
+    wb.save(response)
+    return response
+
+
+@login_required
 def claim_projects(request, slug):
     page_name = "Claim Projects"
     page_description = "Select the projects that you are assigned to"
