@@ -679,8 +679,11 @@ def edit_project(request, slug):
             project.ta_location = form.cleaned_data.get('ta_location')
 
             # roles
-            project.creator = form.cleaned_data.get('project_owner')
-            project.scrum_master = form.cleaned_data.get('scrum_master')
+            if form.cleaned_data.get('project_owner'):
+                project.creator = form.cleaned_data.get('project_owner')
+
+            if form.cleaned_data.get('scrum_master'):
+                project.scrum_master = form.cleaned_data.get('scrum_master')
 
             # Project content
             project.content = form.cleaned_data.get('content')
