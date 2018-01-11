@@ -696,6 +696,11 @@ def edit_project(request, slug):
             return redirect(view_one_project, project.slug)
     else:
         form = EditProjectForm(request.user.id, instance=project, members=members)
+
+        if len(members) > 0:
+            form.fields['project_owner'].required = True
+            form.fields['scrum_master'].required = True
+
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project, 'user':request.user})
