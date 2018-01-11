@@ -516,7 +516,10 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
-    userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+    if request.user.profile.isGT:
+        userRole = 'GT'
+    else:
+        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
 
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
@@ -696,6 +699,11 @@ def edit_project(request, slug):
             return redirect(view_one_project, project.slug)
     else:
         form = EditProjectForm(request.user.id, instance=project, members=members)
+
+        if len(members) > 0:
+            form.fields['project_owner'].required = True
+            form.fields['scrum_master'].required = True
+
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project, 'user':request.user})

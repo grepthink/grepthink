@@ -51,9 +51,13 @@
                         {% endif %}
                         {% endfor %}
                     </p>
+                    {% comment %}
                     {% if p_match_tup.1 %}
-                    <a href="{% url 'matchstats' p_match_tup.0.slug p_match_tup.1 %}"><p> MatchStats </p> </a>
+                    <button class="btn btn-default btn-sm" name="matchstats" value="{{p_match_tup.1}}">Match Stats
+                    </button>
+                    <a href="{% url 'matchstats' p_match_tup.0.slug %}"><p> MatchStats </p> </a>
                     {% endif %}
+                    {% endcomment %}
                     <p>The following students may work well with this project:
                        <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
                             <span class="tooltiptext2">Color shows interest score. <br />
@@ -96,7 +100,12 @@
                     </p>
                 </div>
                 <div class="panel-footer clearfix">
+
                   {% if request.user.username == p_match_tup.0.creator %}
+                  <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.0.slug %}">
+                      <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                      </button>
+                  </a>
                     <a href="{% url 'edit_project' p_match_tup.0.slug %}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
@@ -104,6 +113,10 @@
                         </button>
                     </a>
                   {% endif %}
+                  <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.0.slug %}">
+                      <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                      </button>
+                  </a>
                     <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
                         class="pull-right">
                         <button class="btn btn-info">
@@ -165,9 +178,15 @@
                                     {% endif %}
                                 {% endfor %}
                             </p>
+
+                            {% comment %}
                             {% if p_match_tup.1 %}
-                            <a href="{% url 'matchstats' p_match_tup.1.slug p_match_tup.2 %}"><p> MatchStats </p> </a>
+                            <a style="display:block" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                                <button class="btn btn-default btn-xs" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                                </button>
+                            </a>
                             {% endif %}
+                            {% endcomment %}
 
                             <p>The following students may work well with this project: </p>
                             <p>
@@ -195,15 +214,19 @@
                                     </a>
                                 </li>
                                 {% empty %}
-                                <h3>
+                                <h6>
                                     <font color="red">Could not find any matches for this project</font>
-                                </h3>
+                                </h6>
                                 {% endfor %}
                             </ol>
                             </p>
                         </div>
                         <div class="panel-footer clearfix">
                           {% if request.user.username == p_match_tup.1.creator %}
+                          <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                              <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                              </button>
+                          </a>
                             <a href="{% url 'edit_project' p_match_tup.1.slug %}">
                                 <button class="btn btn-success">
                                     <i class="fa fa-edit"></i>
@@ -211,9 +234,15 @@
                                 </button>
                             </a>
                           {% endif %}
+                          {% if p_match_tup.1 %}
+                          <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                              <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                              </button>
+                          </a>
+                          {% endif %}
                             <a href="{% url 'view_one_project' p_match_tup.1.slug %}"
                                 class="pull-right">
-                                <button class="btn btn-info">
+                                <button class="btn btn-primary">
                                     <i class="fa fa-eye"></i>
                                     View
                                 </button>

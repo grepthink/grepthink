@@ -91,7 +91,12 @@
                         {% endif %}
                             <i class="fa fa-user"></i>
                             {{ mem.0.username }}
-                    </span></a></li>
+                    </span>
+                    <span class="tooltip2 pull-right"><span class="pull-right badge bg-blue">{{ mem.2.interest }}</span>
+                         <span class="tooltiptext2">{{mem.2.interest_reason}}
+                         </span>
+                     </span></a>
+                    </li>
                     {% endif %}
                   {% endfor %}
                  {# <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a> #}

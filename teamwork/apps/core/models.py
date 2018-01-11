@@ -183,6 +183,9 @@ def auto_ros(course):
         while(len(foursAndFives) > 0):
             pick = random.choice(foursAndFives)
             temp_user = pick[0]
+            interest =x.interest.filter(user=temp_user).first()
+            pick2 = [pick[0], pick[1], interest]
+            print(pick2)
 
             # exit loop if the team is full
             if len(temp_team) + len(x.members.all()) == x.teamSize:
@@ -192,7 +195,7 @@ def auto_ros(course):
             # do the actually assignment
             else:
                 # add the user to the suggested team
-                temp_team.append(pick)
+                temp_team.append(pick2)
                 assigned.append(temp_user)
 
         #if the team still needs more add 3s
@@ -201,6 +204,10 @@ def auto_ros(course):
             while(len(threes) > 0):
                 pick = random.choice(threes)
                 temp_user = pick[0]
+                interest = x.interest.filter(user=temp_user).first()
+                pick2 = [pick[0], pick[1], interest]
+                print(pick2)
+
                 # exit loop if the team is full
                 if len(temp_team) + len(x.members.all()) == x.teamSize:
                     break
@@ -209,7 +216,7 @@ def auto_ros(course):
                 # do the actually assignment
                 else:
                     # add the user to the suggested team
-                    temp_team.append(pick)
+                    temp_team.append(pick2)
                     assigned.append(temp_user)
 
         # add the project and team to the roster
@@ -220,6 +227,11 @@ def auto_ros(course):
     #     for mem in p[1]:
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
+
+    print(match_list)
+    print("=================")
+    print(roster)
+
     return roster
 
 def by_schedule(user, project):

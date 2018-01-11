@@ -143,7 +143,7 @@ urlpatterns = [
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
-        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/$', core_views.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
