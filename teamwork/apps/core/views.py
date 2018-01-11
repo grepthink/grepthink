@@ -153,9 +153,6 @@ def view_matches(request):
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
-
-
-
     else:
         my_projects = Project.get_my_projects(request.user)
         # my_created = Project.get_created_projects(request.user)
@@ -164,6 +161,11 @@ def view_matches(request):
         for project in my_projects:
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
+
+    print("the method is:", request.method)
+    if request.POST.get('matchstats'):
+        matches = request.POST.get('matchstats')
+        print("we are getting matchstats dude")
 
 
     return render(request, 'core/view_matches.html', {
@@ -215,7 +217,7 @@ def assign_auto(request, slug):
 
 
 @login_required
-def matchstats(request, slug, project_match_list):
+def matchstats(request, slug):
     """
         Displays why a user was matched with said project.
         Returns two dicts:
@@ -239,19 +241,22 @@ def matchstats(request, slug, project_match_list):
     interest_match = {}
 
     cur_project = get_object_or_404(Project, slug=slug)
-
     cur_desiredSkills = cur_project.desired_skills.all()
+    matched_students = po_match(cur_project)
+
+    print("# of matched students:", len(matched_students))
 
     # match_list is a str object so parse it for usernames...
     # i'm sure theres a better way, couldn't pass the object
-    regex = r"<User: [^>]*>"
-    reg_match = re.finditer(regex, project_match_list)
-    for item in reg_match:
-        username = item.group().split(": ")[1].replace(">","")
-        matched_students.append(username)
+    # regex = r"<User: [^>]*>"
+    # reg_match = re.finditer(regex, project_match_list)
+    # for item in reg_match:
+    #     username = item.group().split(": ")[1].replace(">","")
+    #     matched_students.append(username)
 
     # find each students' known_skills that are desired by cur_project
-    for stud in matched_students:
+    for stud, values in matched_students:
+
         student = get_object_or_404(User, username=stud)
         profile = Profile.objects.get(user=student)
         similar_skills = []

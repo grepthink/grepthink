@@ -68,23 +68,23 @@
 
                         <!-- Menu Footer-->
                         {% block menu_footer %}
-                         <!-- <ul class="nav nav-pills nav-stacked">
-                                <li><a href="{% url 'profile' user.username %}"
+                         <ul class="nav nav-pills nav-stacked">
+                                <li><a style="background: rgba(243, 156, 18, 1);" href="{% url 'profile' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-user"></i>Profile</a></li>
-                         </ul> -->
+                         </ul>
                          <!-- <ul class="nav nav-stacked">
                                 <li><a href="{% url 'edit_profile' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a></li>
                          </ul> -->
-                         <!-- <ul class="nav nav-pills nav-stacked">
+                         <ul class="nav nav-pills nav-stacked">
                              {% if not user.profile.isProf %}
                              <li>
-                                 <a href="{% url 'edit_schedule' user.username %}"
-                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i> Set Availability</a></li>
+                                 <a style="background: rgba(243, 156, 18, 1);" href="{% url 'edit_schedule' user.username %}"
+                                    class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i>Edit Schedule</a></li>
                              {% endif %}
-                         </ul> -->
+                         </ul>
                          <ul class="nav nav-pills nav-stacked">
-                                <li><a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
+                                <li><a style="background: rgba(255, 0, 0, 0.5);" href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
                          </ul>
 
                        {% comment %}
