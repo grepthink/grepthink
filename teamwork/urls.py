@@ -123,6 +123,8 @@ urlpatterns = [
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
         url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        # Export Interest
+        url(r'^course/(?P<slug>[^/]+)/export_interest/$', course_views.export_interest, name='export_interest'),
         # Claim Projects (TA)
         url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
 
@@ -159,7 +161,7 @@ urlpatterns = [
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
-        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/$', core_views.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),

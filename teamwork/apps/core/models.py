@@ -18,11 +18,13 @@ from teamwork.apps.projects.views import to_bits, from_bits
 """
 def sort(matchList):
     matches = []
+    tagged = []
     topScores = sorted(matchList.values())
     for j in reversed(topScores):
         for u, i in matchList.items():
-            if j == i:
+            if j == i and u not in tagged:
                 matches.append((u,i))
+                tagged.append(u)
     return matches
 
 
@@ -47,7 +49,6 @@ def po_match(project):
     course = project.course.first()
 
     if course.limit_weights:
-        # print("po_match values overridden by course instructor")
         interestWeight = course.weigh_interest or 1
         knowWeight = course.weigh_know or 1
         learnWeight = course.weigh_learn or 1
@@ -62,44 +63,58 @@ def po_match(project):
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        if i.user not in project.members.all() and project not in Project.get_created_projects(i.user):
+        # add if they do not have a membership to a project in this course
+        if Membership.objects.filter(user=i.user, project__course=course):
+            continue
+        else:
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
 
-    # Skill Matching
-    # loop through the desired skills can check the skills table to see who
-    # knows or wants to learn this skill. multiply by weight if necessary
-    desired_skills = project.desired_skills.all()
-    for i in desired_skills:
-        know = i.known.all()
-        for j in know:
-            cur_course = Course.get_my_courses(j.user)
-            # if is to allow for updating   the score of users already counted
-            if j.user not in project.members.all() and project not in Project.get_created_projects(j.user):
-                if j.user in initial:
-                    initial[j.user][0] += (2 * knowWeight)
-                    initial[j.user][2] += (2 * knowWeight)
-                # otherwise we add them to a backup list
-                elif course in cur_course:
-                    if j.user in backup:
-                        # temp += (2 * knowWeight)
-                        backup[j.user][0] += (2 * knowWeight)
-                        backup[j.user][2] += (2 * knowWeight)
-                    else:
-                        backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
 
-        learn = i.learn.all()
-        for k in learn:
-            cur_course = Course.get_my_courses(k.user)
-            if k.user not in project.members.all() and project not in Project.get_created_projects(k.user):
-                if k.user in initial:
-                    initial[k.user][0] += (1 * learnWeight)
-                    initial[k.user][3] += (1 * learnWeight)
-                elif course in cur_course:
-                    if k.user in backup:
-                        backup[k.user][0] += (1 * learnWeight)
-                        backup[k.user][3] += (1 * learnWeight)
-                    else:
-                        backup[k.user] = [(1 * learnWeight), 0, 0, (1 * learnWeight), 0]
+    # # Skill Matching
+    # # loop through the desired skills can check the skills table to see who
+    # # knows or wants to learn this skill. multiply by weight if necessary
+    # desired_skills = project.desired_skills.all()
+    # for i in desired_skills:
+    #     # filter the users that know the skill to those actually in the course
+    #     know = i.known.filter(user__enrollment__in=[course])
+    #     for j in know:
+    #         cur_course = Course.get_my_courses(j.user)
+    #         # if is to allow for updating the score of users already counted
+    #         if Membership.objects.filter(user=j.user, project__course=course):
+    #             continue
+    #         elif j.user in project.members.all() or project in Project.get_created_projects(j.user):
+    #             continue
+    #         else:
+    #             if j.user in initial:
+    #                 initial[j.user][0] += (2 * knowWeight)
+    #                 initial[j.user][2] += (2 * knowWeight)
+    #             # otherwise we add them to a backup list
+    #             else:
+    #                 if j.user in backup:
+    #                     # temp += (2 * knowWeight)
+    #                     backup[j.user][0] += (2 * knowWeight)
+    #                     backup[j.user][2] += (2 * knowWeight)
+    #                 else:
+    #                     backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
+    #
+    #     learn = i.learn.filter(user__enrollment__in=[course])
+    #     for k in learn:
+    #         cur_course = Course.get_my_courses(k.user)
+    #         # if is to allow for updating   the score of users already counted
+    #         if Membership.objects.filter(user=k.user, project__course=course):
+    #             continue
+    #         elif k.user in project.members.all() or project in Project.get_created_projects(k.user):
+    #             continue
+    #         else:
+    #             if k.user in initial:
+    #                 initial[k.user][0] += (1 * learnWeight)
+    #                 initial[k.user][3] += (1 * learnWeight)
+    #             else:
+    #                 if k.user in backup:
+    #                     backup[k.user][0] += (1 * learnWeight)
+    #                     backup[k.user][3] += (1 * learnWeight)
+    #                 else:
+    #                     backup[k.user] = [(1 * learnWeight), 0, 0, (1 * learnWeight), 0]
 
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
@@ -130,40 +145,92 @@ def auto_ros(course):
         match_list.extend([(pro, p_match, len(p_match))])
 
     # Sort the list of projects from least interest to most
-    sorted_list = match_list.sort(key=lambda x: x[2])
+    sorted_list = sorted(match_list, key=lambda x: x[-1])
 
     # Mark all curent memebers as assigned before assigning
     for z in match_list:
         for mem in z[0].members.all():
             assigned.append(mem)
 
+    # # Now Generate suggested rosters
+    # for x in match_list:
+    #     temp_team = []
+    #     # loop through the suggested members
+    #     for y in range(0, x[-1]):
+    #         temp_user = x[1][y]
+    #         # exit loop if the team is full
+    #         if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
+    #             break
+    #         # skip the person if they have already been assigned
+    #         elif temp_user[0] in assigned:
+    #             continue
+    #         # do the actually assignment
+    #         else:
+    #             # add the user to the suggested team
+    #             temp_team.append(temp_user)
+    #             # flag the user as assigned
+    #             assigned.append(temp_user[0])
+    #
+    #     # add the project and team to the roster
+    #     roster.append([x[0], temp_team])
+
     # Now Generate suggested rosters
-    for x in match_list:
+    for x, y, z in match_list:
         temp_team = []
-        # loop through the suggested members
-        for y in range(0, x[2]):
-            temp_user = x[1][y]
+
+        # Add as many 4s and 5s first
+        foursAndFives = [s for s in y if s[1][1] == 4 or s[1][1] == 5]
+        while(len(foursAndFives) > 0):
+            pick = random.choice(foursAndFives)
+            temp_user = pick[0]
+            interest =x.interest.filter(user=temp_user).first()
+            pick2 = [pick[0], pick[1], interest]
+            print(pick2)
+
             # exit loop if the team is full
-            if len(temp_team) + len(x[0].members.all()) == x[0].teamSize:
+            if len(temp_team) + len(x.members.all()) == x.teamSize:
                 break
-            # skip the person if they have already been assigned
-            elif (temp_user in assigned) or (temp_user in x[0].members.all()):
-                continue
+            elif temp_user in assigned:
+                foursAndFives.remove(pick)
             # do the actually assignment
             else:
                 # add the user to the suggested team
-                temp_team.append(temp_user)
-                # flag the user as assigned
+                temp_team.append(pick2)
                 assigned.append(temp_user)
-        # add the project and team to the roster
-        roster.append([x[0], temp_team])
 
+        #if the team still needs more add 3s
+        if len(temp_team) + len(x.members.all()) < x.teamSize:
+            threes = [s for s in y if s[1][1] == 3]
+            while(len(threes) > 0):
+                pick = random.choice(threes)
+                temp_user = pick[0]
+                interest = x.interest.filter(user=temp_user).first()
+                pick2 = [pick[0], pick[1], interest]
+                print(pick2)
+
+                # exit loop if the team is full
+                if len(temp_team) + len(x.members.all()) == x.teamSize:
+                    break
+                elif temp_user in assigned:
+                    threes.remove(pick)
+                # do the actually assignment
+                else:
+                    # add the user to the suggested team
+                    temp_team.append(pick2)
+                    assigned.append(temp_user)
+
+        # add the project and team to the roster
+        roster.append([x, temp_team])
 
     # Creates the membership objects, add the new students to respective teams
     # for p in roster:
     #     for mem in p[1]:
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
+
+    print(match_list)
+    print("=================")
+    print(roster)
 
     return roster
 

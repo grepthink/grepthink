@@ -70,7 +70,7 @@ INSTALLED_APPS = [
 ]
 
 # Sets emails for notifications of error when DEBUG=False
-ADMINS = config('ADMINS', default=[('Michael Gates', 'mjgates@ucsc.edu'), ('Ryan Monroe', 'rmonroe@ucsc.edu')])
+ADMINS = config('ADMINS', default=[('Grepthink Team', 'grepthink@gmail.com')])
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587

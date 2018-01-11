@@ -54,6 +54,7 @@ def view_projects(request):
 
     return _projects(request, my_projects)
 
+@login_required
 def view_meetings(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -133,10 +134,6 @@ def view_one_project(request, slug):
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
     project_members = project.members.all()
-
-    isProf = 0
-    if request.user.profile.isProf:
-        isProf = 1
 
     requestButton = 1
     if request.user in pending_members:
@@ -255,6 +252,7 @@ def leave_project(request, slug):
 
     return redirect(view_projects)
 
+@login_required
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
@@ -531,8 +529,13 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
+    if request.user.profile.isGT:
+        userRole = 'GT'
+    else:
+        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user == course.creator:
+    if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
         pass
     elif not request.user  in project.members.all():
         #redirect them with a message
@@ -540,8 +543,9 @@ def edit_project(request, slug):
         return redirect(view_one_project, project.slug)
 
     if request.POST.get('delete_project'):
-        # Check that the current user is the project owner
-        if request.user == project.creator:
+        print("deleting project")
+        # Rights: GT, Professor, TA, Project Creator
+        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
             if chatroom is not None:
                 chatroom.delete()
             project.delete()
@@ -593,34 +597,6 @@ def edit_project(request, slug):
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
         else:
             messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project")
-
-        # curr_members = Membership.objects.filter(project=project)
-        #
-        # # Create membership objects for the newly added members
-        # for uname in members:
-        #     mem_to_add = User.objects.get(username=uname)
-        #     mem_courses = Course.get_my_courses(mem_to_add)
-        #     # Don't add a member if they already have membership in project
-        #     # Confirm that the member is a part of the course
-        #     # List comprehenshion: loops through this projects memberships in order
-        #     #   to check if mem_to_add is in the user field of a current membership.
-        #     if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
-        #         Membership.objects.create(
-        #             user=mem_to_add, project=project, invite_reason='')
-        #         Alert.objects.create(
-        #             sender=request.user,
-        #             to=mem_to_add,
-        #             msg="You were added to " + project.title,
-        #             url=reverse('view_one_project',args=[project.slug]),
-        #             )
-        #         # remove member from pending list if he/she was on it
-        #         pending_members = project.pending_members.all()
-        #         if mem_to_add in pending_members:
-        #             for mem in pending_members:
-        #                 if mem == mem_to_add:
-        #                     project.pending_members.remove(mem)
-        #                     project.save()
-
 
         return redirect(view_one_project, project.slug)
 
@@ -705,7 +681,7 @@ def edit_project(request, slug):
         return redirect(edit_project, slug)
 
     if request.method == 'POST':
-        form = EditProjectForm(request.user.id, request.POST)
+        form = EditProjectForm(request.user.id, request.POST, members=members)
 
         if form.is_valid():
             # edit the project object, omitting slug
@@ -720,6 +696,14 @@ def edit_project(request, slug):
             project.project_image = form.cleaned_data.get('project_image')
             project.ta_time = form.cleaned_data.get('ta_time')
             project.ta_location = form.cleaned_data.get('ta_location')
+
+            # roles
+            if form.cleaned_data.get('project_owner'):
+                project.creator = form.cleaned_data.get('project_owner')
+
+            if form.cleaned_data.get('scrum_master'):
+                project.scrum_master = form.cleaned_data.get('scrum_master')
+
             # Project content
             project.content = form.cleaned_data.get('content')
             project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
@@ -730,7 +714,12 @@ def edit_project(request, slug):
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
-        form = EditProjectForm(request.user.id, instance=project)
+        form = EditProjectForm(request.user.id, instance=project, members=members)
+
+        if len(members) > 0:
+            form.fields['project_owner'].required = True
+            form.fields['scrum_master'].required = True
+
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project, 'user':request.user})
