@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}GT DM{% endblock %}
+{% block header_text %}GT DM{% endblock %}
+
+{% block crumb %}
+
+{# Breadcrumb for All Chats #}
+
+<li><a href="{% url 'view_DM' %}"> Direct Messages </a></li>
+
+{% endblock crumb %}
+
+{% block content %}
+    <script>
+        // This variable is passed into chat.js so that it knows who requested the page
+        var current_user = "{{ current_user }}";
+        // This variable is passed into chat.js so that it knows the rooms
+        var array_of_rooms = []
+		var leaveURLBase = "{% url 'delete_DM' slug=9234523426 %}"
+		var inviteURLBase = "{% url 'view_DM' %}"
+
+    </script>
+<!-- Custom Tabs -->
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab_0" data-toggle="tab">Welcome</a></li>
+                {% for room in rooms %}
+                    <li class=""><a href="#tab_{{ room.id }}" data-toggle="tab">{{ room }}</a></li>
+					<script>array_of_rooms.push({{ room.id }});</script>
+                {% endfor %}
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_0">
+                    Select DM from the above tabs, create them by going to a profile
+                </div>
+                {% for room in rooms %}
+                    <div class="tab-pane" id="tab_{{ room.id }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- nav-tabs-custom -->
+	
+
+    <script src="{% static "js/jquery-2.2.3.min.js" %}" type="text/javascript"></script>
+    <script src="{% static "channels/js/websocketbridge.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/chat_one.js" %}" type="text/javascript"></script>
+
+{% endblock content%}
+
+
+
+
+

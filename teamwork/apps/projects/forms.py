@@ -190,6 +190,7 @@ class EditProjectForm(forms.ModelForm):
 
     # used for filtering the queryset
     def __init__(self, uid, *args, **kwargs):
+        members = kwargs.pop('members', {})
         super(EditProjectForm, self).__init__(*args, **kwargs)
 
         # A user cannot edit the slug field after creation,
@@ -201,6 +202,12 @@ class EditProjectForm(forms.ModelForm):
         if 'instance' in kwargs and kwargs['instance']:
             self.fields['accepting'].initial = kwargs['instance'].avail_mem
             self.fields['sponsor'].initial = kwargs['instance'].sponsor
+            self.fields['scrum_master'].queryset = kwargs['instance'].members.all()
+            self.fields['project_owner'].queryset = kwargs['instance'].members.all()
+            self.fields['project_owner'].initial = kwargs['instance'].creator
+            self.fields['scrum_master'].initial = kwargs['instance'].scrum_master
+
+
 
         # Identify current form user
         user = User.objects.get(id=uid)
@@ -268,6 +275,10 @@ class EditProjectForm(forms.ModelForm):
         max_length=50,
         required=False)
 
+    # scrum_master and project_owner's queryset is set/overridden in init
+    scrum_master = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    project_owner = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+
     # # Project's Assigned Teacher Assistant
     # assigned_ta = models.ManyToManyField(
     #     User,
@@ -279,7 +290,7 @@ class EditProjectForm(forms.ModelForm):
         fields = [
             'title', 'tagline', 'accepting', 'sponsor', 'ta_location', 'ta_time',
             'content', 'slug','weigh_interest', 'weigh_know', 'project_image',
-            'weigh_learn', 'teamSize'
+            'weigh_learn', 'teamSize', 'scrum_master', 'project_owner'
         ]
 
     def clean(self):
@@ -380,6 +391,7 @@ class ChatForm(forms.ModelForm):
         model = ProjectChat
         fields = ['content']
 
+# TSR Form
 class TSR(forms.ModelForm):
     def __init__(self, uid, *args, **kwargs):
         members = kwargs.pop('members')

@@ -1,5 +1,4 @@
 """teamwork URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
 Examples:
@@ -25,6 +24,7 @@ from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
+from teamwork.apps.chat import views as chat_views
 
 urlpatterns = [
         # CORE AND SIGNUP
@@ -123,6 +123,8 @@ urlpatterns = [
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
         url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        # Export Interest
+        url(r'^course/(?P<slug>[^/]+)/export_interest/$', course_views.export_interest, name='export_interest'),
         # Claim Projects (TA)
         url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
 
@@ -138,10 +140,28 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
 
+        # CHAT
+        # View all Chats
+        url(r'^chat/$', chat_views.view_chats, name='view_chats'),
+        # Create a Chatroom
+        url(r'^chat/create/$', chat_views.create_chat, name='create_chat'),
+        # Leave a Chatroom
+        url(r'^chat/leave/(?P<slug>[^/]+)/$', chat_views.leave_chat, name='leave_chat'),
+        # Invite a user to a Chatroom
+        url(r'^chat/invite/(?P<slug>[^/]+)/$', chat_views.invite_chat, name='invite_chat'),
+        # View a profile through the @sign
+        url(r'^chat/(?P<username>[^/]+)/$', chat_views.find_user_profile, name='find_user_profile'),
+
+        # DM
+        url(r'^DM/$', chat_views.view_DM, name='view_DM'),
+        url(r'^DM/(?P<username>[^/]+)/$', chat_views.view_or_create_DM, name='view_or_create_DM'),
+        url(r'^DM/leave/(?P<slug>[^/]+)/$', chat_views.delete_DM, name='delete_DM'),
+        url(r'^DM/one/(?P<slug>[^/]+)/$', chat_views.view_one_DM, name='view_one_DM'),
+
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
         # see why this user matches
-        url(r'^matchstats/(?P<slug>[^/]+)/(?P<project_match_list>[^/]+)$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/$', core_views.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),

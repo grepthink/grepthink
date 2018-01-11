@@ -16,6 +16,7 @@ from teamwork.apps.profiles.models import Alert
 from teamwork.apps.core.helpers import *
 from teamwork.apps.courses.views import view_one_course
 from teamwork.apps.profiles.views import view_alerts
+from teamwork.apps.chat.models import Chatroom
 
 from teamwork.apps.courses.forms import EmailRosterForm
 from .forms import *
@@ -53,6 +54,7 @@ def view_projects(request):
 
     return _projects(request, my_projects)
 
+@login_required
 def view_meetings(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -88,7 +90,7 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 
-
+@login_required
 def view_one_project(request, slug):
     """
     Public method that takes a request and a slug, retrieves the Project object
@@ -132,10 +134,6 @@ def view_one_project(request, slug):
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
     project_members = project.members.all()
-
-    isProf = 0
-    if request.user.profile.isProf:
-        isProf = 1
 
     requestButton = 1
     if request.user in pending_members:
@@ -186,19 +184,22 @@ def view_one_project(request, slug):
     else:
         user_role = 'GT'
 
+    fix = []
+    new_tsr_tuple = []
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        for i in assigned_tsrs:
-            for j in project.tsr.all():
-                if j in i.subs.all():
-                    tsr_tuple.setdefault(j.evaluatee, []).append([0, j, i])
+        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
+        temp = ""
 
-        tsr_keys = tsr_tuple.keys()
-        tsr_items = tsr_tuple.items()
-        mem_count = len(members)
+        for j in temp_tup:
+            if temp != j.evaluatee:
+                temp = j.evaluatee
+                fix.append([temp, j.ass.first(), j, 1])
+            else:
+                fix.append(["", j.ass.first(), j, 0])
     else:
-        tsr_keys = None
-        tsr_items = None
-        mem_count = None
+        fix = None
+
+
 
 
     med = 100
@@ -209,12 +210,12 @@ def view_one_project(request, slug):
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members, 'mem_count':mem_count,
+        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
+        'project': project, 'project_members':project_members, 'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
         'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'tsrs' : tsr_items, 'tsr_keys': tsr_keys, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -224,7 +225,7 @@ def leave_project(request, slug):
     to_delete = Membership.objects.filter(user=f_user, project=project)
 
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
-
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     if (f_user not in members):
         messages.warning(request, "You cannot leave a project you are not a member of!")
@@ -240,7 +241,8 @@ def leave_project(request, slug):
         # check if user that is being removed was Scrum Master
         if f_user == project.scrum_master:
             project.scrum_master = remaining.first().user
-
+        if chatroom is not None:
+            chatroom.remove_user(f_user)
         project.save()
         messages.info(request, "You have left {0}".format(project))
 
@@ -250,6 +252,7 @@ def leave_project(request, slug):
 
     return redirect(view_projects)
 
+@login_required
 def request_join_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     project_members = project.members.all()
@@ -270,7 +273,7 @@ def request_join_project(request, slug):
         # TODO: create link that goes directly to accept or deny
         content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
         content = "{0}\n\n www.grepthink.com".format(content_text)
-        send_email(creator, "noreply@grepthink.com", subject, content)
+        #send_email(creator, "noreply@grepthink.com", subject, content)
         # notify user that their request has gone through successfully
         messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
 
@@ -424,7 +427,8 @@ def create_project(request):
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
             # Create an object for the input
-            project = Project()
+            project  = Project()
+
 
             # Fill all the simple fields and save project object.
             project.slug = form.cleaned_data.get('slug')
@@ -439,6 +443,15 @@ def create_project(request):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
             project.scrum_master = request.user
+
+            #Creates a chatroom with the title of the project and adds the creator
+            #chatroom = Chatroom()
+            chatroom = Chatroom(
+                                name=project.title,
+                                hasProject=True)
+            chatroom.save()
+            chatroom.add_user_to_chat(request.user, request.user)
+
 
             # Course the project is in
             in_course = form.cleaned_data.get('course')
@@ -509,14 +522,20 @@ def edit_project(request, slug):
     course = project.course.first()
     project_owner = project.creator.profile
     members = project.members.all()
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     # Populate page info with edit project title/name
     page_name = "Edit Project"
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
+    if request.user.profile.isGT:
+        userRole = 'GT'
+    else:
+        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user == course.creator:
+    if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
         pass
     elif not request.user  in project.members.all():
         #redirect them with a message
@@ -524,8 +543,11 @@ def edit_project(request, slug):
         return redirect(view_one_project, project.slug)
 
     if request.POST.get('delete_project'):
-        # Check that the current user is the project owner
-        if request.user == project.creator:
+        print("deleting project")
+        # Rights: GT, Professor, TA, Project Creator
+        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
+            if chatroom is not None:
+                chatroom.delete()
             project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')
@@ -568,41 +590,13 @@ def edit_project(request, slug):
                 subject = "GrepThink Project Invitation: " + project.title
                 content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
 
-                send_email(mem_to_add, request.user.email, subject, content)
+                #send_email(mem_to_add, request.user.email, subject, content)
                 added = True
 
         if added:
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
         else:
             messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project")
-
-        # curr_members = Membership.objects.filter(project=project)
-        #
-        # # Create membership objects for the newly added members
-        # for uname in members:
-        #     mem_to_add = User.objects.get(username=uname)
-        #     mem_courses = Course.get_my_courses(mem_to_add)
-        #     # Don't add a member if they already have membership in project
-        #     # Confirm that the member is a part of the course
-        #     # List comprehenshion: loops through this projects memberships in order
-        #     #   to check if mem_to_add is in the user field of a current membership.
-        #     if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
-        #         Membership.objects.create(
-        #             user=mem_to_add, project=project, invite_reason='')
-        #         Alert.objects.create(
-        #             sender=request.user,
-        #             to=mem_to_add,
-        #             msg="You were added to " + project.title,
-        #             url=reverse('view_one_project',args=[project.slug]),
-        #             )
-        #         # remove member from pending list if he/she was on it
-        #         pending_members = project.pending_members.all()
-        #         if mem_to_add in pending_members:
-        #             for mem in pending_members:
-        #                 if mem == mem_to_add:
-        #                     project.pending_members.remove(mem)
-        #                     project.save()
-
 
         return redirect(view_one_project, project.slug)
 
@@ -625,7 +619,8 @@ def edit_project(request, slug):
             # check if user that is being removed was Scrum Master
             if f_user == project.scrum_master:
                 project.scrum_master = remaining.first().user
-
+            if chatroom is not None:
+                chatroom.remove_user(f_user)
             project.save()
             messages.info(request, "{0} has been removed from the project".format(f_username))
 
@@ -686,7 +681,7 @@ def edit_project(request, slug):
         return redirect(edit_project, slug)
 
     if request.method == 'POST':
-        form = EditProjectForm(request.user.id, request.POST)
+        form = EditProjectForm(request.user.id, request.POST, members=members)
 
         if form.is_valid():
             # edit the project object, omitting slug
@@ -701,6 +696,14 @@ def edit_project(request, slug):
             project.project_image = form.cleaned_data.get('project_image')
             project.ta_time = form.cleaned_data.get('ta_time')
             project.ta_location = form.cleaned_data.get('ta_location')
+
+            # roles
+            if form.cleaned_data.get('project_owner'):
+                project.creator = form.cleaned_data.get('project_owner')
+
+            if form.cleaned_data.get('scrum_master'):
+                project.scrum_master = form.cleaned_data.get('scrum_master')
+
             # Project content
             project.content = form.cleaned_data.get('content')
             project.lower_time_bound = form.cleaned_data.get('lower_time_bound')
@@ -711,7 +714,12 @@ def edit_project(request, slug):
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
-        form = EditProjectForm(request.user.id, instance=project)
+        form = EditProjectForm(request.user.id, instance=project, members=members)
+
+        if len(members) > 0:
+            form.fields['project_owner'].required = True
+            form.fields['scrum_master'].required = True
+
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project, 'user':request.user})
@@ -1243,6 +1251,7 @@ def add_member(request, slug, uname):
     mem_to_add = User.objects.get(username=uname)
     mem_courses = Course.get_my_courses(mem_to_add)
     curr_members = Membership.objects.filter(project=project)
+    chatroom = Chatroom.get_chatroom_with_project(Chatroom,project.title)
 
     # ensure user is a member of the course && not a member of the project
     if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
@@ -1259,6 +1268,8 @@ def add_member(request, slug, uname):
         if mem_to_add in pending_members:
             for mem in pending_members:
                 if mem == mem_to_add:
+                    if chatroom is not None:
+                        chatroom.add_user_to_chat(mem, mem)
                     project.pending_members.remove(mem)
                     project.save()
 

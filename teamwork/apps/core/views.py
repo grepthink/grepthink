@@ -81,6 +81,7 @@ def about(request):
     return render(request, 'core/about.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title})
 
+@login_required
 def search(request):
     """
     This works but...
@@ -152,9 +153,6 @@ def view_matches(request):
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
-
-
-
     else:
         my_projects = Project.get_my_projects(request.user)
         # my_created = Project.get_created_projects(request.user)
@@ -164,12 +162,17 @@ def view_matches(request):
             p_match = po_match(project)
             project_match_list.extend([(project, p_match)])
 
+    print("the method is:", request.method)
+    if request.POST.get('matchstats'):
+        matches = request.POST.get('matchstats')
+        print("we are getting matchstats dude")
+
 
     return render(request, 'core/view_matches.html', {
         'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
             'page_description': page_description, 'title' : title})
 
-
+@login_required
 def auto_gen(request, slug):
     """
     Generic view for serving a list of projects and potential teammate matches for
@@ -198,6 +201,7 @@ def auto_gen(request, slug):
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
             'page_description': page_description, 'title' : title, 'flag': flag})
 
+
 def assign_auto(request, slug):
     """
     Assign the students to auto-gen teams
@@ -207,12 +211,13 @@ def assign_auto(request, slug):
 
     for p in auto:
         for mem in p[1]:
-            Membership.objects.create(user=mem, project=p[0], invite_reason='')
+            Membership.objects.create(user=mem[0], project=p[0], invite_reason='')
 
     return redirect(auto_gen, course.slug)
 
 
-def matchstats(request, slug, project_match_list):
+@login_required
+def matchstats(request, slug):
     """
         Displays why a user was matched with said project.
         Returns two dicts:
@@ -236,19 +241,22 @@ def matchstats(request, slug, project_match_list):
     interest_match = {}
 
     cur_project = get_object_or_404(Project, slug=slug)
-
     cur_desiredSkills = cur_project.desired_skills.all()
+    matched_students = po_match(cur_project)
+
+    print("# of matched students:", len(matched_students))
 
     # match_list is a str object so parse it for usernames...
     # i'm sure theres a better way, couldn't pass the object
-    regex = r"<User: [^>]*>"
-    reg_match = re.finditer(regex, project_match_list)
-    for item in reg_match:
-        username = item.group().split(": ")[1].replace(">","")
-        matched_students.append(username)
+    # regex = r"<User: [^>]*>"
+    # reg_match = re.finditer(regex, project_match_list)
+    # for item in reg_match:
+    #     username = item.group().split(": ")[1].replace(">","")
+    #     matched_students.append(username)
 
     # find each students' known_skills that are desired by cur_project
-    for stud in matched_students:
+    for stud, values in matched_students:
+
         student = get_object_or_404(User, username=stud)
         profile = Profile.objects.get(user=student)
         similar_skills = []

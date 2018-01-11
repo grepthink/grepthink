@@ -72,7 +72,7 @@ def view_one_course(request, slug):
 
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
-        if request.user in course.students.all() or request.user.profile.isProf:
+        if request.user in course.students.all() or (request.user==course.creator):
             user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
         else:
             # init user_role otherwise
@@ -81,7 +81,7 @@ def view_one_course(request, slug):
         user_role = 'GT'
 
     # TODO: get rid of isProf and use user_role
-    if request.user.profile.isProf:
+    if request.user==course.creator:
         isProf = 1
     else:
         isProf = 0
@@ -151,7 +151,7 @@ def view_stats(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==cur_course.creator:
         if not user_role=="ta":
             return redirect(view_one_course, cur_course.slug)
 
@@ -458,7 +458,7 @@ def edit_course(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user:
+    elif not course.creator == request.user:
         if not user_role=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only Professor can edit course')
@@ -619,7 +619,7 @@ def edit_assignment(request, slug):
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
-    elif not request.user.profile.isProf or not course.creator == request.user:
+    elif not course.creator == request.user:
         if not user_role=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only a Professor or TA can Edit an Assignment')
@@ -668,7 +668,7 @@ def delete_course(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==course.creator:
         return redirect(view_one_course, course.slug)
 
     #Runs through each project and deletes them
@@ -696,7 +696,7 @@ def delete_assignment(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user.profile.isProf:
+    elif not request.user==course.creator:
         if not user_role == "ta":
             return redirect(view_one_course, course.slug)
 
@@ -797,6 +797,7 @@ def delete_course_update(request, slug, id):
         update.delete()
 
     return redirect(view_one_course, course.slug)
+
 
 def lock_interest(request, slug):
     """
@@ -997,6 +998,72 @@ def export_xls(request, slug):
 
     wb.save(response)
     return response
+
+@login_required
+def export_interest(request, slug):
+    """
+    Exports the interest for each project to a csv
+    """
+    page_name = "Export Course Interest"
+    page_description = "Save the current course's projects and associated Interests in an excel spreadsheet"
+    title = "Export Course"
+    course = get_object_or_404(Course, slug=slug)
+    students = course.students.all()
+
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="project_interest.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet(course.name)
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    # header row
+    ws.write(row_num, 0, course.name, font_style)
+    ws.write(row_num, 1, course.term, font_style)
+    ws.write(row_num, 2, course.year, font_style)
+
+    projects = Project.objects.filter(course=course)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    interested_students = []
+
+    # PROJECT SECTION OF SPREADSHEET
+    for proj in projects:
+        row_num += 2
+        ws.write(row_num, 0, proj.title, font_style)
+        # Gets interest for current project
+        proj_interest = proj.interest.all()
+        row_num += 1
+        ws.write(row_num, 1, "USER")
+        ws.write(row_num, 2, "INTEREST")
+        ws.write(row_num, 3, "REASON")
+        for pi in proj_interest:
+            row_num += 1
+            ws.write(row_num, 1, pi.user.username)
+
+            if pi.user.username not in interested_students:
+                interested_students.append(pi.user.username)
+
+            ws.write(row_num, 2, pi.interest)
+            ws.write(row_num, 3, pi.interest_reason)
+
+    row_num += 3
+    ws.write(row_num, 0, "Students Who have not shown interest", font_style)
+    for stud in students:
+        if stud.username not in interested_students:
+            row_num += 1
+            ws.write(row_num, 1, stud.username)
+
+    wb.save(response)
+    return response
+
 
 @login_required
 def claim_projects(request, slug):

@@ -1,0 +1,17 @@
+Definition of Done:
+
+Done for a feature:
+Unit tests pass
+Able to run server after code is saved
+Basic definition of feature can be used by anyone
+No other feature is broken because of this new feature
+Peer reviewed code in meeting (check for clean code)
+
+Done for a Sprint:
+All user stories were finished (Scrum board has all tasks in done)
+Features usable, no features conflict or cause different parts to break
+Product could be “potentially” given to customer
+
+Done for Release:
+All System and unit tests pass (see our “System and Unit Test Report” in Release 1.0 docs)
+Acceptance Test passed

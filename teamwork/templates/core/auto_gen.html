@@ -7,6 +7,7 @@
   <!-- Select2 -->
     {{block.super}}
   <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
 {% endblock stylesheets %}
 
@@ -18,19 +19,25 @@
 
 {% block content %}
 
+<div style="padding:15px">
+    <a href="{% url 'assign_auto' course.slug %}">
+        {% if flag %}
+            <button class="btn btn-success">
+        {% else %}
+            <button class="btn btn-success" title="Groups are full" disabled="">
+        {% endif %}
+            Set Roster
+        </button>
+    </a>
+    <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+         <span class="tooltiptext2">Use this button to assign teams
+         </span>
+     </span>
+</div>
+
 <section class="prof-matches">
-    <div class="row">
-        <div>
-            <a href="{% url 'assign_auto' course.slug %}">
-                {% if flag %}
-                    <button class="btn btn-success">
-                {% else %}
-                    <button class="btn btn-success" title="Groups are full" disabled="">
-                {% endif %}
-                    Set Roster
-                </button>
-            </a>
-        </div>
+
+
 {% for i in auto_gen %}
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
@@ -45,6 +52,17 @@
               <h3 class="widget-user-username">{{i.0.title}}</h3>
               <h5 class="widget-user-desc">{{i.0.tagline}}</h5>
           </div><!-- /.box-header --></a>
+          <p>The following students may work well with this project:
+             <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+                  <span class="tooltiptext2">Color shows interest score. <br />
+                      <span class="label label-success">5</span>
+                      <span class="label label-info">4</span>
+                      <span class="label label-primary">3</span>
+                      <span class="label label-warning">2</span>
+                      <span class="label label-danger">1</span>
+                  </span>
+              </span>
+          </p>
 
             <div class="box-footer no-padding">
               <ul class="nav nav-stacked" style="position: relative;">
@@ -56,16 +74,31 @@
                           {{ mem.username }}
                   </span></a></li>
                   {% endif %}
-              {% endfor %}
-                  {% for mem in i.1 %}
-                    {% if mem.username != null %}
-                    <li style="height: 40px"><a href="{% url 'profile' mem.username %}">
-                    <span class="label label-primary" >
-                            <i class="fa fa-user"></i>
-                            {{ mem.username }}
-                    </span></a></li>
-                    {% endif %}
                 {% endfor %}
+                  {% for mem in i.1 %}
+                    {% if mem.0.username != null %}
+                    <li style="height: 40px"><a href="{% url 'profile' mem.0.username %}">
+                        {% if mem.1.1 == 5 %}
+                            <span class="label label-success">
+                        {% elif mem.1.1 == 4 %}
+                            <span class="label label-info">
+                        {% elif mem.1.1 == 3 %}
+                            <span class="label label-primary">
+                        {% elif mem.1.1 == 2 %}
+                            <span class="label label-warning">
+                        {% else %}
+                            <span class="label label-danger">
+                        {% endif %}
+                            <i class="fa fa-user"></i>
+                            {{ mem.0.username }}
+                    </span>
+                    <span class="tooltip2 pull-right"><span class="pull-right badge bg-blue">{{ mem.2.interest }}</span>
+                         <span class="tooltiptext2">{{mem.2.interest_reason}}
+                         </span>
+                     </span></a>
+                    </li>
+                    {% endif %}
+                  {% endfor %}
                  {# <a href="{% url 'matchstats' p_match_tup.0 p_match_tup.1 %}"><p> MatchStats </p> </a> #}
               </ul>
             </div>

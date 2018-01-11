@@ -4,6 +4,8 @@ dj-database-url==0.4.2
 whitenoise==3.3.0
 python-decouple==3.0
 Unipath==1.1
+channels==1.1.8
+asgi_redis==1.4.3
 django-adminlte2
 Markdown
 Pillow
@@ -12,3 +14,4 @@ django-chartjs
 sendgrid
 django-gravatar2
 xlwt
+Django==1.10.5

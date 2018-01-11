@@ -29,6 +29,7 @@ from django.utils import timezone
 
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
+from teamwork.apps.chat.models import *
 
 # Generates add code
 def rand_code(size):
@@ -119,7 +120,8 @@ class Project(models.Model):
     Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
                        (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
                        (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
-
+        
+                       
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
         max_length=255,
@@ -261,8 +263,11 @@ class Project(models.Model):
     weigh_know = models.IntegerField(
         default=1)
     weigh_learn = models.IntegerField(
-        default=1)
-
+        default=1) 
+    
+    
+    
+    
     # The Meta class provides some extra information about the Project model.
     class Meta:
         # Verbose name is the same as class name in this case.
