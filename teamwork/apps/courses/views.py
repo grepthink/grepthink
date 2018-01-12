@@ -453,12 +453,17 @@ def edit_course(request, slug):
 
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
-    user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+
+    if request.user.profile.isGT:
+        userRole = 'GT'
+    else:
+        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
 
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
     elif not course.creator == request.user:
+        # if user is not a TA
         if not user_role=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only Professor can edit course')
