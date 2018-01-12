@@ -1011,7 +1011,7 @@ def export_interest(request, slug):
     students = course.students.all()
 
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="project_interest.xls"'
+    response['Content-Disposition'] = 'attachment; filename="project_preference.xls"'
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet(course.name)
@@ -1023,9 +1023,10 @@ def export_interest(request, slug):
     font_style.font.bold = True
 
     # header row
-    ws.write(row_num, 0, course.name, font_style)
-    ws.write(row_num, 1, course.term, font_style)
-    ws.write(row_num, 2, course.year, font_style)
+    ws.write(row_num, 0, "USER", font_style)
+    ws.write(row_num, 1, "PROJECT", font_style)
+    ws.write(row_num, 2, "INTEREST", font_style)
+    ws.write(row_num, 3, "REASON", font_style)
 
     projects = Project.objects.filter(course=course)
 
@@ -1036,19 +1037,18 @@ def export_interest(request, slug):
 
     # PROJECT SECTION OF SPREADSHEET
     for stud in students:
-        row_num += 2
-        #interest for current user
+        #interest for current student\
         interest = Interest.objects.filter(user=stud)
+        # if the student has interests
         if interest:
-            ws.write(row_num, 0, stud.username, font_style)
-            row_num += 1
-            ws.write(row_num, 1, "PROJECT")
-            ws.write(row_num, 2, "INTEREST")
-            ws.write(row_num, 3, "REASON")
+            # for each interest
             for i in interest:
+                # if the interest is a project in the current course
                 if i.project_interest.first() not in projects:
                     continue
+
                 row_num += 1
+                ws.write(row_num, 0, stud.username, font_style)
                 ws.write(row_num, 1, i.project_interest.first().title)
                 ws.write(row_num, 2, i.interest)
                 ws.write(row_num, 3, i.interest_reason)
@@ -1058,10 +1058,10 @@ def export_interest(request, slug):
 
 
     row_num += 3
-    ws.write(row_num, 0, "Students Who have not shown interest", font_style)
+    ws.write(row_num, 0, "NO INTEREST", font_style)
     for stud in no_interest_students:
         row_num += 1
-        ws.write(row_num, 1, stud)
+        ws.write(row_num, 0, stud)
 
     wb.save(response)
     return response
