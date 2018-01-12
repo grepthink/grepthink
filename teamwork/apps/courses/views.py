@@ -1046,11 +1046,13 @@ def export_interest(request, slug):
             ws.write(row_num, 2, "INTEREST")
             ws.write(row_num, 3, "REASON")
             for i in interest:
+                if i.project_interest.first() not in projects:
+                    continue
                 row_num += 1
                 ws.write(row_num, 1, i.project_interest.first().title)
                 ws.write(row_num, 2, i.interest)
                 ws.write(row_num, 3, i.interest_reason)
-                
+
         else:
             no_interest_students.append(stud.username)
 
