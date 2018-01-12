@@ -377,6 +377,8 @@ def show_interest(request, slug):
                 choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=r5))
                 choice_5.save()
 
+            messages.success(request, "You have left succesfully submitted interest")
+
 
             return redirect(view_one_course, slug)
 

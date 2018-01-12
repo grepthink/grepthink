@@ -145,7 +145,7 @@ def auto_ros(course):
         match_list.extend([(pro, p_match, len(p_match))])
 
     # Sort the list of projects from least interest to most
-    sorted_list = sorted(match_list, key=lambda x: x[-1])
+    sorted_list = list(reversed(sorted(match_list, key=lambda x: x[-1])))
 
     # Mark all curent memebers as assigned before assigning
     for z in match_list:
@@ -175,28 +175,46 @@ def auto_ros(course):
     #     roster.append([x[0], temp_team])
 
     # Now Generate suggested rosters
-    for x, y, z in match_list:
+    for x, y, z in sorted_list:
         temp_team = []
 
         # Add as many 4s and 5s first
-        foursAndFives = [s for s in y if s[1][1] == 4 or s[1][1] == 5]
-        while(len(foursAndFives) > 0):
-            pick = random.choice(foursAndFives)
+        fives = [s for s in y if s[1][1] == 5]
+        while(len(fives) > 0):
+            pick = random.choice(fives)
             temp_user = pick[0]
             interest =x.interest.filter(user=temp_user).first()
             pick2 = [pick[0], pick[1], interest]
-            print(pick2)
 
             # exit loop if the team is full
             if len(temp_team) + len(x.members.all()) == x.teamSize:
                 break
             elif temp_user in assigned:
-                foursAndFives.remove(pick)
+                fives.remove(pick)
             # do the actually assignment
             else:
                 # add the user to the suggested team
                 temp_team.append(pick2)
                 assigned.append(temp_user)
+
+        if len(temp_team) + len(x.members.all()) < x.teamSize:
+            fours = [s for s in y if s[1][1] == 4]
+            while(len(fours) > 0):
+                pick = random.choice(fours)
+                temp_user = pick[0]
+                interest =x.interest.filter(user=temp_user).first()
+                pick2 = [pick[0], pick[1], interest]
+
+                # exit loop if the team is full
+                if len(temp_team) + len(x.members.all()) == x.teamSize:
+                    break
+                elif temp_user in assigned:
+                    fours.remove(pick)
+                # do the actually assignment
+                else:
+                    # add the user to the suggested team
+                    temp_team.append(pick2)
+                    assigned.append(temp_user)
 
         #if the team still needs more add 3s
         if len(temp_team) + len(x.members.all()) < x.teamSize:
@@ -206,7 +224,6 @@ def auto_ros(course):
                 temp_user = pick[0]
                 interest = x.interest.filter(user=temp_user).first()
                 pick2 = [pick[0], pick[1], interest]
-                print(pick2)
 
                 # exit loop if the team is full
                 if len(temp_team) + len(x.members.all()) == x.teamSize:
@@ -227,10 +244,6 @@ def auto_ros(course):
     #     for mem in p[1]:
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
-
-    print(match_list)
-    print("=================")
-    print(roster)
 
     return roster
 
