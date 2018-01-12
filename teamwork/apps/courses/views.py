@@ -1032,34 +1032,34 @@ def export_interest(request, slug):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
 
-    interested_students = []
+    no_interest_students = []
 
     # PROJECT SECTION OF SPREADSHEET
-    for proj in projects:
+    for stud in students:
         row_num += 2
-        ws.write(row_num, 0, proj.title, font_style)
-        # Gets interest for current project
-        proj_interest = proj.interest.all()
-        row_num += 1
-        ws.write(row_num, 1, "USER")
-        ws.write(row_num, 2, "INTEREST")
-        ws.write(row_num, 3, "REASON")
-        for pi in proj_interest:
+        #interest for current user
+        interest = Interest.objects.filter(user=stud)
+        if interest:
+            ws.write(row_num, 0, stud.username, font_style)
             row_num += 1
-            ws.write(row_num, 1, pi.user.username)
+            ws.write(row_num, 1, "PROJECT")
+            ws.write(row_num, 2, "INTEREST")
+            ws.write(row_num, 3, "REASON")
+            for i in interest:
+                row_num += 1
+                ws.write(row_num, 1, i.project_interest.first().title)
+                ws.write(row_num, 2, i.interest)
+                ws.write(row_num, 3, i.interest_reason)
+                
+        else:
+            no_interest_students.append(stud.username)
 
-            if pi.user.username not in interested_students:
-                interested_students.append(pi.user.username)
-
-            ws.write(row_num, 2, pi.interest)
-            ws.write(row_num, 3, pi.interest_reason)
 
     row_num += 3
     ws.write(row_num, 0, "Students Who have not shown interest", font_style)
-    for stud in students:
-        if stud.username not in interested_students:
-            row_num += 1
-            ws.write(row_num, 1, stud.username)
+    for stud in no_interest_students:
+        row_num += 1
+        ws.write(row_num, 1, stud)
 
     wb.save(response)
     return response
