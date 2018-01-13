@@ -565,6 +565,13 @@ def edit_project(request, slug):
                 if request.user == course.creator:
                     # if the professor of the course wants to add members to a project, just add them
                     add_member(request, slug, uname)
+
+                    # send user that was added an email
+                    subject = "You've been added to a Project"
+                    content = "You have been added to the Project: {0}.\n\n".format(project.title)
+                    send_email(mem_to_add, request.user.email, subject, content)
+
+                    # profAdded bool used to give the correct Success Message
                     profAdded = True
                 else:
                     # add user to pending invitations
@@ -593,7 +600,7 @@ def edit_project(request, slug):
         elif profAdded:
             messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project")
+            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
 
         return redirect(view_one_project, project.slug)
 
