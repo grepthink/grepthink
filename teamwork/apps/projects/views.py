@@ -391,11 +391,9 @@ def create_project(request):
     # profile = Profile.objects.get(user=user)
     profile = user.profile
 
-    # Enrollment objects containing current user
-    # enroll = Enrollment.objects.filter(user=user)
+    # current courses the user is in
     cur_courses = user.enrollment.all()
-    # Current courses user is in
-    # cur_courses = Course.objects.filter(enrollment__in=enroll)
+
     no_postable_classes = False
 
     # my_created_courses = Course.objects.filter(creator=user)
@@ -420,7 +418,6 @@ def create_project(request):
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
 
-
     if request.method == 'POST':
         form = CreateProjectForm(user.id, request.POST)
         if form.is_valid():
@@ -443,6 +440,7 @@ def create_project(request):
 
             # Course the project is in
             in_course = form.cleaned_data.get('course')
+
             # Init TA of Project ot be the Professor
             project.ta = in_course.creator
             project.save()
@@ -634,7 +632,7 @@ def edit_project(request, slug):
         return redirect(view_one_project, project.slug)
 
 
-    # Transfer ownership of a project
+    # Transfer ownership of a project - TODO: needs to be removed, but add messages to new implementation
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
         f_user = User.objects.get(username=f_username)
@@ -648,7 +646,7 @@ def edit_project(request, slug):
 
         return redirect(edit_project, slug)
 
-    # Transfer Scrum Master
+    # Transfer Scrum Master  - TODO: needs to be removed, but add messages to new implementation
     if request.POST.get('make_scrum'):
         f_username = request.POST.get('make_scrum')
         f_user = User.objects.get(username=f_username)
@@ -719,9 +717,10 @@ def edit_project(request, slug):
     else:
         form = EditProjectForm(request.user.id, instance=project, members=members)
 
-        if len(members) > 0:
-            form.fields['project_owner'].required = True
-            form.fields['scrum_master'].required = True
+        # TEMPORARILIY COMMENTED OUT, DUE TO JULLIG HAVING TROUBLE ADDING MEMBERS
+        # if len(members) > 0:
+        #     form.fields['project_owner'].required = True
+        #     form.fields['scrum_master'].required = True
 
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
