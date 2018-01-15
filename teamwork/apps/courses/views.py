@@ -87,6 +87,7 @@ def view_one_course(request, slug):
         isProf = 0
 
     projects = projects_in_course(slug)
+    projectCount = len(projects)
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
@@ -133,7 +134,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'user_role':user_role, 'available':available, 'assignments':asgs,
+        'user_role':user_role, 'available':available, 'assignments':asgs, 'projectCount':projectCount,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
