@@ -173,6 +173,7 @@ $(document).ready(function() {
                     {% if not user.profile.isGT %}
                         {% if not user_role == "ta" %}
                         {% if not course.limit_interest %}
+                            {% if projectCount > 0 %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
                                     <a href="{% url 'show_interest' course.slug %}" class="alert-link">
@@ -180,6 +181,7 @@ $(document).ready(function() {
                                     </a>
                                 </div>
                             </div>
+                            {% endif %}
                         {% endif %}
                         {% endif %}
                     {% endif %}
