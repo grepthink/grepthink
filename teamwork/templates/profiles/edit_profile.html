@@ -134,6 +134,7 @@ $(document).ready(function() {
 {% else %}
 <form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
 {% endif %}
+
  <div class="row">
     <div class="col-md-6 clearfix">
         <div class="box box-primary">
@@ -164,6 +165,7 @@ $(document).ready(function() {
                     <label>Bio</label>
                     {{ form.bio }}
                   </div>
+                  
                   <div class="box-footer">
                       <div class="pull-left">
                           {% if user.profile.isGT %}
@@ -218,7 +220,7 @@ $(document).ready(function() {
                   </select>
                 </div>
               </div>
-        
+
         </div>
         </div>
         <div class="col-md-6 clearfix">
