@@ -245,7 +245,9 @@ def auto_ros(course):
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
 
-    return roster
+
+
+    return sorted(roster, key=lambda x: x[0].title.lower())
 
 def by_schedule(user, project):
     """
