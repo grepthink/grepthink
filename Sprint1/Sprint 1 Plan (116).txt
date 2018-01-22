@@ -1,4 +1,4 @@
-﻿								Sprint 1 Plan
+﻿								                                      Sprint 1 Plan
 
 Product name: GrepThink Upgrade
 Team name: GrepThink
@@ -33,22 +33,22 @@ Team Roles
 Initial Task Assignment
 *  Oscar Castro:
    * User Story 1: As a developer I want to learn Django
-   *  User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
 
 * Katerina Chinnappan:
    * User Story 1: As a developer I want to learn Django
-   *  User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
 
 * Eddy Chen
    * User Story 1: As a developer I want to learn Django
-   *  User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
 
 * Henry Hargreaves:
    * User Story 1: As a developer I want to learn Django
-   *  User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
 
 Scrum Times
