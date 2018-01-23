@@ -21,7 +21,7 @@ Point Breakdown:
 12 Story Points - User Story 3: As a developer I want to fix small bugs in GrepThink
         1 pt - Add ability to Edit Primary Email address
         1 pt -  Email Address Login (Currently we just login with a username)
-        1 pt - Projects with one member that are locked with no activity should be auto                       deleted
+        1 pt - Projects with one member that are locked with no activity should be auto deleted
         1.5 pt -  Projects with one member that are locked with no activity should be auto deleted
         1.5 pt -  filter display of full, sponsored, or skill of project
         1 pt - Add ‘technologies’ to a project (Github, travisCL, etc.)
