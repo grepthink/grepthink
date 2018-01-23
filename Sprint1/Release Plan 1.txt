@@ -1,0 +1,47 @@
+﻿RELEASE Plan
+GrepThink
+Team GrepThink
+Revision #1
+January 22 - February 15
+
+
+Team Members: Oscar Castro, Katerina Chinnappan, Eddy Chen, Henry Hargreaves
+
+
+Top Level Goals: Add new capabilities to the GrepThink tool used to manage projects. GrepThink native Scrum Board and Assignment capability. Scrum Board Requirements: The ability to place and move a task to not assigned, in progress, and completed columns(Interactive, such as dragging, preferred) Ability to distinguish who is assigned to an in progress task Ability to create boards for separate sprints (BONUS) Be able to export a scrum board. Expand this system to allow the professor to choose the type and allow customization. Allow the professor to upload his own print out of the requirements for the assignment
+
+
+Sprint 1
+Goal: As a user, I want to fix the bugs in the current GrepThink version using Django
+
+
+Point Breakdown:
+2 Story Points - User Story 1: As a developer I want to learn Django
+4 Story Points -  User Story 2: As a developer I want to build a small basic app using Django
+12 Story Points - User Story 3: As a developer I want to fix small bugs in GrepThink
+        1 pt - Add ability to Edit Primary Email address
+        1 pt -  Email Address Login (Currently we just login with a username)
+        1 pt - Projects with one member that are locked with no activity should be auto                       deleted
+        1.5 pt -  Projects with one member that are locked with no activity should be auto deleted
+        1.5 pt -  filter display of full, sponsored, or skill of project
+        1 pt - Add ‘technologies’ to a project (Github, travisCL, etc.)
+        1 pt - Allow choice between light and dark themes
+        1.5 pt -  Feedback system users to send error reports or suggestions
+        2.5 pt - View/edit/update previous preferences
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Product Backlog:
