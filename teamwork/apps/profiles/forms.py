@@ -125,7 +125,8 @@ class SignUpForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        self.declared_fields['email'].widget.attrs.update([('value', kwargs.get('instance').user.email)])
+        if kwargs.get('instance') is not None:
+            self.declared_fields['email'].widget.attrs.update([('value', kwargs.get('instance').user.email)])
         super(ProfileForm, self).__init__(*args, **kwargs)
 
     name = forms.CharField(
