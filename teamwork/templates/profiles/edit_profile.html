@@ -47,6 +47,9 @@ $(document).ready(function() {
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
 
+
+
+
   $(".s2_known_skills").select2({
     ajax: {
       url: "ajax/edit_skills/",
@@ -80,6 +83,7 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
+
   $(".s2_learn_skills").select2({
     ajax: {
       url: "ajax/edit_skills/",
@@ -113,6 +117,14 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
     });
+
+{#    document.getElementById("editEmailButton").onclick = function() {myFunction()};#}
+{##}
+{#    function myFunction() {#}
+{#        document.getElementById("demo").innerHTML = "YOU CLICKED ME!";#}
+{#    }#}
+
+
 });
 
 </script>
@@ -122,6 +134,7 @@ $(document).ready(function() {
 {% block stylesheets %}
   <!-- Select2 -->
   <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/SafeInputBox.css' %}">
 
   {{block.super}}
 
@@ -150,6 +163,15 @@ $(document).ready(function() {
                     <label>Full Name</label>
                     {{ form.name }}
                   </div>
+
+                  <div class="form-group .button">
+                    <label>Edit Email</label>
+                      <div id="editEmail">
+                        {{ form.email }}
+                        <button onclick="myFunction()" id="editEmailButton">edit</button>
+                      </div>
+                  </div>
+
 
                   <div class="form-group">
                     <label>Institution</label>

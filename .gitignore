@@ -10,7 +10,7 @@ teamwork/media/**
 # Database files
 .DS_Store
 *.sqlite3
-
+.idea
 # Sublime Text Project Workspace
 *.sublime-project
 *.sublime-workspace

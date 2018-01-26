@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 
 import os
-
 import dj_database_url
 # Using python decouple (instead of os) for easier path management
 from decouple import config

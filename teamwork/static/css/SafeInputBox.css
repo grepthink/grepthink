@@ -1,0 +1,18 @@
+#editEmail {
+  /* This bit sets up the horizontal layout */
+  display:flex;
+  flex-direction:row;
+  
+  /* This bit draws the box around it */
+  padding:2px;
+}
+
+#editEmailButton{
+  /* Just a little styling to make it pretty */
+    background: Transparent no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    color: #3875d7;
+}
