@@ -46,7 +46,7 @@ The .env file should be in /twdev/teamwork-project
 ## Step 4: Install dependencies
 This part is fun because it's easy. Make sure you're in your venv then install everything in requirements.txt
 ```bash
-$ pip install -r requirements.txt
+$sudo pip install -r requirements.txt
 ```
 
 ## Step 5: I think that's it
