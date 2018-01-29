@@ -45,8 +45,6 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
-            # ta = form.cleaned_data.get('ta')
-
             if GT:
                 user1 = User.objects.create_superuser(
                     username=username,
@@ -71,19 +69,8 @@ def signup(request):
             # edits profile to add professor
             user1.profile.isProf = prof
 
-            # edits profile to add ta
-            # user1.profile.isTa = ta
-
             # saves profile
             user1.save()
-
-            # User.objects.save()
-
-
-            # uinfo = user.get_profile()
-            # uinfo.isProf = prof
-            # uinfo.save()
-
             return redirect(edit_profile, username)
 
     else:
@@ -156,6 +143,7 @@ def edit_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
     """
+
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
     if request.user.profile.isGT:
@@ -172,7 +160,7 @@ def edit_profile(request, username):
         return redirect(view_profile, request.user.username)
 
     page_name = "Edit Profile"
-    page_description = "Edit %s's Profile" % (profile.user.username)
+    page_description = "Edit %s's Profile" % profile.user.username
     title = "Edit Profile"
 
     # original form
@@ -257,10 +245,11 @@ def edit_profile(request, username):
                 return redirect('about')
 
         # handles saving bio info if none of the cases were taken
-        edit_profile_helper(request, username)
 
-        # redirects to view_profile when submit button is clicked
-        return redirect(view_profile, username)
+        form = edit_profile_helper(request, username)
+        if form.is_valid():
+            # redirects to view_profile when submit button is clicked
+            return redirect(view_profile, username)
 
     else:
         # load form with prepopulated data
@@ -297,16 +286,20 @@ def edit_profile_helper(request, username):
 
         # grab each form element from the clean form
         bio = form.cleaned_data.get('bio')
+        email = form.cleaned_data.get('email')
         name = form.cleaned_data.get('name')
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
         ava = form.cleaned_data.get('avatar')
-        # profile.save() <-- why is this here -kp
 
         # if data is entered, save it to the profile for the following
         if name:
             profile.name = name
             profile.save()
+        if email:
+            user = request.user
+            user.email = email
+            user.save()
         if bio:
             profile.bio = bio
             profile.save()
@@ -319,6 +312,8 @@ def edit_profile_helper(request, username):
         if ava:
             profile.avatar = ava
             profile.save()
+
+    return form
 
 
 @login_required
