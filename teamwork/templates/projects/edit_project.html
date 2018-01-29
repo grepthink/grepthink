@@ -220,7 +220,7 @@ $(document).ready(function() {
                     </select>
                 </div>
                 <label>Remove Desired Technologies</label>
-                <br /> {% for skill in project.desired_technologies.all %}
+                <br /> {% for technology in project.desired_technologies.all %}
                 <button class="btn btn-danger btn-sm" name="remove_desired_technology" value="{{technology.technology}}"><i class="fa fa-trash"></i> {{technology.technology}}
                 </button>
                 {% empty %}
