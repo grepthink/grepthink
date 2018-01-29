@@ -35,21 +35,26 @@ Initial Task Assignment
    * User Story 1: As a developer I want to learn Django
    * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
+        Bug to fix: Feedback system users to send error reports or suggestions
 
 * Katerina Chinnappan:
    * User Story 1: As a developer I want to learn Django
    * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
+        Bug to fix: Add ' desired technologies' to a project, ajax search, delete technologies(Github, travisCL, etc.) 
 
 * Eddy Chen
    * User Story 1: As a developer I want to learn Django
    * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
+        Bug to fix: Allow choice between light and dark themes
 
 * Henry Hargreaves:
    * User Story 1: As a developer I want to learn Django
    * User Story 2: As a developer I want to build a small basic app using Django
    * User Story 3: As a developer I want to fix small bugs in GrepThink
+         Bug to fix: Add ability to Edit Primary Email addressAdd ability to Edit Primary Email address
+         Bug to fix: Email Address Login
 
 Scrum Times
 * Tuesday: 15 min within 9:50 am - 11:25 pm (meet with the TA)
