@@ -1,0 +1,56 @@
+﻿								                                      Sprint 1 Plan
+
+Product name: GrepThink Upgrade
+Team name: GrepThink
+Sprint Completion: 2/03/2018
+Revision number 1.0
+Revision date 1/21/2018
+
+Goal
+Our goal is to learn Django and apply that knowledge to fix some small bugs in GrepThink.
+
+Task listing, organized by user story
+* User Story 1: As a developer I want to learn Django
+   * Task 1: Look up tutorials on Django to learn the syntax and how it is used for rapid development (4 hours)
+Total Hours: ~4 hours
+         
+* User Story 2: As a developer I want to build a small basic app using Django
+   * Task 1: Look for a small basic app online that is great for beginners using Django (30 min)
+   * Task 2: Work on that app and finish it in less than a week (< 1 week)
+Total Time: < 1 week
+
+* User Story 3: As a developer I want to fix small bugs in GrepThink
+   * Task 1: Get the list of bugs from Sean and Ryan and distribute the bugs evenly among the team (~30 min)
+   * Task: Work on fixing the bugs and take no longer than one week to do so (< 1 week)
+Total Hours: < 1 week
+
+Team Roles
+* Oscar Castro - Product Owner
+* Katerina Chinnappan - Scrum Master
+* Eddy Chen - Developer
+* Henry Hargreaves- Developer
+
+Initial Task Assignment
+*  Oscar Castro:
+   * User Story 1: As a developer I want to learn Django
+   * User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 3: As a developer I want to fix small bugs in GrepThink
+
+* Katerina Chinnappan:
+   * User Story 1: As a developer I want to learn Django
+   * User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 3: As a developer I want to fix small bugs in GrepThink
+
+* Eddy Chen
+   * User Story 1: As a developer I want to learn Django
+   * User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 3: As a developer I want to fix small bugs in GrepThink
+
+* Henry Hargreaves:
+   * User Story 1: As a developer I want to learn Django
+   * User Story 2: As a developer I want to build a small basic app using Django
+   * User Story 3: As a developer I want to fix small bugs in GrepThink
+
+Scrum Times
+* Tuesday: 15 min within 9:50 am - 11:25 pm (meet with the TA)
+* Thursday: 10:30 am - 10:45 am
