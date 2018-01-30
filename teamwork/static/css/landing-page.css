@@ -24,6 +24,15 @@ header.masthead {
   padding-bottom: 8rem;
 }
 
+
+
+@media (min-width: 768px) {
+  .faqcontent {
+    max-width: 700px;
+    text-align: left;
+  }
+}
+
 header.masthead .overlay {
   position: absolute;
   background-color: #212529;

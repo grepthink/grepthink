@@ -31,6 +31,7 @@ urlpatterns = [
         url(r'^$', core_views.index, name='index'),
         url(r'^about/$', core_views.about, name='about'),
         url(r'^signup/$', profile_views.signup, name='signup'),
+        url(r'^contact/$', core_views.contact, name='contact'),
         url(r'^profSignup/$', profile_views.profSignup, name='profSignup'),
         url(r'^search/$', core_views.search, name='search'),
         url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
