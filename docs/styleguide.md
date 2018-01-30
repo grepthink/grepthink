@@ -10,7 +10,7 @@ Template Style Guide
 All templates extend `base.html` which provides some commonly used "blocks".
 
 ## Page title and description:
-The page tilte and description can be set dynamically in *views.py* like so:
+The page title and description can be set dynamically in *views.py* like so:
 
 ```python
 def index(request):

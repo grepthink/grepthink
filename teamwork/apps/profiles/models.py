@@ -7,7 +7,10 @@ Database Models for the objects: Skills, Profile
 # Django Imports
 from __future__ import unicode_literals
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models.signals import post_save
@@ -97,7 +100,7 @@ class Events(models.Model):
 
     def __str__(self):
         event_string = "%s -> %02d:%02d - %02d:%02d" % (
-        self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+            self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
         # event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
         return event_string
 
@@ -226,14 +229,14 @@ class Profile(models.Model):
         return hash(self.user)
 
     def __eq__(self, other):
-        return (self.user == other.user)
+        return self.user == other.user
 
     def __ne__(self, other):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
         return not (self == other)
 
-    # Alert functions, self explanitory
+    # Alert functions, self explanatory
     def alerts(self):
         return Alert.objects.filter(to=self.user)
 
@@ -242,6 +245,19 @@ class Profile(models.Model):
 
     def read_alerts(self):
         return Alert.objects.filter(to=self.user, read=True)
+
+
+class EmailBackend(ModelBackend):
+    def authenticate(self, username=None, password=None, **kwargs):
+        UserModel = get_user_model()
+        try:
+            user = UserModel.objects.get(email=username)
+        except UserModel.DoesNotExist:
+            return None
+        else:
+            if user.check_password(password):
+                return user
+        return None
 
 
 @receiver(post_save, sender=User)

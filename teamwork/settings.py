@@ -202,5 +202,8 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 ALLOWED_SIGNUP_DOMAINS = ['*']
 
+AUTHENTICATION_BACKENDS = ['teamwork.apps.profiles.models.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
+
+
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'

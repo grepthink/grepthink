@@ -16,6 +16,8 @@ from teamwork.apps.projects.views import to_bits, from_bits
        match: the list of matched students
     returns: a sorted list of students from best score to worst
 """
+
+
 def sort(matchList):
     matches = []
     tagged = []
@@ -23,7 +25,7 @@ def sort(matchList):
     for j in reversed(topScores):
         for u, i in matchList.items():
             if j == i and u not in tagged:
-                matches.append((u,i))
+                matches.append((u, i))
                 tagged.append(u)
     return matches
 
@@ -68,7 +70,6 @@ def po_match(project):
             continue
         else:
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
-
 
     # # Skill Matching
     # # loop through the desired skills can check the skills table to see who
@@ -133,6 +134,7 @@ def po_match(project):
     return sort(initial)
     # past classes match
 
+
 def auto_ros(course):
     match_list = []
     all_projects = course.projects.all()
@@ -180,10 +182,10 @@ def auto_ros(course):
 
         # Add as many 4s and 5s first
         fives = [s for s in y if s[1][1] == 5]
-        while(len(fives) > 0):
+        while (len(fives) > 0):
             pick = random.choice(fives)
             temp_user = pick[0]
-            interest =x.interest.filter(user=temp_user).first()
+            interest = x.interest.filter(user=temp_user).first()
             pick2 = [pick[0], pick[1], interest]
 
             # exit loop if the team is full
@@ -199,10 +201,10 @@ def auto_ros(course):
 
         if len(temp_team) + len(x.members.all()) < x.teamSize:
             fours = [s for s in y if s[1][1] == 4]
-            while(len(fours) > 0):
+            while (len(fours) > 0):
                 pick = random.choice(fours)
                 temp_user = pick[0]
-                interest =x.interest.filter(user=temp_user).first()
+                interest = x.interest.filter(user=temp_user).first()
                 pick2 = [pick[0], pick[1], interest]
 
                 # exit loop if the team is full
@@ -216,10 +218,10 @@ def auto_ros(course):
                     temp_team.append(pick2)
                     assigned.append(temp_user)
 
-        #if the team still needs more add 3s
+        # if the team still needs more add 3s
         if len(temp_team) + len(x.members.all()) < x.teamSize:
             threes = [s for s in y if s[1][1] == 3]
-            while(len(threes) > 0):
+            while (len(threes) > 0):
                 pick = random.choice(threes)
                 temp_user = pick[0]
                 interest = x.interest.filter(user=temp_user).first()
@@ -249,6 +251,7 @@ def auto_ros(course):
 
     return sorted(roster, key=lambda x: x[0].title.lower())
 
+
 def by_schedule(user, project):
     """
         Summary: Takes in a user and a project, compares users availability
@@ -259,8 +262,8 @@ def by_schedule(user, project):
     """
     course = Course.objects.get(projects=project)
 
-    event_list = []     # list of all events for each user
-    pos_event = []      # list of possible meeting times
+    event_list = []  # list of all events for each user
+    pos_event = []  # list of possible meeting times
     sunday_list = []
     monday_list = []
     teusday_list = []
@@ -270,7 +273,6 @@ def by_schedule(user, project):
     saturday_list = []
     total_hours = 0
     total_meetings = 0
-
 
     # Loops through each member
     for mem in project.members.all():
@@ -301,8 +303,8 @@ def by_schedule(user, project):
             saturday_list.append(i)
 
     # Converts to and from bitstring to find FREE time
-    sunday_list = to_bits(sunday_list)  #this is working
-    sunday_list = from_bits(sunday_list)    #this is now working
+    sunday_list = to_bits(sunday_list)  # this is working
+    sunday_list = from_bits(sunday_list)  # this is now working
     # Appends to list
     for i in sunday_list:
         pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
@@ -345,12 +347,11 @@ def by_schedule(user, project):
         total_hours = total_hours + (i[2] - i[0])
 
     total_meetings = len(pos_event)
-    #print("\n\nStudent: %s\nMeeting List: %s\nHours: %d\nMeetings: %d\nHours/Meetings: %d\n\n"%(user.profile, pos_event, total_hours, total_meetings, total_hours/total_meetings))
+    # print("\n\nStudent: %s\nMeeting List: %s\nHours: %d\nMeetings: %d\nHours/Meetings: %d\n\n"%(user.profile, pos_event, total_hours, total_meetings, total_hours/total_meetings))
 
     if total_meetings == 0:
         return 1
-    return floor(total_hours/total_meetings)
-
+    return floor(total_hours / total_meetings)
 
 # def by_schedule(user, project):
 #     """
