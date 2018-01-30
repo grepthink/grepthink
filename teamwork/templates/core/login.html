@@ -36,7 +36,7 @@
         {% csrf_token %}
         <div class="form-group has-feedback {% if form.username.errors %} has-error {% endif %}">
             <label for="username"> UCSC CruzID / Email </label>
-            <a class='username-tooltip' data-toggle="tooltip" data-placement="left" title="For example: if the UCSC email you signed up with is sammyslug@ucsc.edu, simply login as sammyslug">
+            <a class='username-tooltip' data-toggle="tooltip" data-placement="left" title="For example: if the UCSC email you signed up with is sammyslug@ucsc.edu, simply login as sammyslug or your email address">
                         <i class='glyphicon glyphicon-info-sign'></i></a>
             <input type="text" class="form-control" id="username" name="username">
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
