@@ -29,8 +29,11 @@ from teamwork.apps.projects import views as project_views
 urlpatterns = [
         # CORE AND SIGNUP
         url(r'^$', core_views.index, name='index'),
+        # /about/
         url(r'^about/$', core_views.about, name='about'),
+        # /signup/
         url(r'^signup/$', profile_views.signup, name='signup'),
+        # /contact/
         url(r'^contact/$', core_views.contact, name='contact'),
         url(r'^profSignup/$', profile_views.profSignup, name='profSignup'),
         url(r'^search/$', core_views.search, name='search'),
