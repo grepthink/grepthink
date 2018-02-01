@@ -116,3 +116,5 @@ ENV/
 .ropeproject
 sendgrid.env
 .idea/
+.xml
+.iml
