@@ -30,12 +30,14 @@ from django.utils import timezone
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
 
+
 # Generates add code
 def rand_code(size):
     # Usees a random choice from lowercase, uppercase, and digits
     return ''.join([
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
+
 
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
@@ -49,7 +51,8 @@ class Interest(models.Model):
     interest_reason = models.CharField(max_length=100)
 
     def __str__(self):
-        return("%d"%(self.interest))
+        return ("%d" % (self.interest))
+
 
 class Tsr(models.Model):
     """
@@ -59,10 +62,10 @@ class Tsr(models.Model):
     ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
     # person who is evaluating
     evaluator = models.ForeignKey(User, on_delete=models.CASCADE,
-        related_name="evaluator", default=0)
+                                  related_name="evaluator", default=0)
     # person being evaluated
     evaluatee = models.ForeignKey(User, on_delete=models.CASCADE,
-        related_name="evaluatee", default=0)
+                                  related_name="evaluatee", default=0)
     # sprint percent contribution
     percent_contribution = models.DecimalField(max_digits=2, decimal_places=0)
     # evaluatee pros
@@ -84,9 +87,11 @@ class Tsr(models.Model):
         unique=True)
 
     def __str__(self):
-        return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
-            self.positive_feedback, self.negative_feedback,
-            self.tasks_completed, self.performance_assessment, self.notes)))
+        return (("%d, %s, %s, %d, %s, %s, %s, %s, %s" % (
+        self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
+        self.positive_feedback, self.negative_feedback,
+        self.tasks_completed, self.performance_assessment, self.notes)))
+
     def save(self, *args, **kwargs):
         # Generate URL slug if not specified
         if self.slug is None or len(self.slug) == 0:
@@ -96,6 +101,7 @@ class Tsr(models.Model):
             self.slug = newslug
 
         super(Tsr, self).save(*args, **kwargs)
+
 
 class Project(models.Model):
     """
@@ -112,13 +118,13 @@ class Project(models.Model):
     """
 
     Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
-                       (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
-                       (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
-                       (24, '12:00'), )
+                             (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                             (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                             (24, '12:00'),)
 
     Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
-                       (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
-                       (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+                             (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                             (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'),)
 
     # The title of the project. Should not be null, but default is provided.
     title = models.CharField(
@@ -218,8 +224,6 @@ class Project(models.Model):
         max_length=100,
         default='http://i.imgur.com/5Z17VfH.png')
 
-
-
     # TODO:NEED TO SETUP M2M not proper
     # Resource list that the project members can update
     resource = models.TextField(
@@ -237,7 +241,7 @@ class Project(models.Model):
     # TODO:NEED TO GET THIS GOING AS WELL FOR NAV FILTERS
     # Date the project was originally submitted on
     # Commented until we get to a point where we want to have everyone flush
-    #create_date = models.DateTimeField(auto_now_add=True)
+    # create_date = models.DateTimeField(auto_now_add=True)
 
     # projects tsr
     tsr = models.ManyToManyField(
@@ -288,7 +292,7 @@ class Project(models.Model):
         Bassically a way to check if the Project object exists in the database. Will be helpful later.
         self.pk is the primary key of the Project object in the database!
         """
-        #if not self.pk:
+        # if not self.pk:
         #    super(Project, self).save(*args, **kwargs)
 
         # Generate a Project URL slug if not specified
@@ -298,7 +302,7 @@ class Project(models.Model):
             newslug = self.title
             newslug = slugify(newslug)[0:20]
             while Project.objects.filter(slug=newslug).exists():
-                #print(Project.objects.filter(slug=newslug).exists())
+                # print(Project.objects.filter(slug=newslug).exists())
                 newslug = self.title
                 newslug = slugify(newslug[0:16] + "-" + rand_code(3))
             self.slug = newslug
@@ -310,6 +314,7 @@ class Project(models.Model):
     """
     Gets all students in a project and returns a list
     """
+
     def get_members(self):
         temp = self.members.all()
         students = []
@@ -321,8 +326,8 @@ class Project(models.Model):
 
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
     def generate_avail(self):
-        event_list = []     # list of all events for each user
-        pos_event = []      # list of possible meeting times
+        event_list = []  # list of all events for each user
+        pos_event = []  # list of possible meeting times
         temp = []
 
         sunday_list = []
@@ -363,10 +368,9 @@ class Project(models.Model):
             if i.day == "Saturday":
                 saturday_list.append(i)
 
-
         # Converts to and from bitstring to find FREE time
-        sunday_list = to_bits(sunday_list)  #this is working
-        sunday_list = from_bits(sunday_list)    #this is now working
+        sunday_list = to_bits(sunday_list)  # this is working
+        sunday_list = from_bits(sunday_list)  # this is now working
         # Appends to list
         for i in sunday_list:
             pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
@@ -408,8 +412,8 @@ class Project(models.Model):
         for i in range(len(pos_event)):
             # d is a dictionary
             d = {}
-            d['start'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][1], pos_event[i][2])
-            d['end'] = '%s%02d:%02d:00'%(dayasday(pos_event[i][0]), pos_event[i][3], pos_event[i][4])
+            d['start'] = '%s%02d:%02d:00' % (dayasday(pos_event[i][0]), pos_event[i][1], pos_event[i][2])
+            d['end'] = '%s%02d:%02d:00' % (dayasday(pos_event[i][0]), pos_event[i][3], pos_event[i][4])
             d['title'] = 'Meeting'
             # appends dictionary to list
             ajax.append(d)
@@ -477,6 +481,7 @@ class Project(models.Model):
                 course.projects.all())
     """
 
+
 class Membership(models.Model):
     """
     Membership objects relate a user and a project.
@@ -494,7 +499,8 @@ class Membership(models.Model):
         max_length=64)
 
     def __str__(self):
-        return("%s: %s"%(self.user.username, self.project.title))
+        return ("%s: %s" % (self.user.username, self.project.title))
+
 
 class ProjectUpdate(models.Model):
     """
@@ -518,14 +524,13 @@ class ProjectUpdate(models.Model):
     class Meta:
         verbose_name = "Project Update"
         verbose_name_plural = "Project Updates"
-        ordering = ("-date", )
+        ordering = ("-date",)
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
 
 class ResourceUpdate(models.Model):
-
     project = models.ForeignKey(Project)
     date = models.DateTimeField(auto_now_add=True, editable=True)
     user = models.ForeignKey(User)
@@ -535,14 +540,13 @@ class ResourceUpdate(models.Model):
     class Meta:
         verbose_name = "Resource Update"
         verbose_name_plural = "Resource Updates"
-        ordering = ("-date", )
+        ordering = ("-date",)
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
 
 class ProjectChat(models.Model):
-
     project = models.ForeignKey(Project, related_name='chat', on_delete=models.CASCADE)
     author = models.ForeignKey(User, related_name='author_chat', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True, editable=True)
@@ -550,10 +554,11 @@ class ProjectChat(models.Model):
 
     class Meta:
         verbose_name = "Project Chat"
-        ordering = ("-date", )
+        ordering = ("-date",)
 
     def __str__(self):
         return '{0} - {1}'.format(self.author.username, self.content)
+
 
 # Generates add code
 def rand_code(size):
@@ -561,6 +566,7 @@ def rand_code(size):
     return ''.join([
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
+
 
 # Converts a number into a weekday
 def dayofweek(number):
@@ -574,6 +580,7 @@ def dayofweek(number):
         15: "Saturday",
     }.get(number, "Day that doesnt exist")
 
+
 def dayasday(day):
     return {
         "Sunday": '2017-04-09T',
@@ -585,29 +592,28 @@ def dayasday(day):
         "Saturday": '2017-04-15T',
     }.get(day, '2017-04-00T')
 
+
 # Given an array, creates a bitstring based on meeting times
 # def to_bits(day, l, h):
 def to_bits(day):
     # Creates array of all 0's of length 48
-    bitstring = [False]*48
+    bitstring = [False] * 48
     # Loops through each Event in array
     for event in day:
         # Start = double start hour (30 min intervals)
-        start = 2*event.start_time_hour
+        start = 2 * event.start_time_hour
         # End = double End hour (30 min intervals)
-        end = 2*event.end_time_hour
+        end = 2 * event.end_time_hour
 
         # SPECIAL CASE: Because 12a == 0, we manually set end to 47
         if event.end_time_hour == 0:
             end = 47
 
-
-        for i in range (start, end+1):
+        for i in range(start, end + 1):
             bitstring[i] = True
         # If we ended in XX:30, block off next bit
         if event.end_time_min == 30:
-            bitstring[end+1] = True
-
+            bitstring[end + 1] = True
 
     # Manually block off time bounds given by professor
     for x in range(0, 16):
@@ -617,7 +623,8 @@ def to_bits(day):
 
     return bitstring
 
-#given a bitstring, converts to array containing start and end time
+
+# given a bitstring, converts to array containing start and end time
 def from_bits(bitstring):
     event_array = []
     temp = 0
@@ -635,7 +642,7 @@ def from_bits(bitstring):
             if i % 2 != 0:
                 start_min = 30
             # Start hour is i/2
-            start_hour = floor(i/2)
+            start_hour = floor(i / 2)
 
             # Loops until True (Busy)
             temp = i
@@ -651,7 +658,7 @@ def from_bits(bitstring):
                     if i % 2 != 0:
                         end_min = 30
                     # End hour is i/2
-                    end_hour = floor(i/2)
+                    end_hour = floor(i / 2)
                     break
 
                 elif bitstring[temp + 1] == True:
@@ -661,7 +668,7 @@ def from_bits(bitstring):
                     if i % 2 != 0:
                         end_min = 30
                     # End hour is i/2
-                    end_hour = floor(i/2)
+                    end_hour = floor(i / 2)
                     break
 
                 # Increase temp
@@ -671,6 +678,6 @@ def from_bits(bitstring):
             event_array.append([start_hour, start_min, end_hour, end_min])
 
         # Update iterator
-        i=i+1
+        i = i + 1
 
     return event_array

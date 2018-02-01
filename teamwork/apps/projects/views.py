@@ -31,16 +31,14 @@ def _projects(request, projects):
     """
     page = request.GET.get('page')
 
-
     # Populate with page name and title
     page_name = "My Projects"
     page_description = "Projects created by " + request.user.username
     title = "My Projects"
 
-
     return render(request, 'projects/view_projects.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'projects': projects})
+                                                           'page_description': page_description, 'title': title,
+                                                           'projects': projects})
 
 
 @login_required
@@ -52,6 +50,7 @@ def view_projects(request):
     my_projects = Project.get_my_projects(request.user)
 
     return _projects(request, my_projects)
+
 
 @login_required
 def view_meetings(request, slug):
@@ -74,10 +73,9 @@ def view_meetings(request, slug):
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)
 
-    #meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
+    # meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
 
     meetings = mark_safe(project.meetings)
-
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -85,8 +83,9 @@ def view_meetings(request, slug):
     title = project.title or "Meetings"
 
     return render(request, 'projects/meeting_times.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'project': project, 'course' : course, 'json_events': meetings})
+                                                           'page_description': page_description, 'title': title,
+                                                           'project': project, 'course': course,
+                                                           'json_events': meetings})
 
 
 @login_required
@@ -124,8 +123,6 @@ def view_one_project(request, slug):
                 asg_completed.append(i)
                 break
 
-
-
     user = request.user
     profile = Profile.objects.get(user=user)
 
@@ -148,7 +145,7 @@ def view_one_project(request, slug):
             chat.save()
             return redirect(view_one_project, project.slug)
         else:
-            messages.info(request,'Errors in form')
+            messages.info(request, 'Errors in form')
     else:
         # Send form for initial project creation
         form = ChatForm(request.user.id, slug)
@@ -176,7 +173,7 @@ def view_one_project(request, slug):
     # ======================
     assigned_tsrs = course.assignments.filter(ass_type="tsr", closed=False)
 
-    tsr_tuple={}
+    tsr_tuple = {}
 
     if not request.user.profile.isGT:
         user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
@@ -185,7 +182,7 @@ def view_one_project(request, slug):
 
     fix = []
     new_tsr_tuple = []
-    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+    if request.user.profile.isGT or request.user.profile.isProf or user_role == "ta":
         temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
         temp = ""
 
@@ -198,23 +195,29 @@ def view_one_project(request, slug):
     else:
         fix = None
 
-
-
-
     med = 100
     if len(members) > 0:
-        med = int(100/len(members))
-    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
+        med = int(100 / len(members))
+    mid = {'low': int(med * 0.7), 'high': int(med * 1.4)}
     # ======================
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members,
-        'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
-        'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+                                                          'page_description': page_description, 'title': title,
+                                                          'members': members, 'form': form, 'temp_tup': fix,
+                                                          'project': project, 'project_members': project_members,
+                                                          'pending_members': pending_members,
+                                                          'requestButton': requestButton, 'avgs': avgs,
+                                                          'assignments': asgs, 'asg_completed': asg_completed,
+                                                          'today': today,
+                                                          'pending_count': pending_count, 'profile': profile,
+                                                          'scrum_master': scrum_master, 'staff': staff,
+                                                          'updates': updates, 'project_chat': project_chat,
+                                                          'course': course, 'project_owner': project_owner,
+                                                          'meetings': readable, 'resources': resources,
+                                                          'json_events': project.meetings, 'contribute_levels': mid,
+                                                          'assigned_tsrs': assigned_tsrs})
+
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -225,14 +228,13 @@ def leave_project(request, slug):
 
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
 
-
     if (f_user not in members):
         messages.warning(request, "You cannot leave a project you are not a member of!")
         HttpResponseRedirect('project/all')
     # check if they were the only member of the project
     elif len(members) == 1:
         messages.warning(request,
-         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+                         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
     else:
         # check if user that is being removed was Project Owner
         if f_user == project.creator:
@@ -249,6 +251,7 @@ def leave_project(request, slug):
             mem_obj.delete()
 
     return redirect(view_projects)
+
 
 @login_required
 def request_join_project(request, slug):
@@ -273,7 +276,8 @@ def request_join_project(request, slug):
         content = "{0}\n\n www.grepthink.com".format(content_text)
         send_email(creator, "noreply@grepthink.com", subject, content)
         # notify user that their request has gone through successfully
-        messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
+        messages.add_message(request, messages.SUCCESS,
+                             "{0} has been notified of your request to join!".format(project.title))
 
         # TODO: send alert to project members and/or PO
 
@@ -293,10 +297,11 @@ def request_join_project(request, slug):
             sender=request.user,
             to=project.creator,
             msg=request.user.username + " has revoked there request to join " + project.title,
-            url=reverse('view_one_project',args=[project.slug]),
-            )
+            url=reverse('view_one_project', args=[project.slug]),
+        )
 
     return view_one_project(request, slug)
+
 
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
@@ -310,14 +315,15 @@ def select_members(request):
         q = request.GET.get('q')
         if q is not None:
             results = User.objects.filter(
-                Q( first_name__contains = q ) |
-                Q( last_name__contains = q ) |
-                Q( username__contains = q ) ).order_by( 'username' )
+                Q(first_name__contains=q) |
+                Q(last_name__contains=q) |
+                Q(username__contains=q)).order_by('username')
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
 
     return HttpResponse("Failure")
+
 
 # used for querying members in EditProject, EditCourse
 def edit_select_members(request, slug):
@@ -332,14 +338,15 @@ def edit_select_members(request, slug):
         q = request.GET.get('q')
         if q is not None:
             results = User.objects.filter(
-                Q( first_name__contains = q ) |
-                Q( last_name__contains = q ) |
-                Q( username__contains = q ) ).order_by( 'username' )
+                Q(first_name__contains=q) |
+                Q(last_name__contains=q) |
+                Q(username__contains=q)).order_by('username')
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
 
     return HttpResponse("Failure")
+
 
 def add_desired_skills(request, slug):
     if request.method == 'GET' and request.is_ajax():
@@ -350,13 +357,13 @@ def add_desired_skills(request, slug):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
+
 
 def create_desired_skills(request):
     if request.method == 'GET' and request.is_ajax():
@@ -367,13 +374,13 @@ def create_desired_skills(request):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
+
 
 @login_required
 def create_project(request):
@@ -495,7 +502,8 @@ def create_project(request):
         # Send form for initial project creation
         form = CreateProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'form': form})
+                                                            'page_description': page_description, 'title': title,
+                                                            'form': form})
 
 
 @login_required
@@ -522,8 +530,8 @@ def edit_project(request, slug):
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
         pass
-    elif not request.user  in project.members.all():
-        #redirect them with a message
+    elif not request.user in project.members.all():
+        # redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
 
@@ -533,7 +541,7 @@ def edit_project(request, slug):
         if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
             project.delete()
         else:
-            messages.warning(request,'Only project owner can delete project.')
+            messages.warning(request, 'Only project owner can delete project.')
 
         return HttpResponseRedirect('/project/all')
 
@@ -581,14 +589,15 @@ def edit_project(request, slug):
                         sender=request.user,
                         to=mem_to_add,
                         msg="You have been invited to join the Project: " + project.title,
-                        url=reverse('view_one_project',args=[project.slug]),
+                        url=reverse('view_one_project', args=[project.slug]),
                         alertType="invitation",
                         slug=project.slug
-                        )
+                    )
 
                     # send user an email
                     subject = "GrepThink Project Invitation: " + project.title
-                    content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(project.title)
+                    content = "You have been invited to Join the Project: {0},\n\n You can accept this invitation from the alerts dropdown in the topright @ grepthink.com".format(
+                        project.title)
 
                     send_email(mem_to_add, request.user.email, subject, content)
                     added = True
@@ -598,7 +607,8 @@ def edit_project(request, slug):
         elif profAdded:
             messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
+            messages.add_message(request, messages.WARNING,
+                                 "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
 
         return redirect(view_one_project, project.slug)
 
@@ -613,7 +623,7 @@ def edit_project(request, slug):
         # check if they were the only member of the project
         if len(members) == 1:
             messages.warning(request,
-             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+                             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
         else:
             # check if user that is being removed was Project Owner
             if f_user == project.creator:
@@ -631,7 +641,6 @@ def edit_project(request, slug):
 
         return redirect(view_one_project, project.slug)
 
-
     # Transfer ownership of a project - TODO: needs to be removed, but add messages to new implementation
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
@@ -642,7 +651,7 @@ def edit_project(request, slug):
             project.save()
             messages.info(request, "{0} is now the Project Owner".format(f_username))
         else:
-            messages.warning(request,'Only the current Project Owner can give away Project Ownership.')
+            messages.warning(request, 'Only the current Project Owner can give away Project Ownership.')
 
         return redirect(edit_project, slug)
 
@@ -723,8 +732,9 @@ def edit_project(request, slug):
         #     form.fields['scrum_master'].required = True
 
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members':members,
-        'form': form, 'project': project, 'user':request.user})
+                                                          'page_description': page_description, 'title': title,
+                                                          'members': members,
+                                                          'form': form, 'project': project, 'user': request.user})
 
 
 @login_required
@@ -738,7 +748,7 @@ def post_update(request, slug):
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
-        #redirect them with a message
+        # redirect them with a message
         messages.info(request, 'Only current members can post an update for a project!')
         return HttpResponseRedirect('/project/all')
 
@@ -757,16 +767,16 @@ def post_update(request, slug):
                   {'form': form,
                    'project': project})
 
+
 @login_required
 def resource_update(request, slug):
-
     project = get_object_or_404(Project, slug=slug)
 
     if request.user.profile.isGT:
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
-        #redirect them with a message
+        # redirect them with a message
         messages.info(request, 'Only current members can post an update for a project!')
         return HttpResponseRedirect('/project/all')
 
@@ -782,7 +792,8 @@ def resource_update(request, slug):
     else:
         form = ResourceForm(request.user.id)
 
-    return render(request, 'projects/add_resource.html',{'form': form, 'project': project})
+    return render(request, 'projects/add_resource.html', {'form': form, 'project': project})
+
 
 @login_required
 def tsr_update(request, slug, assslug):
@@ -819,15 +830,15 @@ def tsr_update(request, slug, assslug):
     if asg_ass_date <= today <= asg_due_date:
         late = False
     else:
-        late=True
+        late = True
     print(late)
 
-    forms =list()
+    forms = list()
     if request.method == 'POST':
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, prefix=email, scrum_master=scrum_master)
+                       emails=emails, prefix=email, scrum_master=scrum_master)
             if form.is_valid():
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
@@ -838,7 +849,7 @@ def tsr_update(request, slug, assslug):
                 tsr.performance_assessment = form.cleaned_data.get('perf_assess')
                 tsr.notes = form.cleaned_data.get('notes')
                 tsr.evaluator = request.user
-                tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
+                tsr.evaluatee = User.objects.filter(email__iexact=email).first()
                 tsr.late = late
                 print(tsr.late)
 
@@ -855,16 +866,17 @@ def tsr_update(request, slug, assslug):
     else:
         # if request was not post then display forms
         for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members,
-             emails=emails, prefix=m, scrum_master=scrum_master)
+            form_i = TSR(request.user.id, request.POST, members=members,
+                         emails=emails, prefix=m, scrum_master=scrum_master)
             forms.append(form_i)
         form = TSR(request.user.id, request.POST, members=members,
-            emails=emails, scrum_master=scrum_master)
+                   emails=emails, scrum_master=scrum_master)
 
     return render(request, 'projects/tsr_update.html',
-    {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
-    'page_name' : page_name, 'page_description': page_description,
-    'title': title})
+                  {'forms': forms, 'cur_proj': cur_proj, 'ass': asg,
+                   'page_name': page_name, 'page_description': page_description,
+                   'title': title})
+
 
 @login_required
 def tsr_edit(request, slug, assslug):
@@ -896,21 +908,21 @@ def tsr_edit(request, slug, assslug):
     late = False
     if "tsr" in asg.ass_type.lower():
         asg_ass_date = asg.ass_date
-        asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
+        asg_ass_date = datetime.strptime(asg_ass_date, "%Y-%m-%d").date()
 
         asg_due_date = asg.due_date
-        asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
+        asg_due_date = datetime.strptime(asg_due_date, "%Y-%m-%d").date()
         if asg_ass_date <= today <= asg_due_date:
             late = False
         else:
-            late=True
+            late = True
 
-    forms =list()
+    forms = list()
     if request.method == 'POST':
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, prefix=email, scrum_master=scrum_master)
+                       emails=emails, prefix=email, scrum_master=scrum_master)
             if form.is_valid():
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
@@ -921,7 +933,7 @@ def tsr_edit(request, slug, assslug):
                 tsr.performance_assessment = form.cleaned_data.get('perf_assess')
                 tsr.notes = form.cleaned_data.get('notes')
                 tsr.evaluator = request.user
-                tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
+                tsr.evaluatee = User.objects.filter(email__iexact=email).first()
                 tsr.late = late
 
                 tsr.save()
@@ -937,18 +949,16 @@ def tsr_edit(request, slug, assslug):
     else:
         # if request was not post then display forms
         for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members,
-             emails=emails, prefix=m, scrum_master=scrum_master)
+            form_i = TSR(request.user.id, request.POST, members=members,
+                         emails=emails, prefix=m, scrum_master=scrum_master)
             forms.append(form_i)
         form = TSR(request.user.id, request.POST, members=members,
-            emails=emails, scrum_master=scrum_master)
+                   emails=emails, scrum_master=scrum_master)
 
     return render(request, 'projects/tsr_update.html',
-    {'forms':forms,'cur_proj': cur_proj, 'ass':asg,
-    'page_name' : page_name, 'page_description': page_description,
-    'title': title})
-
-
+                  {'forms': forms, 'cur_proj': cur_proj, 'ass': asg,
+                   'page_name': page_name, 'page_description': page_description,
+                   'title': title})
 
 
 @login_required
@@ -965,53 +975,52 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     members = project.members.all()
 
-
     # put emails into list
-    emails=list()
+    emails = list()
     for member in members:
         emails.append(member.email)
 
     # for every sprint, get the tsr's and calculate the average % contribution
-    tsr_dicts=list()
+    tsr_dicts = list()
     tsr_dict = list()
-    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
+    sprint_numbers = Tsr.objects.values_list('ass_number', flat=True).distinct()
     for i in sprint_numbers.all():
-        #averages=list()
-        tsr_dict=list()
+        # averages=list()
+        tsr_dict = list()
         for member in members:
-            tsr_single=list()
+            tsr_single = list()
             # for every member in project, filter query using member.id
             # and assignment number
             for member_ in members:
                 if member == member_:
                     continue
-                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
-                if(len(tsr_query_result)==0):
+                tsr_query_result = Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(
+                    ass_number=i).all()
+                if (len(tsr_query_result) == 0):
                     continue
-                tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
-            avg=0
-            if(len(tsr_single)!=0):
+                tsr_single.append(tsr_query_result[len(tsr_query_result) - 1])
+            avg = 0
+            if (len(tsr_single) != 0):
                 for tsr_obj in tsr_single:
-                    print("\n\n%d\n\n"%tsr_obj.percent_contribution)
-                    avg=avg+tsr_obj.percent_contribution
-                avg=avg/len(tsr_single)
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
-                'avg' : avg})
-            averages.append({'email':member.email,'avg':avg})
-        tsr_dicts.append({'number': i , 'dict':tsr_dict,
-            'averages':averages})
+                    print("\n\n%d\n\n" % tsr_obj.percent_contribution)
+                    avg = avg + tsr_obj.percent_contribution
+                avg = avg / len(tsr_single)
+            tsr_dict.append({'email': member.email, 'tsr': tsr_single,
+                             'avg': avg})
+            averages.append({'email': member.email, 'avg': avg})
+        tsr_dicts.append({'number': i, 'dict': tsr_dict,
+                          'averages': averages})
 
     med = 1
     if len(members):
-        med = int(100/len(members))
-    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-
+        med = int(100 / len(members))
+    mid = {'low': int(med * 0.7), 'high': int(med * 1.4)}
 
     if request.method == 'POST':
-
         return redirect(view_projects)
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
-
+    return render(request, 'projects/view_tsr.html',
+                  {'page_name': page_name, 'page_description': page_description, 'title': title, 'tsrs': tsr_dicts,
+                   'contribute_levels': mid, 'avg': averages})
 
 
 def find_meeting(slug):
@@ -1028,7 +1037,7 @@ def find_meeting(slug):
     if project.meetings is not None:
         project.meetings = ''
     if project.readable_meetings is not None:
-         project.readable_meetings = ''
+        project.readable_meetings = ''
 
     # Stores avaliablity in list
     # event_list = project.generate_avail(low, high)
@@ -1036,7 +1045,6 @@ def find_meeting(slug):
     readable_list = []
 
     for event in event_list:
-
         day = event['start'][8] + event['start'][9]
         day = int(day)
         day = dayofweek(day)
@@ -1051,7 +1059,7 @@ def find_meeting(slug):
         e_hour = int(e_hour)
         e_minute = int(e_minute)
 
-        event_string = "%s -> %02d:%02d - %02d:%02d"%(day, s_hour, s_minute, e_hour, e_minute)
+        event_string = "%s -> %02d:%02d - %02d:%02d" % (day, s_hour, s_minute, e_hour, e_minute)
         readable_list.append(event_string)
 
     # Adds meeting to model
@@ -1062,8 +1070,9 @@ def find_meeting(slug):
     project.save()
 
     return "Something"
-    #return render(request, 'projects/view_projects.html',
+    # return render(request, 'projects/view_projects.html',
     #              {'projects': projects})
+
 
 """
 @login_required
@@ -1242,6 +1251,8 @@ def view_tsr(request, slug):
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title,
                         'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
 """
+
+
 def add_member(request, slug, uname):
     """
     Add member to project if:
@@ -1262,8 +1273,8 @@ def add_member(request, slug, uname):
             sender=request.user,
             to=mem_to_add,
             msg="You were added to " + project.title,
-            url=reverse('view_one_project',args=[project.slug]),
-            )
+            url=reverse('view_one_project', args=[project.slug]),
+        )
         # remove member from pending list if he/she was on it
         pending_members = project.pending_members.all()
         if mem_to_add in pending_members:
@@ -1284,6 +1295,7 @@ def add_member(request, slug, uname):
 
     return redirect(view_one_project, slug)
 
+
 def reject_member(request, slug, uname):
     """
     Reject Membership
@@ -1303,8 +1315,8 @@ def reject_member(request, slug, uname):
             sender=request.user,
             to=mem_to_add,
             msg="Sorry, " + project.title + " has denied your request",
-            url=reverse('view_one_project',args=[project.slug]),
-            )
+            url=reverse('view_one_project', args=[project.slug]),
+        )
 
     # taken from alert code
     user = request.user
@@ -1319,11 +1331,12 @@ def reject_member(request, slug, uname):
 
     return redirect(view_one_project, slug)
 
+
 @login_required
 def email_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     page_name = "Email Project"
-    page_description = "Emailing members of Project: %s"%(project.title)
+    page_description = "Emailing members of Project: %s" % (project.title)
     title = "Email Project"
 
     students_in_project = project.get_members()
@@ -1334,9 +1347,9 @@ def email_project(request, slug):
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
-        #if form is accepted
+        # if form is accepted
         if form.is_valid():
-            #the courseID will be gotten from the form
+            # the courseID will be gotten from the form
             data = form.cleaned_data
             subject = data.get('subject')
             content = data.get('content')
@@ -1354,8 +1367,8 @@ def email_project(request, slug):
             print("EmailRosterForm not valid")
 
     return render(request, 'projects/email_project.html', {
-        'slug':slug, 'form':form, 'count':count, 'students':students_in_project,
-        'project':project,
-        'page_name':page_name, 'page_description':page_description,
-        'title':title
+        'slug': slug, 'form': form, 'count': count, 'students': students_in_project,
+        'project': project,
+        'page_name': page_name, 'page_description': page_description,
+        'title': title
     })

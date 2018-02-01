@@ -106,7 +106,7 @@ def view_profile(request, username):
     user = request.user
     profile = Profile.objects.get(user=user)
     page_name = "Profile"
-    page_description = "%s's Profile" % (page_user.username)
+    page_description = "%s's Profile" % page_user.username
     title = "View Profile"
 
     # gets all interest objects of the current user

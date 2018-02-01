@@ -6,71 +6,79 @@
 
 {# following 2 blocks copied from edit_project.html #}
 {% block javascript %}
-{{block.super}}
-<script src="{% static 'js/select2.full.min.js' %}"></script>
+    {{ block.super }}
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
+    <script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+    <script src="{% static 'js/filter.js' %}"></script>
 
-<script type="text/javascript">
 
-$(document).ready(function() {
-  $(".select2").select2({
-    ajax: {
-      url: "ajax/select_projects/",
-      dataType: 'json',
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term, // search term
-          page: params.page
-        };
-      },
-      processResults: function (data, params) {
-        // parse the results into the format expected by Select2
-        // since we are using custom formatting functions we do not need to
-        // alter the remote JSON data, except to indicate that infinite
-        // scrolling can be used
-        params.page = params.page || 1;
+    <script type="text/javascript">
 
-        console.log(data);
-        console.log(params);
+        $(document).ready(function () {
+            $(".select2").select2({
+                ajax: {
+                    url: "ajax/select_projects/",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        // parse the results into the format expected by Select2
+                        // since we are using custom formatting functions we do not need to
+                        // alter the remote JSON data, except to indicate that infinite
+                        // scrolling can be used
+                        params.page = params.page || 1;
 
-        return {
-          results: data.items,
-          pagination: {
-            more: (params.page * 30) < data.total_count
-          }
-        };
-      },
-      cache: true
-    },
-    placeholder: "Search for Projects to Claim",
-    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-    minimumInputLength: 1,
-    //templateResult: formatRepo, // omitted for brevity, see the source of this page
-    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-  });
+                        console.log(data);
+                        console.log(params);
 
-});
+                        return {
+                            results: data.items,
+                            pagination: {
+                                more: (params.page * 30) < data.total_count
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: "Search for Projects to Claim",
+                //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                minimumInputLength: 1,
+                //templateResult: formatRepo, // omitted for brevity, see the source of this page
+                //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+            });
 
-</script>
+        });
+
+    </script>
 
 {% endblock javascript %}
 
 
 {% block stylesheets %}
-<!-- Select2 -->
-<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+{#    <link rel="stylesheet" href="{% static 'css/filter.css' %}">#}
 
-  {{block.super}}
-<!-- for multi dropdowns and other goodies -->
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+    {{ block.super }}
+    <!-- for multi dropdowns and other goodies -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
 
 
@@ -84,7 +92,6 @@ $(document).ready(function() {
 {% endblock crumb %}
 
 {% block content %}
-
 <div>
 
     {% if user == course.creator %}

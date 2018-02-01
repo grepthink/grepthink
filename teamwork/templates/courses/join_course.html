@@ -6,8 +6,9 @@
   <script src="{% static 'js/course.js' %}"></script>
 {% endblock head %}
 
+
 {% block content %}
-  <form action="{% url 'join_course' %}" method="post" role="form">
+  <form class="form-group" action="{% url 'join_course' %}" method="post" role="form">
     {% csrf_token %}
     {{ form.status }}
     {% for field in form.visible_fields %}
