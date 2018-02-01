@@ -341,6 +341,7 @@ def edit_select_members(request, slug):
 
     return HttpResponse("Failure")
 
+#add desired skill method
 def add_desired_skills(request, slug):
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -370,6 +371,41 @@ def create_desired_skills(request):
                 Q( skill__contains = q ) ).order_by( 'skill' )
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
+#add desired technologies method
+def add_desired_technologies(request, slug):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Technologies.objects.filter(
+                Q( technology__contains = q ) ).order_by( 'technology' )
+        for s in results:
+            data['items'].append({'id': s.technology, 'text': s.technology})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
+def create_desired_technologies(request):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Technologies.objects.filter(
+                Q( technology__contains = q ) ).order_by( 'technology' )
+        for s in results:
+            data['items'].append({'id': s.technology, 'text': s.technology})
         return JsonResponse(data)
 
 
@@ -469,6 +505,24 @@ def create_project(request):
                         desired_skill.save()
                     # Add the skill to the project (as a desired_skill)
                     project.desired_skills.add(desired_skill)
+                    project.save()
+
+             # Add technologies to the project
+            if request.POST.get('desired_technologies'):
+                technologies = request.POST.getlist('desired_technologies')
+                for t in technologies:
+                    t_lower = t.lower()
+                    # Check if lowercase version of technology is in db
+                    if Technologies.objects.filter(technology=t_lower):
+                        # Technology already exists, then pull it up
+                        desired_technology = Technologies.objects.get(technology=t_lower)
+                    else:
+                        # Add the new technology to the Technologies table
+                        desired_technology = Technologies.objects.create(technology=t_lower)
+                        # Save the new object
+                        desired_technology.save()
+                    # Add the technology to the project (as a desired_technology)
+                    project.desired_technologies.add(desired_technology)
                     project.save()
 
             # Loop through the members in the object and make m2m rows for them
@@ -679,6 +733,32 @@ def edit_project(request, slug):
         skillname = request.POST.get('remove_desired_skill')
         to_delete = Skills.objects.get(skill=skillname)
         project.desired_skills.remove(to_delete)
+        return redirect(edit_project, slug)
+
+    # Add technologies to the project
+    if request.POST.get('desired_technologies'):
+        technologies = request.POST.getlist('desired_technologies')
+        for t in technologies:
+            t_lower = t.lower()
+            # Check if lowercase version of technology is in db
+            if Technologies.objects.filter(technology=t_lower):
+                # Technology already exists, then pull it up
+                desired_technology = Technologies.objects.get(technology=t_lower)
+            else:
+                # Add the new technology to the Technologies table
+                desired_technology = Technologies.objects.create(technology=t_lower)
+                # Save the new object
+                desired_technology.save()
+            # Add the technology to the project (as a desired_technology)
+            project.desired_technologies.add(desired_technology)
+            project.save()
+        return redirect(view_one_project, project.slug)
+
+    # Remove a desired technology from the project
+    if request.POST.get('remove_desired_technology'):
+        technologyname = request.POST.get('remove_desired_technology')
+        to_delete = Technologies.objects.get(technology=technologyname)
+        project.desired_technologies.remove(to_delete)
         return redirect(edit_project, slug)
 
     if request.method == 'POST':
