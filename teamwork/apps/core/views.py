@@ -15,7 +15,6 @@ from .forms import *
 from .models import *
 import re
 
-
 def login_view(request):
     page_name = "Login"
     page_description = ""
@@ -37,7 +36,7 @@ def index(request):
     # TODO: get feed of project updates (or public projects) to display on login
 
     # Populate with defaults for not logged in user
-    page_name = "GrepThink"
+    page_name = "Grepthink"
     page_description = "Build Better Teams"
     title = "Welcome"
     date_updates = None
@@ -73,13 +72,6 @@ def index(request):
     return render(request, 'core/index.html', {'page_name' : page_name,
          'page_description' : page_description, 'title' : title,
          'date_updates' : date_updates, 'logged_in' : logged_in})
-
-def about(request):
-    page_name = "Frequently Asked Questions"
-    page_description = "GrepThink"
-    title = "FAQ"
-    return render(request, 'core/about.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title})
 
 @login_required
 def search(request):
@@ -286,3 +278,16 @@ def matchstats(request, slug):
         'title':title,'skill_match':skill_match, 'cur_project' : cur_project,
         'interest_match':interest_match
         })
+
+def about(request):
+    page_name = "Frequently Asked Questions"
+    page_description = "GrepThink"
+    title = "FAQ"
+    return render(request, 'core/about.html', {'page_name': page_name,
+        'page_description': page_description, 'title' : title})
+
+def contact(request):
+    """
+    Renders the ContactUs page
+    """
+    return render(request, 'core/contact.html')
