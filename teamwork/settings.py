@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 
 import os
-
 import dj_database_url
 # Using python decouple (instead of os) for easier path management
 from decouple import config
@@ -202,6 +201,9 @@ MEDIA_URL = '/media/'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 ALLOWED_SIGNUP_DOMAINS = ['*']
+
+AUTHENTICATION_BACKENDS = ['teamwork.apps.profiles.models.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
+
 
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'

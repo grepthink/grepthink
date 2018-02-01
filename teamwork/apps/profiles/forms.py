@@ -14,20 +14,22 @@ def SignupDomainValidator(value):
     public method that takes a value
     """
     grepthinkers = ['rmonroe@grepthink.com', 'mgates@grepthink.com',
-                   'sdougher@grepthink.com', 'kpannell@grepthink.com']
+                    'sdougher@grepthink.com', 'kpannell@grepthink.com']
 
     # Block any @grepthink email
     if 'grepthink' in value and (value not in grepthinkers):
         raise ValidationError('@grepthink is reserved for employees only. Please use a valid email')
-    elif ('*' not in ALLOWED_SIGNUP_DOMAINS):
+    elif '*' not in ALLOWED_SIGNUP_DOMAINS:
         try:
             domain = value[value.index("@"):]
-            #GrepThink accounts only
-            if (domain not in ALLOWED_SIGNUP_DOMAINS):
-                raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
+            # GrepThink accounts only
+            if domain not in ALLOWED_SIGNUP_DOMAINS:
+                raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(
+                    ','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
 
         except Exception:
-            raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
+            raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(
+                ','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
 
 
 def ForbiddenUsernamesValidator(value):
@@ -47,7 +49,7 @@ def ForbiddenUsernamesValidator(value):
                            'media', 'setting', 'css', 'js', 'follow',
                            'activity', 'questions', 'articles', 'network',
                            'grepthink', 'gt', 'groupthink', 'alphanumeric'
-                           'teamwork']
+                                                            'teamwork']
 
     if value.lower() in forbidden_usernames:
         raise ValidationError('This is a reserved word.')
@@ -72,11 +74,6 @@ def UniqueUsernameIgnoreCaseValidator(value):
 
 
 class SignUpForm(forms.ModelForm):
-    # username = forms.CharField(
-    #     widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #     max_length=30,
-    #     required=True,
-        # help_text='Usernames may contain <strong>alphanumeric</strong>, <strong>_</strong> and <strong>.</strong> characters')  # noqa: E261
     email = forms.CharField(
         widget=forms.EmailInput(attrs={'class': 'form-control'}),
         required=True,
@@ -92,9 +89,9 @@ class SignUpForm(forms.ModelForm):
         required=True)
 
     prof = forms.BooleanField(
-        initial = False,
-        label = 'Sign up as a professor?',
-        required = False)
+        initial=False,
+        label='Sign up as a professor?',
+        required=False)
 
     class Meta:
         model = User
@@ -103,10 +100,6 @@ class SignUpForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
-        # self.fields['username'].validators.append(ForbiddenUsernamesValidator)
-        # self.fields['username'].validators.append(InvalidUsernameValidator)
-        # self.fields['username'].validators.append(
-        #     UniqueUsernameIgnoreCaseValidator)
         self.fields['email'].validators.append(UniqueEmailValidator)
         self.fields['email'].validators.append(SignupDomainValidator)
 
@@ -119,44 +112,40 @@ class SignUpForm(forms.ModelForm):
                 ['Passwords don\'t match'])
         return self.cleaned_data
 
+
 class ProfileForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
-
     name = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=50, required=False)
+
+    email = forms.CharField(
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        help_text='Enter a valid Email Address',
+        max_length=75,
+        required=False)
 
     bio = forms.CharField(
-              widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
-              max_length=500, required=False)
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        max_length=500, required=False)
 
     institution = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=50, required=False)
 
     location = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
-
-    # known_skill = forms.CharField(
-    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #           max_length=255, required=False)
-    #
-    #
-    # learn_skill = forms.CharField(
-    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #           max_length=255, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=50, required=False)
 
     avatar = forms.ImageField(required=False)
 
-# past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
-
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['email'].validators.append(UniqueEmailValidator)
+        self.fields['email'].validators.append(SignupDomainValidator)
+        if kwargs.get('instance') is not None:
+            self.fields['email'].widget.attrs.update([('value', kwargs.get('instance').user.email)])
+            self.fields['email'].widget.attrs.update([('disabled', 'true')])
 
     class Meta:
-      # was model=Skills not sure why or why it was working. This works also
         model = Profile
-        # fields = ['name', 'bio', 'institution', 'location',
-        #         'known_skill', 'learn_skill']
-        fields = ['name', 'bio', 'institution', 'location']
+        fields = ['name', 'email', 'bio', 'institution', 'location']

@@ -23,11 +23,12 @@ def login_view(request):
     if request.user.is_authenticated():
         # TODO: get feed of project updates (or public projects) to display on login
         return render(request, 'courses/view_course.html', {'page_name': page_name,
-            'page_description': page_description, 'title' : title})
+                                                            'page_description': page_description, 'title': title})
     else:
         # Redirect user to login instead of public index (for ease of use)
         return render(request, 'core/login.html', {'page_name': page_name,
-            'page_description': page_description, 'title' : title})
+                                                   'page_description': page_description, 'title': title})
+
 
 def index(request):
     """
@@ -41,11 +42,11 @@ def index(request):
     page_description = "Build Better Teams"
     title = "Welcome"
     date_updates = None
-    logged_in = request.user.is_authenticated();
+    logged_in = request.user.is_authenticated()
 
     if not logged_in:
-        return render(request, 'core/landing.html', {'page_name' : page_name,
-            'page_description' : page_description, 'title' : title})
+        return render(request, 'core/landing.html', {'page_name': page_name,
+                                                     'page_description': page_description, 'title': title})
 
     # If the user is a professor, return the dashboard html
     if logged_in and request.user.profile.isProf:
@@ -53,15 +54,15 @@ def index(request):
         page_description = "Instructor Control Panel"
         title = "Dashboard"
         all_courses = Course.get_my_created_courses(request.user)
-        return render(request, 'core/dashboard.html', {'page_name' : page_name,
-         'page_description' : page_description, 'title' : title,
-         'all_courses' : all_courses})
+        return render(request, 'core/dashboard.html', {'page_name': page_name,
+                                                       'page_description': page_description, 'title': title,
+                                                       'all_courses': all_courses})
 
     if logged_in:
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
-        if (request.user.profile.isProf):
+        if request.user.profile.isProf:
             all_courses = Course.get_my_created_courses(request.user)
         else:
             all_courses = Course.get_my_courses(request.user)
@@ -70,16 +71,18 @@ def index(request):
             course_updates = course.get_updates_by_date()
             date_updates.extend(course.get_updates_by_date())
 
-    return render(request, 'core/index.html', {'page_name' : page_name,
-         'page_description' : page_description, 'title' : title,
-         'date_updates' : date_updates, 'logged_in' : logged_in})
+    return render(request, 'core/index.html', {'page_name': page_name,
+                                               'page_description': page_description, 'title': title,
+                                               'date_updates': date_updates, 'logged_in': logged_in})
+
 
 def about(request):
     page_name = "Frequently Asked Questions"
     page_description = "GrepThink"
     title = "FAQ"
     return render(request, 'core/about.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title})
+                                               'page_description': page_description, 'title': title})
+
 
 @login_required
 def search(request):
@@ -96,7 +99,7 @@ def search(request):
     title = "Search Results"
 
     context = {'page_name': page_name,
-    'page_description': page_description, 'title' : title}
+               'page_description': page_description, 'title': title}
 
     if request.POST.get('q'):
         raw_keywords = request.POST.get('q')
@@ -112,16 +115,16 @@ def search(request):
                 keywords.append(raw_keywords)
             for q in keywords:
                 user_results = User.objects.filter(
-                    Q( first_name__contains = q ) |
-                    Q( last_name__contains = q ) |
-                    Q( username__contains = q ) ).order_by('username')
+                    Q(first_name__contains=q) |
+                    Q(last_name__contains=q) |
+                    Q(username__contains=q)).order_by('username')
                 project_results = Project.objects.filter(
-                    Q( title__contains = q ) |
-                    Q( content__contains = q ) |
-                    Q( tagline__contains = q ) ).order_by('title')
+                    Q(title__contains=q) |
+                    Q(content__contains=q) |
+                    Q(tagline__contains=q)).order_by('title')
                 course_results = Course.objects.filter(
-                    Q( name__contains = q ) |
-                    Q( info__contains = q ) ).order_by('name')
+                    Q(name__contains=q) |
+                    Q(info__contains=q)).order_by('name')
 
             if user_results:
                 context['user_results'] = user_results
@@ -132,6 +135,7 @@ def search(request):
 
     return render(request, 'core/search_results.html', context)
 
+
 @login_required
 def view_matches(request):
     """
@@ -140,7 +144,6 @@ def view_matches(request):
     """
     project_match_list = []
     course_set = []
-
 
     page_name = "View Matches"
     page_description = "View Matching Students"
@@ -167,10 +170,10 @@ def view_matches(request):
         matches = request.POST.get('matchstats')
         print("we are getting matchstats dude")
 
-
     return render(request, 'core/view_matches.html', {
-        'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
-            'page_description': page_description, 'title' : title})
+        'project_match_list': project_match_list, 'course_set': course_set, 'page_name': page_name,
+        'page_description': page_description, 'title': title})
+
 
 @login_required
 def auto_gen(request, slug):
@@ -198,8 +201,8 @@ def auto_gen(request, slug):
     projects = [x[0] for x in auto]
 
     return render(request, 'core/auto_gen.html', {
-        'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
-            'page_description': page_description, 'title' : title, 'flag': flag})
+        'auto_gen': auto, 'course': course, 'projects': projects, 'page_name': page_name,
+        'page_description': page_description, 'title': title, 'flag': flag})
 
 
 def assign_auto(request, slug):
@@ -274,15 +277,15 @@ def matchstats(request, slug):
         for interest in interests:
             interest_match[stud] = ([interest, interest.interest_reason])
 
-        if (len(similar_skills) > 0):
+        if len(similar_skills) > 0:
             skill_match[stud] = similar_skills
         else:
             skill_match[stud] = ["No similar skills"]
 
     user = request.user
 
-    return render(request, 'core/matchstats.html',{
-        'page_name':page_name,'page_description':page_description,
-        'title':title,'skill_match':skill_match, 'cur_project' : cur_project,
-        'interest_match':interest_match
-        })
+    return render(request, 'core/matchstats.html', {
+        'page_name': page_name, 'page_description': page_description,
+        'title': title, 'skill_match': skill_match, 'cur_project': cur_project,
+        'interest_match': interest_match
+    })

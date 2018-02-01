@@ -26,7 +26,7 @@ def signup(request):
     page_description = "Sign up for Groupthink!"
     title = "Signup"
 
-    GT =  False
+    GT = False
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -45,8 +45,6 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
-            # ta = form.cleaned_data.get('ta')
-
             if GT:
                 user1 = User.objects.create_superuser(
                     username=username,
@@ -71,37 +69,31 @@ def signup(request):
             # edits profile to add professor
             user1.profile.isProf = prof
 
-            # edits profile to add ta
-            # user1.profile.isTa = ta
-
             # saves profile
             user1.save()
-
-            #User.objects.save()
-
-
-            #uinfo = user.get_profile()
-            #uinfo.isProf = prof
-            #uinfo.save()
-
             return redirect(edit_profile, username)
 
     else:
         return render(request, 'profiles/signup.html',
-                      {'form': SignUpForm(), 'page_name' : page_name,
-                      'page_description': page_description, 'title': title})
+                      {'form': SignUpForm(), 'page_name': page_name,
+                       'page_description': page_description, 'title': title})
+
 
 def password_reset(request):
     return
 
+
 def password_reset_done(request):
     return
+
 
 def password_reset_confirm(request):
     return
 
+
 def password_reset_complete(request):
     return
+
 
 @login_required
 def view_profile(request, username):
@@ -114,7 +106,7 @@ def view_profile(request, username):
     user = request.user
     profile = Profile.objects.get(user=user)
     page_name = "Profile"
-    page_description = "%s's Profile"%(page_user.username)
+    page_description = "%s's Profile" % (page_user.username)
     title = "View Profile"
 
     # gets all interest objects of the current user
@@ -123,8 +115,10 @@ def view_profile(request, username):
     my_projects = Project.objects.filter(interest__in=my_interests)
 
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
-        })
+        'page_user': page_user, 'profile': profile, 'page_name': page_name, 'page_description': page_description,
+        'title': title
+    })
+
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():
@@ -135,13 +129,13 @@ def edit_skills(request, username):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
+
 
 @login_required
 def edit_profile(request, username):
@@ -149,13 +143,14 @@ def edit_profile(request, username):
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
     """
+
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)
         profile = Profile.objects.get(user=tempProfile)
     else:
-        #grab profile for the current user
+        # grab profile for the current user
         profile = Profile.objects.get(user=request.user)
 
     if request.user.profile.isGT:
@@ -165,10 +160,10 @@ def edit_profile(request, username):
         return redirect(view_profile, request.user.username)
 
     page_name = "Edit Profile"
-    page_description = "Edit %s's Profile"%(profile.user.username)
+    page_description = "Edit %s's Profile" % profile.user.username
     title = "Edit Profile"
 
-    #original form
+    # original form
     if request.method == 'POST':
 
         # Add skills to the project learn_skills
@@ -234,13 +229,13 @@ def edit_profile(request, username):
             # stay on edit_profile page
             return redirect(edit_profile, username)
 
-        #handle deleting avatar
+        # handle deleting avatar
         if request.POST.get('delete_avatar'):
             avatar = request.POST.get('delete_avatar')
             profile.avatar.delete()
             form = ProfileForm(instance=profile)
 
-        #handle deleting profile
+        # handle deleting profile
         if request.POST.get('delete_profile'):
             page_user = get_object_or_404(User, username=username)
             page_user.delete()
@@ -250,23 +245,28 @@ def edit_profile(request, username):
                 return redirect('about')
 
         # handles saving bio info if none of the cases were taken
-        edit_profile_helper(request, username)
 
-        #redirects to view_profile when submit button is clicked
-        return redirect(view_profile, username)
+        form = edit_profile_helper(request, username)
+        if form.is_valid():
+            # redirects to view_profile when submit button is clicked
+            return redirect(view_profile, username)
 
     else:
-        #load form with prepopulated data
+        # load form with prepopulated data
         form = ProfileForm(instance=profile)
 
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
 
+    # form.fields.
+
     page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/edit_profile.html', {
-        'page_user': page_user, 'form':form, 'profile':profile,
-        'known_skills_list':known_skills_list,
-        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
+        'page_user': page_user, 'form': form, 'profile': profile,
+        'known_skills_list': known_skills_list,
+        'learn_skills_list': learn_skills_list, 'page_name': page_name, 'page_description': page_description,
+        'title': title})
+
 
 def edit_profile_helper(request, username):
     """
@@ -277,25 +277,29 @@ def edit_profile_helper(request, username):
         tempProfile = User.objects.get(username=username)
         profile = Profile.objects.get(user=tempProfile)
     else:
-        #grab profile for the current user
+        # grab profile for the current user
         profile = Profile.objects.get(user=request.user)
 
-    #request.FILES is passed for File storing
+    # request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
 
         # grab each form element from the clean form
         bio = form.cleaned_data.get('bio')
+        email = form.cleaned_data.get('email')
         name = form.cleaned_data.get('name')
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
         ava = form.cleaned_data.get('avatar')
-        # profile.save() <-- why is this here -kp
 
-        #if data is entered, save it to the profile for the following
+        # if data is entered, save it to the profile for the following
         if name:
             profile.name = name
             profile.save()
+        if email:
+            user = request.user
+            user.email = email
+            user.save()
         if bio:
             profile.bio = bio
             profile.save()
@@ -309,6 +313,9 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
             profile.save()
 
+    return form
+
+
 @login_required
 def edit_schedule(request, username):
     """
@@ -320,11 +327,11 @@ def edit_schedule(request, username):
 
     user = get_object_or_404(User, username=username)
     page_name = "Edit Schedule"
-    page_description = "Edit %s's Schedule"%(user.username)
+    page_description = "Edit %s's Schedule" % (user.username)
     title = "Edit Schedule"
     profile = Profile.objects.get(user=user)
 
-    #gets current avaliability
+    # gets current avaliability
     readable = ""
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
@@ -332,11 +339,14 @@ def edit_schedule(request, username):
 
     meetings = mark_safe(profile.jsonavail)
 
-    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
+    return render(request, 'profiles/edit_schedule.html',
+                  {'page_name': page_name, 'page_description': page_description, 'title': title,
+                   'json_events': meetings})
+
 
 @csrf_exempt
 def save_event(request, username):
-    #grab profile for the current user
+    # grab profile for the current user
     profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -372,7 +382,7 @@ def save_event(request, username):
             busy = Events()
 
             # Get data
-            #function assumes start day and end day are the same
+            # function assumes start day and end day are the same
             day = event['start'][8] + event['start'][9]
             day = int(day)
             s_hour = event['start'][11] + event['start'][12]
@@ -399,19 +409,18 @@ def save_event(request, username):
             profile.avail.add(busy)
             profile.save()
 
-
         return HttpResponse("Schedule Saved")
-        #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
+        # return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     else:
         pass
-        #print("\n\nDebug: Request method was not post \n\n")
+        # print("\n\nDebug: Request method was not post \n\n")
 
     return HttpResponse("Failure")
 
+
 @login_required
 def view_alerts(request):
-
     user = request.user
     profile = Profile.objects.get(user=user)
 
@@ -427,7 +436,8 @@ def view_alerts(request):
         'archive': archive,
         'page_name': page_name,
         'page_description': page_description
-        })
+    })
+
 
 @login_required
 def read_alert(request, ident):
@@ -436,9 +446,10 @@ def read_alert(request, ident):
     if alert.to.id is user.id:
         alert.read = True
         alert.save()
-    # else:
+        # else:
         # print("Attempt to read alert caught by internet police: " + str(alert.id))
     return redirect(view_alerts)
+
 
 @login_required
 def unread_alert(request, ident):
@@ -448,6 +459,7 @@ def unread_alert(request, ident):
         alert.read = False
         alert.save()
     return redirect(view_alerts)
+
 
 @login_required
 def archive_alerts(request):
@@ -461,6 +473,7 @@ def archive_alerts(request):
             alert.save()
 
     return redirect(view_alerts)
+
 
 @login_required
 def delete_alert(request, ident):
