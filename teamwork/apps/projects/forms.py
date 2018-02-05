@@ -17,19 +17,21 @@ from django.forms import URLField
 from .models import *
 
 Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
-                   (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
-                   (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
-                   (24, '12:00'), )
+                         (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                         (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                         (24, '12:00'),)
 
 Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
-                   (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
-                   (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+                         (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                         (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'),)
+
 
 def ForbiddenNamesValidator(value):
     forbidden_names = ['create', 'all', 'delete']
 
     if value.lower() in forbidden_names:
         raise ValidationError('This is a reserved word.')
+
 
 class CreateProjectForm(forms.ModelForm):
     """
@@ -160,7 +162,6 @@ class CreateProjectForm(forms.ModelForm):
     #         #Field Required
     #         required=False)
 
-
     class Meta:
         model = Project
         fields = [
@@ -168,7 +169,6 @@ class CreateProjectForm(forms.ModelForm):
             'course', 'content', 'slug',
             'weigh_interest', 'weigh_know', 'weigh_learn', 'teamSize',
         ]
-
 
 
 class EditProjectForm(forms.ModelForm):
@@ -206,8 +206,6 @@ class EditProjectForm(forms.ModelForm):
             self.fields['project_owner'].queryset = kwargs['instance'].members.all()
             self.fields['project_owner'].initial = kwargs['instance'].creator
             self.fields['scrum_master'].initial = kwargs['instance'].scrum_master
-
-
 
         # Identify current form user
         user = User.objects.get(id=uid)
@@ -257,9 +255,9 @@ class EditProjectForm(forms.ModelForm):
         required=False)
 
     project_image = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
-    max_length=100,
-    required=False,
-    help_text="Enter a valid Image URL, Example:https://i.imgur.com/example.jpg")
+                                    max_length=100,
+                                    required=False,
+                                    help_text="Enter a valid Image URL, Example:https://i.imgur.com/example.jpg")
 
     # Location of Weekly meeting with TA
     ta_location = forms.CharField(
@@ -289,7 +287,7 @@ class EditProjectForm(forms.ModelForm):
         model = Project
         fields = [
             'title', 'tagline', 'accepting', 'sponsor', 'ta_location', 'ta_time',
-            'content', 'slug','weigh_interest', 'weigh_know', 'project_image',
+            'content', 'slug', 'weigh_interest', 'weigh_know', 'project_image',
             'weigh_learn', 'teamSize', 'scrum_master', 'project_owner'
         ]
 
@@ -350,6 +348,7 @@ class UpdateForm(forms.ModelForm):
         model = ProjectUpdate
         fields = ['update_title', 'update']
 
+
 class ResourceForm(forms.ModelForm):
 
     def __init__(self, uid, *args, **kwargs):
@@ -377,6 +376,7 @@ class ResourceForm(forms.ModelForm):
 
         return self.cleaned_data
 
+
 class ChatForm(forms.ModelForm):
 
     def __init__(self, uid, slug, *args, **kwargs):
@@ -390,6 +390,7 @@ class ChatForm(forms.ModelForm):
     class Meta:
         model = ProjectChat
         fields = ['content']
+
 
 # TSR Form
 class TSR(forms.ModelForm):
@@ -444,10 +445,10 @@ class TSR(forms.ModelForm):
         max_length=255,
         required=True)
 
-
     class Meta:
         model = Project
         fields = ['perc_contribution', 'pos_fb', 'neg_fb']
+
 
 def validate_url(url):
     url_form_field = URLField()
