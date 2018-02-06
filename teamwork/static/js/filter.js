@@ -82,12 +82,12 @@ var multiFilter = {
         }
 
         if ($input.is('[type="search"]') && this.value.length >= minimumLength) {
-          searchTerm = this.value
-            .trim()
-            .toLowerCase()
-            .replace(' ', '-');
-
-          group.active[0] = '[class*="' + searchTerm + '"]';
+          var searchTerms = this.value.split(' ');
+          var searchString = '';
+          for (let s of searchTerms){
+            searchString += "[class*="+s+"]"
+          }
+          group.active[0] = searchString;
         }
       });
       group.active.length && (group.tracker = 0);
