@@ -82,10 +82,14 @@ var multiFilter = {
         }
 
         if ($input.is('[type="search"]') && this.value.length >= minimumLength) {
-          var searchTerms = this.value.split(' ');
+          var searchTerms = this. value.replace(' ', ', ').split(' ').filter(x => x);
           var searchString = '';
           for (let s of searchTerms){
-            searchString += "[class*="+s+"]"
+            if(s.endsWith(','))
+              searchString += "[class~="+s+"]"
+            else
+              searchString += "[class*="+s+"]"
+
           }
           group.active[0] = searchString;
         }
