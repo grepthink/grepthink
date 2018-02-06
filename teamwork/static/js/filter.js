@@ -18,7 +18,7 @@ var multiFilter = {
     self.$filterUi = $('.cd-main-content');
     self.$filterGroups = $('.cd-filter-block');
     self.$container = $('.container');
-    self.$reset = $('.cd-close');
+    self.$reset = $('.cd-clear');
 
     self.$filterGroups.each(function () {
       self.groups.push({
