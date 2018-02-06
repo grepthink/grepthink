@@ -1,7 +1,7 @@
 # Setting up a development environment to contribute
 
-## Step 1: Python Virtual Enviornment
-Note: Python 3.6 is assumed. Check your python version with `python --version`
+## Step 1: Python Virtual Environment
+Note: Python 3.6.0 is used. Check your python version with `python --version`
 
 If you don't have [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/) (it comes with python3 on some systems), install it with `pip install virtualenv`
 
@@ -27,17 +27,17 @@ alias tw="cd ~/Documents/twdev && source bin/activate"
 You can always exit the venv with `deactivate`
 
 ## Step 2: Cloning the Repo
-Optionally fork the teamwork-project repo. Clone it into the venv folder you just created. That's it, have a cookie.
+Optionally fork the grepthink repo. Clone it into the venv folder you just created.
 
 ## Step 3: Make a .env file based on .env.example
 The .env file should be in the twdev (or whatever you named your venv) folder. So above the teamwork-project folder.
 
-This is so we can keep the secret key hidden. 
+This is so we can keep the secret key hidden.
 
 It also allows us to use sqlite locally and postgres in production, neat.
 
 For local develompent, your DATABASE_URL can be something like:
-`DATABASE_URL=sqlite:////Users/sammyslug/Documents/twdev/teamwork-project/teamwork/db.sqlite3`
+`DATABASE_URL=sqlite:////Users/sammyslug/Documents/twdev/grepthink/teamwork/db.sqlite3`
 
 The .env file should be in /twdev/teamwork-project
 

@@ -88,11 +88,6 @@ class SignUpForm(forms.ModelForm):
         label="Confirm your password",
         required=True)
 
-    prof = forms.BooleanField(
-        initial=False,
-        label='Sign up as a professor?',
-        required=False)
-
     class Meta:
         model = User
         exclude = ['last_login', 'date_joined']
