@@ -13,14 +13,6 @@
 
     <script type="text/javascript">
 
-        {#$(document).ready(function () {#}
-        {#    $.ajax({#}
-        {#        url: '{% url myview %}',#}
-        {#        success: function (data) {#}
-        {#            $('#projects').html(data);#}
-        {#        }#}
-        {#    });#}
-
             $(".select2").select2({
                 ajax: {
                     url: "ajax/select_projects/",
@@ -58,7 +50,7 @@
                 //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
             });
 
-        });
+
 
     </script>
 
