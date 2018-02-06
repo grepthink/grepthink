@@ -144,7 +144,7 @@ var multiFilter = {
     }
     while (!crawled && checkTrackers());
 
-    self.outputString = self.outputArray.join();
+    self.outputString = self.outputArray.join().replace(',','');
 
     // If the output string is empty, show all rather than none:
 
