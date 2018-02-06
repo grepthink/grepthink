@@ -246,6 +246,11 @@ xcustom form elements
   position: relative;
 }
 
+li {
+    list-style-type: none;
+}
+
+
 .cd-filter-block .cd-select::after {
   /* switcher arrow for select element */
   content: '';
