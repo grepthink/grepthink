@@ -18,6 +18,7 @@ var multiFilter = {
     self.$filterUi = $('.cd-main-content');
     self.$filterGroups = $('.cd-filter-block');
     self.$container = $('.container');
+    self.$reset = $('.cd-close');
 
     self.$filterGroups.each(function () {
       self.groups.push({
@@ -53,6 +54,13 @@ var multiFilter = {
       resetTimer();
     });
 
+
+    self.$reset.on('click', function (e) {
+      e.preventDefault();
+      $('input[type=checkbox]').attr('checked',false);
+      self.$filterUi.find('input[type="search"]').val('');
+      self.parseFilters();
+    });
   },
 
   // The parseFilters method checks which filters are active in each group:
