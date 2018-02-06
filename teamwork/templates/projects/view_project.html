@@ -162,6 +162,18 @@
                             &nbsp;
                             {% endfor %}
                             {% endif %}
+
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Desired Technologies</strong>
+                            &nbsp;
+                            {% if project.desired_technologies != none %}
+                            {% for technology in project.desired_technologies.all %}
+                            <span class="label label-warning">
+                                {{ technology.technology }}
+                            </span>
+                            &nbsp;
+                            {% endfor %}
+                            {% endif %}
                             <div class="box-tools pull-right">
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse">More Info</button>
                             </div>

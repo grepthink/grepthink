@@ -54,6 +54,39 @@ class Skills(models.Model):
         super(Skills, self).save(*args, **kwargs)
 
 
+class Technologies(models.Model):
+    """
+    Technologies: A database model (object) for technologies.
+
+    Fields:
+        technology: a field that contains the name of a technology
+
+    Methods:
+        __str__(self):                  Human readeable representation of the skill object.
+        save(self, *args, **kwargs):    Overides the default save operator...
+
+        """
+    # technology, a string
+    technology = models.CharField(max_length=255,default="")
+
+    def __str__(self):
+        return self.technology
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Technology"
+        # Multiple Technologies objects are referred to as Projects.
+        verbose_name_plural = "Technologies"
+        ordering = ('technology',)
+
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Project object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Project object in the database!
+        I don't know what super does...
+        """
+        super(Technologies, self).save(*args, **kwargs)
+
 # Converts a number into a weekday
 def dayofweek(number):
     return {

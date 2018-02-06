@@ -12,7 +12,7 @@ Top Level Goals: Add new capabilities to the GrepThink tool used to manage proje
 
 
 Sprint 1
-Goal: As a user, I want to fix the bugs in the current GrepThink version using Django
+Goal: As a developer, I want to fix the bugs in the current GrepThink version using Django
 
 
 Point Breakdown:
@@ -22,26 +22,37 @@ Point Breakdown:
         1 pt - Add ability to Edit Primary Email address
         1 pt -  Email Address Login (Currently we just login with a username)
         1 pt - Projects with one member that are locked with no activity should be auto deleted
-        1.5 pt -  Projects with one member that are locked with no activity should be auto deleted
         1.5 pt -  filter display of full, sponsored, or skill of project
         1 pt - Add ‘technologies’ to a project (Github, travisCL, etc.)
         1 pt - Allow choice between light and dark themes
         1.5 pt -  Feedback system users to send error reports or suggestions
         2.5 pt - View/edit/update previous preferences
 
+Total: 18 Points
+
+Sprint 2
+Goal: As a developer I want to make a GrepThink native Scrum Board
 
 
+Point Breakdown:
+2 Story Point - User Story 1: As a developer I want to add the Scrum Board tab to the Project
+4 Story Points - User Story 2: As a developer I want to add a basic page layout for the scrum board
+8 Story Points - User Story 3: As a developer I want to add "cards" to the scrum board and be able to save the information for each user
+
+Total: 14 Points
+
+Sprint 3
+Goal: (Continued) As a developer, I want to make a GrepThink native Scrum Board
 
 
+Point Breakdown:
+2 Story Points - User Story 1: As a developer I want to edit the "cards"
+6 Story Points - User Story 2: As a developer I want to assign specific tasks to group member
+7 Story Points - User Story 3: As a developer I want the professor to see our scrum board but cannot modify
+8 Story Points - User Story 4: As a developer I want to move around the "cards"
 
+Total: 23 Points
 
-
-
-
-
-
-
-
-
+--if we find more bugs, fix them no matter what sprint we are currently in
 
 Product Backlog:
