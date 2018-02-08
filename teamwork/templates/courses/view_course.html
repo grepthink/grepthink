@@ -175,18 +175,17 @@
                                 {% if not course.limit_interest %}
                                     {% if projectCount > 0 %}
                                         <div class="row">
-{#                                            <div class="alert alert-info" role="alert">#}
-{#                                                <a href="{% url 'show_interest' course.slug %}" class="alert-link">#}
-{#                                                    Show interest in these projects!#}
-{#                                                </a>#}
-{#                                            </div>#}
+                                            <div class="alert alert-info" role="alert">
+                                                <a href="{% url 'show_interest' course.slug %}" class="alert-link">
+                                                    Show interest in these projects!
+                                                </a>
+                                            </div>
                                         </div>
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
                         {% endif %}
                     {% endif %}
-{#                    {% include "projects/partial_project_box.html" with projects=projects %}#}
                     {% include "projects/filter.html" %}
                 </div>
 
