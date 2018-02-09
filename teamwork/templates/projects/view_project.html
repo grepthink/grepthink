@@ -66,14 +66,14 @@
             <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
             <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
             <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
-            {% if user in project_members %}
+            {% if user in project.members.all %}
             <li class=""><a href="#tab_5" data-toggle="tab"
                 aria-expanded="false">TSR</a></li>
             {% endif %}
             {% if request.user in staff or request.user.profile.isGT %}
             <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
             {% endif %}
-            {% if user in project_members %}
+            {% if user in project.members.all %}
             <li class=""><a href="#tab_7" data-toggle="tab" aria-expanded="false">Chat</a></li>
             {% endif %}
             <li class="dropdown">
@@ -86,7 +86,7 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
 
-                    {% if user in project_members %}
+                    {% if user in project.members.all %}
                       <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'leave_project' project.slug %}">Leave Project </a></li>
                     {% endif %}
 
@@ -141,10 +141,10 @@
                         <div class="box-header with-border">
                             <strong>Project Owner</strong>
                             &nbsp;
-                            <a href="{% url 'profile' project_owner.user.username %}">
-                            {% if project_owner.isGT %}
+                            <a href="{% url 'profile' project.creator.username %}">
+                            {% if project.creator.profile.isGT %}
                                 <span class="label label-success">
-                            {% elif project_owner.isProf %}
+                            {% elif project.creator.profile.isProf %}
                                 <span class="label label-warning">
                             {% else %}
                                 <span class="label label-info">
@@ -231,7 +231,7 @@
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user == project.creator or user.profile.isGT%}
+                    {% if user in project.members.all or user == project.creator or request.user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">
@@ -432,7 +432,7 @@
                                             </form>
                                             {% endcomment %}
                                         {% else %}
-                                            {% if request.user == scrum_master %}
+                                            {% if request.user == project.scrum_master %}
                                                 <form action="{% url 'tsr_update' project.slug asg.slug%}">
                                                     <button class="btn btn-success btn-sm" type="submit" value="scrum_master_form" name="scrum_master_form">
                                                         <i class="fa fa-plus"></i> Scrum Master
@@ -703,7 +703,7 @@
                       <!-- Load Members -->
                       <div class="direct-chat-contacts">
                         <ul class="contacts-list">
-                            {% for mem in members %}
+                            {% for mem in project.members.all %}
                                 <li>
                                     <a href="{% url 'profile' mem.username %}">
                                       {% if mem.profile.avatar %}
@@ -758,7 +758,7 @@
 </div>
 
 <!-- Pending Members Box -->
-{% if user in project_members or user == project.creator%}
+{% if user in project.members.all or user == project.creator%}
 <div class="box sm-box-solid collapsed-box">
 
     <div class="box-header with-border">

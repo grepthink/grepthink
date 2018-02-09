@@ -98,13 +98,12 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
 
-    project = get_object_or_404(Project, slug=slug)
-    scrum_master = project.scrum_master
+    project=Project.objects.filter(slug=slug).select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile', 'members', 'members__profile', 'desired_skills',
+    'course', 'course__assignments', 'pending_members', 'tsr').first()
+
     updates = project.get_updates()
     resources = project.get_resources()
     # Get the project owner for color coding stuff
-    project_owner = project.creator.profile
-    members = project.members.all()
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -119,20 +118,15 @@ def view_one_project(request, slug):
     asg_completed = []
 
     for i in asgs:
-        for j in i.subs.all():
+        for j in i.subs.all().prefetch_related('evaluator'):
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
 
 
-
-    user = request.user
-    profile = Profile.objects.get(user=user)
-
     # to reduce querys in templates -kp
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
-    project_members = project.members.all()
 
     requestButton = 1
     if request.user in pending_members:
@@ -160,7 +154,7 @@ def view_one_project(request, slug):
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(project.readable_meetings)
 
-    completed_tsrs = project.tsr.all()
+    completed_tsrs = project.tsr.all().prefetch_related('evaluator', 'evaluatee')
     avg_dict = {}
     for i in completed_tsrs.all():
         if i.evaluatee in avg_dict.keys():
@@ -170,7 +164,7 @@ def view_one_project(request, slug):
 
     avgs = []
     for key, item in avg_dict.items():
-        con_avg = item / (len(completed_tsrs) / len(members))
+        con_avg = item / (len(completed_tsrs) / len(project.members.all()))
         avgs.append((key, int(con_avg)))
 
     # ======================
@@ -186,7 +180,7 @@ def view_one_project(request, slug):
     fix = []
     new_tsr_tuple = []
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
+        temp_tup = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.id))
         temp = ""
 
         for j in temp_tup:
@@ -202,19 +196,20 @@ def view_one_project(request, slug):
 
 
     med = 100
-    if len(members) > 0:
-        med = int(100/len(members))
+    if len(project.members.all()) > 0:
+        med = int(100/len(project.members.all()))
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'page_description': page_description, 'title' : title, 'form' : form, 'temp_tup':fix,
+        'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
-        'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'pending_count':pending_count,'staff':staff,
+        'updates': updates, 'project_chat': project_chat, 'course' : course,
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs,
+        'project': project})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
