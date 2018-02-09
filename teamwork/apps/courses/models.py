@@ -98,6 +98,23 @@ def get_user_courses(self):
 # Add method to function that returns a list of users enrolled courses
 auth.models.User.add_to_class('get_user_courses', get_user_courses)
 
+class Reasons(models.Model):
+        reason1 = models.TextField(
+        max_length=38,
+        default="")
+        reason2 = models.TextField(
+        max_length=38,
+        default="")
+        reason3 = models.TextField(
+        max_length=38,
+        default="")
+        reason4 = models.TextField(
+        max_length=38,
+        default="")
+        reason5 = models.TextField(
+        max_length=38,
+        default="")
+
 class Course(models.Model):
     """
     Course: A database model (object) for courses.

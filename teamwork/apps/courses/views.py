@@ -288,6 +288,67 @@ def join_course(request):
 #     return HttpResponseRedirect('/course')
 
 @login_required
+def edit_interest(request, slug):
+    """
+    public method that takes in a slug and generates a form for the user
+    to show interest in all projects in a given course
+    """
+    user = request.user
+    # current course
+    cur_course = get_object_or_404(Course, slug=slug)
+    # projects in current course
+    projects = projects_in_course(slug)
+    # enrollment objects containing current user
+    user_courses = request.user.enrollment.all()
+    # current courses user is in
+    # user_courses = Course.objects.filter(enrollment__in=enroll)
+
+    page_name = "Show Interest"
+    page_description = "Show Interest in Projects for %s"%(cur_course.name)
+    title = "Show Interest"
+
+    #if user is professor
+    if user.profile.isProf:
+        #redirect them with a message
+        messages.info(request,'Professor cannot show interest')
+        return HttpResponseRedirect('/course')
+
+    #if not enough projects
+    if len(projects) == 0:
+        #redirect them with a message
+        messages.info(request,'No projects to show interest in!')
+        return HttpResponseRedirect('/course')
+
+    # if course has disabled setting interest
+    if cur_course.limit_interest:
+        #redirect them with a message
+        messages.info(request,'Can no longer show interest!')
+        return HttpResponseRedirect('/course')
+
+    # if current course not in users enrolled courses
+    if not cur_course in user_courses and cur_course.creator != user:
+        messages.info(request,'You are not enrolled in this course')
+        return HttpResponseRedirect('/course')
+
+
+    # TODO: SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
+
+    if request.method == 'POST':
+        form = ShowInterestForm(request.user.id, request.POST, slug = slug)
+        if form.is_valid():
+            show_interest_course = Reasons()
+            show_interest_course.reason1 = form.cleaned_data.get('p1r')
+            r1 = show_interest_course.reason1
+            r2 = show_interest_course.reason1
+
+            if r1:
+                show_interest_course.save()
+                messages.info(request, r1)
+            if r2:
+                show_interest_course.save()
+                messages.info(request, r2)
+
+@login_required
 def show_interest(request, slug):
     """
     public method that takes in a slug and generates a form for the user
@@ -336,12 +397,13 @@ def show_interest(request, slug):
     if request.method == 'POST':
         form = ShowInterestForm(request.user.id, request.POST, slug = slug)
         if form.is_valid():
-            data=form.cleaned_data
+
             #Gets first choice, creates interest object for it
 
-            # Clear all interest objects where user is current user and for this course, avoid duplicates
+            #Clear all interest objects where user is current user and for this course, avoid duplicates
             all_interests = Interest.objects.filter(project_interest=projects)
             interests = user.interest.all()
+            data = form.cleaned_data
             if interests is not None: interests.delete()
 
             if len(projects) >= 1:

@@ -14,10 +14,11 @@
     <div class="box-header with-border">
         <h3 class="box-title">Interest</h3>
     </div>
-    <form action="{% url 'show_interest' cur_course.slug %}" method="post" role="form">
+    <form action="{% url 'show_interest' cur_course.slug  %}" method="post" role="form">
     <div class="box-body">
         {% csrf_token %}
         {{ form.status }}
+       
         {% for field in form.visible_fields %}
           <div class="form-group{% if field.errors %} has-error{% endif %}">
             <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>

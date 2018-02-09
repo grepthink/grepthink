@@ -46,7 +46,7 @@ class Interest(models.Model):
     # can access interest from the user through user.interest.all()
     user = models.ForeignKey(User, related_name='interest', on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
-    interest_reason = models.CharField(max_length=100)
+    interest_reason = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
         return("%d"%(self.interest))
