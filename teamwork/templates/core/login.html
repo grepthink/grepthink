@@ -35,8 +35,8 @@
     <form method="post" action="{% url 'login' %}" role="form">
         {% csrf_token %}
         <div class="form-group has-feedback {% if form.username.errors %} has-error {% endif %}">
-            <label for="username"> UCSC CruzID </label>
-            <a class='username-tooltip' data-toggle="tooltip" data-placement="left" title="For example: if the UCSC email you signed up with is sammyslug@ucsc.edu, simply login as sammyslug">
+            <label for="username"> UCSC CruzID / Email </label>
+            <a class='username-tooltip' data-toggle="tooltip" data-placement="left" title="For example: if the UCSC email you signed up with is sammyslug@ucsc.edu, simply login as sammyslug or your email address">
                         <i class='glyphicon glyphicon-info-sign'></i></a>
             <input type="text" class="form-control" id="username" name="username">
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -55,7 +55,10 @@
 
         <div class="row">
         <div class="col-xs-8">
-            <a class="text-left" href="{% url 'signup' %}" class="btn btn-link"><b>Create</b> an account</a>
+            <a class="text-left" href="{% url 'signup' %}" class="btn btn-link">Create a <b>Student/TA</b> account</a>
+        </div>
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'profSignup' %}" class="btn btn-link">Create an <b>Instructor</b> account</a>
         </div>
         <!-- /.col -->
         <div class="col-xs-4">

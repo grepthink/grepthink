@@ -7,13 +7,17 @@ Database Models for the objects: Skills, Profile
 # Django Imports
 from __future__ import unicode_literals
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+
 
 class Skills(models.Model):
     """
@@ -28,10 +32,11 @@ class Skills(models.Model):
 
         """
     # skill, a string
-    skill = models.CharField(max_length=255,default="")
+    skill = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.skill
+
     class Meta:
         # Verbose name is the same as class name in this case.
         verbose_name = "Skill"
@@ -47,6 +52,7 @@ class Skills(models.Model):
         I don't know what super does...
         """
         super(Skills, self).save(*args, **kwargs)
+
 
 class Technologies(models.Model):
     """
@@ -93,6 +99,7 @@ def dayofweek(number):
         15: "Saturday",
     }.get(number, "Day that doesnt exist")
 
+
 class Events(models.Model):
     """
     Events: A database model (object) for Events (Availabiliy).
@@ -112,7 +119,7 @@ class Events(models.Model):
 
         """
     # Day (Is this a character?)
-    day = models.CharField(max_length=255,default="")
+    day = models.CharField(max_length=255, default="")
 
     # Times stored in 24h format
     # Start time (Hours)
@@ -123,9 +130,11 @@ class Events(models.Model):
     end_time_hour = models.SmallIntegerField()
     # End time (Minutes)
     end_time_min = models.SmallIntegerField()
+
     def __str__(self):
-        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
-        #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
+        event_string = "%s -> %02d:%02d - %02d:%02d" % (
+            self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+        # event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
         return event_string
 
     class Meta:
@@ -166,7 +175,7 @@ class Alert(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
-    url = models.CharField(max_length=500,default="")
+    url = models.CharField(max_length=500, default="")
 
     # Slug is used to accept invitations
     slug = models.CharField(
@@ -193,10 +202,11 @@ class Alert(models.Model):
 def validate_image(fieldfile_obj):
     filesize = fieldfile_obj.file.size
     megabyte_limit = 5.0
-    if filesize > megabyte_limit*1024*1024:
+    if filesize > megabyte_limit * 1024 * 1024:
         raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
     else:
         print("file size okay")
+
 
 class Profile(models.Model):
     """
@@ -223,15 +233,15 @@ class Profile(models.Model):
     # Avail - Availabiliy
     avail = models.ManyToManyField(Events)
     jsonavail = models.TextField(
-                default='[]')
+        default='[]')
 
     # Profile Image
     avatar = models.ImageField(
-                upload_to= 'avatars/%Y/%m/%d/',
-                validators=[validate_image],
-                default="",
-                null=True,
-                blank=True)
+        upload_to='avatars/%Y/%m/%d/',
+        validators=[validate_image],
+        default="",
+        null=True,
+        blank=True)
 
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
@@ -245,24 +255,42 @@ class Profile(models.Model):
     isTa = models.BooleanField(default=False)
 
     def __str__(self):
-        string = "%s (%s)"%(self.user.email, self.name)
+        string = "%s (%s)" % (self.user.email, self.name)
         return string
+
     def __hash__(self):
         return hash(self.user)
+
     def __eq__(self, other):
-        return (self.user == other.user)
+        return self.user == other.user
+
     def __ne__(self, other):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
-        return not(self == other)
+        return not (self == other)
 
-    # Alert functions, self explanitory
+    # Alert functions, self explanatory
     def alerts(self):
         return Alert.objects.filter(to=self.user)
+
     def unread_alerts(self):
-        return Alert.objects.filter(to=self.user,read=False)
+        return Alert.objects.filter(to=self.user, read=False)
+
     def read_alerts(self):
-        return Alert.objects.filter(to=self.user,read=True)
+        return Alert.objects.filter(to=self.user, read=True)
+
+
+class EmailBackend(ModelBackend):
+    def authenticate(self, username=None, password=None, **kwargs):
+        UserModel = get_user_model()
+        try:
+            user = UserModel.objects.get(email=username)
+        except UserModel.DoesNotExist:
+            return None
+        else:
+            if user.check_password(password):
+                return user
+        return None
 
 
 @receiver(post_save, sender=User)
@@ -270,9 +298,11 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

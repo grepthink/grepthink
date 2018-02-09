@@ -15,9 +15,11 @@ class ProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'profile'
 
+
 # Define a new User admin
 class UserAdmin(BaseUserAdmin):
-    inlines = (ProfileInline, )
+    inlines = (ProfileInline,)
+
 
 # Re-register UserAdmin
 admin.site.unregister(User)

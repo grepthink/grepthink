@@ -20,14 +20,16 @@ from teamwork.apps.courses.models import *
 def create_project(title, creator, scrum_master, tagline, content, slug, resource, avail_mem=True, sponsor=False):
     # Create a dummy project (with no M2M relationships) that will be associated with user1
     return Project.objects.create(title=title, creator=creator,
-        scrum_master=scrum_master,
-        tagline=tagline, content=content,
-        avail_mem=avail_mem, sponsor=sponsor, slug=slug,resource=resource)
+                                  scrum_master=scrum_master,
+                                  tagline=tagline, content=content,
+                                  avail_mem=avail_mem, sponsor=sponsor, slug=slug, resource=resource)
+
 
 def create_user(username, email, password):
     # Create a test user as an attribute of ProjectTestCase, for future use
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
+
 
 def create_course(name, slug, info):
     return Course.objects.create(name=name, info=info, slug=slug)
@@ -43,6 +45,7 @@ class ViewProjectTestCase(TestCase):
     https://docs.djangoproject.com/en/1.11/topics/testing/tools/#django.test.override_settings
     https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.core.urlresolvers.reverse
     """
+
     def setUp(self):
         """
         Initialize project, user, and membership objects for use in test methods.
@@ -52,7 +55,7 @@ class ViewProjectTestCase(TestCase):
         # Membership.objects.create(user=user1, project=project1, invite_reason='')
         """
 
-    @override_settings(STATICFILES_STORAGE = None)
+    @override_settings(STATICFILES_STORAGE=None)
     def test_view_one_project(self):
         """
         Confirms that view_one_project sucesfully returns a 200 response when given the
@@ -69,7 +72,7 @@ class ViewProjectTestCase(TestCase):
         # The course is now looked up in view_one_project because it is needed for breadcrumbs.
         # course1 = create_course("Test Course 1", "test-course1", "Test Info")
         course1 = Course.objects.create(name="Test Course 1", info="Test Course", slug="test-course1",
-            creator=self.user1)
+                                        creator=self.user1)
 
         # fuck this.
         # # Create a test project to be served.

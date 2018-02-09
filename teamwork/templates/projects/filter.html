@@ -1,0 +1,63 @@
+{% load static %}
+
+
+{% block javascript %}
+
+    <script src="{% static 'js/jquery-2.1.1.js' %}"></script>
+    <script src="{% static 'js/mixitup.min.js' %}"></script>
+
+    <script src="{% static 'js/filter.js' %}"></script>
+
+
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="{% static 'css/filter.css' %}">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <main class="cd-main-content">
+
+        <section class="cd-gallery">
+            <div class="container ">
+                {% include "projects/partial_project_box.html" with projects=projects %}
+            </div>
+        </section>
+
+        <div class="cd-filter">
+            <form>
+                <div class="cd-filter-block search">
+                    <h4>Search</h4>
+                    <div class="cd-filter-content">
+                        <input type="search" placeholder="Search">
+                    </div>
+                </div>
+
+                <div class="cd-filter-block checkboxes">
+                    <h4>Filters</h4>
+                    <ul class="cd-filter-content cd-filters list">
+                        <li>
+                            <input class="filter" value=".sponsored" type="checkbox" id="checkbox1">
+                            <label class="checkbox-label" for="checkbox1">Sponsored</label>
+                        </li>
+                        <li>
+                            <input class="filter" value=".open" type="checkbox" id="checkbox2">
+                            <label class="checkbox-label" for="checkbox2">Open</label>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+
+            <a href="#0" class="cd-close">Close</a>
+        </div>
+
+        <a href="#0" class="cd-filter-trigger">Filters</a>
+    </main>
+
+
+{% endblock content %}
+
