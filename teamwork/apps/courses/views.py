@@ -339,7 +339,8 @@ def edit_interest(request, slug):
             show_interest_course = Reasons()
             show_interest_course.reason1 = form.cleaned_data.get('p1r')
             r1 = show_interest_course.reason1
-            r2 = show_interest_course.reason1
+            r2 = show_interest_course.reason2
+            r3 = show_interest_course.reason3
 
             if r1:
                 show_interest_course.save()
