@@ -3,25 +3,31 @@ var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
 
 module.exports = {
-context: __dirname,
+  context: __dirname,
 
-entry: './teamwork/static/js/reactFrontEnd.js',
+  entry: './teamwork/static/js/reactFrontEnd.js',
 
-output: {
+  output: {
     path: path.resolve('./teamwork/static/js/bundles/'),
     filename: "[name]-[hash].js",
-},
+  },
 
-plugins: [
+  plugins: [
     new BundleTracker({filename: './webpack-stats.json'}),
-],
-
-module: {
-    loaders: [
-    { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
-    { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
-
-    ],
-},
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [ 'es2015', 'react', 'stage-2' ]
+          }
+        }
+      }
+    ]
+  }
 
 }
