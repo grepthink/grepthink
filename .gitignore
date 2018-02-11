@@ -118,3 +118,7 @@ sendgrid.env
 .idea/
 .xml
 .iml
+
+node_modules/
+webpack-stats.json
+
