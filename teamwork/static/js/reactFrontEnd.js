@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // fake data generator
 const getItems = count =>
   Array.from({ length: count }, (v, k) => k).map(k => ({
     id: `item-${k}`,
-    content: `item ${k}`,
+    content: `item ${k}`
   }));
 
 // a little function to help us with reordering the result
@@ -22,28 +22,28 @@ const grid = 8;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
+  userSelect: "none",
   padding: grid * 2,
   margin: `0 0 ${grid}px 0`,
 
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
+  background: isDragging ? "lightgreen" : "grey",
 
   // styles we need to apply on draggables
-  ...draggableStyle,
+  ...draggableStyle
 });
 
 const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
+  background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
-  width: 250,
+  width: 250
 });
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: getItems(10),
+      items: getItems(10)
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -61,7 +61,7 @@ class App extends Component {
     );
 
     this.setState({
-      items,
+      items
     });
   }
 
@@ -106,4 +106,4 @@ class App extends Component {
 }
 
 // Put the thing into the DOM!
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
