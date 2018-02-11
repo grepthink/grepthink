@@ -311,37 +311,36 @@ def edit_interest(request, slug):
     # user_courses = Course.objects.filter(enrollment__in=enroll)
 
     page_name = "Show Interest"
-    page_description = "Show Interest in Projects for %s"%(cur_course.name)
+    page_description = "Show Interest in Projects for %s" % (cur_course.name)
     title = "Show Interest"
 
-    #if user is professor
+    # if user is professor
     if user.profile.isProf:
-        #redirect them with a message
-        messages.info(request,'Professor cannot show interest')
+        # redirect them with a message
+        messages.info(request, 'Professor cannot show interest')
         return HttpResponseRedirect('/course')
 
-    #if not enough projects
+    # if not enough projects
     if len(projects) == 0:
-        #redirect them with a message
-        messages.info(request,'No projects to show interest in!')
+        # redirect them with a message
+        messages.info(request, 'No projects to show interest in!')
         return HttpResponseRedirect('/course')
 
     # if course has disabled setting interest
     if cur_course.limit_interest:
-        #redirect them with a message
-        messages.info(request,'Can no longer show interest!')
+        # redirect them with a message
+        messages.info(request, 'Can no longer show interest!')
         return HttpResponseRedirect('/course')
 
     # if current course not in users enrolled courses
     if not cur_course in user_courses and cur_course.creator != user:
-        messages.info(request,'You are not enrolled in this course')
+        messages.info(request, 'You are not enrolled in this course')
         return HttpResponseRedirect('/course')
-
 
     # TODO: SHOULD ALSO HAVE CHECK TO SEE IF USER ALREADY HAS SHOWN INTEREST
 
     if request.method == 'POST':
-        form = ShowInterestForm(request.user.id, request.POST, slug = slug)
+        form = ShowInterestForm(request.user.id, request.POST, slug=slug)
         if form.is_valid():
             show_interest_course = Reasons()
             show_interest_course.reason1 = form.cleaned_data.get('p1r')
@@ -355,6 +354,7 @@ def edit_interest(request, slug):
             if r2:
                 show_interest_course.save()
                 messages.info(request, r2)
+
 
 @login_required
 def show_interest(request, slug):
@@ -404,15 +404,10 @@ def show_interest(request, slug):
     if request.method == 'POST':
         form = ShowInterestForm(request.user.id, request.POST, slug=slug)
         if form.is_valid():
-<<<<<<< HEAD
 
-            #Gets first choice, creates interest object for it
-=======
-            data = form.cleaned_data
             # Gets first choice, creates interest object for it
->>>>>>> 2fdefffab283843afc61ed2b5e29ec9dc52f6367
 
-            #Clear all interest objects where user is current user and for this course, avoid duplicates
+            # Clear all interest objects where user is current user and for this course, avoid duplicates
             all_interests = Interest.objects.filter(project_interest=projects)
             interests = user.interest.all()
             data = form.cleaned_data

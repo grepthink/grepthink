@@ -7,7 +7,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-
 import os
 import dj_database_url
 # Using python decouple (instead of os) for easier path management
@@ -15,7 +14,7 @@ from decouple import config
 from unipath import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = Path(__file__).parent
 COURSE_DIR = Path(__file__).parent
@@ -48,17 +47,21 @@ INSTALLED_APPS = [
     'teamwork.apps.profiles',
     'teamwork.apps.projects',
     'teamwork.apps.courses',
+    'teamwork.apps.scrumboard',
+
 
     'django_adminlte',
     'django_adminlte_theme',
 
-    #'django_extensions',
+    # 'django_extensions',
 
     'django.contrib.admin',
 
     'django_gravatar',
 
-    'chartjs'
+    'chartjs',
+
+    'webpack_loader'
 ]
 
 # Sets emails for notifications of error when DEBUG=False
@@ -75,8 +78,8 @@ isProd = config('PRODUCTION', default=False)
 
 if isProd:
     pass
-    #For Testing, comment out for production
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # For Testing, comment out for production
+    # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -97,7 +100,7 @@ ROOT_URLCONF = 'teamwork.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ PROJECT_DIR.child('templates'), COURSE_DIR.child('templates') ],
+        'DIRS': [PROJECT_DIR.child('templates'), COURSE_DIR.child('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,7 +116,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'teamwork.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -121,12 +123,12 @@ WSGI_APPLICATION = 'teamwork.wsgi.application'
 if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     'travisdb',  # Must match travis.yml setting
-            'USER':     'postgres',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'travisdb',  # Must match travis.yml setting
+            'USER': 'postgres',
             'PASSWORD': '',
-            'HOST':     'localhost',
-            'PORT':     '',
+            'HOST': 'localhost',
+            'PORT': '',
         }
     }
 
@@ -137,7 +139,6 @@ else:
             default=config('DATABASE_URL')
         )
     }
-
 
 """ Original Django Database Settings
 DATABASES = {
@@ -174,8 +175,8 @@ USE_TZ = True
 DATE_FORMAT = '%Y%m%d'
 
 # Update database configuration with $DATABASE_URL.
-#db_from_env = dj_database_url.config(conn_max_age=500)
-#DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -189,6 +190,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     PROJECT_DIR.child('static'),
+    os.path.join(BASE_DIR, 'assets'),
 )
 
 MEDIA_ROOT = PROJECT_DIR.child('media')
@@ -196,7 +198,7 @@ MEDIA_URL = '/media/'
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
@@ -204,6 +206,12 @@ ALLOWED_SIGNUP_DOMAINS = ['*']
 
 AUTHENTICATION_BACKENDS = ['teamwork.apps.profiles.models.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
 
-
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
