@@ -25,6 +25,7 @@ from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
 from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.projects import views as project_views
+from teamwork.apps.scrumboard import views as scrumboard
 
 urlpatterns = [
         # CORE AND SIGNUP
@@ -88,7 +89,10 @@ urlpatterns = [
         # Edit individual assignment (based on slug)
         url(r'^assignment/(?P<slug>[^/]+)/edit/$', course_views.edit_assignment, name='edit_assignment'),
 
-        # View all courses
+
+        url(r'^scrumboard/$', scrumboard.index, name='scrumboard'),
+
+                  # View all courses
         url(r'^course/$', course_views.view_courses, name='view_course'),
         # Join a course (valid for all courses)
         url(r'^course/join/$', course_views.join_course, name='join_course'),
