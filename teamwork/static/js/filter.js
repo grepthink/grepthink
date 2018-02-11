@@ -18,7 +18,7 @@ var multiFilter = {
     self.$filterUi = $('.cd-main-content');
     self.$filterGroups = $('.cd-filter-block');
     self.$container = $('.container');
-    self.$reset = $('.cd-close');
+    self.$reset = $('.cd-clear');
 
     self.$filterGroups.each(function () {
       self.groups.push({
@@ -82,12 +82,16 @@ var multiFilter = {
         }
 
         if ($input.is('[type="search"]') && this.value.length >= minimumLength) {
-          searchTerm = this.value
-            .trim()
-            .toLowerCase()
-            .replace(' ', '-');
+          var searchTerms = this. value.replace(' ', ', ').split(' ').filter(x => x);
+          var searchString = '';
+          for (let s of searchTerms){
+            if(s.endsWith(','))
+              searchString += "[class~="+s+"]"
+            else
+              searchString += "[class*="+s+"]"
 
-          group.active[0] = '[class*="' + searchTerm + '"]';
+          }
+          group.active[0] = searchString;
         }
       });
       group.active.length && (group.tracker = 0);

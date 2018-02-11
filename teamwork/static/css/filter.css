@@ -4,15 +4,36 @@
   box-sizing: border-box;
 }
 
+.cd-clear {
+  font-size: 1.45rem;
+  font-family: "Open Sans", sans-serif;
+  color: #1c67bf;
+  background-color: rgba(255, 255, 255, .15);
+  text-align: center;
+  width: 60%;
+  margin-left: 20%;
+  margin-right: 20%;
+  border: none;
+
+}
+
+.cd-clear:focus {outline:0;}
+
+button.cd-clear:hover {
+    cursor: pointer;
+    color: #00a65a;
+}
+
+
 .cd-filter {
   font-size: 1.6rem;
   font-family: "Open Sans", sans-serif;
-  color: #331d35;
+  color: #000000;
   background-color: #e7e7e7;
 }
 
 a {
-  color: #41307c;
+  color: #000000;
   text-decoration: none;
 }
 
@@ -30,12 +51,10 @@ a {
   transition: width 0.3s;
 }
 
-
 .cd-gallery.filter-is-visible {
   /* reduce width when filter is visible */
   width: 80%;
 }
-
 
 .cd-filter {
   position: absolute;
@@ -247,9 +266,8 @@ xcustom form elements
 }
 
 li {
-    list-style-type: none;
+  list-style-type: none;
 }
-
 
 .cd-filter-block .cd-select::after {
   /* switcher arrow for select element */
