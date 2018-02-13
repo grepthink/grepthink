@@ -53,7 +53,24 @@ class Interest(models.Model):
     def __str__(self):
         return ("%d" % (self.interest))
 
-
+class ScrumBoard(models.Model):
+    user = models.ForeignKey(User, related_name='scrumboard', on_delete=models.CASCADE)
+    project_title = models.CharField(
+        max_length=255,
+        default="")
+    task =  models.CharField(
+        max_length=255,
+        default="")
+    member = models.CharField(
+        max_length=255,
+        default="Search for team member")
+    scrum_title = models.CharField(
+        max_length=255,
+        default="")
+    scrum_description = models.CharField(
+        max_length=255,
+        default="")
+    
 class Tsr(models.Model):
     """
     TSR objects relate a user and tsr fields, along with assignment information
