@@ -178,22 +178,19 @@ def view_one_project(request, slug):
         user_role = 'GT'
 
     fix = []
-    new_tsr_tuple = []
-    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        temp_tup = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.id))
-        temp = ""
 
-        for j in temp_tup:
-            if temp != j.evaluatee:
-                temp = j.evaluatee
-                fix.append([temp, j.ass.first(), j, 1])
-            else:
-                fix.append(["", j.ass.first(), j, 0])
+    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+        fix = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.username))
+        # temp = ""
+        #
+        # for j in temp_tup:
+        #     if temp != j.evaluatee:
+        #         temp = j.evaluatee
+        #         fix.append([temp, j.ass.first(), j, 1])
+        #     else:
+        #         fix.append(["", j.ass.first(), j, 0])
     else:
         fix = None
-
-
-
 
     med = 100
     if len(project.members.all()) > 0:
