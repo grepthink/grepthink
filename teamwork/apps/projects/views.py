@@ -98,8 +98,8 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
 
-    project=Project.objects.filter(slug=slug).select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile', 'members', 'members__profile', 'desired_skills',
-    'course', 'course__assignments', 'pending_members', 'tsr').first()
+    project=get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile', 'members', 'members__profile', 'desired_skills',
+    'course', 'course__assignments', 'pending_members', 'tsr'), slug=slug)
 
     updates = project.get_updates()
     resources = project.get_resources()

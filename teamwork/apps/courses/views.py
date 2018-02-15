@@ -65,11 +65,12 @@ def view_one_course(request, slug):
     Public method that takes a request and a coursename, retrieves the Course object from the model
     with given coursename.  Renders courses/view_course.html
     """
-    course = get_object_or_404(Course, slug=slug)
+    course = get_object_or_404(Course.objects.prefetch_related('creator', 'students', 'projects'), slug=slug)
     page_name = "%s"%(course.name)
     page_description = "Course Overview"
     title = "%s"%(slug)
 
+    # Get the user_role
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
         if request.user in course.students.all() or (request.user==course.creator):
@@ -80,36 +81,31 @@ def view_one_course(request, slug):
     else:
         user_role = 'GT'
 
-    # TODO: get rid of isProf and use user_role
-    if request.user==course.creator:
-        isProf = 1
-    else:
-        isProf = 0
-
-    projects = projects_in_course(slug)
-    projectCount = len(projects)
+    # Misc list needed
+    projects = course.projects.all()
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-    profile = Profile.objects.get(user=request.user)
     students = Enrollment.objects.filter(course = course, role = "student")
     staff = course.get_staff()
     asgs = list(course.assignments.all())
 
-
+    # Prepare a list of students not in a project for count and color coding
     available=[]
-    for i in students:
-        available.append(i.user)
+    taken_ids=list(Membership.objects.prefetch_related('user').values_list('user', flat=True).filter(project__in=course.projects.all()))
+    staff_ids=[o.id for o in staff]
+    available=list(course.students.exclude(id__in=taken_ids+staff_ids))
 
-    for i in projects:
-        for j in i.members.all():
-            if j in available:
-                available.remove(j)
 
+    # GET RID OF THIS NEXT vvvvvv
     student_users = []
     for stud in students:
         temp_user = get_object_or_404(User, username=stud)
         student_users.append(temp_user)
+
+
+
+
 
     assignmentForm = AssignmentForm(request.user.id, slug)
     if(request.method == 'POST'):
@@ -122,7 +118,6 @@ def view_one_course(request, slug):
             ass.ass_name = assignmentForm.cleaned_data.get('ass_name')
             ass.description = assignmentForm.cleaned_data.get('description')
             ass.ass_number = assignmentForm.cleaned_data.get('ass_number')
-            print(ass.ass_number)
 
             ass.save()
 
@@ -132,9 +127,9 @@ def view_one_course(request, slug):
         messages.info(request, 'You have successfully created an assignment')
         return redirect(view_one_course,course.slug)
 
-    return render(request, 'courses/view_course.html', { 'isProf':isProf, 'assignmentForm':assignmentForm,
+    return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
-        'user_role':user_role, 'available':available, 'assignments':asgs, 'projectCount':projectCount,
+        'user_role':user_role, 'available':available, 'assignments':asgs,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 
