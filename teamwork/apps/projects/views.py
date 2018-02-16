@@ -172,7 +172,7 @@ def view_one_project(request, slug):
         avgs.append((key, int(con_avg)))
 
     # ======================
-    assigned_tsrs = course.assignments.filter(ass_type="tsr", closed=False)
+    assigned_tsrs = sorted(course.assignments.filter(ass_type="tsr", closed=False), key=lambda s: s.ass_date)
 
     tsr_tuple={}
 
