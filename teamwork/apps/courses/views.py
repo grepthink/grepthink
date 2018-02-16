@@ -92,7 +92,7 @@ def view_one_course(request, slug):
     staff = course.get_staff()
     staff_ids=[o.id for o in staff]
     students =list(course.students.exclude(id__in=staff_ids))
-    asgs = list(course.assignments.all())
+    asgs = sorted(course.assignments.all(), key=lambda s: s.ass_date)
 
     # Prepare a list of students not in a project for count and color coding
     available=[]
@@ -110,7 +110,7 @@ def view_one_course(request, slug):
             ass.ass_name = assignmentForm.cleaned_data.get('ass_name')
             ass.description = assignmentForm.cleaned_data.get('description')
             ass.ass_number = assignmentForm.cleaned_data.get('ass_number')
-            
+
             ass.save()
 
             course.assignments.add(assignment)

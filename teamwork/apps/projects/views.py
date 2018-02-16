@@ -114,7 +114,8 @@ def view_one_project(request, slug):
     course = project.course.first()
     staff = course.get_staff()
 
-    asgs = list(course.assignments.all())
+    asgs = sorted(course.assignments.all(), key=lambda s: s.ass_date)
+
     asg_completed = []
 
     for i in asgs:
@@ -1161,7 +1162,7 @@ def email_project(request, slug):
             #the courseID will be gotten from the form
             data = form.cleaned_data
             subject = data.get('subject')
-            content = data.get('content')            
+            content = data.get('content')
 
             send_email(students_in_project, request.user.email, subject, content)
             messages.add_message(request, messages.SUCCESS, "Email Sent!")
