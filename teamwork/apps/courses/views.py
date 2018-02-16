@@ -86,26 +86,15 @@ def view_one_course(request, slug):
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-    students = Enrollment.objects.filter(course = course, role = "student")
     staff = course.get_staff()
+    staff_ids=[o.id for o in staff]
+    students =list(course.students.exclude(id__in=staff_ids))
     asgs = list(course.assignments.all())
 
     # Prepare a list of students not in a project for count and color coding
     available=[]
     taken_ids=list(Membership.objects.prefetch_related('user').values_list('user', flat=True).filter(project__in=course.projects.all()))
-    staff_ids=[o.id for o in staff]
     available=list(course.students.exclude(id__in=taken_ids+staff_ids))
-
-
-    # GET RID OF THIS NEXT vvvvvv
-    student_users = []
-    for stud in students:
-        temp_user = get_object_or_404(User, username=stud)
-        student_users.append(temp_user)
-
-
-
-
 
     assignmentForm = AssignmentForm(request.user.id, slug)
     if(request.method == 'POST'):
@@ -128,7 +117,7 @@ def view_one_course(request, slug):
         return redirect(view_one_course,course.slug)
 
     return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
-        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':student_users,
+        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
         'user_role':user_role, 'available':available, 'assignments':asgs,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
