@@ -22,6 +22,18 @@
 
         <p class="text-muted text-center">{{page_user.email}}</p>
         <p class="text-muted text-center">{{page_user.username}}</p>
+
+
+        <!-- <ul class="nav nav-pills nav-stacked">
+        <li>
+            <a href="{% url 'edit_profile' user.username %}"
+                class="btn btn-default">Edit Profile</a>
+        </li>
+        <li>
+            <a href="{% url 'edit_schedule' user.username %}"
+               class="btn btn-default btn-flat">Set Availability</a>
+        </li>
+        </ul> -->
     </div>
 </div>
 
@@ -31,8 +43,17 @@
   <div class="box-header with-border">
     <h3 class="box-title">About Me</h3>
     <span class="pull-right">
-        <a href="{% url 'edit_profile' user.username %}"
-        class="btn btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
+        {% if user.profile.isGT %}
+            <a href="{% url 'edit_profile' page_user.username %}"
+                class="btn btn-primary btn-flat">Edit Profile</a>
+        {% else %}
+            <a href="{% url 'edit_profile' user.username %}"
+                class="btn btn-primary btn-flat">Edit Profile</a>
+        {% endif %}
+    </span>
+    <span class="pull-right">
+        <a href="{% url 'edit_schedule' user.username %}"
+           class="btn btn-primary btn-flat">Edit Schedule</a>
     </span>
   </div>
 
@@ -72,15 +93,7 @@
             </p>
 
         {% endif %}
-    {% endif %}
-
-    <!-- IF USER IS GT -->
-    {% if user.profile.isGT %}
-        <div class="pull-right">
-            <a href="{% url 'edit_profile' page_user.username %}"
-                class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
-        </div>
-    {% endif %}
+    {% endif %}    
   </div>
 </div>
 

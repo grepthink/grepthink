@@ -74,7 +74,10 @@ def view_one_course(request, slug):
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
         if request.user in course.students.all() or (request.user==course.creator):
-            user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+            try:
+                user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+            except:
+                user_role = "not enrolled"
         else:
             # init user_role otherwise
             user_role = "not enrolled"
@@ -107,10 +110,10 @@ def view_one_course(request, slug):
             ass.ass_name = assignmentForm.cleaned_data.get('ass_name')
             ass.description = assignmentForm.cleaned_data.get('description')
             ass.ass_number = assignmentForm.cleaned_data.get('ass_number')
-
+            
             ass.save()
 
-            course.assignments.add(ass)
+            course.assignments.add(assignment)
             course.save()
 
         messages.info(request, 'You have successfully created an assignment')
@@ -128,9 +131,13 @@ def view_stats(request, slug):
     page_name = "Statistics"
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
+    enrollment = Enrollment.objects.filter(user=request.user, course=cur_course)
 
     if not request.user.profile.isGT:
-        user_role = Enrollment.objects.filter(user=request.user, course=cur_course).first().role
+        if enrollment:
+            user_role = enrollment.first().role
+        else:
+            user_role = "not enrolled"
     else:
         user_role = 'GT'
 
@@ -204,7 +211,7 @@ def join_course(request):
     page_description = "Join a Course!"
     title = "Join Course"
 
-    if request.user.profile.isProf:
+    if request.user.profile.isprof:
         role = 'professor'
     else:
         role = 'student'
@@ -284,8 +291,6 @@ def show_interest(request, slug):
     projects = projects_in_course(slug)
     # enrollment objects containing current user
     user_courses = request.user.enrollment.all()
-    # current courses user is in
-    # user_courses = Course.objects.filter(enrollment__in=enroll)
 
     page_name = "Show Interest"
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
@@ -298,7 +303,7 @@ def show_interest(request, slug):
         return HttpResponseRedirect('/course')
 
     #if not enough projects
-    if len(projects) == 0:
+    if not projects:
         #redirect them with a message
         messages.info(request,'No projects to show interest in!')
         return HttpResponseRedirect('/course')
@@ -328,35 +333,37 @@ def show_interest(request, slug):
             interests = user.interest.all()
             if interests is not None: interests.delete()
 
-            if len(projects) >= 1:
+            projectCount = len(projects)
+
+            if projectCount >= 1:
                 choice_1 = data.get('projects')
                 r1 = data.get('p1r')
                 choice_1.interest.add(Interest.objects.create(user=user, interest=5, interest_reason=r1))
                 choice_1.save()
 
             #Gets second choice, creates interest object for it
-            if len(projects) >= 2:
+            if projectCount >= 2:
                 choice_2 = data.get('projects2')
                 r2 = data.get('p2r')
                 choice_2.interest.add(Interest.objects.create(user=user, interest=4, interest_reason=r2))
                 choice_2.save()
 
             #Gets third choice, creates interest object for it
-            if len(projects) >= 3:
+            if projectCount >= 3:
                 choice_3 = data.get('projects3')
                 r3 = data.get('p3r')
                 choice_3.interest.add(Interest.objects.create(user=user, interest=3, interest_reason=r3))
                 choice_3.save()
 
             #Gets fourth choice, creates interest object for it
-            if len(projects) >= 4:
+            if projectCount >= 4:
                 choice_4 = data.get('projects4')
                 r4 = data.get('p4r')
                 choice_4.interest.add(Interest.objects.create(user=user, interest=2, interest_reason=r4))
                 choice_4.save()
 
             #Gets fifth choice, creates interest object for it
-            if len(projects) >= 5:
+            if projectCount >= 5:
                 choice_5 = data.get('projects5')
                 r5 = data.get('p5r')
                 choice_5.interest.add(Interest.objects.create(user=user, interest=1, interest_reason=r5))
@@ -420,7 +427,7 @@ def create_course(request):
 
             # add enrollment object for professor
             if request.user.profile.isProf:
-                Enrollment.objects.create(user=request.user, course=course,role="professor")
+                Enrollment.objects.create(user=request.user, course=course, role="professor")
 
             return redirect(upload_csv, course.slug)
     else:
@@ -438,13 +445,17 @@ def edit_course(request, slug):
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
 
+    enrollments = Enrollment.objects.filter(user=request.user, course=course)
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
 
     if request.user.profile.isGT:
         userRole = 'GT'
     else:
-        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+        if enrollments:
+            userRole = enrollments.first().role
+        else:
+            userRole = "not enrolled"
 
     if request.user.profile.isGT:
         pass
@@ -669,6 +680,8 @@ def delete_course(request, slug):
 
     #deletes course
     course.delete()
+
+    print("course deleted")
     return redirect(view_courses)
 
 @login_required

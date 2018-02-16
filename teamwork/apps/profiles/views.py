@@ -23,7 +23,7 @@ def signup(request):
     """
 
     page_name = "Signup"
-    page_description = "Sign up for Groupthink!"
+    page_description = "Sign up for Grepthink!"
     title = "Signup"
 
     GT =  False
@@ -45,7 +45,6 @@ def signup(request):
             password = form.cleaned_data.get('password')
 
             prof = form.cleaned_data.get('prof')
-            # ta = form.cleaned_data.get('ta')
 
             if GT:
                 user1 = User.objects.create_superuser(
@@ -69,25 +68,75 @@ def signup(request):
                 user1.profile.isGT = True
 
             # edits profile to add professor
-            user1.profile.isProf = prof
-
-            # edits profile to add ta
-            # user1.profile.isTa = ta
+            user1.profile.isProf = False
 
             # saves profile
             user1.save()
-
-            #User.objects.save()
-
-
-            #uinfo = user.get_profile()
-            #uinfo.isProf = prof
-            #uinfo.save()
 
             return redirect(edit_profile, username)
 
     else:
         return render(request, 'profiles/signup.html',
+                      {'form': SignUpForm(), 'page_name' : page_name,
+                      'page_description': page_description, 'title': title})
+
+def profSignup(request):
+    """
+    public method that generates a form a user uses to sign up for an account (push test)
+    """
+
+    page_name = "Signup"
+    page_description = "Sign up for Grepthink!"
+    title = "Professor Signup"
+
+    GT =  False
+
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+
+        if not form.is_valid():
+            return render(request, 'profiles/professorSignup.html',
+                          {'form': form})
+
+        else:
+            email = form.cleaned_data.get('email')
+            split = email.split("@")
+            username = split[0]
+
+            if 'grepthink' in email:
+                GT = True
+            password = form.cleaned_data.get('password')
+
+            if GT:
+                user1 = User.objects.create_superuser(
+                    username=username,
+                    password=password,
+                    email=email)
+            else:
+                user1 = User.objects.create_user(
+                    username=username,
+                    password=password,
+                    email=email)
+
+            user = authenticate(username=username, password=password)
+            login(request, user)
+
+            # saves current user, which creates a link from user to profile
+            user1.save()
+
+            if GT:
+                user1.profile.isGT = True
+
+            # edits profile to add professor
+            user1.profile.isProf = True
+
+            # saves profile
+            user1.save()
+
+            return redirect(edit_profile, username)
+
+    else:
+        return render(request, 'profiles/professorSignup.html',
                       {'form': SignUpForm(), 'page_name' : page_name,
                       'page_description': page_description, 'title': title})
 
