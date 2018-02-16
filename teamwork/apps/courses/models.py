@@ -31,7 +31,8 @@ def rand_code(size):
     ])
 
 def get_all_courses(self):
-    return Course.objects.all()
+    return Course.objects.all().extra(\
+    select={'lower_name':'lower(name)'}).order_by('lower_name')
 
 class Assignment(models.Model):
     due_date = models.DateField()
@@ -83,15 +84,18 @@ def get_user_courses(self):
     """
     # Get all courses for a GT Admin
     if self.profile.isGT:
-        my_courses = get_all_courses(self)
+        my_courses = Course.objects.all().extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
     # Get only created courses through the creator relationship
     elif self.profile.isProf:
         # my_courses = Course.objects.filter(creator=self)
-        my_courses = self.course_creator.all()
+        my_courses = self.course_creator.all().extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
     # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
-        my_courses = self.enrollment.all()
+        my_courses = self.enrollment.all().extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
     return my_courses
 
 
@@ -213,7 +217,7 @@ class Course(models.Model):
         max_length=20,
         # defaulted to current year
         default=now.year)
-        
+
     # limit creation, boolean
     limit_creation = models.BooleanField(
         #defaulted to False
@@ -333,11 +337,7 @@ class Course(models.Model):
     Gets all students in a course excluding professors and returns a list
     """
     def get_students(self):
-        temp = Enrollment.objects.filter(course=self,role="student")
-        students = []
-
-        for stud in temp:
-            students.append(stud.user)
+        students = list(Enrollment.objects.filter(course=self,role="student"))
 
         return students
 
@@ -345,12 +345,7 @@ class Course(models.Model):
     Gets the tas for a course
     """
     def get_tas(self):
-        tas = []
-
-        temp = Enrollment.objects.filter(course=self,role="ta")
-
-        for i in temp:
-            tas.append(i.user)
+        tas = list(Enrollment.objects.filter(course=self,role="ta"))
 
         return tas
 
@@ -358,16 +353,11 @@ class Course(models.Model):
     Gets ALL of the teaching staff
     """
     def get_staff(self):
-        tas = self.get_tas()
         staff=[]
+        staff = self.get_tas()
         staff.append(self.creator)
 
-        for i in tas:
-            staff.append(i)
-
         return staff
-
-
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
