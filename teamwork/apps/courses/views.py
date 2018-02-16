@@ -127,14 +127,14 @@ def view_one_course(request, slug):
 
 @login_required
 def view_stats(request, slug):
-    cur_course = get_object_or_404(Course, slug=slug)
+    cur_course = get_object_or_404(Course.objects.prefetch_related('creator', 'projects', 'projects__members'), slug=slug)
     page_name = "Statistics"
     page_description = "Statistics for %s"%(cur_course.name)
     title = "Statistics"
     enrollment = Enrollment.objects.filter(user=request.user, course=cur_course)
 
     if not request.user.profile.isGT:
-        if enrollment:
+        if enrollment.count():
             user_role = enrollment.first().role
         else:
             user_role = "not enrolled"
@@ -148,41 +148,40 @@ def view_stats(request, slug):
             return redirect(view_one_course, cur_course.slug)
 
     students_num = Enrollment.objects.filter(course = cur_course, role="student")
-    projects_num = projects_in_course(slug)
+
+    staff = cur_course.get_staff()
+    staff_ids=[o.id for o in staff]
+
     students_projects = []
     students_projects_not = []
     emails = []
     cleanup_students = []
     cleanup_projects = []
 
-    for i in projects_num:
-        for j in i.members.all():
-            if not j in students_projects:
-                students_projects.append(j)
+    taken=list(Membership.objects.prefetch_related('user').values_list('user', flat=True).filter(project__in=cur_course.projects.all()))
 
-    for i in students_num:
-        if not i.user in students_projects:
-            students_projects_not.append(i.user)
+    temp_in=cur_course.students.filter(id__in=taken+staff_ids).order_by('username')
+    num_in = temp_in.count()
+    students_projects=list(temp_in)
 
-    for i in students_num:
-        if not i.user in cleanup_students:
-            cleanup_students.append(i.user)
+    temp_out=cur_course.students.exclude(id__in=taken+staff_ids).order_by('username')
+    num_not = temp_out.count()
+    students_projects_not=list(temp_out)
 
-    for i in projects_num:
-        if not i in cleanup_projects:
-            cleanup_projects.append(i)
+    num_total = num_in+num_not
 
-    for i in students_num:
-        emails.append(i.user.email)
+    temp_proj=cur_course.projects.all().extra(\
+    select={'lower_title':'lower(title)'}).order_by('lower_title').prefetch_related('members')
+    num_projects = temp_proj.count()
+    cleanup_projects=list(temp_proj)
 
-    num_in = len(students_projects)
-    num_not = len(students_projects_not)
-    num_total = len(students_num)
-    num_projects = len(projects_num)
+    emails=list(cur_course.students.values_list('email', flat=True).order_by('email').exclude(id__in=staff_ids))
+
+
 
     return render(request, 'courses/view_statistics.html', {
-        'cur_course': cur_course, 'students_num': students_num,
-        'cleanup_students': cleanup_students, 'projects_num': projects_num,
+        'cur_course': cur_course,
+        'cleanup_students': cleanup_students,
         'cleanup_projects': cleanup_projects, 'students_projects': students_projects,
         'students_projects_not': students_projects_not, 'emails': emails,
         'page_name' : page_name, 'page_description': page_description, 'title': title,

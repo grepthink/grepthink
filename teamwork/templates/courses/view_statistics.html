@@ -61,7 +61,7 @@
                      <div class="panel-body ScrollStyle">
                          <p>
                              {% for student in students_projects_not %}
-                                 <li>{{student.email}}</li>
+                                 <li>{{student.username}}</li>
                              {% endfor %}
                          </p></br>
                      </div>
@@ -83,7 +83,7 @@
                                 <li>{{project.title}}</li>
                                 <ul>
                                     {% for mem in project.members.all %}
-                                        <li>{{mem.email}}</li>
+                                        <li>{{mem.username}}</li>
 
                                     {% endfor %}
                                 </ul>
@@ -113,20 +113,3 @@
     </div>
 </section>
 {% endblock content %}
-
-
-
-<!--
-1. Calculate number of students in course.
-    -add variable students_num to Courses class
-    -length?
-2. Calculate number of projects in course.
-    -add variable projects_num to Courses class
-3. Calculate number of students in course not in projects.
-    -find number of students in projects
-        -add variable current_mems to Project class
-        -traverse through projects in for loop. increment value
-    -subtract result from students_num
-4. Extract students emails.
-    -add variable email to membership class
--->
