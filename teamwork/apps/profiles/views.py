@@ -105,7 +105,7 @@ def profSignup(request):
 
             if 'grepthink' in email:
                 GT = True
-            password = form.cleaned_data.get('password')            
+            password = form.cleaned_data.get('password')
 
             if GT:
                 user1 = User.objects.create_superuser(

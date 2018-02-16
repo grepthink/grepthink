@@ -463,10 +463,10 @@ class Project(models.Model):
         return markdown.markdown(self.resource, safe_mode='escape')
 
     def get_updates(self):
-        return ProjectUpdate.objects.filter(project=self)
+        return ProjectUpdate.objects.filter(project=self).prefetch_related('project', 'user')
 
     def get_resources(self):
-        return ResourceUpdate.objects.filter(project=self)
+        return ResourceUpdate.objects.filter(project=self).prefetch_related('project', 'user')
 
     def get_chat(self):
         return self.chat.all()

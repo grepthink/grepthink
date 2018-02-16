@@ -98,13 +98,12 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
 
-    project = get_object_or_404(Project, slug=slug)
-    scrum_master = project.scrum_master
+    project=get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile', 'members', 'members__profile', 'desired_skills',
+    'course', 'course__assignments', 'pending_members', 'tsr'), slug=slug)
+
     updates = project.get_updates()
     resources = project.get_resources()
     # Get the project owner for color coding stuff
-    project_owner = project.creator.profile
-    members = project.members.all()
 
     # Populate with project name and tagline
     page_name = project.title or "Project"
@@ -119,20 +118,15 @@ def view_one_project(request, slug):
     asg_completed = []
 
     for i in asgs:
-        for j in i.subs.all():
+        for j in i.subs.all().prefetch_related('evaluator'):
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
 
 
-
-    user = request.user
-    profile = Profile.objects.get(user=user)
-
     # to reduce querys in templates -kp
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
-    project_members = project.members.all()
 
     requestButton = 1
     if request.user in pending_members:
@@ -160,7 +154,7 @@ def view_one_project(request, slug):
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(project.readable_meetings)
 
-    completed_tsrs = project.tsr.all()
+    completed_tsrs = project.tsr.all().prefetch_related('evaluator', 'evaluatee')
     avg_dict = {}
     for i in completed_tsrs.all():
         if i.evaluatee in avg_dict.keys():
@@ -170,7 +164,10 @@ def view_one_project(request, slug):
 
     avgs = []
     for key, item in avg_dict.items():
-        con_avg = item / (len(completed_tsrs) / len(members))
+        try:
+            con_avg = item / (len(completed_tsrs) / len(project.members.all()))
+        except:
+            con_avg = -1    # if dividing by zero set avg to -1
         avgs.append((key, int(con_avg)))
 
     # ======================
@@ -184,37 +181,37 @@ def view_one_project(request, slug):
         user_role = 'GT'
 
     fix = []
-    new_tsr_tuple = []
-    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
-        temp_tup = sorted(project.tsr.all(), key=lambda x: (x.ass_number, x.evaluatee.id))
-        temp = ""
 
-        for j in temp_tup:
-            if temp != j.evaluatee:
-                temp = j.evaluatee
-                fix.append([temp, j.ass.first(), j, 1])
-            else:
-                fix.append(["", j.ass.first(), j, 0])
+    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+        fix = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.username))
+        # temp = ""
+        #
+        # for j in temp_tup:
+        #     if temp != j.evaluatee:
+        #         temp = j.evaluatee
+        #         fix.append([temp, j.ass.first(), j, 1])
+        #     else:
+        #         fix.append(["", j.ass.first(), j, 0])
     else:
         fix = None
 
-
-
-
     med = 100
-    if len(members) > 0:
-        med = int(100/len(members))
+
+    if len(project.members.all()) > 0:
+        med = int(100/len(project.members.all()))
+
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members' : members, 'form' : form, 'temp_tup':fix,
-        'project': project, 'project_members':project_members, 'pending_members': pending_members,
+        'page_description': page_description, 'title' : title, 'form' : form, 'temp_tup':fix,
+        'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
-        'pending_count':pending_count,'profile' : profile, 'scrum_master': scrum_master, 'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course, 'project_owner' : project_owner,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs})
+        'pending_count':pending_count,'staff':staff,
+        'updates': updates, 'project_chat': project_chat, 'course' : course,
+        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs,
+        'project': project})
 
 def leave_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
@@ -402,7 +399,7 @@ def create_project(request):
     if user.profile.isGT:
         pass
     # If user is in 0 courses
-    elif len(cur_courses) == 0 and len(my_created_courses) == 0:
+    elif not cur_courses and not my_created_courses:
         # Redirect them to homepage and tell them to join a course
         messages.info(request,
                       'You need to join a course before creating projects!')
@@ -413,7 +410,7 @@ def create_project(request):
 
     if user.profile.isGT:
         pass
-    elif len(cur_courses) >= 1 and no_postable_classes and not profile.isProf:
+    elif cur_courses and no_postable_classes and not profile.isProf:
         # Redirect them to homepage and tell them to join a course
         messages.info(request, 'Professor has disabled Project Creation!')
         return HttpResponseRedirect('/')
@@ -718,7 +715,7 @@ def edit_project(request, slug):
         form = EditProjectForm(request.user.id, instance=project, members=members)
 
         # TEMPORARILIY COMMENTED OUT, DUE TO JULLIG HAVING TROUBLE ADDING MEMBERS
-        # if len(members) > 0:
+        # if members:
         #     form.fields['project_owner'].required = True
         #     form.fields['scrum_master'].required = True
 
@@ -986,29 +983,33 @@ def view_tsr(request, slug):
                 if member == member_:
                     continue
                 tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
-                if(len(tsr_query_result)==0):
+                result_size = len(tsr_query_result)
+                if(result_size == 0):
                     continue
-                tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
+                tsr_single.append(tsr_query_result[result_size - 1])
+
             avg=0
-            if(len(tsr_single)!=0):
+
+            if tsr_single:
                 for tsr_obj in tsr_single:
-                    print("\n\n%d\n\n"%tsr_obj.percent_contribution)
-                    avg=avg+tsr_obj.percent_contribution
-                avg=avg/len(tsr_single)
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
-                'avg' : avg})
+                    # print("\n\n%d\n\n"%tsr_obj.percent_contribution)
+                    avg = avg + tsr_obj.percent_contribution
+                avg = avg / len(tsr_single)
+
+            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,'avg' : avg})
             averages.append({'email':member.email,'avg':avg})
+
         tsr_dicts.append({'number': i , 'dict':tsr_dict,
             'averages':averages})
 
     med = 1
     if len(members):
         med = int(100/len(members))
+
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
 
 
     if request.method == 'POST':
-
         return redirect(view_projects)
     return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
 
@@ -1062,186 +1063,7 @@ def find_meeting(slug):
     project.save()
 
     return "Something"
-    #return render(request, 'projects/view_projects.html',
-    #              {'projects': projects})
 
-"""
-@login_required
-def tsr_update(request, slug):
-
-    public method that takes in a slug and generates a TSR
-    form for user. Different form generated based on which
-    button was pressed (scrum/normal)
-
-    page_name = "TSR Update"
-    page_description = "Update TSR form"
-    title = "TSR Update"
-
-    user = request.user
-    cur_proj = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=cur_proj)
-
-    # get list of emails of users in current project
-    members = cur_proj.members.all()
-    emails = list()
-    for member in members:
-        emails.append(member.email)
-
-    asgs = list(course.assignments.all())
-
-    # if an assignment is not available, boolean is set to
-    # false and user is redirected to project view when they
-    # try to fill out a tsr
-    asg_available = False
-    if not asgs:
-        ("No ASSIGNMENTS")
-    else:
-        # if an assignment is available, the lines below will check the date
-        # of the assignment, verify that todays date is in between the assigned
-        # date and the due date, and set the boolean for true as well as making
-        # the assignment number = the assignment number of the assignment object
-        today = datetime.now().date()
-
-        for asg in asgs:
-            if "tsr" in asg.ass_type.lower():
-                asg_ass_date = asg.ass_date
-                asg_ass_date = datetime.strptime(asg_ass_date,"%Y-%m-%d").date()
-
-                asg_due_date = asg.due_date
-                asg_due_date = datetime.strptime(asg_due_date,"%Y-%m-%d").date()
-                if asg_ass_date < today <= asg_due_date:
-                    ("assignment in progress")
-                    asg_available = True
-                    asg_number = asg.ass_number
-
-
-    # This checks if button clicked was scrum or non scrum
-    params = str(request)
-    if "scrum_master_form" in params:
-        scrum_master = True
-    else:
-        scrum_master = False
-
-    forms=list()
-
-    if(asg_available):
-        # if 'Save TSR' was clicked
-        if request.method == 'POST':
-            for email in emails:
-                # grab form
-                form = TSR(request.user.id, request.POST, members=members,
-                    emails=emails,prefix=email, scrum_master=scrum_master)
-                if form.is_valid():
-                    # put form data in variables
-                    data=form.cleaned_data
-                    percent_contribution = data.get('perc_contribution')
-                    positive_feedback = data.get('pos_fb')
-                    negative_feedback = data.get('neg_fb')
-                    tasks_completed = data.get('tasks_comp')
-                    performance_assessment = data.get('perf_assess')
-                    notes = data.get('notes')
-                    evaluatee_query = User.objects.filter(email__iexact=email)
-                    evaluatee = evaluatee_query.first()
-
-                    # gets fields variables and saves them to project
-                    cur_proj.tsr.add(Tsr.objects.create(evaluator=user,
-                        evaluatee=evaluatee,
-                        percent_contribution=percent_contribution,
-                        positive_feedback=positive_feedback,
-                        negative_feedback=negative_feedback,
-                        tasks_completed=tasks_completed,
-                        performance_assessment=performance_assessment,
-                        notes=notes,
-                        ass_number=int(asg_number)))
-
-                    cur_proj.save()
-
-            print(list(cur_proj.tsr.all()))
-            return redirect(view_projects)
-
-        else:
-            # if request was not post then display forms for filling out a TSR
-            for m in emails:
-                form_i = TSR(request.user.id, request.POST, members=members,
-                    emails=emails, prefix=m, scrum_master=scrum_master)
-                forms.append(form_i)
-            form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, scrum_master=scrum_master)
-        return render(request, 'projects/tsr_update.html',
-            {'forms':forms,'emails':emails,'cur_proj': cur_proj,
-            'page_name' : page_name, 'page_description': page_description,
-            'title': title})
-    else:
-        # need to change this redirect to display message
-        # so that user is aware why they were redirected
-        return redirect(view_projects)
-
-
-@login_required
-def view_tsr(request, slug):
-
-    public method that takes in a slug and generates a view for
-    submitted TSRs
-
-    page_name = "View TSR"
-    page_description = "Submissions"
-    title = "View TSR"
-
-    project = get_object_or_404(Project, slug=slug)
-    members = project.members.all()
-    tsrs = list(project.tsr.all())
-
-    # put emails into list
-    emails=list()
-    for member in members:
-        emails.append(member.email)
-
-    # for every sprint, get the tsr's and calculate the average % contribution
-    tsr_dicts=list()
-    tsr_dict = list()
-    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
-    averages = list()
-    for i in sprint_numbers.all():
-        # averages=list()
-        tsr_dict=list()
-        for member in members:
-            tsr_single=list()
-            # for every member in project, filter query using member.id
-            # and assignment number
-            for member_ in members:
-                if member == member_:
-                    continue
-                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
-                if(len(tsr_query_result)==0):
-                    continue
-                tsr_single.append(tsr_query_result[len(tsr_query_result)-1])
-
-            avg=0
-            if(len(tsr_single)!=0):
-                for tsr_obj in tsr_single:
-                    avg = avg + tsr_obj.percent_contribution
-                avg = avg / len(tsr_single)
-
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,
-                'avg' : avg})
-            averages.append({'email':member.email,'avg':avg})
-
-        tsr_dicts.append({'number': i , 'dict':tsr_dict,
-            'averages':averages})
-
-    med = 1
-    if len(members):
-        med = int(100/len(members))
-
-    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-
-
-    if request.method == 'POST':
-
-        return redirect(view_projects)
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title,
-                        'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
-"""
 def add_member(request, slug, uname):
     """
     Add member to project if:
@@ -1339,11 +1161,7 @@ def email_project(request, slug):
             #the courseID will be gotten from the form
             data = form.cleaned_data
             subject = data.get('subject')
-            content = data.get('content')
-
-            # attachment = request.FILES['attachment']
-            # if attachment:
-            #     handle_file(attachment)
+            content = data.get('content')            
 
             send_email(students_in_project, request.user.email, subject, content)
             messages.add_message(request, messages.SUCCESS, "Email Sent!")
