@@ -163,9 +163,9 @@ urlpatterns = [
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #Django Toolbar Uncomment to turn on
-
-if settings.DEBUG:
-   import debug_toolbar
-   urlpatterns += [
-       url(r'^__debug__/', include(debug_toolbar.urls)),
-   ]
+#
+# if settings.DEBUG:
+#    import debug_toolbar
+#    urlpatterns += [
+#        url(r'^__debug__/', include(debug_toolbar.urls)),
+#    ]
