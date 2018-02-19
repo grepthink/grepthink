@@ -103,15 +103,15 @@ def view_one_course(request, slug):
     if(request.method == 'POST'):
         assignmentForm = AssignmentForm(request.user.id, slug, request.POST)
         if assignmentForm.is_valid():
-            ass = Assignment()
-            ass.due_date = assignmentForm.cleaned_data.get('due_date')
-            ass.ass_date = assignmentForm.cleaned_data.get('ass_date')
-            ass.ass_type =assignmentForm.cleaned_data.get('ass_type').lower()
-            ass.ass_name = assignmentForm.cleaned_data.get('ass_name')
-            ass.description = assignmentForm.cleaned_data.get('description')
-            ass.ass_number = assignmentForm.cleaned_data.get('ass_number')
+            assignment = Assignment()
+            assignment.due_date = assignmentForm.cleaned_data.get('due_date')
+            assignment.ass_date = assignmentForm.cleaned_data.get('ass_date')
+            assignment.ass_type =assignmentForm.cleaned_data.get('ass_type').lower()
+            assignment.ass_name = assignmentForm.cleaned_data.get('ass_name')
+            assignment.description = assignmentForm.cleaned_data.get('description')
+            assignment.ass_number = assignmentForm.cleaned_data.get('ass_number')
 
-            ass.save()
+            assignment.save()
 
             course.assignments.add(assignment)
             course.save()
@@ -211,7 +211,7 @@ def join_course(request):
     page_description = "Join a Course!"
     title = "Join Course"
 
-    if request.user.profile.isprof:
+    if request.user.profile.isProf:
         role = 'professor'
     else:
         role = 'student'
