@@ -159,7 +159,12 @@ def view_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
     """
-    page_user = get_object_or_404(User, username=username)
+
+
+    # Where I stopped and broke something
+
+
+    page_user = get_object_or_404(User.objects.prefetch_related('profile'), username=username)
     user = request.user
     profile = Profile.objects.get(user=user)
     page_name = "Profile"
@@ -172,7 +177,7 @@ def view_profile(request, username):
     my_projects = Project.objects.filter(interest__in=my_interests)
 
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
+        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title,
         })
 
 def edit_skills(request, username):
