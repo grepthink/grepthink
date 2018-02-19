@@ -43,18 +43,16 @@
   <div class="box-header with-border">
     <h3 class="box-title">About Me</h3>
     <span class="pull-right">
-        {% if user.profile.isGT %}
-            <a href="{% url 'edit_profile' page_user.username %}"
-                class="btn btn-primary btn-flat">Edit Profile</a>
-        {% else %}
-            <a href="{% url 'edit_profile' user.username %}"
-                class="btn btn-primary btn-flat">Edit Profile</a>
+        {% if user.profile.isGT or page_user == request.user %}
+            <a href="{% url 'edit_profile' page_user.username %}">
+                <button class="btn btn-primary btn-flat">Edit Profile</button>
+            </a>
+            <a href="{% url 'edit_schedule' user.username %}">
+               <button class="btn btn-primary btn-flat">Edit Schedule</button>
+            </a>
         {% endif %}
     </span>
-    <span class="pull-right">
-        <a href="{% url 'edit_schedule' user.username %}"
-           class="btn btn-primary btn-flat">Edit Schedule</a>
-    </span>
+
   </div>
 
   <!-- BOX BODY -->
@@ -93,7 +91,7 @@
             </p>
 
         {% endif %}
-    {% endif %}    
+    {% endif %}
   </div>
 </div>
 

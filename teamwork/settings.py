@@ -207,7 +207,7 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 # Django Toolbar Uncomment to turn on
-
+#
 # DEBUG = True
 #
 # if DEBUG:

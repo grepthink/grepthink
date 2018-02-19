@@ -302,10 +302,11 @@ class ShowInterestForm(forms.ModelForm):
         super(ShowInterestForm, self).__init__(*args, **kwargs)
 
         # Gets course with certain slug
-        cur_course = Course.objects.get(slug=slug)
+        cur_course = Course.objects.prefetch_related('projects').get(slug=slug)
 
         # Gets all projects in that course
-        projects = cur_course.projects.all()
+        projects = cur_course.projects.all().extra(\
+        select={'lower_title':'lower(title)'}).order_by('lower_title')
 
         self.fields['projects'].queryset = projects
         self.fields['projects2'].queryset = projects
@@ -314,19 +315,19 @@ class ShowInterestForm(forms.ModelForm):
         self.fields['projects5'].queryset = projects
 
         # Hides fields based on # projects in course
-        if len(projects) < 5:
+        if projects.count() < 5:
             self.fields['projects5'].widget = forms.HiddenInput()
             self.fields['p5r'].widget = forms.HiddenInput()
-            if len(projects) < 4:
+            if projects.count() < 4:
                 self.fields['projects4'].widget = forms.HiddenInput()
                 self.fields['p4r'].widget = forms.HiddenInput()
-                if len(projects) < 3:
+                if projects.count() < 3:
                     self.fields['projects3'].widget = forms.HiddenInput()
                     self.fields['p3r'].widget = forms.HiddenInput()
-                    if len(projects) < 2:
+                    if projects.count() < 2:
                         self.fields['projects2'].widget = forms.HiddenInput()
                         self.fields['p2r'].widget = forms.HiddenInput()
-                        if len(projects) < 1:
+                        if projects.count() < 1:
                             self.fields['projects'].widget = forms.HiddenInput()
                             self.fields['p1r'].widget = forms.HiddenInput()
 
