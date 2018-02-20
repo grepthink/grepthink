@@ -77,6 +77,7 @@ def view_one_course(request, slug):
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
+    print(date_updates)
     staff = course.get_staff()
     staff_ids=[o.id for o in staff]
     students =list(course.students.exclude(id__in=staff_ids))

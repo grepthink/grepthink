@@ -37,7 +37,7 @@
         {% for date_update in date_updates %}
         <li class="time-label" style="list-style: none">
             <span class="bg-blue">
-                {{ date_update.date }}
+                {{ date_update.date |date:"M d, Y" }}
             </span>
         </li>
             {% for update in date_update.updates %}

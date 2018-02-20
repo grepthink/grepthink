@@ -2,11 +2,15 @@
 {% load static %}
 {% load i18n %}
 
-<!-- {% block crumb %}
-<li><a href="{% url 'view_course' %}">Courses</a></li>
-<li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
-<li><a href="">Post Update</a></li>
-{% endblock crumb %} -->
+
+{% block crumb %}
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+{% endblock crumb %}
 
 {% block content %}
 <div class="row">
