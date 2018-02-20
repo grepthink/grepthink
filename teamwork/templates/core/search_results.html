@@ -24,7 +24,7 @@
 
       </div> <!-- /.box-header -->
 
-      <div class="box-body no-padding">
+      <div class="box-body">
         <ul class="users-list clearfix">
           {% for u in user_results.all %}
           {% if u.username != null %}
@@ -43,7 +43,7 @@
             </li>
           {% endif %}
           {% empty %}
-          <li style="list-style-type: none;">No users found matching that query.</li>
+          No users found matching that query
           {% endfor %}
         </ul>
       </div> <!-- /.box-body -->
@@ -70,18 +70,35 @@
 
       </div> <!-- /.box-header -->
 
-      <div class="box-body no-padding">
+      <div class="box-body ">
 
-        <ul>
+
 
           {% for course in course_results %}
-          <li>{{course.name}}</li>
+
+              <div class="small-box bg-aqua" style="border-radius: 10px">
+                <div class="inner">
+                  <h3>{{course.name}}</h3>
+
+                  <p>{{course.term}}  {{course.year}}</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-book"></i>
+                </div>
+                <a href="{% url 'view_one_course' course.slug %}" class="small-box-footer" style="border-radius: 10px">
+                  More info <i class="fa fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                
 
           {% empty %}
-          <li>No courses found matching that query.</li>
+
+            </h3> No courses found matching that query.</h3>
+
           {% endfor %}
 
-        </ul>
+
+
 
 
       </div><!-- /.box-body -->

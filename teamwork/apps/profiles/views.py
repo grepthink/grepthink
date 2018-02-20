@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from teamwork.apps.profiles.forms import SignUpForm
 from teamwork.apps.projects.models import *
+from teamwork.apps.courses.models import *
 
 from .forms import *
 from .models import *
@@ -162,7 +163,9 @@ def view_profile(request, username):
 
     page_user = get_object_or_404(User.objects.prefetch_related('profile'), username=username)
     user = request.user
+    projects = Project.get_my_projects(page_user)
     profile = Profile.objects.get(user=user)
+    courses = Course.get_my_courses(page_user)
     page_name = "Profile"
     page_description = "%s's Profile"%(page_user.username)
     title = "View Profile"
@@ -174,7 +177,7 @@ def view_profile(request, username):
 
     return render(request, 'profiles/profile.html', {
         'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title,
-        })
+        'projects': projects, 'courses': courses})
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():

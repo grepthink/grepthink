@@ -816,10 +816,11 @@ def tsr_update(request, slug, assslug):
         late = False
     else:
         late=True
-    print(late)
+
 
     forms =list()
     if request.method == 'POST':
+
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
@@ -836,7 +837,6 @@ def tsr_update(request, slug, assslug):
                 tsr.evaluator = request.user
                 tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
                 tsr.late = late
-                print(tsr.late)
 
                 tsr.save()
 

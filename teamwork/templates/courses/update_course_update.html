@@ -2,8 +2,17 @@
 {% load static %}
 {% load i18n %}
 
+{% block crumb %}
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+{% endblock crumb %}
+
 {% block content %}
-<ol class="breadcrumb">
+<!-- <ol class="breadcrumb">
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'view_course' %}">Courses</a></li>
     <li>
@@ -16,7 +25,7 @@
             Edit update
         </a>
     </li>
-</ol>
+</ol> -->
 
 <div class="row">
     <div class="col-md-10">
