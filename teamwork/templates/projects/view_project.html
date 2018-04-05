@@ -393,13 +393,13 @@ k
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <th>Assigned</th>
-                                        <th>Due</th>
-                                        <th>Type</th>
-                                        <th>Name</th>
+                                        <th style="width:5%;">Assigned</th>
+                                        <th style="width:5%;">Due</th>
+                                        <th style="width:1%;">Type</th>
+                                        <th style="width:5%;">Name</th>
                                         <th style="width:1%;">Number</th>
-                                        <th>Description</th>
-                                        <th> </th>
+                                        <th style="width:20%;">Description</th>
+                                        <th style="width:5%;"> </th>
                                     </tr>
                                     {% for asg in assignments %}
                                     <tr>
@@ -475,12 +475,12 @@ k
               }
             </style>
             {% for ass in assigned_tsrs %}
-            <div class="box box-solid">
+            <div class="box box-solid  collapsed-box">
               <div class="box-header with-border">
                 <h3 class="box-title">Evaluation #{{ ass.ass_number }}</h3>
 
                 <div class="box-tools">
-                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                   </button>
                 </div>
 
@@ -590,7 +590,12 @@ k
                        </tr>
                     {% for avg in avgs %}
                      <tr>
-                       <td>{{ avg.0.username }}</td>
+                       <td>
+                           <a href="{% url 'profile' avg.0.username %}">
+
+                           {{ avg.0.username }}</a>
+
+                       </td>
                        <td>
                          {% if contribute_levels.high < avg.1 %}
                              <div style="color:blue">{{avg.1}}</div>

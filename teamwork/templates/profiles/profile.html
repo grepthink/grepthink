@@ -4,6 +4,16 @@
 {% load static %}
 {% load gravatar %}
 
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+
+{% endblock stylesheets %}
+
 <!-- BREADCRUMB -->
 {% block crumb %}
 <li><a href="{% url 'profile' page_user.username %}">Profile</a></li>
@@ -38,23 +48,22 @@
 </div>
 
 <!-- INFORMATION BOX -->
-<div class="box box-primary">
+<div class="box sm-box-solid">
     <!-- BOX HEADER -->
   <div class="box-header with-border">
     <h3 class="box-title">About Me</h3>
     <span class="pull-right">
-        {% if user.profile.isGT %}
-            <a href="{% url 'edit_profile' page_user.username %}"
-                class="btn btn-primary btn-flat">Edit Profile</a>
-        {% else %}
-            <a href="{% url 'edit_profile' user.username %}"
-                class="btn btn-primary btn-flat">Edit Profile</a>
+        {% if user.profile.isGT or page_user == request.user %}
+            <a href="{% url 'edit_profile' page_user.username %}">
+                <button class="btn btn-primary btn-flat">Edit Profile</button>
+            </a>
+            <a href="{% url 'edit_schedule' user.username %}">
+               <button class="btn btn-primary btn-flat">Edit Schedule</button>
+            </a>
         {% endif %}
+        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
     </span>
-    <span class="pull-right">
-        <a href="{% url 'edit_schedule' user.username %}"
-           class="btn btn-primary btn-flat">Edit Schedule</a>
-    </span>
+
   </div>
 
   <!-- BOX BODY -->
@@ -93,8 +102,63 @@
             </p>
 
         {% endif %}
-    {% endif %}    
+    {% endif %}
   </div>
+</div>
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Projects</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfile">
+        {% include "projects/partial_project_profile.html" with projects=projects %}
+    </div>
+
+  <!-- /.box-body -->
+</div>
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Courses</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfilesm">
+
+
+        {% for course in courses %}
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <a href="{% url 'view_one_course' course.slug %}" class="info-box-footer" style="border-radius: 10px">
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-book"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">{{course.name}}</span>
+              <p>{{course.term}}&nbsp;{{course.year}}</p>
+
+              More info <i class="fa fa-arrow-circle-right"></i>
+
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+          </a>
+        </div>
+
+        {% empty %}
+
+         They are not in any courses.
+
+        {% endfor %}
+    </div>
+
+  <!-- /.box-body -->
 </div>
 
 {% endblock content %}

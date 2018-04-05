@@ -31,12 +31,10 @@ def _projects(request, projects):
     """
     page = request.GET.get('page')
 
-
     # Populate with page name and title
     page_name = "My Projects"
     page_description = "Projects created by " + request.user.username
     title = "My Projects"
-
 
     return render(request, 'projects/view_projects.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
@@ -114,12 +112,12 @@ def view_one_project(request, slug):
     course = project.course.first()
     staff = course.get_staff()
 
-    asgs = sorted(course.assignments.all(), key=lambda s: s.ass_date)
+    asgs = sorted(course.assignments.prefetch_related('subs').all(), key=lambda s: s.ass_date)
 
     asg_completed = []
 
     for i in asgs:
-        for j in i.subs.all().prefetch_related('evaluator'):
+        for j in i.subs.prefetch_related('evaluator').all():
             if j.evaluator == request.user:
                 asg_completed.append(i)
                 break
@@ -215,7 +213,7 @@ def view_one_project(request, slug):
         'project': project})
 
 def leave_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.prefetch_related('members', 'pending_members').select_related('creator', 'scrum_master'), slug=slug)
     members = project.members.all()
     pending_members = project.pending_members.all()
     f_user = request.user
@@ -250,7 +248,7 @@ def leave_project(request, slug):
 
 @login_required
 def request_join_project(request, slug):
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.object.select_related('creator').prefetch_related('members', 'pending_members', 'course'), slug=slug)
     project_members = project.members.all()
     pending_members = project.pending_members.all()
 
@@ -502,7 +500,7 @@ def edit_project(request, slug):
     Public method that serves the form allowing a user to edit a project
     Based off courses/views.py/edit_course
     """
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.prefetch_related('members', 'course').select_related('creator'), slug=slug)
     course = project.course.first()
     project_owner = project.creator.profile
     members = project.members.all()
@@ -730,7 +728,7 @@ def post_update(request, slug):
     """
     Post an update for a given project
     """
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
 
     if request.user.profile.isGT:
         pass
@@ -758,7 +756,7 @@ def post_update(request, slug):
 @login_required
 def resource_update(request, slug):
 
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
 
     if request.user.profile.isGT:
         pass
@@ -794,8 +792,8 @@ def tsr_update(request, slug, assslug):
     title = "TSR Update"
 
     user = request.user
-    cur_proj = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=cur_proj)
+    cur_proj = get_object_or_404(Project.objects.prefetch_related('course'), slug=slug)
+    course = cur_proj.course.first()
     asg = get_object_or_404(Assignment, slug=assslug)
     today = datetime.now().date()
     members = cur_proj.members.all()
@@ -818,10 +816,11 @@ def tsr_update(request, slug, assslug):
         late = False
     else:
         late=True
-    print(late)
+
 
     forms =list()
     if request.method == 'POST':
+
         for email in emails:
             # grab form
             form = TSR(request.user.id, request.POST, members=members,
@@ -838,7 +837,6 @@ def tsr_update(request, slug, assslug):
                 tsr.evaluator = request.user
                 tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
                 tsr.late = late
-                print(tsr.late)
 
                 tsr.save()
 
@@ -1022,7 +1020,7 @@ def find_meeting(slug):
     """
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=project)
+    # course = Course.objects.get(projects=project)
     # low = project.lower_time_bound
     # high = project.upper_time_bound
 
@@ -1071,14 +1069,14 @@ def add_member(request, slug, uname):
         - They aren't a member already
         - They are a member of the course
     """
-    project = get_object_or_404(Project, slug=slug)
-    course = Course.objects.get(projects=project)
+    project = get_object_or_404(Project.objects.prefetch_related('course', 'members', 'pending_members'), slug=slug)
+    course = project.course.first()
     mem_to_add = User.objects.get(username=uname)
     mem_courses = Course.get_my_courses(mem_to_add)
-    curr_members = Membership.objects.filter(project=project)
+    curr_members = project.members.all()
 
     # ensure user is a member of the course && not a member of the project
-    if course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+    if course in mem_courses and mem_to_add not in [mem for mem in curr_members]:
         Membership.objects.create(
             user=mem_to_add, project=project, invite_reason='')
         Alert.objects.create(
@@ -1111,7 +1109,7 @@ def reject_member(request, slug, uname):
     """
     Reject Membership
     """
-    project = get_object_or_404(Project, slug=slug)
+    project = get_object_or_404(Project.object.prefetch_related('pending_members'), slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
     # remove member from pending list if he/she was on it

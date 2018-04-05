@@ -64,8 +64,13 @@ def send_email(recipients, gt_email, subject, content):
 
     # The following line was giving SSL Certificate errors.
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
+
+
+    # Comment this line to stop local email errors
     response = sg.client.mail.send.post(request_body=mail.get())
-    #
+
+
+
     # print(response.status_code)
     # print(response.body)
     # print(response.headers)

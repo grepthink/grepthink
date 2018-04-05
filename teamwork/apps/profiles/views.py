@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from teamwork.apps.profiles.forms import SignUpForm
 from teamwork.apps.projects.models import *
+from teamwork.apps.courses.models import *
 
 from .forms import *
 from .models import *
@@ -159,21 +160,24 @@ def view_profile(request, username):
     and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
 
     """
-    page_user = get_object_or_404(User, username=username)
+
+    page_user = get_object_or_404(User.objects.prefetch_related('profile'), username=username)
     user = request.user
+    projects = Project.get_my_projects(page_user)
     profile = Profile.objects.get(user=user)
+    courses = Course.get_my_courses(page_user)
     page_name = "Profile"
     page_description = "%s's Profile"%(page_user.username)
     title = "View Profile"
 
-    # gets all interest objects of the current user
-    my_interests = Interest.objects.filter(user=user)
-    # gets all projects where user has interest
-    my_projects = Project.objects.filter(interest__in=my_interests)
+    # # gets all interest objects of the current user
+    # my_interests = Interest.objects.filter(user=user)
+    # # gets all projects where user has interest
+    # my_projects = Project.objects.filter(interest__in=my_interests)
 
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title
-        })
+        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title,
+        'projects': projects, 'courses': courses})
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():
@@ -197,19 +201,22 @@ def edit_profile(request, username):
     """
     Public method that takes a request and a username.  Gets an entered 'skill' from the form
     and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
+
+    GT OVERRRIDE DOES NOT EDIT OTHER PROFILES BUT IT NO LONGER CRASHES
     """
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
-    if request.user.profile.isGT:
-        tempProfile = User.objects.get(username=username)
-        profile = Profile.objects.get(user=tempProfile)
+    # elif request.user.profile.isGT:
+    #     print(username)
+    #     profile = Profile.objects.get(user__username=username)
     else:
         #grab profile for the current user
-        profile = Profile.objects.get(user=request.user)
+        profile = Profile.objects.prefetch_related('user').get(user=request.user)
 
-    if request.user.profile.isGT:
-        pass
-    elif request.user.username != username:
+    # if request.user.profile.isGT:
+    #     pass
+    # el
+    if request.user.username != username:
         messages.info(request, 'You cannot access the user profile specified!')
         return redirect(view_profile, request.user.username)
 
@@ -219,7 +226,6 @@ def edit_profile(request, username):
 
     #original form
     if request.method == 'POST':
-
         # Add skills to the project learn_skills
         if request.POST.get('known_skills') or request.POST.get('learn_skills'):
             known = request.POST.getlist('known_skills')
@@ -311,9 +317,8 @@ def edit_profile(request, username):
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
 
-    page_user = get_object_or_404(User, username=username)
     return render(request, 'profiles/edit_profile.html', {
-        'page_user': page_user, 'form':form, 'profile':profile,
+        'form':form, 'profile':profile,
         'known_skills_list':known_skills_list,
         'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
 
