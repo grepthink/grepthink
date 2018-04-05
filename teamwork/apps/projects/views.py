@@ -248,7 +248,7 @@ def leave_project(request, slug):
 
 @login_required
 def request_join_project(request, slug):
-    project = get_object_or_404(Project.object.select_related('creator').prefetch_related('members', 'pending_members', 'course'), slug=slug)
+    project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members', 'pending_members', 'course'), slug=slug)
     project_members = project.members.all()
     pending_members = project.pending_members.all()
 
@@ -1109,7 +1109,7 @@ def reject_member(request, slug, uname):
     """
     Reject Membership
     """
-    project = get_object_or_404(Project.object.prefetch_related('pending_members'), slug=slug)
+    project = get_object_or_404(Project.objects.prefetch_related('pending_members'), slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
     # remove member from pending list if he/she was on it
