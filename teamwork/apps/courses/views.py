@@ -276,6 +276,8 @@ def show_interest(request, slug):
     # enrollment objects containing current user
     user_courses = profile.user.enrollment.all()
 
+    user = request.user
+
     page_name = "Show Interest"
     page_description = "Show Interest in Projects for %s"%(cur_course.name)
     title = "Show Interest"
@@ -315,6 +317,7 @@ def show_interest(request, slug):
             # Clear all interest objects where user is current user and for this course, avoid duplicates
             all_interests = Interest.objects.filter(project_interest=projects)
             interests = user.interest.all()
+
             if interests is not None: interests.delete()
 
             projectCount = len(projects)
