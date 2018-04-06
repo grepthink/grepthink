@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load gravatar %}
 
 {% block content %}
 
@@ -30,13 +31,9 @@
           {% if u.username != null %}
             <li style="list-style-type: none;">
               <a href="{% url 'profile' u.username %}">
-              {% if u.profile.avatar %}
-                <img src="{{ u.profile.avatar.url }}" class="img-circle" alt="User Image">
-              {% else %}
-                <img src="https://www.gravatar.com/avatar/0cf665cbc2864084b988b0332fbebaae?s=90&amp;d=mm"
-                    class="img-circle" alt="User Image">
-                    <!-- <img src="/media/avatars/Greppy.jpg" class="img-circle"  alt="User Image"> -->
-              {% endif %}
+                  <div class="img-circle">
+                  {% gravatar u.email 50 %}
+                  </div>
               </a>
               <a class="users-list-name" href="{% url 'profile' u.username %}">{% firstof u.user.get_short_name u.get_username %}</a>
               <span class="users-list-date"><a href="mailto:{{u.email}}" target="_top">{{u.email}}</a></span>
@@ -89,7 +86,7 @@
                   More info <i class="fa fa-arrow-circle-right"></i>
                 </a>
                 </div>
-                
+
 
           {% empty %}
 

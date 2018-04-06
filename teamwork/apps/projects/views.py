@@ -96,25 +96,28 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
 
-    project=get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile', 'members', 'members__profile', 'desired_skills',
-    'course', 'course__assignments', 'pending_members', 'tsr'), slug=slug)
-
-    updates = project.get_updates()
-    resources = project.get_resources()
-    # Get the project owner for color coding stuff
-
+    project=get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile',
+                                                                                                              'members',
+                                                                                                              'members__profile',
+                                                                                                              'desired_skills',
+                                                                                                              'course',
+                                                                                                              'course__assignments',
+                                                                                                              'pending_members',
+                                                                                                              'tsr'),
+                                                                                                              slug=slug)
     # Populate with project name and tagline
     page_name = project.title or "Project"
     page_description = project.tagline or "Tagline"
     title = project.title or "Project"
 
-    # Get the course given a project wow ethan great job keep it up.
+    # Local Variables
+    updates = project.get_updates()
+    resources = project.get_resources()
     course = project.course.first()
     staff = course.get_staff()
-
     asgs = sorted(course.assignments.prefetch_related('subs').all(), key=lambda s: s.ass_date)
-
     asg_completed = []
+
 
     for i in asgs:
         for j in i.subs.prefetch_related('evaluator').all():
@@ -122,29 +125,29 @@ def view_one_project(request, slug):
                 asg_completed.append(i)
                 break
 
-
-    # to reduce querys in templates -kp
     pending_members = project.pending_members.all()
     pending_count = len(pending_members)
 
+    # If the current user is on the Pending List, requestButton bool hides the RequestToJoin button
     requestButton = 1
     if request.user in pending_members:
         requestButton = 0
 
-    project_chat = reversed(project.get_chat())
-    if request.method == 'POST':
-        form = ChatForm(request.user.id, slug, request.POST)
-        if form.is_valid():
-            # Create a chat object
-            chat = ProjectChat(author=request.user, project=project)
-            chat.content = form.cleaned_data.get('content')
-            chat.save()
-            return redirect(view_one_project, project.slug)
-        else:
-            messages.info(request,'Errors in form')
-    else:
-        # Send form for initial project creation
-        form = ChatForm(request.user.id, slug)
+
+    # project_chat = reversed(project.get_chat())
+    # if request.method == 'POST':
+    #     form = ChatForm(request.user.id, slug, request.POST)
+    #     if form.is_valid():
+    #         # Create a chat object
+    #         chat = ProjectChat(author=request.user, project=project)
+    #         chat.content = form.cleaned_data.get('content')
+    #         chat.save()
+    #         return redirect(view_one_project, project.slug)
+    #     else:
+    #         messages.info(request,'Errors in form')
+    # else:
+    #     # Send form for initial project creation
+    #     form = ChatForm(request.user.id, slug)
 
     find_meeting(slug)
 
@@ -169,18 +172,11 @@ def view_one_project(request, slug):
             con_avg = -1    # if dividing by zero set avg to -1
         avgs.append((key, int(con_avg)))
 
-    # ======================
     assigned_tsrs = sorted(course.assignments.filter(ass_type="tsr", closed=False), key=lambda s: s.ass_date)
-
     tsr_tuple={}
 
-    if not request.user.profile.isGT:
-        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
-    else:
-        user_role = 'GT'
-
+    user_role = get_user_role(request.user, course)
     fix = []
-
     if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
         fix = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.username))
         # temp = ""
@@ -204,11 +200,11 @@ def view_one_project(request, slug):
     today = datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'form' : form, 'temp_tup':fix,
+        'page_description': page_description, 'title' : title, 'temp_tup':fix,
         'pending_members': pending_members,
         'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
         'pending_count':pending_count,'staff':staff,
-        'updates': updates, 'project_chat': project_chat, 'course' : course,
+        'updates': updates, 'course' : course,
         'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs,
         'project': project})
 
@@ -252,45 +248,48 @@ def request_join_project(request, slug):
     project_members = project.members.all()
     pending_members = project.pending_members.all()
 
-    if request.user in project_members:
-        # TODO: send an error
-        print("already in project, button shouldn't appear")
-    elif request.user not in pending_members:
-        # user wants to join project
-        # add to pending members list of projects
-        project.pending_members.add(request.user)
-        project.save()
+    user_role = get_user_role(request.user, project.course.first())    
+    # If the user is enrolled in the course, then allow them to request to join
+    if user_role != 'not enrolled':
+        if request.user in project_members:
+            # TODO: send an error
+            print("need this print here until we put something in")
+        elif request.user not in pending_members:
+            # user wants to join project
+            # add to pending members list of projects
+            project.pending_members.add(request.user)
+            project.save()
 
-        # send email to project owner
-        creator = project.creator
-        subject = "{0} has requested to join {1}".format(request.user, project.title)
-        # TODO: create link that goes directly to accept or deny
-        content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
-        content = "{0}\n\n www.grepthink.com".format(content_text)
-        send_email(creator, "noreply@grepthink.com", subject, content)
-        # notify user that their request has gone through successfully
-        messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
+            # send email to project owner
+            creator = project.creator
+            subject = "{0} has requested to join {1}".format(request.user, project.title)
+            # TODO: create link that goes directly to accept or deny
+            content_text = "Please follow the link below to accept or deny {0}'s request.".format(request.user)
+            content = "{0}\n\n www.grepthink.com".format(content_text)
+            send_email(creator, "noreply@grepthink.com", subject, content)
+            # notify user that their request has gone through successfully
+            messages.add_message(request, messages.SUCCESS, "{0} has been notified of your request to join!".format(project.title))
 
-        # TODO: send alert to project members and/or PO
+            # TODO: send alert to project members and/or PO
 
-        course = project.course.first()
+            course = project.course.first()
 
-        return redirect(view_one_course, course.slug)
+            return redirect(view_one_course, course.slug)
 
-    elif request.user in pending_members:
-        # Cancel Request to join
-        # remove member from pending list
-        for mem in pending_members:
-            if mem == request.user:
-                project.pending_members.remove(mem)
-                project.save()
+        elif request.user in pending_members:
+            # Cancel Request to join
+            # remove member from pending list
+            for mem in pending_members:
+                if mem == request.user:
+                    project.pending_members.remove(mem)
+                    project.save()
 
-        Alert.objects.create(
-            sender=request.user,
-            to=project.creator,
-            msg=request.user.username + " has revoked there request to join " + project.title,
-            url=reverse('view_one_project',args=[project.slug]),
-            )
+            Alert.objects.create(
+                sender=request.user,
+                to=project.creator,
+                msg=request.user.username + " has revoked there request to join " + project.title,
+                url=reverse('view_one_project',args=[project.slug]),
+                )
 
     return view_one_project(request, slug)
 
@@ -510,13 +509,10 @@ def edit_project(request, slug):
     page_description = "Make changes to " + project.title
     title = "Edit Project"
 
-    if request.user.profile.isGT:
-        userRole = 'GT'
-    else:
-        userRole = Enrollment.objects.filter(user=request.user, course=course).first().role
+    user_role = get_user_role(request.user, course)
 
     # if user is not project owner or they arent in the member list
-    if request.user.profile.isGT or request.user == course.creator or userRole == "ta":
+    if request.user.profile.isGT or request.user == course.creator or user_role == "ta":
         pass
     elif not request.user  in project.members.all():
         #redirect them with a message
@@ -526,7 +522,7 @@ def edit_project(request, slug):
     if request.POST.get('delete_project'):
         print("deleting project")
         # Rights: GT, Professor, TA, Project Creator
-        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or userRole == "ta":
+        if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or user_role == "ta":
             project.delete()
         else:
             messages.warning(request,'Only project owner can delete project.')
@@ -1176,3 +1172,19 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
+
+def get_user_role(user, course):
+    """
+    returns the role of the user in the course
+    """
+    if not user.profile.isGT:
+        userEnrollment = Enrollment.objects.filter(user=user, course=course).first()
+        if userEnrollment is None:
+            # then the current user is not enrolled in the course this project belongs to
+            user_role = 'not enrolled'
+        else:
+            user_role = userEnrollment.role
+    else: #maybe don't need a GT user_role. profile.isGT is probably better -kp
+        user_role = 'GT'
+
+    return user_role
