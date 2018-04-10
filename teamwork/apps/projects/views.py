@@ -149,7 +149,7 @@ def view_one_project(request, slug):
     #     # Send form for initial project creation
     #     form = ChatForm(request.user.id, slug)
 
-    find_meeting(slug)
+    #find_meeting(slug)
 
     readable = ""
     if project.readable_meetings:
@@ -248,7 +248,7 @@ def request_join_project(request, slug):
     project_members = project.members.all()
     pending_members = project.pending_members.all()
 
-    user_role = get_user_role(request.user, project.course.first())    
+    user_role = get_user_role(request.user, project.course.first())
     # If the user is enrolled in the course, then allow them to request to join
     if user_role != 'not enrolled':
         if request.user in project_members:
