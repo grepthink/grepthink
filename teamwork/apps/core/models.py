@@ -70,51 +70,50 @@ def po_match(project):
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
 
 
-    # # Skill Matching
-    # # loop through the desired skills can check the skills table to see who
-    # # knows or wants to learn this skill. multiply by weight if necessary
-    # desired_skills = project.desired_skills.all()
-    # for i in desired_skills:
-    #     # filter the users that know the skill to those actually in the course
-    #     know = i.known.filter(user__enrollment__in=[course])
-    #     for j in know:
-    #         cur_course = Course.get_my_courses(j.user)
-    #         # if is to allow for updating the score of users already counted
-    #         if Membership.objects.filter(user=j.user, project__course=course):
-    #             continue
-    #         elif j.user in project.members.all() or project in Project.get_created_projects(j.user):
-    #             continue
-    #         else:
-    #             if j.user in initial:
-    #                 initial[j.user][0] += (2 * knowWeight)
-    #                 initial[j.user][2] += (2 * knowWeight)
-    #             # otherwise we add them to a backup list
-    #             else:
-    #                 if j.user in backup:
-    #                     # temp += (2 * knowWeight)
-    #                     backup[j.user][0] += (2 * knowWeight)
-    #                     backup[j.user][2] += (2 * knowWeight)
-    #                 else:
-    #                     backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
-    #
-    #     learn = i.learn.filter(user__enrollment__in=[course])
-    #     for k in learn:
-    #         cur_course = Course.get_my_courses(k.user)
-    #         # if is to allow for updating   the score of users already counted
-    #         if Membership.objects.filter(user=k.user, project__course=course):
-    #             continue
-    #         elif k.user in project.members.all() or project in Project.get_created_projects(k.user):
-    #             continue
-    #         else:
-    #             if k.user in initial:
-    #                 initial[k.user][0] += (1 * learnWeight)
-    #                 initial[k.user][3] += (1 * learnWeight)
-    #             else:
-    #                 if k.user in backup:
-    #                     backup[k.user][0] += (1 * learnWeight)
-    #                     backup[k.user][3] += (1 * learnWeight)
-    #                 else:
-    #                     backup[k.user] = [(1 * learnWeight), 0, 0, (1 * learnWeight), 0]
+    # Skill Matching
+    # loop through the desired skills can check the skills table to see who
+    # knows or wants to learn this skill. multiply by weight if necessary
+    desired_skills = project.desired_skills.all()
+    for i in desired_skills:
+        # filter the users that know the skill to those actually in the course
+        know = i.known.filter(user__enrollment__in=[course])
+
+        for j in know:
+            # if is to allow for updating the score of users already counted
+            if Membership.objects.filter(user=j.user, project__course=course):
+                continue
+            # elif j.user in project.members.all() or project in Project.get_created_projects(j.user):
+            #     continue
+            else:
+                if j.user in initial:
+                    initial[j.user][0] += (2 * knowWeight)
+                    initial[j.user][2] += (2 * knowWeight)
+                # otherwise we add them to a backup list
+                else:
+                    if j.user in backup:
+                        # temp += (2 * knowWeight)
+                        backup[j.user][0] += (2 * knowWeight)
+                        backup[j.user][2] += (2 * knowWeight)
+                    else:
+                        backup[j.user] = [(2 * knowWeight), 0, (2 * knowWeight), 0, 0]
+
+        learn = i.learn.filter(user__enrollment__in=[course])
+        for k in learn:
+            # if is to allow for updating   the score of users already counted
+            if Membership.objects.filter(user=k.user, project__course=course):
+                continue
+            # elif k.user in project.members.all() or project in Project.get_created_projects(k.user):
+            #     continue
+            else:
+                if k.user in initial:
+                    initial[k.user][0] += (1 * learnWeight)
+                    initial[k.user][3] += (1 * learnWeight)
+                else:
+                    if k.user in backup:
+                        backup[k.user][0] += (1 * learnWeight)
+                        backup[k.user][3] += (1 * learnWeight)
+                    else:
+                        backup[k.user] = [(1 * learnWeight), 0, 0, (1 * learnWeight), 0]
 
     # we compare the size of the intial list to check if there are at least
     # 10 users that match already. If not we will add second list to the
