@@ -3,6 +3,10 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import *
 
+from django.http import JsonResponse
+from django.db.models import Q
+
+# Django
 from django.contrib.auth.models import User
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -67,7 +71,7 @@ def send_email(recipients, gt_email, subject, content):
 
 
     # Comment this line to stop local email errors
-    response = sg.client.mail.send.post(request_body=mail.get())
+    # response = sg.client.mail.send.post(request_body=mail.get())
 
 
 
@@ -146,3 +150,46 @@ def parse_csv(csv_file):
         data[fullname] = email
 
     return data
+
+def select_members(request):
+    if request.method == 'POST' and request.is_ajax():
+        return HttpResponse("Form Submitted")
+
+    elif request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = User.objects.filter(
+                Q( first_name__contains = q ) |
+                Q( last_name__contains = q ) |
+                Q( username__contains = q ) ).order_by( 'username' )
+        for u in results:
+            data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
+
+    return HttpResponse("Failure")
+
+# used for querying members in EditProject, EditCourse
+def edit_select_members(request, slug):
+    if request.method == 'POST' and request.is_ajax():
+        return HttpResponse("Form Submitted")
+
+    elif request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = User.objects.filter(
+                Q( first_name__contains = q ) |
+                Q( last_name__contains = q ) |
+                Q( username__contains = q ) ).order_by( 'username' )
+        for u in results:
+            data['items'].append({'id': u.username, 'text': u.username})
+        return JsonResponse(data)
+
+    return HttpResponse("Failure")

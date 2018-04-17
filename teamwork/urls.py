@@ -12,6 +12,8 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+
+    CAN OPTIONALLY INCLUDE A CONVERTER TYPE. I.e: <int: index>. Otherwise all <index> will be passed as string. -kp
 """
 from django.conf import settings
 from django.conf.urls import include, url
@@ -24,7 +26,15 @@ from django.views.generic.base import RedirectView
 from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
 from teamwork.apps.profiles import views as profile_views
-from teamwork.apps.projects import views as project_views
+from teamwork.apps.core import helpers as core_helpers
+
+# Project Imports
+from teamwork.apps.projects.views import _base
+from teamwork.apps.projects.views import ProjectView
+from teamwork.apps.projects.views import MyProjectsView
+from teamwork.apps.projects.views import EditProjectView
+from teamwork.apps.projects.views import TsrView
+from teamwork.apps.projects.views import MeetingsView
 
 urlpatterns = [
         # CORE AND SIGNUP
@@ -45,40 +55,40 @@ urlpatterns = [
 
         # PROJECT
         # /create_project/
-        url(r'^project/create/$', project_views.create_project, name='create_project'),
+        url(r'^project/create/$', _base.create_project, name='create_project'),
         # /view_projects/
-        url(r'^project/all/', project_views.view_projects, name='view_projects'),
+        url(r'^project/all/', MyProjectsView.view_projects, name='view_projects'),
         # View individual project
-        url(r'^project/(?P<slug>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
+        url(r'^project/(?P<slug>[^/]+)/$', ProjectView.view_one_project, name='view_one_project'),
         # Edit individual project (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/edit/$', project_views.edit_project, name='edit_project'),
+        url(r'^project/(?P<slug>[^/]+)/edit/$', EditProjectView.edit_project, name='edit_project'),
         # Post update for individual project (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
+        url(r'^project/(?P<slug>[^/]+)/update/$', ProjectView.post_update, name='post_update'),
         # Add new resource (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
+        url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
         # Update TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_update, name='tsr_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', TsrView.tsr_update, name='tsr_update'),
         # Edit TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_edit, name='tsr_edit'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', TsrView.tsr_edit, name='tsr_edit'),
         # View TSRs
-        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
+        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', TsrView.view_tsr, name='view_tsr'),
         # View meeting times
-        url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
+        url(r'^project/(?P<slug>[^/]+)/meetings/$', MeetingsView.view_meetings, name='view_meetings'),
         # Request to join Project
-        url(r'^project/(?P<slug>[^/]+)/join/$', project_views.request_join_project, name='request_to_join'),
+        url(r'^project/(?P<slug>[^/]+)/join/$', ProjectView.request_join_project, name='request_to_join'),
         # Request to leave Project
-        url(r'^project/(?P<slug>[^/]+)/leave/$', project_views.leave_project, name='leave_project'),
+        url(r'^project/(?P<slug>[^/]+)/leave/$', EditProjectView.leave_project, name='leave_project'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', project_views.add_member, name='add_member'),
+        url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', project_views.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', _base.reject_member, name='reject_member'),
         # Email Members of Project
-        url(r'^project/(?P<slug>[^/]+)/email_members/$', project_views.email_project, name='email_project'),
+        url(r'^project/(?P<slug>[^/]+)/email_members/$', _base.email_project, name='email_project'),
         # select members (select2)
-        url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
-        url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+        url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', EditProjectView.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/create/ajax/add_desired_skills/$', EditProjectView.create_desired_skills, name='create_desired_skills'),
 
         # COURSE
         # Delete individual assignment (based on slug)
@@ -123,7 +133,7 @@ urlpatterns = [
         # link to show interest page
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
         # select2 for course
-        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         # select2 for course
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
@@ -163,7 +173,7 @@ urlpatterns = [
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #Django Toolbar Uncomment to turn on
-# 
+#
 # if settings.DEBUG:
 #    import debug_toolbar
 #    urlpatterns += [

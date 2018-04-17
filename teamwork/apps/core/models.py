@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
-from teamwork.apps.projects.views import to_bits, from_bits
+from teamwork.apps.projects.models import to_bits, from_bits
 
 """
     Summary: this function is called to sort the  list of matches by score
