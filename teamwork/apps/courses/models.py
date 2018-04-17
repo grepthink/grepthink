@@ -345,9 +345,10 @@ class Course(models.Model):
     Gets the tas for a course
     """
     def get_tas(self):
-        tas = list(Enrollment.objects.filter(course=self,role="ta"))
+        teacher_assistants = list(Enrollment.objects.filter(course=self,role="ta"))
+        assistants = [assistant.user for assistant in teacher_assistants]
 
-        return tas
+        return assistants
 
     """
     Gets ALL of the teaching staff

@@ -77,8 +77,10 @@ def view_one_course(request, slug):
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
     projects = sorted(projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
-    print(date_updates)
+
     staff = course.get_staff()
+
+    # Grab Students in the course
     staff_ids=[o.id for o in staff]
     students =list(course.students.exclude(id__in=staff_ids))
     asgs = sorted(course.assignments.all(), key=lambda s: s.ass_date)
@@ -449,7 +451,7 @@ def edit_course(request, slug):
     #if user is not a professor or they did not create course
     elif not course.creator == request.user:
         # if user is not a TA
-        if not user_role=="ta":
+        if not userRole=="ta":
             #redirect them to the /course directory with message
             messages.info(request,'Only Professor can edit course')
             return HttpResponseRedirect('/course')
