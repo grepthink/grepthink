@@ -299,7 +299,6 @@ def edit_profile(request, username):
         if request.POST.get('delete_profile'):
             page_user = get_object_or_404(User, username=username)
 
-            # Not sure why we want to
             if request.user.profile.isGT:
                 page_user.delete()
                 return redirect('view_course')
@@ -347,24 +346,20 @@ def edit_profile_helper(request, username):
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
         ava = form.cleaned_data.get('avatar')
-        # profile.save() <-- why is this here -kp
 
         #if data is entered, save it to the profile for the following
         if name:
-            profile.name = name
-            profile.save()
+            profile.name = name                        
         if bio:
             profile.bio = bio
-            profile.save()
         if institution:
             profile.institution = institution
-            profile.save()
         if location:
             profile.location = location
-            profile.save()
         if ava:
             profile.avatar = ava
-            profile.save()
+
+        profile.save()
 
 @login_required
 def edit_schedule(request, username):
