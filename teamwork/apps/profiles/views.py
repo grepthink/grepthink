@@ -298,10 +298,13 @@ def edit_profile(request, username):
         #handle deleting profile
         if request.POST.get('delete_profile'):
             page_user = get_object_or_404(User, username=username)
-            page_user.delete()
+
+            # Not sure why we want to
             if request.user.profile.isGT:
+                page_user.delete()
                 return redirect('view_course')
             else:
+                page_user.delete()
                 return redirect('about')
 
         # handles saving bio info if none of the cases were taken
