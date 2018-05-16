@@ -25,16 +25,22 @@ from django.views.generic.base import RedirectView
 
 from teamwork.apps.core import views as core_views
 from teamwork.apps.courses import views as course_views
-from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.core import helpers as core_helpers
 
 # Project Imports
-from teamwork.apps.projects.views import BaseView
+from teamwork.apps.projects.views import BaseView as ProjectBaseView
 from teamwork.apps.projects.views import ProjectView
 from teamwork.apps.projects.views import MyProjectsView
 from teamwork.apps.projects.views import EditProjectView
 from teamwork.apps.projects.views import TsrView
 from teamwork.apps.projects.views import MeetingsView
+
+# Profile Imports
+from teamwork.apps.profiles.views import BaseView as ProfileBaseView
+from teamwork.apps.profiles.views import AlertView
+from teamwork.apps.profiles.views import EditProfileView
+from teamwork.apps.profiles.views import EditScheduleView
+from teamwork.apps.profiles.views import ProfileView
 
 urlpatterns = [
         # CORE AND SIGNUP
@@ -42,10 +48,10 @@ urlpatterns = [
         # /about/
         url(r'^about/$', core_views.about, name='about'),
         # /signup/
-        url(r'^signup/$', profile_views.signup, name='signup'),
+        url(r'^signup/$', ProfileBaseView.signup, name='signup'),
         # /contact/
         url(r'^contact/$', core_views.contact, name='contact'),
-        url(r'^profSignup/$', profile_views.profSignup, name='profSignup'),
+        url(r'^profSignup/$', ProfileBaseView.profSignup, name='profSignup'),
         url(r'^search/$', core_views.search, name='search'),
         url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
         url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
@@ -55,7 +61,7 @@ urlpatterns = [
 
         # PROJECT
         # /create_project/
-        url(r'^project/create/$', BaseView.create_project, name='create_project'),
+        url(r'^project/create/$', ProjectBaseView.create_project, name='create_project'),
         # /view_projects/
         url(r'^project/all/', MyProjectsView.view_projects, name='view_projects'),
         # View individual project
@@ -81,9 +87,9 @@ urlpatterns = [
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', BaseView.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectBaseView.reject_member, name='reject_member'),
         # Email Members of Project
-        url(r'^project/(?P<slug>[^/]+)/email_members/$', BaseView.email_project, name='email_project'),
+        url(r'^project/(?P<slug>[^/]+)/email_members/$', ProjectBaseView.email_project, name='email_project'),
         # select members (select2)
         url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
@@ -149,11 +155,11 @@ urlpatterns = [
         url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
 
         # PROFILE
-        url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
-        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
-        url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
-        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
-        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
+        url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
+        url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', core_views.view_matches, name='view_matches'),
@@ -164,11 +170,11 @@ urlpatterns = [
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
 
         # alerts
-        url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
-        url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
-        url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
-        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert, name="delete_alert"),
-        url(r'^alerts/readall/$', profile_views.archive_alerts, name="archive_alerts"),
+        url(r'^alerts/$', AlertView.view_alerts, name="view_alerts"),
+        url(r'^alerts/(?P<ident>[^/]+)/read/$', AlertView.read_alert, name="read_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/unread/$', AlertView.unread_alert, name="unread_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/delete/$', AlertView.delete_alert, name="delete_alert"),
+        url(r'^alerts/readall/$', AlertView.archive_alerts, name="archive_alerts"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
