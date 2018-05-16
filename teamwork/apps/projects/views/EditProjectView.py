@@ -14,7 +14,7 @@ from teamwork.apps.projects.forms import *
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
 # Helpers
-from teamwork.apps.projects.views._base import *
+from teamwork.apps.projects.views.BaseView import *
 from teamwork.apps.core.helpers import *
 
 @login_required

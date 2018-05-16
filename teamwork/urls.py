@@ -29,7 +29,7 @@ from teamwork.apps.profiles import views as profile_views
 from teamwork.apps.core import helpers as core_helpers
 
 # Project Imports
-from teamwork.apps.projects.views import _base
+from teamwork.apps.projects.views import BaseView
 from teamwork.apps.projects.views import ProjectView
 from teamwork.apps.projects.views import MyProjectsView
 from teamwork.apps.projects.views import EditProjectView
@@ -55,7 +55,7 @@ urlpatterns = [
 
         # PROJECT
         # /create_project/
-        url(r'^project/create/$', _base.create_project, name='create_project'),
+        url(r'^project/create/$', BaseView.create_project, name='create_project'),
         # /view_projects/
         url(r'^project/all/', MyProjectsView.view_projects, name='view_projects'),
         # View individual project
@@ -81,9 +81,9 @@ urlpatterns = [
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', _base.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', BaseView.reject_member, name='reject_member'),
         # Email Members of Project
-        url(r'^project/(?P<slug>[^/]+)/email_members/$', _base.email_project, name='email_project'),
+        url(r'^project/(?P<slug>[^/]+)/email_members/$', BaseView.email_project, name='email_project'),
         # select members (select2)
         url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),

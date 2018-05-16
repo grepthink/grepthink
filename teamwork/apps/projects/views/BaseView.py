@@ -5,8 +5,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from teamwork.apps.courses.models import *
+from teamwork.apps.courses.forms import *
 from teamwork.apps.projects.models import *
 from teamwork.apps.projects.forms import *
+from teamwork.apps.projects.views.MyProjectsView import *
 
 @login_required
 def create_project(request):

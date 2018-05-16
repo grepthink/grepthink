@@ -9,7 +9,7 @@ import json
 from teamwork.apps.core.models import *
 from teamwork.apps.projects.models import ResourceUpdate
 from teamwork.apps.projects.forms import UpdateForm, ResourceForm
-from teamwork.apps.projects.views._base import get_user_role
+from teamwork.apps.projects.views.BaseView import get_user_role
 
 from teamwork.apps.projects.forms import *
 
