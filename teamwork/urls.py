@@ -42,6 +42,15 @@ from teamwork.apps.profiles.views import EditProfileView
 from teamwork.apps.profiles.views import EditScheduleView
 from teamwork.apps.profiles.views import ProfileView
 
+# Course Imports
+from teamwork.apps.courses.views import BaseView as CourseBaseView
+from teamwork.apps.courses.views import CourseView
+from teamwork.apps.courses.views import EditCourseView
+from teamwork.apps.courses.views import EmailCourseView
+from teamwork.apps.courses.views import InterestView
+from teamwork.apps.courses.views import MyCoursesView
+from teamwork.apps.courses.views import StatsView
+
 urlpatterns = [
         # CORE AND SIGNUP
         url(r'^$', core_views.index, name='index'),
@@ -98,56 +107,56 @@ urlpatterns = [
 
         # COURSE
         # Delete individual assignment (based on slug)
-        url(r'^assignment/(?P<slug>[^/]+)/delete/$', course_views.delete_assignment, name='delete_assignment'),
+        url(r'^assignment/(?P<slug>[^/]+)/delete/$', CourseView.delete_assignment, name='delete_assignment'),
         # Edit individual assignment (based on slug)
-        url(r'^assignment/(?P<slug>[^/]+)/edit/$', course_views.edit_assignment, name='edit_assignment'),
+        url(r'^assignment/(?P<slug>[^/]+)/edit/$', CourseView.edit_assignment, name='edit_assignment'),
 
         # View all courses
-        url(r'^course/$', course_views.view_courses, name='view_course'),
+        url(r'^course/$', CourseBaseView.view_courses, name='view_course'),
         # Join a course (valid for all courses)
-        url(r'^course/join/$', course_views.join_course, name='join_course'),
+        url(r'^course/join/$', CourseBaseView.join_course, name='join_course'),
         # Create new course
-        url(r'^course/new/$', course_views.create_course, name='create_course'),
+        url(r'^course/new/$', CourseBaseView.create_course, name='create_course'),
         # View individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
+        url(r'^course/(?P<slug>[^/]+)/$', CourseView.view_one_course, name='view_one_course'),
         # Delete individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course, name='delete_course'),
+        url(r'^course/(?P<slug>[^/]+)/delete/$', EditCourseView.delete_course, name='delete_course'),
         # Drop from a course based on a slug
         #url(r'^course/(?P<slug>[^/]+)/drop/$', course_views.drop_course, name='drop_course'),
         # Edit individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
+        url(r'^course/(?P<slug>[^/]+)/edit/$', EditCourseView.edit_course, name='edit_course'),
         # Stats page link
-        url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
+        url(r'^course/(?P<slug>[^/]+)/stats/$', StatsView.view_stats, name='view_statistics'),
         # Email Roster link
-        url(r'^course/(?P<slug>[^/]+)/email_roster/$', course_views.email_roster, name='email_roster'),
+        url(r'^course/(?P<slug>[^/]+)/email_roster/$', EmailCourseView.email_roster, name='email_roster'),
         # Email w/ CSV
-        url(r'^course/(?P<slug>[^/]+)/email_csv/$', course_views.email_csv, name='email_csv'),
+        url(r'^course/(?P<slug>[^/]+)/email_csv/$', EmailCourseView.email_csv, name='email_csv'),
         # upload csv
-        url(r'^course/(?P<slug>[^/]+)/upload_csv/$', course_views.upload_csv, name='upload_csv'),
+        url(r'^course/(?P<slug>[^/]+)/upload_csv/$', CourseBaseView.upload_csv, name='upload_csv'),
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
         # Setup link to assign students
         url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',core_views.assign_auto, name='assign_auto'),
         # Post update to course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course, name='update_course'),
+        url(r'^course/(?P<slug>[^/]+)/update/$', CourseView.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', course_views.update_course_update, name='update_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', CourseView.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',course_views.delete_course_update, name='delete_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',CourseView.delete_course_update, name='delete_course_update'),
         # Button to lock interest
-        url(r'^course/(?P<slug>[^/]+)/lock$',course_views.lock_interest, name='lock_interest'),
+        url(r'^course/(?P<slug>[^/]+)/lock$',EditCourseView.lock_interest, name='lock_interest'),
         # link to show interest page
-        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$',InterestView.show_interest, name='show_interest'),
         # select2 for course
         url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         # select2 for course
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
-        url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        url(r'^course/(?P<slug>[^/]+)/export/$', CourseBaseView.export_xls, name='export_xls'),
         # Export Interest
-        url(r'^course/(?P<slug>[^/]+)/export_interest/$', course_views.export_interest, name='export_interest'),
+        url(r'^course/(?P<slug>[^/]+)/export_interest/$', InterestView.export_interest, name='export_interest'),
         # Claim Projects (TA)
-        url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
+        url(r'^course/(?P<slug>[^/]+)/claim/$', CourseView.claim_projects, name='claim_projects'),
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),

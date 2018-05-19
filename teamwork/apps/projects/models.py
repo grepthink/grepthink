@@ -1,7 +1,7 @@
 """
 Teamwork: projects
 
-Database Models for the objects: Project, Membership, Intrest, ProjectUpdate
+Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 """
 
 # Built-in modules
