@@ -24,32 +24,19 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
 from teamwork.apps.core import views as core_views
-from teamwork.apps.courses import views as course_views
 from teamwork.apps.core import helpers as core_helpers
 
 # Project Imports
 from teamwork.apps.projects.views import BaseView as ProjectBaseView
-from teamwork.apps.projects.views import ProjectView
-from teamwork.apps.projects.views import MyProjectsView
-from teamwork.apps.projects.views import EditProjectView
-from teamwork.apps.projects.views import TsrView
-from teamwork.apps.projects.views import MeetingsView
+from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjectView, TsrView, MeetingsView
 
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
-from teamwork.apps.profiles.views import AlertView
-from teamwork.apps.profiles.views import EditProfileView
-from teamwork.apps.profiles.views import EditScheduleView
-from teamwork.apps.profiles.views import ProfileView
+from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
 
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
-from teamwork.apps.courses.views import CourseView
-from teamwork.apps.courses.views import EditCourseView
-from teamwork.apps.courses.views import EmailCourseView
-from teamwork.apps.courses.views import InterestView
-from teamwork.apps.courses.views import MyCoursesView
-from teamwork.apps.courses.views import StatsView
+from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView
 
 urlpatterns = [
         # CORE AND SIGNUP
