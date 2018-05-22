@@ -23,7 +23,6 @@ from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
-from teamwork.apps.core import views as core_views
 from teamwork.apps.core import helpers as core_helpers
 
 # Project Imports
@@ -36,19 +35,22 @@ from teamwork.apps.profiles.views import AlertView, EditProfileView, EditSchedul
 
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
-from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView
+from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
+
+# Core Imports
+from teamwork.apps.core.views import AboutView, ContactView, LandingView, LoginView
 
 urlpatterns = [
         # CORE AND SIGNUP
-        url(r'^$', core_views.index, name='index'),
+        url(r'^$', LandingView.index, name='index'),
         # /about/
-        url(r'^about/$', core_views.about, name='about'),
+        url(r'^about/$', AboutView.about, name='about'),
         # /signup/
         url(r'^signup/$', ProfileBaseView.signup, name='signup'),
         # /contact/
-        url(r'^contact/$', core_views.contact, name='contact'),
+        url(r'^contact/$', ContactView.contact, name='contact'),
         url(r'^profSignup/$', ProfileBaseView.profSignup, name='profSignup'),
-        url(r'^search/$', core_views.search, name='search'),
+        url(r'^search/$', core_helpers.search, name='search'),
         url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
         url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
         url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
@@ -121,9 +123,9 @@ urlpatterns = [
         # upload csv
         url(r'^course/(?P<slug>[^/]+)/upload_csv/$', CourseBaseView.upload_csv, name='upload_csv'),
         # Auto Generation page link
-        url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
+        url(r'^course/(?P<slug>[^/]+)/auto_gen/$', MatchesView.auto_gen, name='auto_gen'),
         # Setup link to assign students
-        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',core_views.assign_auto, name='assign_auto'),
+        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',MatchesView.assign_auto, name='assign_auto'),
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', CourseView.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
@@ -158,9 +160,9 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
         # MATCHES AND MATCHSTATS
-        url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        url(r'^matches/$', MatchesView.view_matches, name='view_matches'),
         # see why this user matches
-        url(r'^matchstats/(?P<slug>[^/]+)/$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/$', MatchesView.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
