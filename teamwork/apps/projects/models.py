@@ -1,7 +1,7 @@
 """
 Teamwork: projects
 
-Database Models for the objects: Project, Membership, Intrest, ProjectUpdate
+Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 """
 
 # Built-in modules
@@ -586,7 +586,6 @@ def dayasday(day):
     }.get(day, '2017-04-00T')
 
 # Given an array, creates a bitstring based on meeting times
-# def to_bits(day, l, h):
 def to_bits(day):
     # Creates array of all 0's of length 48
     bitstring = [False]*48
