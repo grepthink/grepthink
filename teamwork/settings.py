@@ -74,11 +74,11 @@ DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 
 isProd = config('PRODUCTION', default=False)
 
+# Stripe Settings
 if isProd:
-    pass
-    #For Testing, comment out for production
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    STRIPE_API_KEY = os.environ.get('STRIPE_SK')
 else:
+    STRIPE_API_KEY = config('STRIPE_SK')
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE_CLASSES = [
