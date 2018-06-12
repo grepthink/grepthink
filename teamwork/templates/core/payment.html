@@ -71,7 +71,7 @@
             {% csrf_token %}
             <script
             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-            data-key="pk_test_P7FKe7l3uiySL3UAPy7mvRxM"
+            data-key="{{ publicKey }}"
             data-amount="{{ paymentForm.amount }}"
             data-name="Grepthink"
             data-description="Make a Donation to Grepthink"

@@ -10,6 +10,11 @@ Simple view only accessible via the URL to donate/accept payments temporarily
 
 def payment(request):
 
+    if settings.IS_PRODUCTION:
+        publicKey = "pk_live_gzjeFHYF6EZxNfmJy6ZJS0Ua"
+    else:
+        publicKey = "pk_test_P7FKe7l3uiySL3UAPy7mvRxM"
+
     paymentForm = PaymentForm()
 
     if (request.method == "POST"):
@@ -37,6 +42,6 @@ def payment(request):
         )
 
         # TODO: validate that the payment was successful
-        return render(request, 'core/success_payment.html')
+        return render(request, 'core/success_payment.html', {'amount':amount, 'memo':memo})
 
-    return render(request, 'core/payment.html', {'paymentForm':paymentForm})
+    return render(request, 'core/payment.html', {'paymentForm':paymentForm, 'publicKey':publicKey})

@@ -72,10 +72,10 @@ EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 
-isProd = config('PRODUCTION', default=False)
+IS_PRODUCTION = config('PRODUCTION', default=False)
 
 # Stripe Settings
-if isProd:
+if IS_PRODUCTION:
     STRIPE_API_KEY = os.environ.get('STRIPE_SK')
 else:
     STRIPE_API_KEY = config('STRIPE_SK')
