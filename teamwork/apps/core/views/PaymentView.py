@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 import os
 import stripe
+from decimal import Decimal
 from django.conf import settings
 from teamwork.apps.core.forms import PaymentForm
 
@@ -21,9 +22,10 @@ def payment(request):
         paymentForm = PaymentForm(request.POST)
 
         if not paymentForm.is_valid():
-            return
+            print("form is not valid")
+            return redirect('core/payment.html')
 
-        amount = request.POST.get('amount')
+        amount = Decimal(request.POST.get('amount'))
         memo = request.POST.get('memo')
 
         stripe.api_key = settings.STRIPE_API_KEY
@@ -31,8 +33,12 @@ def payment(request):
         # Token is created using Checkout or Elements
         # Get the payment token ID submitted by the form
         token = request.POST['stripeToken']
-
-        # TODO: convert amount from dollars to pennies if needed. Better yet, add a mask to the form to force decimal entry
+        
+        # TODO: add a mask to the form to force decimal entry
+        if ((amount % 1) != 0):
+            # amount contains pennies. i.e: $3.95
+            print("amount contains pennies.")
+            amount = int(amount * 100)
 
         charge = stripe.Charge.create(
             amount=amount, # this is pennies?
