@@ -8,9 +8,9 @@ from teamwork.apps.core.forms import PaymentForm
 """
 Simple view only accessible via the URL to donate/accept payments temporarily
 """
-
 def payment(request):
 
+    # Grabs either the TEST version or the LIVE public key, dependent on IS_PRODUCTION
     if settings.IS_PRODUCTION:
         publicKey = "pk_live_gzjeFHYF6EZxNfmJy6ZJS0Ua"
     else:
@@ -18,36 +18,45 @@ def payment(request):
 
     paymentForm = PaymentForm()
 
+    # If POST, then handle the payment, creating a stripe.Charge object
     if (request.method == "POST"):
         paymentForm = PaymentForm(request.POST)
 
         if not paymentForm.is_valid():
-            print("form is not valid")
-            return redirect('core/payment.html')
+            # TODO: show error message, also TODO: validate values as being typed, display error message instantly.
+            return redirect('/payment')
 
-        amount = Decimal(request.POST.get('amount'))
+        # Grab the As-Typed Amount, the Decimal Amount and Memo from the form
+        asTypedAmount = request.POST.get('amount')
+        decimalAmount = Decimal(asTypedAmount)
         memo = request.POST.get('memo')
 
+        # Grab the API Key from the setttings file
         stripe.api_key = settings.STRIPE_API_KEY
 
-        # Token is created using Checkout or Elements
         # Get the payment token ID submitted by the form
         token = request.POST['stripeToken']
-        
-        # TODO: add a mask to the form to force decimal entry
-        if ((amount % 1) != 0):
-            # amount contains pennies. i.e: $3.95
-            print("amount contains pennies.")
-            amount = int(amount * 100)
+
+        # Round the decimalAmount to 2 decimal spaces
+        roundedAmount = round(decimalAmount, 2)
+
+        # Force the amount to an integer since stripe charges in pennies
+        amount = int(decimalAmount * 100)
 
         charge = stripe.Charge.create(
-            amount=amount, # this is pennies?
+            amount=amount,
             currency='usd',
-            description='Donation',
+            description='Donation - ' + memo,
             source=token,
         )
 
         # TODO: validate that the payment was successful
-        return render(request, 'core/success_payment.html', {'amount':amount, 'memo':memo})
+        return render(request, 'core/success_payment.html', {'amount':amount, 'memo':memo, 'asTypedAmount':asTypedAmount})
 
     return render(request, 'core/payment.html', {'paymentForm':paymentForm, 'publicKey':publicKey})
+
+"""
+View that displays the invalid payment template
+"""
+def invalid_template(request):
+    return render(request, 'core/invalid_payment.html')

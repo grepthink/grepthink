@@ -44,9 +44,9 @@
       </div>
     </header>
 
-
     <div class="container" style="height:65vh;">
     <div class="row">
+
       <div class="col-lg-12 h-1000 text-center text-lg-left my-auto">
         <ul class="list-inline mb-2">
           <h3>Make a Donation</h3>
@@ -73,11 +73,10 @@
             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
             data-key="{{ publicKey }}"
             data-amount="{{ paymentForm.amount }}"
-            data-name="Grepthink"
+            data-name="GT"
             data-description="Make a Donation to Grepthink"
             data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-            data-locale="auto"
-            data-zip-code="true">
+            data-locale="auto">
             </script>
         </form> <!-- end of stripe form -->
 
