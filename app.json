@@ -17,6 +17,12 @@
     },
     "WEB_CONCURRENCY": {
       "required": true
+    },
+    "STRIPE_SK": {
+        "required": true
+    },
+    "PRODUCTION":{
+        "required": true
     }
   },
   "formation": {
