@@ -24,3 +24,10 @@ class TestSomthing(TestCase):
 
     def test_day_of_week_basic(self):
         self.assertEqual(dayofweek(9), "Sunday")
+
+    def test_validate_image_basic(self):
+        return(0)
+    def test_create_user_profile(self):
+        return(0)
+    def test_save_user_profile(self):
+        return(0)
