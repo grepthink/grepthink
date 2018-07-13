@@ -431,66 +431,6 @@ class TSR(forms.ModelForm):
         model = Tsr
         fields = ['perc_contribution', 'pos_fb', 'neg_fb']
 
-# TSR Form
-class EditTsrForm(forms.ModelForm):
-    def __init__(self, uid, slug, *args, **kwargs):
-        members = kwargs.pop('members')
-        emails = kwargs.pop('emails')
-        scrum_master = kwargs.pop('scrum_master')
-
-        super(TSR, self).__init__(*args, **kwargs)
-
-        if not scrum_master:
-            self.fields['tasks_comp'].required = False
-            self.fields['perf_assess'].required = False
-            self.fields['notes'].required = False
-            self.fields['tasks_comp'].widget = forms.HiddenInput()
-            self.fields['perf_assess'].widget = forms.HiddenInput()
-            self.fields['notes'].widget = forms.HiddenInput()
-
-    perc_contribution = forms.DecimalField(
-        widget=forms.NumberInput(attrs={'class': 'form-control'}),
-        label='% Contribution (Values of 0-99 only!)',
-        max_digits=2,
-        decimal_places=0,
-        required=True)
-
-    pos_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Positive Feedback',
-        max_length=255,
-        required=True)
-
-    neg_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Improvement Suggestion',
-        max_length=255,
-        required=True)
-
-    tasks_comp = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Tasks Completed (SCRUM Master only)',
-        max_length=255,
-        required=True)
-
-    perf_assess = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Performance Assessment: Evidence (SCRUM Master Only)',
-        max_length=255,
-        required=True)
-
-    notes = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label='Notes/Comments (SCRUM Master Only)',
-        max_length=255,
-        required=True)
-
-
-    class Meta:
-        model = Assignment
-        fields = ['perc_contribution', 'pos_fb', 'neg_fb']
-
-
 def validate_url(url):
     url_form_field = URLField()
     try:
