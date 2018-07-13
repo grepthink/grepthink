@@ -83,6 +83,9 @@ class Tsr(models.Model):
         max_length=20,
         unique=True)
 
+    # Type of TSR - options are 'member' or 'scrum master'
+    # type = models.CharField(max_length=15, default='member')
+
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
             self.positive_feedback, self.negative_feedback,

@@ -41,11 +41,8 @@ def view_one_project(request, slug):
     resources = project.get_resources()
     course = project.course.first()
     staff = course.get_staff()
-    print(staff)
-    print(type(staff[0]))
     asgs = sorted(course.assignments.prefetch_related('subs').all(), key=lambda s: s.ass_date)
     asg_completed = []
-
 
     for i in asgs:
         for j in i.subs.prefetch_related('evaluator').all():

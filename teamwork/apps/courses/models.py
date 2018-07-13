@@ -6,6 +6,7 @@ Database Models for the objects: Course, Enrollment
 #Build-in modules
 from __future__ import unicode_literals
 
+from datetime import date
 import datetime
 import random
 import string
@@ -61,6 +62,11 @@ class Assignment(models.Model):
         Human readeable representation of the Assignment object.
         """
         return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number, self.slug))
+
+    @property
+    def is_past_due(self):
+        return date.today() > self.due_date
+
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...

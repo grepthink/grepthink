@@ -138,116 +138,112 @@ def join_course(request):
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
+@login_required
+def upload_csv(request, slug):
+    page_name = "Upload CSV File"
+    page_description = "CSV Upload"
+    title = "Upload CSV"
+    course = get_object_or_404(Course, slug=slug)
 
+    recipients = []
 
+    form = UploadCSVForm()
+    if request.method == 'POST':
+        form = UploadCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
 
+            csv_file = data.get('csv_file')
 
-    @login_required
-    def upload_csv(request, slug):
-        page_name = "Upload CSV File"
-        page_description = "CSV Upload"
-        title = "Upload CSV"
-        course = get_object_or_404(Course, slug=slug)
+            csv_dict = parse_csv(csv_file)
 
-        recipients = []
+            for student in csv_dict:
+                recipients.append(csv_dict[student])
 
-        form = UploadCSVForm()
-        if request.method == 'POST':
-            form = UploadCSVForm(request.POST, request.FILES)
-            if form.is_valid():
-                data = form.cleaned_data
+            request.session['recipients'] = recipients
 
-                csv_file = data.get('csv_file')
+            return redirect(email_csv, slug)
+        else:
+            print("form is invalid")
 
-                csv_dict = parse_csv(csv_file)
+    return render(request, 'core/upload_csv.html', {
+        'slug':slug, 'form':form, 'course':course,
+        'page_name':page_name, 'page_description':page_description,'title':title
+    })
 
-                for student in csv_dict:
-                    recipients.append(csv_dict[student])
+import xlwt
+@login_required
+def export_xls(request, slug):
+    page_name = "Export Course"
+    page_description = "Save the current course's projects and associated members in an excel spreadsheet"
+    title = "Export Course"
+    course = get_object_or_404(Course, slug=slug)
 
-                request.session['recipients'] = recipients
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="course_overview.xls"'
 
-                return redirect(email_csv, slug)
-            else:
-                print("form is invalid")
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet(course.name)
 
-        return render(request, 'core/upload_csv.html', {
-            'slug':slug, 'form':form, 'course':course,
-            'page_name':page_name, 'page_description':page_description,'title':title
-        })
+    # Sheet header, first row
+    row_num = 0
 
-    import xlwt
-    @login_required
-    def export_xls(request, slug):
-        page_name = "Export Course"
-        page_description = "Save the current course's projects and associated members in an excel spreadsheet"
-        title = "Export Course"
-        course = get_object_or_404(Course, slug=slug)
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
 
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="course_overview.xls"'
+    # header row
+    ws.write(row_num, 0, course.name, font_style)
+    ws.write(row_num, 1, course.term, font_style)
+    ws.write(row_num, 2, course.year, font_style)
 
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet(course.name)
+    projects = Project.objects.filter(course=course)
 
-        # Sheet header, first row
-        row_num = 0
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
 
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-
-        # header row
-        ws.write(row_num, 0, course.name, font_style)
-        ws.write(row_num, 1, course.term, font_style)
-        ws.write(row_num, 2, course.year, font_style)
-
-        projects = Project.objects.filter(course=course)
-
-        # Sheet body, remaining rows
-        font_style = xlwt.XFStyle()
-
-        # PROJECT SECTION OF SPREADSHEET
-        for proj in projects:
-            row_num += 2
-            members = proj.get_members()
-            ws.write(row_num, 0, proj.title, font_style)
+    # PROJECT SECTION OF SPREADSHEET
+    for proj in projects:
+        row_num += 2
+        members = proj.get_members()
+        ws.write(row_num, 0, proj.title, font_style)
+        row_num += 1
+        ws.write(row_num, 1, "TA:", font_style)
+        ws.write(row_num, 2, proj.ta.email, font_style)
+        row_num += 1
+        ws.write(row_num, 1, "TA Meeting:", font_style)
+        ws.write(row_num, 2, proj.ta_time, font_style)
+        row_num += 1
+        ws.write(row_num, 1, "Location:", font_style)
+        ws.write(row_num, 2, proj.ta_location, font_style)
+        row_num += 2
+        ws.write(row_num, 1, "Members:", font_style)
+        for mem in members:
             row_num += 1
-            ws.write(row_num, 1, "TA:", font_style)
-            ws.write(row_num, 2, proj.ta.email, font_style)
-            row_num += 1
-            ws.write(row_num, 1, "TA Meeting:", font_style)
-            ws.write(row_num, 2, proj.ta_time, font_style)
-            row_num += 1
-            ws.write(row_num, 1, "Location:", font_style)
-            ws.write(row_num, 2, proj.ta_location, font_style)
-            row_num += 2
-            ws.write(row_num, 1, "Members:", font_style)
-            for mem in members:
-                row_num += 1
-                ws.write(row_num, 2, mem.email, font_style)
+            ws.write(row_num, 2, mem.email, font_style)
 
-        students_num = Enrollment.objects.filter(course = course, role="student")
-        projects_num = projects_in_course(course.slug)
-        students_projects = []
-        students_projects_not = []
+    students_num = Enrollment.objects.filter(course = course, role="student")
+    projects_num = projects_in_course(course.slug)
+    students_projects = []
+    students_projects_not = []
 
-        # DISPLAY PROJECTLESS SECTION OF SPREADSHEET
-        for i in projects_num:
-            for j in i.members.all():
-                if not j in students_projects:
-                    students_projects.append(j)
+    # DISPLAY PROJECTLESS SECTION OF SPREADSHEET
+    for i in projects_num:
+        for j in i.members.all():
+            if not j in students_projects:
+                students_projects.append(j)
 
-        for i in students_num:
-            if not i.user in students_projects:
-                students_projects_not.append(i.user)
+    for i in students_num:
+        if not i.user in students_projects:
+            students_projects_not.append(i.user)
 
-        row_num += 3
-        ws.write(row_num, 0, "Students without a Project", font_style)
-        for stud in students_projects_not:
-            row_num += 1
-            ws.write(row_num, 1, stud.email, font_style)
+    row_num += 3
+    ws.write(row_num, 0, "Students without a Project", font_style)
+    for stud in students_projects_not:
+        row_num += 1
+        ws.write(row_num, 1, stud.email, font_style)
 
-        wb.save(response)
-        return response
+    wb.save(response)
+    return response
 
 
 @login_required
