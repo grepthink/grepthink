@@ -58,7 +58,7 @@ def dayofweek(number):
         13: "Thursday",
         14: "Friday",
         15: "Saturday",
-    }.get(number, "Day that doesnt exist")
+    }.get(number, "Invalid")
 
 class Events(models.Model):
     """
@@ -161,9 +161,9 @@ def validate_image(fieldfile_obj):
     filesize = fieldfile_obj.file.size
     megabyte_limit = 5.0
     if filesize > megabyte_limit*1024*1024:
-        raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+        raise ValidationError("Max file size is {}MB" .format(megabyte_limit))
     else:
-        print("file size okay")
+        print("File size okay")
 
 class Profile(models.Model):
     """

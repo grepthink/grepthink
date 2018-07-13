@@ -20,10 +20,17 @@ class TestSomthing(TestCase):
         """
         Initialize things here
         """
-        print("Test case setup!")
+        valid_days = [day for day in range(9,16)]
+        invalid_days = [8, 16, 'Monday']
 
     def test_day_of_week_basic(self):
-        self.assertEqual(dayofweek(9), "Sunday")
+        days = ['Sunday', 'Monday', 'Teusday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        for i in range(len(valid_days)):
+            self.assertEqual(dayofweek(valid_days(i), days(i)))
+
+    def test_day_of_week_invalid(self):
+        for i in range(len(invalid_days)):
+            self.assertEqual(dayofweek(valid_days(i), 'Invalid'))
 
     def test_validate_image_basic(self):
         return(0)
