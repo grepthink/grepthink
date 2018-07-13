@@ -162,8 +162,10 @@ def validate_image(fieldfile_obj):
     megabyte_limit = 5.0
     if filesize > megabyte_limit*1024*1024:
         raise ValidationError("Max file size is {}MB" .format(megabyte_limit))
+        return(False)
     else:
         print("File size okay")
+        return(True)
 
 class Profile(models.Model):
     """
@@ -207,8 +209,6 @@ class Profile(models.Model):
 
     isProf = models.BooleanField(default=False)
     isGT = models.BooleanField(default=False)
-
-    # don't believe this is used anywhere 9/24
     isTa = models.BooleanField(default=False)
 
     def __str__(self):

@@ -10,7 +10,7 @@ from django.test import TestCase
 from teamwork.apps.profiles.models import *
 
 # Create your tests here.
-class TestSomthing(TestCase):
+class TestDayOfWeek(TestCase):
     """
     Tests various methods included in projects/models.py
 
@@ -20,21 +20,25 @@ class TestSomthing(TestCase):
         """
         Initialize things here
         """
-        valid_days = [day for day in range(9,16)]
-        invalid_days = [8, 16, 'Monday']
 
     def test_day_of_week_basic(self):
-        days = ['Sunday', 'Monday', 'Teusday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        valid_days = [day for day in range(9,16)]
+        days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         for i in range(len(valid_days)):
-            self.assertEqual(dayofweek(valid_days(i), days(i)))
+            self.assertEqual(dayofweek(valid_days[i]), days[i])
 
     def test_day_of_week_invalid(self):
+        invalid_days = [8, 16, 'Monday']
         for i in range(len(invalid_days)):
-            self.assertEqual(dayofweek(valid_days(i), 'Invalid'))
+            self.assertEqual(dayofweek(invalid_days[i]), 'Invalid')
 
-    def test_validate_image_basic(self):
-        return(0)
-    def test_create_user_profile(self):
-        return(0)
-    def test_save_user_profile(self):
-        return(0)
+    
+    
+    # Unsure how to test these functions
+    
+    # def test_validate_image_basic(self):
+    #     return(0)
+    # def test_create_user_profile(self):
+    #     return(0)
+    # def test_save_user_profile(self):
+    #     return(0)
