@@ -55,7 +55,13 @@ def tsr_edit(request, slug, asg_slug):
     else:
         # if request was not post then display forms
         for tsr in tsr_list:
-            form_i = TSR(instance=tsr, members=members,
+            initial_dict = {'perc_contribution':tsr.percent_contribution,
+                            'pos_fb':tsr.positive_feedback,
+                            'neg_fb':tsr.negative_feedback,
+                            'tasks_comp':tsr.tasks_completed,
+                            'perf_assess':tsr.performance_assessment,
+                            'notes':tsr.notes}
+            form_i = TSR(initial=initial_dict, members=members,
                          emails=emails, prefix=tsr.evaluatee.email, scrum_master=scrum_master)
             forms.append(form_i)
 
