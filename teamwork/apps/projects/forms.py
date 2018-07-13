@@ -300,23 +300,6 @@ class EditProjectForm(forms.ModelForm):
 
         return self.cleaned_data
 
-
-class ViewProjectForm(forms.ModelForm):
-    """
-    Is this still used? - andgates
-    TODO: verify we can remove this safely
-    """
-
-    def __init__(self, *args, **kwargs):
-        super(ViewProjectForm, self).__init__(*args, **kwargs)
-
-    interest = forms.IntegerField(required=False)
-
-    class Meta:
-        model = Project
-        fields = ['interest']
-
-
 class UpdateForm(forms.ModelForm):
     """
     Form used for submitting project updates
