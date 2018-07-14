@@ -86,3 +86,9 @@ class ViewProjectTestCase(TestCase):
         #
         # # Confirm that view_one_project returned a response with status code 200 (page served sucesfully).
         # self.assertEqual(response.status_code, 200)
+
+class TestEditTsrView(TestCase):
+    def setup(self):
+        requestScrum = "WSGIRequest: GET '/project/customyo/tsr/Iy0bKbZiJp/edit/'"
+
+    def test_is_scrum_master(self):

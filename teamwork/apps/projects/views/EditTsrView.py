@@ -19,23 +19,28 @@ def tsr_edit(request, slug, asg_slug):
 
     TODO: need to check if past due then don't allow an edit
     TODO: pass tsr.evaluator as prefix so we can display username also
+    TODO: get scrum_master bool another way, not through url
     """
     page_name = "TSR Edit"
     page_description = "Edit TSR form"
     title = "TSR Edit"
-
+    print(request)
+    # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
+
+    # Assignment object that the TSR's belong to
     asg = get_object_or_404(Assignment, slug=asg_slug)
+
+    # List of Members of the Current Project
     members = cur_proj.members.all()
     emails = [member.email for member in members]
     tsr_list = Tsr.objects.filter(ass_number=asg.ass_number, evaluator=request.user)
 
-    scrum_master = False
-    if "scrum_master" in str(request):
-        scrum_master = True
+    # Determine if Scrum Master
+    scrum_master = is_scrum_master(request)
 
-    forms = []
     if request.method == 'POST':
+        # For each Tsr displayed, update the values and save the Tsr
         for tsr in tsr_list:
             form = TSR(request.POST, members=members,
                        emails=emails, prefix=tsr.evaluatee.email, scrum_master=scrum_master)
@@ -53,7 +58,11 @@ def tsr_edit(request, slug, asg_slug):
         return redirect(view_one_project, slug)
 
     else:
-        # if request was not post then display forms
+        # If request was not post then display forms
+        # List of TSR Forms to be rendered
+        forms = []
+
+        # Display each TSR Form with their fields pre-populated by 'initial_dict'
         for tsr in tsr_list:
             initial_dict = {'perc_contribution':tsr.percent_contribution,
                             'pos_fb':tsr.positive_feedback,
@@ -63,6 +72,8 @@ def tsr_edit(request, slug, asg_slug):
                             'notes':tsr.notes}
             form_i = TSR(initial=initial_dict, members=members,
                          emails=emails, prefix=tsr.evaluatee.email, scrum_master=scrum_master)
+
+            # Add the TSR Form to forms list
             forms.append(form_i)
 
     return render(request, 'projects/tsr_edit.html',{
@@ -70,3 +81,13 @@ def tsr_edit(request, slug, asg_slug):
         'page_name' : page_name, 'page_description': page_description,
         'title': title
     })
+
+def is_scrum_master(request):
+    """
+    Simple method that checks the request for 'scrum_master'
+    """
+    scrum_master = False
+    if "scrum_master" in str(request):
+        scrum_master = True
+
+    return scrum_master
