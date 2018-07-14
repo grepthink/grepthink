@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.courses.models import get_user_courses
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
+from django.core.urlresolvers import reverse
 
 from teamwork.apps.courses.forms import JoinCourseForm
 from teamwork.apps.courses.models import Course, Enrollment
