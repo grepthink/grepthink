@@ -71,7 +71,6 @@ class ViewProjectTestCase(TestCase):
         course1 = Course.objects.create(name="Test Course 1", info="Test Course", slug="test-course1",
             creator=self.user1)
 
-        # fuck this.
         # # Create a test project to be served.
         # # Currently can't create_project due to User not being authenticated (logged-in),
         # #
