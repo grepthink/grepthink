@@ -89,6 +89,11 @@ class ViewProjectTestCase(TestCase):
 
 class TestEditTsrView(TestCase):
     def setup(self):
-        requestScrum = "WSGIRequest: GET '/project/customyo/tsr/Iy0bKbZiJp/edit/'"
+        requestScrum = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?scrum_master=scrum_master'"
+        requestMember = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?'"
 
     def test_is_scrum_master(self):
+        self.asserttrue(is_scrum_master(self.requestScrum))
+
+    def test_isnt_scrum_master(self):
+        self.assertfalse(is_scrum_master(self.requestMember))

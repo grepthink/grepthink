@@ -426,7 +426,7 @@ k
 
                                             {% if request.user == project.scrum_master %}
                                             <form action="{% url 'tsr_edit' project.slug asg.slug %}">
-                                                <button class="btn btn-info btn-sm" type="submit" type="scrum_master" value="scrum_master">
+                                                <button class="btn btn-info btn-sm" type="submit" name="scrum_master" value="scrum_master">
                                                     <i class="fa fa-edit"></i> Edit SM
                                                 </button>
                                             </form>

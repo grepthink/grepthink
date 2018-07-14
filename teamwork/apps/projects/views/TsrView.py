@@ -18,19 +18,15 @@ def create_member_tsr(request, slug, asg_slug):
     page_name = "TSR - Member"
     page_description = "Project Member TSR form"
     title = "TSR - Member"
-
-    user = request.user
-    cur_proj = get_object_or_404(Project.objects.prefetch_related('course'), slug=slug)
-    course = cur_proj.course.first()
+    
+    cur_proj = get_object_or_404(Project, slug=slug)
     asg = get_object_or_404(Assignment, slug=asg_slug)
-    today = datetime.now().date()
     members = cur_proj.members.all()
-    emails = []
-    for member in members:
-        emails.append(member.email)
+    emails = [member.email for member in members]
 
     # Determine if the TSR is late
     late = False
+    today = datetime.now().date()
     asg_ass_date = asg.ass_date
     asg_due_date = asg.due_date
 
@@ -42,7 +38,7 @@ def create_member_tsr(request, slug, asg_slug):
 
         for email in emails:
             # grab form
-            form = TSR(request.user.id, request.POST, members=members,
+            form = TSR(request.POST, members=members,
                 emails=emails, prefix=email, scrum_master=False)
             if form.is_valid():
                 tsr = Tsr()
@@ -70,12 +66,9 @@ def create_member_tsr(request, slug, asg_slug):
     else:
         # if request was not post then display forms
         for m in emails:
-            form_i = TSR(request.user.id, request.POST, members=members,
+            form_i = TSR(request.POST, members=members,
                          emails=emails, prefix=m, scrum_master=False)
             forms.append(form_i)
-
-        form = TSR(request.user.id, request.POST, members=members,
-            emails=emails, scrum_master=False)
 
     return render(request, 'projects/tsr_member.html',{
         'forms':forms,'cur_proj': cur_proj, 'ass':asg,
@@ -94,15 +87,11 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     page_description = "Scrum Master TSR form"
     title = "TSR - Scrum Master"
 
-    user = request.user
-    cur_proj = get_object_or_404(Project.objects.prefetch_related('course'), slug=slug)
-    course = cur_proj.course.first()
+    cur_proj = get_object_or_404(Project, slug=slug)
     asg = get_object_or_404(Assignment, slug=asg_slug)
     today = datetime.now().date()
     members = cur_proj.members.all()
-    emails = []
-    for member in members:
-        emails.append(member.email)
+    emails = [member.email for member in members]
 
     # Determine if the TSR is late
     late = False
@@ -117,8 +106,8 @@ def create_scrum_master_tsr(request, slug, asg_slug):
 
         for email in emails:
             # grab form
-            form = TSR(request.user.id, request.POST, members=members,
-                emails=emails, prefix=email, scrum_master=True)
+            form = TSR(request.POST, members=members,
+                       emails=emails, prefix=email, scrum_master=True)
             if form.is_valid():
                 tsr = Tsr()
                 tsr.ass_number = asg.ass_number
@@ -145,11 +134,9 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     else:
         # if request was not post then display forms
         for m in emails:
-            form_i=TSR(request.user.id, request.POST, members=members,
-             emails=emails, prefix=m, scrum_master=True)
+            form_i = TSR(request.POST, members=members,
+                         emails=emails, prefix=m, scrum_master=True)
             forms.append(form_i)
-        form = TSR(request.user.id, request.POST, members=members,
-            emails=emails, scrum_master=True)
 
     return render(request, 'projects/tsr_scrum_master.html',{
         'forms':forms,'cur_proj': cur_proj, 'ass':asg,
