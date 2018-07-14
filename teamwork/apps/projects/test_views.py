@@ -77,13 +77,13 @@ class ViewProjectTestCase(TestCase):
         # project1 = create_project("Test Project 1", self.user1, "Test Tagline 1",
         #     "Test Content 1", "test1-slug", "Test Resource 1")
         #
-        # # Add the project to the course many to many field so the course lookup is sucesfull.
+        # # Add the project to the course many to many field so the course lookup is successful.
         # course1.projects.add(project1)
         #
         # # Get the response using reverse to load the url with keyword arg: slug of project 1
         # response = self.client.get(reverse('view_one_project', kwargs={'slug':project1.slug}))
         #
-        # # Confirm that view_one_project returned a response with status code 200 (page served sucesfully).
+        # # Confirm that view_one_project returned a response with status code 200 (page served successfully).
         # self.assertEqual(response.status_code, 200)
 
 class TestEditTsrView(TestCase):
@@ -92,7 +92,7 @@ class TestEditTsrView(TestCase):
         requestMember = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?'"
 
     def test_is_scrum_master(self):
-        self.asserttrue(is_scrum_master(self.requestScrum))
+        self.assertEqual(is_scrum_master(self.requestScrum), True)
 
     def test_isnt_scrum_master(self):
-        self.assertfalse(is_scrum_master(self.requestMember))
+        self.assertEqual(is_scrum_master(self.requestMember), False)
