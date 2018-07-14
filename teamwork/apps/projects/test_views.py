@@ -16,6 +16,8 @@ from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
 
+from teamwork.apps.projects.views.EditTsrView import *
+
 
 def create_project(title, creator, scrum_master, tagline, content, slug, resource, avail_mem=True, sponsor=False):
     # Create a dummy project (with no M2M relationships) that will be associated with user1
@@ -87,10 +89,9 @@ class ViewProjectTestCase(TestCase):
         # self.assertEqual(response.status_code, 200)
 
 class TestEditTsrView(TestCase):
-    def setup(self):
-        requestScrum = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?scrum_master=scrum_master'"
-        requestMember = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?'"
-
+    requestScrum = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?scrum_master=scrum_master'"
+    requestMember = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?'"
+        
     def test_is_scrum_master(self):
         self.assertEqual(is_scrum_master(self.requestScrum), True)
 

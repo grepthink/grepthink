@@ -24,7 +24,7 @@ def tsr_edit(request, slug, asg_slug):
     page_name = "TSR Edit"
     page_description = "Edit TSR form"
     title = "TSR Edit"
-    print(request)
+    
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
 

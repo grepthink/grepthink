@@ -13,61 +13,39 @@ def create_member_tsr(request, slug, asg_slug):
     """
     Method fires when the Scrum Master begins their Tsr Assignment
     """
-    print("creating member tsr")
-
     page_name = "TSR - Member"
     page_description = "Project Member TSR form"
     title = "TSR - Member"
-    
+
+    # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
+
+    # Assignment object that the TSR's belong to
     asg = get_object_or_404(Assignment, slug=asg_slug)
+
+    # List of Members of the Current Project
     members = cur_proj.members.all()
     emails = [member.email for member in members]
 
     # Determine if the TSR is late
-    late = False
-    today = datetime.now().date()
-    asg_ass_date = asg.ass_date
-    asg_due_date = asg.due_date
+    late = asg.is_past_due
 
-    if today > asg_due_date:
-        late = True
-
-    forms = []
     if request.method == 'POST':
-
-        for email in emails:
-            # grab form
-            form = TSR(request.POST, members=members,
-                emails=emails, prefix=email, scrum_master=False)
-            if form.is_valid():
-                tsr = Tsr()
-                tsr.ass_number = asg.ass_number
-                tsr.percent_contribution = form.cleaned_data.get('perc_contribution')
-                tsr.positive_feedback = form.cleaned_data.get('pos_fb')
-                tsr.negative_feedback = form.cleaned_data.get('neg_fb')
-                tsr.tasks_completed = form.cleaned_data.get('tasks_comp')
-                tsr.performance_assessment = form.cleaned_data.get('perf_assess')
-                tsr.notes = form.cleaned_data.get('notes')
-                tsr.evaluator = request.user
-                tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
-                tsr.late = late
-
-                tsr.save()
-
-                # gets fields variables and saves them to project
-                cur_proj.tsr.add(tsr)
-                cur_proj.save()
-                asg.subs.add(tsr)
-                asg.save()
+        # Create the TSR with the Form Data
+        create_tsr_helper(request, members, emails, asg, cur_proj, False, late)
 
         return redirect(view_one_project, slug)
-
     else:
-        # if request was not post then display forms
+        # If request was not post then display forms
+        # List of TSR Forms to be rendered
+        forms = []
+
+        # Display a TSR form for each email in the list
         for m in emails:
             form_i = TSR(request.POST, members=members,
                          emails=emails, prefix=m, scrum_master=False)
+
+            # Add the TSR form to forms list
             forms.append(form_i)
 
     return render(request, 'projects/tsr_member.html',{
@@ -81,8 +59,6 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     """
     Method fires when the Scrum Master begins their Tsr Assignment
     """
-    print("creating scrum tsr")
-
     page_name = "TSR - Scrum Master"
     page_description = "Scrum Master TSR form"
     title = "TSR - Scrum Master"
@@ -94,43 +70,14 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     emails = [member.email for member in members]
 
     # Determine if the TSR is late
-    late = False
-    asg_ass_date = asg.ass_date
-    asg_due_date = asg.due_date
-
-    if today > asg_due_date:
-        late = True
+    late = asg.is_past_due
 
     forms = []
     if request.method == 'POST':
-
-        for email in emails:
-            # grab form
-            form = TSR(request.POST, members=members,
-                       emails=emails, prefix=email, scrum_master=True)
-            if form.is_valid():
-                tsr = Tsr()
-                tsr.ass_number = asg.ass_number
-                tsr.percent_contribution = form.cleaned_data.get('perc_contribution')
-                tsr.positive_feedback = form.cleaned_data.get('pos_fb')
-                tsr.negative_feedback = form.cleaned_data.get('neg_fb')
-                tsr.tasks_completed = form.cleaned_data.get('tasks_comp')
-                tsr.performance_assessment = form.cleaned_data.get('perf_assess')
-                tsr.notes = form.cleaned_data.get('notes')
-                tsr.evaluator = request.user
-                tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
-                tsr.late = late
-
-                tsr.save()
-
-                # gets fields variables and saves them to project
-                cur_proj.tsr.add(tsr)
-                cur_proj.save()
-                asg.subs.add(tsr)
-                asg.save()
+        # Create the TSR with the Form Data
+        create_tsr_helper(request, members, emails, asg, cur_proj, True, late)
 
         return redirect(view_one_project, slug)
-
     else:
         # if request was not post then display forms
         for m in emails:
@@ -144,6 +91,35 @@ def create_scrum_master_tsr(request, slug, asg_slug):
         'title': title
     })
 
+def create_tsr_helper(request, members, email_list, assignment, project, scrum_master, late):
+    """
+    Creates a Tsr object, and fills its data with the form values
+    """
+    # For each email/member, create a Tsr
+    for email in email_list:
+        # grab form
+        form = TSR(request.POST, members=members,
+                   emails=email_list, prefix=email, scrum_master=scrum_master)
+        if form.is_valid():
+            tsr = Tsr()
+            tsr.ass_number = assignment.ass_number
+            tsr.percent_contribution = form.cleaned_data.get('perc_contribution')
+            tsr.positive_feedback = form.cleaned_data.get('pos_fb')
+            tsr.negative_feedback = form.cleaned_data.get('neg_fb')
+            tsr.tasks_completed = form.cleaned_data.get('tasks_comp')
+            tsr.performance_assessment = form.cleaned_data.get('perf_assess')
+            tsr.notes = form.cleaned_data.get('notes')
+            tsr.evaluator = request.user
+            tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
+            tsr.late = late
+
+            tsr.save()
+
+            # gets fields variables and saves them to project
+            project.tsr.add(tsr)
+            project.save()
+            assignment.subs.add(tsr)
+            assignment.save()
 
 @login_required
 def view_tsr(request, slug):
