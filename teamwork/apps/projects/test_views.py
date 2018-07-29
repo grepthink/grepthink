@@ -64,14 +64,14 @@ class ViewProjectTestCase(TestCase):
         """
         # Create a test user as an attribute of ProjectTestCase, for future use
         #   (we're not testing user or profile methods here)
-        self.user1 = User.objects.create_user('user_test1', 'test1@test.com', 'groupthink')
-
-        test = authenticate(username='user_test1', password='groupthink')
+        # self.user1 = User.objects.create_user('user_test1', 'test1@test.com', 'groupthink')
+        #
+        # test = authenticate(self, username='user_test1', password='groupthink')
         # login(username='user_test1', password='groupthink')
         # The course is now looked up in view_one_project because it is needed for breadcrumbs.
         # course1 = create_course("Test Course 1", "test-course1", "Test Info")
-        course1 = Course.objects.create(name="Test Course 1", info="Test Course", slug="test-course1",
-            creator=self.user1)
+        # course1 = Course.objects.create(name="Test Course 1", info="Test Course", slug="test-course1",
+        #     creator=self.user1)
 
         # # Create a test project to be served.
         # # Currently can't create_project due to User not being authenticated (logged-in),
@@ -91,7 +91,7 @@ class ViewProjectTestCase(TestCase):
 class TestEditTsrView(TestCase):
     requestScrum = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?scrum_master=scrum_master'"
     requestMember = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?'"
-        
+
     def test_is_scrum_master(self):
         self.assertEqual(is_scrum_master(self.requestScrum), True)
 

@@ -15,7 +15,12 @@ from teamwork.apps.projects.models import *
 from teamwork.apps.projects.models import to_bits, from_bits
 
 class EmailAddressAuthBackend(ModelBackend):
-
+    """
+    Authentication backend used to determine if a users email & password are valid.
+    Returns:
+        - None if Email doesn't exist or password doesn't match Email
+        - UserModel object if email and password match
+    """
     def authenticate(self, username=None, password=None, **kwargs):
         UserModel = get_user_model()
 
@@ -56,8 +61,6 @@ def sort(matchList):
     returns: a list of the top users that match with a project, based on there cumulative score
         collected after each pass
 """
-
-
 def po_match(project):
     initial = {}
     backup = {}
