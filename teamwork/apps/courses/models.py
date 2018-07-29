@@ -388,7 +388,7 @@ class Enrollment(models.Model):
         # with a default of 0
         default=0)
 
-    # user role in a course
+    # user role in a course; options: professor, student, ta
     role = models.CharField(max_length=24, default="student")
 
     def __str__(self):

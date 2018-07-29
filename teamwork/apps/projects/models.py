@@ -81,7 +81,7 @@ class Tsr(models.Model):
     slug = models.CharField(
         default="",
         max_length=20,
-        unique=True)    
+        unique=True)
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
@@ -227,7 +227,7 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-    # the interest in a project can be access through back realtionship
+    # the interest in a project can be access through back relationship
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,

@@ -57,7 +57,7 @@ def sort(matchList):
         project: the project looking for matches
         interestWeight: the weight the user can assign to interest, or default to 1
         knowWeight: the weight the user can assign to knowing a skill, or defaults to 1
-        leanrWeight: the weight the user can assign to wanting to learn a skill, or default to 1
+        learnWeight: the weight the user can assign to wanting to learn a skill, or default to 1
     returns: a list of the top users that match with a project, based on there cumulative score
         collected after each pass
 """
@@ -65,10 +65,10 @@ def po_match(project):
     initial = {}
     backup = {}
 
-    # set weights based on criteria
     # locate project course
     course = project.course.first()
 
+    # set weights based on criteria
     if course.limit_weights:
         interestWeight = course.weigh_interest or 1
         knowWeight = course.weigh_know or 1
@@ -84,12 +84,9 @@ def po_match(project):
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        # add if they do not have a membership to a project in this course
-        if Membership.objects.filter(user=i.user, project__course=course):
-            continue
-        else:
+        # if they do not have a membership to a project in this course
+        if not Membership.objects.filter(user=i.user, project__course=course):
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
-
 
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
@@ -146,7 +143,7 @@ def po_match(project):
     # Look through the currently selected students and reward those with the best schedule for
     # meeting with the current members
     for l in initial.keys():
-        temp = by_schedule(l, project)
+        temp = by_schedule(l, project)        
         initial[l][0] += temp
         initial[l][4] += temp
 
