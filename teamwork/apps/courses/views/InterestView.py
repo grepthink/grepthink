@@ -6,13 +6,14 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
 
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.courses.models import Course
-from teamwork.apps.projects.models import Interest
+from teamwork.apps.projects.models import Interest, Project
 
 from teamwork.apps.courses.views.CourseView import view_one_course
 
 from teamwork.apps.courses.forms import ShowInterestForm
 
 import csv
+import xlwt
 
 @login_required
 def show_interest(request, slug):

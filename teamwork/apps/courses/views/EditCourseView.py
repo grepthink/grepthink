@@ -6,6 +6,8 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.urls import reverse
+
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.courses.forms import EditCourseForm
 

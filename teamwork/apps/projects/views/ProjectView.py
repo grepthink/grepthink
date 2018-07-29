@@ -12,6 +12,7 @@ from teamwork.apps.projects.forms import UpdateForm, ResourceForm
 from teamwork.apps.projects.views.BaseView import get_user_role
 
 from teamwork.apps.projects.forms import *
+from teamwork.apps.core.helpers import *
 
 @login_required
 def view_one_project(request, slug):
@@ -41,11 +42,8 @@ def view_one_project(request, slug):
     resources = project.get_resources()
     course = project.course.first()
     staff = course.get_staff()
-    print(staff)
-    print(type(staff[0]))
     asgs = sorted(course.assignments.prefetch_related('subs').all(), key=lambda s: s.ass_date)
     asg_completed = []
-
 
     for i in asgs:
         for j in i.subs.prefetch_related('evaluator').all():
@@ -201,7 +199,9 @@ def post_update(request, slug):
 
 @login_required
 def resource_update(request, slug):
-
+    """
+    Post a Resource to the project given the slug
+    """
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
 
     if request.user.profile.isGT:
