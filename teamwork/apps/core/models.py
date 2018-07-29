@@ -6,9 +6,27 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+# Used for Email Address authentication method
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth import get_user_model
+
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
 from teamwork.apps.projects.models import to_bits, from_bits
+
+class EmailAddressAuthBackend(ModelBackend):
+
+    def authenticate(self, username=None, password=None, **kwargs):
+        UserModel = get_user_model()
+
+        try:
+            user = UserModel.objects.get(email=username)
+        except UserModel.DoesNotExist:
+            return None
+        else:
+            if user.check_password(password):
+                return user
+        return None
 
 """
     Summary: this function is called to sort the  list of matches by score
