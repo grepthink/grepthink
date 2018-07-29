@@ -12,6 +12,8 @@ from teamwork.apps.projects.models import *
 from teamwork.apps.projects.forms import *
 from teamwork.apps.projects.views.MyProjectsView import *
 
+from teamwork.apps.core.helpers import send_email
+
 @login_required
 def create_project(request):
     """
@@ -205,7 +207,6 @@ def email_project(request, slug):
         'page_name':page_name, 'page_description':page_description,
         'title':title
     })
-
 
 def get_user_role(user, course):
     """

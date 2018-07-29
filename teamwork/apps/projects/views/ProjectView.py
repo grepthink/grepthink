@@ -12,6 +12,7 @@ from teamwork.apps.projects.forms import UpdateForm, ResourceForm
 from teamwork.apps.projects.views.BaseView import get_user_role
 
 from teamwork.apps.projects.forms import *
+from teamwork.apps.core.helpers import *
 
 @login_required
 def view_one_project(request, slug):
@@ -198,7 +199,9 @@ def post_update(request, slug):
 
 @login_required
 def resource_update(request, slug):
-
+    """
+    Post a Resource to the project given the slug
+    """
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
 
     if request.user.profile.isGT:

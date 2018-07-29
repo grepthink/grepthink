@@ -52,9 +52,6 @@ def save_event(request, username):
             if profile.avail.all() is not None: profile.avail.all().delete()
 
             profile.save()
-
-            print("\n\nI CLEARED THE SCHEDULE\n")
-
             return HttpResponse("Schedule Cleared")
 
         # List of events as a string (json)
@@ -105,9 +102,5 @@ def save_event(request, username):
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
-
-    else:
-        pass
-        #print("\n\nDebug: Request method was not post \n\n")
 
     return HttpResponse("Failure")

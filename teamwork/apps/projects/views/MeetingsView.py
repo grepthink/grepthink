@@ -7,6 +7,7 @@ from teamwork.apps.projects.models import Project
 from teamwork.apps.courses.models import Course
 from teamwork.apps.projects.models import dayofweek
 from teamwork.apps.projects.forms import *
+from django.utils.safestring import mark_safe
 
 @login_required
 def view_meetings(request, slug):
@@ -16,9 +17,12 @@ def view_meetings(request, slug):
 
     Passing status check unit test in test_views.py.
     """
-    from django.utils.safestring import mark_safe
-
     project = get_object_or_404(Project, slug=slug)
+    
+    # Populate with project name and tagline
+    page_name = project.title or "Project"
+    page_description = project.tagline or "Meeting Times"
+    title = project.title or "Meetings"
 
     find_meeting(slug)
 
@@ -31,14 +35,7 @@ def view_meetings(request, slug):
     course = Course.objects.get(projects=project)
 
     #meetings = mark_safe([{'start': '2017-04-09T08:00:00', 'end': '2017-04-09T20:30:00', 'title': 'Meeting'}])
-
     meetings = mark_safe(project.meetings)
-
-
-    # Populate with project name and tagline
-    page_name = project.title or "Project"
-    page_description = project.tagline or "Meeting Times"
-    title = project.title or "Meetings"
 
     return render(request, 'projects/meeting_times.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
