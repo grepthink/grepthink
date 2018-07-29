@@ -1,7 +1,7 @@
 """
 Teamwork: projects
 
-Database Models for the objects: Project, Membership, Intrest, ProjectUpdate
+Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 """
 
 # Built-in modules
@@ -81,7 +81,7 @@ class Tsr(models.Model):
     slug = models.CharField(
         default="",
         max_length=20,
-        unique=True)
+        unique=True)    
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
@@ -586,7 +586,6 @@ def dayasday(day):
     }.get(day, '2017-04-00T')
 
 # Given an array, creates a bitstring based on meeting times
-# def to_bits(day, l, h):
 def to_bits(day):
     # Creates array of all 0's of length 48
     bitstring = [False]*48

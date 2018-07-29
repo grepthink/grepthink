@@ -300,23 +300,6 @@ class EditProjectForm(forms.ModelForm):
 
         return self.cleaned_data
 
-
-class ViewProjectForm(forms.ModelForm):
-    """
-    Is this still used? - andgates
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        super(ViewProjectForm, self).__init__(*args, **kwargs)
-
-    interest = forms.IntegerField(required=False)
-
-    class Meta:
-        model = Project
-        fields = ['interest']
-
-
 class UpdateForm(forms.ModelForm):
     """
     Form used for submitting project updates
@@ -393,7 +376,7 @@ class ChatForm(forms.ModelForm):
 
 # TSR Form
 class TSR(forms.ModelForm):
-    def __init__(self, uid, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         members = kwargs.pop('members')
         emails = kwargs.pop('emails')
         scrum_master = kwargs.pop('scrum_master')
@@ -444,9 +427,8 @@ class TSR(forms.ModelForm):
         max_length=255,
         required=True)
 
-
     class Meta:
-        model = Project
+        model = Tsr
         fields = ['perc_contribution', 'pos_fb', 'neg_fb']
 
 def validate_url(url):

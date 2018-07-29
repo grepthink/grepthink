@@ -12,6 +12,8 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+
+    CAN OPTIONALLY INCLUDE A CONVERTER TYPE. I.e: <int: index>. Otherwise all <index> will be passed as string. -kp
 """
 from django.conf import settings
 from django.conf.urls import include, url
@@ -21,22 +23,34 @@ from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
-from teamwork.apps.core import views as core_views
-from teamwork.apps.courses import views as course_views
-from teamwork.apps.profiles import views as profile_views
-from teamwork.apps.projects import views as project_views
+from teamwork.apps.core import helpers as core_helpers
+
+# Project Imports
+from teamwork.apps.projects.views import BaseView as ProjectBaseView
+from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjectView, TsrView, MeetingsView, EditTsrView
+
+# Profile Imports
+from teamwork.apps.profiles.views import BaseView as ProfileBaseView
+from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
+
+# Course Imports
+from teamwork.apps.courses.views import BaseView as CourseBaseView
+from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
+
+# Core Imports
+from teamwork.apps.core.views import AboutView, ContactView, LandingView, LoginView
 
 urlpatterns = [
         # CORE AND SIGNUP
-        url(r'^$', core_views.index, name='index'),
+        url(r'^$', LandingView.index, name='index'),
         # /about/
-        url(r'^about/$', core_views.about, name='about'),
+        url(r'^about/$', AboutView.about, name='about'),
         # /signup/
-        url(r'^signup/$', profile_views.signup, name='signup'),
+        url(r'^signup/$', ProfileBaseView.signup, name='signup'),
         # /contact/
-        url(r'^contact/$', core_views.contact, name='contact'),
-        url(r'^profSignup/$', profile_views.profSignup, name='profSignup'),
-        url(r'^search/$', core_views.search, name='search'),
+        url(r'^contact/$', ContactView.contact, name='contact'),
+        url(r'^profSignup/$', ProfileBaseView.profSignup, name='profSignup'),
+        url(r'^search/$', core_helpers.search, name='search'),
         url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
         url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
         url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
@@ -45,93 +59,95 @@ urlpatterns = [
 
         # PROJECT
         # /create_project/
-        url(r'^project/create/$', project_views.create_project, name='create_project'),
+        url(r'^project/create/$', ProjectBaseView.create_project, name='create_project'),
         # /view_projects/
-        url(r'^project/all/', project_views.view_projects, name='view_projects'),
+        url(r'^project/all/', MyProjectsView.view_projects, name='view_projects'),
         # View individual project
-        url(r'^project/(?P<slug>[^/]+)/$', project_views.view_one_project, name='view_one_project'),
+        url(r'^project/(?P<slug>[^/]+)/$', ProjectView.view_one_project, name='view_one_project'),
         # Edit individual project (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/edit/$', project_views.edit_project, name='edit_project'),
+        url(r'^project/(?P<slug>[^/]+)/edit/$', EditProjectView.edit_project, name='edit_project'),
         # Post update for individual project (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/update/$', project_views.post_update, name='post_update'),
+        url(r'^project/(?P<slug>[^/]+)/update/$', ProjectView.post_update, name='post_update'),
         # Add new resource (based on slug)
-        url(r'^project/(?P<slug>[^/]+)/resource/$', project_views.resource_update, name='resource_update'),
+        url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
+        # Create Scrum Master TSR
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/smaster/$', TsrView.create_scrum_master_tsr, name='create_scrum_master_tsr'),
         # Update TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_update, name='tsr_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/member/$', TsrView.create_member_tsr, name='create_member_tsr'),
         # Edit TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', project_views.tsr_edit, name='tsr_edit'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/edit/$', EditTsrView.tsr_edit, name='tsr_edit'),
         # View TSRs
-        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', project_views.view_tsr, name='view_tsr'),
+        url(r'^project/(?P<slug>[^/]+)/view_tsr/$', TsrView.view_tsr, name='view_tsr'),
         # View meeting times
-        url(r'^project/(?P<slug>[^/]+)/meetings/$', project_views.view_meetings, name='view_meetings'),
+        url(r'^project/(?P<slug>[^/]+)/meetings/$', MeetingsView.view_meetings, name='view_meetings'),
         # Request to join Project
-        url(r'^project/(?P<slug>[^/]+)/join/$', project_views.request_join_project, name='request_to_join'),
+        url(r'^project/(?P<slug>[^/]+)/join/$', ProjectView.request_join_project, name='request_to_join'),
         # Request to leave Project
-        url(r'^project/(?P<slug>[^/]+)/leave/$', project_views.leave_project, name='leave_project'),
+        url(r'^project/(?P<slug>[^/]+)/leave/$', EditProjectView.leave_project, name='leave_project'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', project_views.add_member, name='add_member'),
+        url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', project_views.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectBaseView.reject_member, name='reject_member'),
         # Email Members of Project
-        url(r'^project/(?P<slug>[^/]+)/email_members/$', project_views.email_project, name='email_project'),
+        url(r'^project/(?P<slug>[^/]+)/email_members/$', ProjectBaseView.email_project, name='email_project'),
         # select members (select2)
-        url(r'^project/create/ajax/select_members/$', project_views.select_members, name='select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
-        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', project_views.add_desired_skills, name='add_desired_skills'),
-        url(r'^project/create/ajax/add_desired_skills/$', project_views.create_desired_skills, name='create_desired_skills'),
+        url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', EditProjectView.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/create/ajax/add_desired_skills/$', EditProjectView.create_desired_skills, name='create_desired_skills'),
 
         # COURSE
         # Delete individual assignment (based on slug)
-        url(r'^assignment/(?P<slug>[^/]+)/delete/$', course_views.delete_assignment, name='delete_assignment'),
+        url(r'^assignment/(?P<slug>[^/]+)/delete/$', CourseView.delete_assignment, name='delete_assignment'),
         # Edit individual assignment (based on slug)
-        url(r'^assignment/(?P<slug>[^/]+)/edit/$', course_views.edit_assignment, name='edit_assignment'),
+        url(r'^assignment/(?P<slug>[^/]+)/edit/$', CourseView.edit_assignment, name='edit_assignment'),
 
         # View all courses
-        url(r'^course/$', course_views.view_courses, name='view_course'),
+        url(r'^course/$', CourseBaseView.view_courses, name='view_course'),
         # Join a course (valid for all courses)
-        url(r'^course/join/$', course_views.join_course, name='join_course'),
+        url(r'^course/join/$', CourseBaseView.join_course, name='join_course'),
         # Create new course
-        url(r'^course/new/$', course_views.create_course, name='create_course'),
+        url(r'^course/new/$', CourseBaseView.create_course, name='create_course'),
         # View individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/$', course_views.view_one_course, name='view_one_course'),
+        url(r'^course/(?P<slug>[^/]+)/$', CourseView.view_one_course, name='view_one_course'),
         # Delete individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/delete/$', course_views.delete_course, name='delete_course'),
+        url(r'^course/(?P<slug>[^/]+)/delete/$', EditCourseView.delete_course, name='delete_course'),
         # Drop from a course based on a slug
         #url(r'^course/(?P<slug>[^/]+)/drop/$', course_views.drop_course, name='drop_course'),
         # Edit individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/edit/$', course_views.edit_course, name='edit_course'),
+        url(r'^course/(?P<slug>[^/]+)/edit/$', EditCourseView.edit_course, name='edit_course'),
         # Stats page link
-        url(r'^course/(?P<slug>[^/]+)/stats/$', course_views.view_stats, name='view_statistics'),
+        url(r'^course/(?P<slug>[^/]+)/stats/$', StatsView.view_stats, name='view_statistics'),
         # Email Roster link
-        url(r'^course/(?P<slug>[^/]+)/email_roster/$', course_views.email_roster, name='email_roster'),
+        url(r'^course/(?P<slug>[^/]+)/email_roster/$', EmailCourseView.email_roster, name='email_roster'),
         # Email w/ CSV
-        url(r'^course/(?P<slug>[^/]+)/email_csv/$', course_views.email_csv, name='email_csv'),
+        url(r'^course/(?P<slug>[^/]+)/email_csv/$', EmailCourseView.email_csv, name='email_csv'),
         # upload csv
-        url(r'^course/(?P<slug>[^/]+)/upload_csv/$', course_views.upload_csv, name='upload_csv'),
+        url(r'^course/(?P<slug>[^/]+)/upload_csv/$', CourseBaseView.upload_csv, name='upload_csv'),
         # Auto Generation page link
-        url(r'^course/(?P<slug>[^/]+)/auto_gen/$', core_views.auto_gen, name='auto_gen'),
+        url(r'^course/(?P<slug>[^/]+)/auto_gen/$', MatchesView.auto_gen, name='auto_gen'),
         # Setup link to assign students
-        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',core_views.assign_auto, name='assign_auto'),
+        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',MatchesView.assign_auto, name='assign_auto'),
         # Post update to course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/update/$', course_views.update_course, name='update_course'),
+        url(r'^course/(?P<slug>[^/]+)/update/$', CourseView.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', course_views.update_course_update, name='update_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', CourseView.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',course_views.delete_course_update, name='delete_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',CourseView.delete_course_update, name='delete_course_update'),
         # Button to lock interest
-        url(r'^course/(?P<slug>[^/]+)/lock$',course_views.lock_interest, name='lock_interest'),
+        url(r'^course/(?P<slug>[^/]+)/lock$',EditCourseView.lock_interest, name='lock_interest'),
         # link to show interest page
-        url(r'^course/(?P<slug>[^/]+)/show_interest/$',course_views.show_interest, name='show_interest'),
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$',InterestView.show_interest, name='show_interest'),
         # select2 for course
-        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', project_views.edit_select_members, name='edit_select_members'),
+        url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         # select2 for course
         # url(r'^course/(?P<slug>[^/]+)/claim/ajax/select_projects/$', course_views.select_projects, name='select_projects'),
         # Export Spreadsheet
-        url(r'^course/(?P<slug>[^/]+)/export/$', course_views.export_xls, name='export_xls'),
+        url(r'^course/(?P<slug>[^/]+)/export/$', CourseBaseView.export_xls, name='export_xls'),
         # Export Interest
-        url(r'^course/(?P<slug>[^/]+)/export_interest/$', course_views.export_interest, name='export_interest'),
+        url(r'^course/(?P<slug>[^/]+)/export_interest/$', InterestView.export_interest, name='export_interest'),
         # Claim Projects (TA)
-        url(r'^course/(?P<slug>[^/]+)/claim/$', course_views.claim_projects, name='claim_projects'),
+        url(r'^course/(?P<slug>[^/]+)/claim/$', CourseView.claim_projects, name='claim_projects'),
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),
@@ -139,31 +155,31 @@ urlpatterns = [
         url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
 
         # PROFILE
-        url(r'^user/(?P<username>[^/]+)/$', profile_views.view_profile, name='profile'),
-        url(r'^user/(?P<username>[^/]+)/edit/$', profile_views.edit_profile, name='edit_profile'),
-        url(r'^user/(?P<username>[^/]+)/edit_schedule/$', profile_views.edit_schedule, name='edit_schedule'),
-        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', profile_views.save_event, name='save_event'),
-        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', profile_views.edit_skills, name='edit_skills'),
+        url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
+        url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
         # MATCHES AND MATCHSTATS
-        url(r'^matches/$', core_views.view_matches, name='view_matches'),
+        url(r'^matches/$', MatchesView.view_matches, name='view_matches'),
         # see why this user matches
-        url(r'^matchstats/(?P<slug>[^/]+)/$', core_views.matchstats, name='matchstats'),
+        url(r'^matchstats/(?P<slug>[^/]+)/$', MatchesView.matchstats, name='matchstats'),
 
         # favicon
         url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
 
         # alerts
-        url(r'^alerts/$', profile_views.view_alerts, name="view_alerts"),
-        url(r'^alerts/(?P<ident>[^/]+)/read/$', profile_views.read_alert, name="read_alert"),
-        url(r'^alerts/(?P<ident>[^/]+)/unread/$', profile_views.unread_alert, name="unread_alert"),
-        url(r'^alerts/(?P<ident>[^/]+)/delete/$', profile_views.delete_alert, name="delete_alert"),
-        url(r'^alerts/readall/$', profile_views.archive_alerts, name="archive_alerts"),
+        url(r'^alerts/$', AlertView.view_alerts, name="view_alerts"),
+        url(r'^alerts/(?P<ident>[^/]+)/read/$', AlertView.read_alert, name="read_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/unread/$', AlertView.unread_alert, name="unread_alert"),
+        url(r'^alerts/(?P<ident>[^/]+)/delete/$', AlertView.delete_alert, name="delete_alert"),
+        url(r'^alerts/readall/$', AlertView.archive_alerts, name="archive_alerts"),
 
         ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #Django Toolbar Uncomment to turn on
-# 
+#
 # if settings.DEBUG:
 #    import debug_toolbar
 #    urlpatterns += [
