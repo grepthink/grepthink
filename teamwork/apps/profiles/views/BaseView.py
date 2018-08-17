@@ -31,12 +31,11 @@ def signup(request):
             email = form.cleaned_data.get('email')
             split = email.split("@")
             username = split[0]
+            password = form.cleaned_data.get('password')
+            prof = form.cleaned_data.get('prof')
 
             if 'grepthink' in email:
                 GT = True
-            password = form.cleaned_data.get('password')
-
-            prof = form.cleaned_data.get('prof')
 
             if GT:
                 user1 = User.objects.create_superuser(
@@ -44,7 +43,6 @@ def signup(request):
                     password=password,
                     email=email)
             else:
-                # parse email for 'username'
                 user1 = User.objects.create_user(
                     username=username,
                     password=password,

@@ -143,7 +143,7 @@ def po_match(project):
     # Look through the currently selected students and reward those with the best schedule for
     # meeting with the current members
     for l in initial.keys():
-        temp = by_schedule(l, project)        
+        temp = by_schedule(l, project)
         initial[l][0] += temp
         initial[l][4] += temp
 
@@ -318,8 +318,9 @@ def by_schedule(user, project):
             saturday_list.append(i)
 
     # Converts to and from bitstring to find FREE time
-    sunday_list = to_bits(sunday_list)  #this is working
-    sunday_list = from_bits(sunday_list)    #this is now working
+    sunday_list = to_bits(sunday_list)
+    sunday_list = from_bits(sunday_list)
+    
     # Appends to list
     for i in sunday_list:
         pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])
