@@ -164,7 +164,7 @@ def auto_ros(course):
     # Sort the list of projects from least interest to most
     sorted_list = list(reversed(sorted(match_list, key=lambda x: x[-1])))
 
-    # Mark all curent memebers as assigned before assigning
+    # Mark all current members as 'assigned'
     for z in match_list:
         for mem in z[0].members.all():
             assigned.append(mem)
@@ -320,7 +320,7 @@ def by_schedule(user, project):
     # Converts to and from bitstring to find FREE time
     sunday_list = to_bits(sunday_list)
     sunday_list = from_bits(sunday_list)
-    
+
     # Appends to list
     for i in sunday_list:
         pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])

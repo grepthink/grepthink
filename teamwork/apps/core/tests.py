@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from teamwork.apps.core.views import *
-from teamwork.apps.core.models import EmailAddressAuthBackend, po_match
+from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
 
 from teamwork.apps.profiles.models import Profile, Skills
 from teamwork.apps.courses.models import Course, Enrollment
@@ -106,6 +106,10 @@ class FindProjectMatchesTest(TestCase):
         # delete project
         del self.project
 
+        # delete skills
+        del self.skill1
+        del self.skill2
+
         # delete course
         del self.course
 
@@ -148,4 +152,80 @@ class FindProjectMatchesTest(TestCase):
     def testMatchWithScheduleBonus(self):
         """
         Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
+        """
+
+# TODO: sort
+class SortMatchListTest(TestCase):
+    """
+    """
+    def setUp(self):
+        """
+        Init any variables that are needed for testing
+        """
+        # create users
+        self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
+        self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
+        self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
+
+        # create course
+        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+
+    def tearDown(self):
+        """
+        Delete any variables that were created for testing
+        """
+        del self.user1
+        del self.user2
+        del self.user3
+
+        del self.course
+        
+# TODO: auto_ros tests
+class AutoSetRosterTest(TestCase):
+    """
+    """
+    def setUp(self):
+        """
+        Init any variables that are needed for testing
+        """
+        # create users
+        self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
+        self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
+        self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
+
+        # create course
+        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+
+    def tearDown(self):
+        """
+        Delete any variables that were created for testing
+        """
+        del self.user1
+        del self.user2
+        del self.user3
+
+        del self.course
+
+    def testInitialTesting(self):
+        auto = auto_ros(self.course)
+        print(auto)
+
+
+# TODO: by_schedule tests
+class GetAvailabilityScoreTest(TestCase):
+    """
+        Summary: Takes in a user and a project, compares users availability
+            to the avalibility of other users in a specific project.
+        Params: User - user object
+                Project - Project object
+        Returns: An integer that is floor(# meeting hours/ # pos meetings)
+    """
+    def setUp(self):
+        """
+        Init any variables that are needed for testing
+        """
+
+    def tearDown(self):
+        """
+        Delete any variables that were created for testing
         """

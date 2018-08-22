@@ -119,6 +119,9 @@ def auto_gen(request, slug):
 
     auto = auto_ros(course)
 
+    # needs some documentation/comments/more useful variable name for 'i'
+    # what is auto/i and what is in i[1]?
+    # why do we break if i[1]?
     flag = False
     for i in auto:
         if i[1]:
@@ -127,7 +130,7 @@ def auto_gen(request, slug):
 
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
-    projects = [x[0] for x in auto]
+    projects = [i[0] for i in auto]
 
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
