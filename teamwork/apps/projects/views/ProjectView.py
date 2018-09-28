@@ -2,6 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.urlresolvers import reverse
 
 import json
 
@@ -9,7 +10,9 @@ import json
 from teamwork.apps.core.models import *
 from teamwork.apps.projects.models import ResourceUpdate
 from teamwork.apps.projects.forms import UpdateForm, ResourceForm
+
 from teamwork.apps.projects.views.BaseView import get_user_role
+from teamwork.apps.courses.views.CourseView import view_one_course
 
 from teamwork.apps.projects.forms import *
 from teamwork.apps.core.helpers import *
