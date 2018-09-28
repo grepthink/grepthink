@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
+from teamwork.apps.projects.models import dayofweek
 
 # Form Imports
 
