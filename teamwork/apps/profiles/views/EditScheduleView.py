@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 
 # Model Imports
-from teamwork.apps.profiles.models import Profile
+from teamwork.apps.profiles.models import Profile, Events
+
 # Form Imports
 
 # View Imports
