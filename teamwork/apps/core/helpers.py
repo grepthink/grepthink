@@ -33,6 +33,10 @@ from teamwork.apps.courses.models import Course
 """
 def send_email(recipients, gt_email, subject, content):
 
+    # Check if the recipients list is empty
+    if not recipients:
+        return HttpResponse("No recipients were found.")
+
     student_email_list = []
 
     if type(recipients) is User:
@@ -47,16 +51,15 @@ def send_email(recipients, gt_email, subject, content):
             for student in recipients:
                 student_email_list.append(Email(student.email))
     else:
-        print("bad response ", type(recipients))
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Bad Request")
 
     # Handle email sending
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
 
     # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
     # but I'm not sure how the Mail() constructor below works without it.
-    # to_email = Email("initial_email@grepthink.com", "GrepThink")
-    to_email = Email("mrp00pybutth0l3@yourmom.com", "GrepThink")
+    # to_email = Email("initial_email@grepthink.com", "Grepthink")
+    to_email = Email("noemail@notset.com", "Grepthink")
 
     from_email = Email(gt_email)
 
@@ -74,15 +77,10 @@ def send_email(recipients, gt_email, subject, content):
     # The following line was giving SSL Certificate errors.
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
 
+    # Send the Email
+    response = sg.client.mail.send.post(request_body=mail.get())
 
-    # Comment this line to stop local email errors
-    # response = sg.client.mail.send.post(request_body=mail.get())
-
-
-
-    # print(response.status_code)
-    # print(response.body)
-    # print(response.headers)
+    return HttpResponse("Email Sent!") 
 
 
 """
@@ -108,6 +106,8 @@ def handle_file(uploaded_file):
 
 """
 parse csv file
+
+Expects csv file to contain headers containing: first name, last name, email
 
 return dict. Key (string) = FirstName, Lastname
              Value (string)= Email

@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
 
 from teamwork.apps.courses.models import Course
 from teamwork.apps.courses.forms import EmailRosterForm
@@ -32,17 +34,12 @@ def email_roster(request, slug):
             subject = data.get('subject')
             content = data.get('content')
 
-            # attachment = request.FILES['attachment']
-            # if attachment:
-            #     handle_file(attachment)
+            response = send_email(students_in_course, request.user.email, subject, content)
 
-            send_email(students_in_course, request.user.email, subject, content)
-            messages.add_message(request, messages.SUCCESS, "Email Sent!")
+            if isinstance(response, HttpResponse):
+                messages.add_message(request, messages.INFO, response.content)
 
-            return redirect('view_one_course', slug)
-        else:
-            # redirect to error
-            print("EmailRosterForm not valid")
+            return redirect('view_one_course', slug)        
 
     return render(request, 'courses/email_roster.html', {
         'slug':slug, 'form':form, 'count':count, 'students':students_in_course,
