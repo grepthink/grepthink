@@ -136,41 +136,6 @@ def create_project(request):
     return render(request, 'projects/create_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'form': form})
 
-def reject_member(request, slug, uname):
-    """
-    Reject Membership
-    """
-    project = get_object_or_404(Project.objects.prefetch_related('pending_members'), slug=slug)
-    mem_to_add = User.objects.get(username=uname)
-
-    # remove member from pending list if he/she was on it
-    pending_members = project.pending_members.all()
-    if mem_to_add in pending_members:
-        for mem in pending_members:
-            if mem == mem_to_add:
-                project.pending_members.remove(mem)
-                project.save()
-
-        Alert.objects.create(
-            sender=request.user,
-            to=mem_to_add,
-            msg="Sorry, " + project.title + " has denied your request",
-            url=reverse('view_one_project',args=[project.slug]),
-            )
-
-    # taken from alert code
-    user = request.user
-    profile = Profile.objects.get(user=user)
-    unread = profile.unread_alerts()
-    for alert in unread:
-        if alert.slug == project.slug:
-            if alert.to.id is user.id:
-                alert.read = True
-                alert.save()
-                return redirect(view_alerts)
-
-    return redirect(view_one_project, slug)
-
 @login_required
 def email_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
