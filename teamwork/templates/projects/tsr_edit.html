@@ -24,22 +24,22 @@ onblur="checkTextField(this);" />
           <p class="text-center">
               <strong>Assignment:</strong> {{ ass.ass_name }}
           </p>
-      <form action="{% url 'tsr_edit' cur_proj.slug ass.slug %}" method="post" role="form">
-        {% csrf_token %}
-        {% for form in forms %}
-          <h3>For {{form.prefix}}</h3>
-          {% for field in form.visible_fields %}
-            <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+          <form action="{% url 'tsr_edit' cur_proj.slug ass.slug %}" method="post" role="form">
+            {% csrf_token %}
+            {% for form in forms %}
+              <h3>For {{form.prefix}}</h3>
+              {% for field in form.visible_fields %}
+                <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
 
-            {{ field }}
+                {{ field }}
+                {% endfor %}
+                <br>
+                <br>
             {% endfor %}
             <br>
-            <br>
-        {% endfor %}
-        <br>
-        <h5> <input type="submit" value="Submit">
-        </form>
+            <h5> <input type="submit" value="Save">
+            </form>
+        </div>
     </div>
-</div>
 </div>
 {% endblock content %}
