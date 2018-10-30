@@ -92,11 +92,11 @@ def get_user_courses(self):
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # Get only created courses through the creator relationship
-    elif self.profile.isProf:
-        # my_courses = Course.objects.filter(creator=self)
-        my_courses = self.course_creator.all().extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
+    # # Get only created courses through the creator relationship
+    # elif self.profile.isProf:
+    #     # my_courses = Course.objects.filter(creator=self)
+    #     my_courses = self.course_creator.all().extra(\
+    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
     # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
