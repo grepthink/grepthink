@@ -5,6 +5,7 @@
 
 {% block head %}
 <script src="{% static 'js/course.js' %}"></script>
+<link rel="stylesheet" href="css/ScrollTitle.css">
 {% endblock head %}
 
 <!-- {% block crumb %}
@@ -36,15 +37,15 @@
             <div class="box-header with-border">
               <h3 class="box-title">Recipients ( {{ count }} )</h3>
 
-              <div class="box-tools">
+              <div class="box-tools smallScrollStyle">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
               </div>
 
             </div>
 
-            <div class="box-body no-padding">
-             <ul class="nav nav-pills nav-stacked">
+            <div class="box-body no-padding emailScroll">
+             <ul style="list-style-type:none" >
                  {% for stud in students %}
                     <li> <a href="#">{{ stud }} </a></li>
                  {% endfor %}
