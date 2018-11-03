@@ -249,6 +249,7 @@ $(document).ready(function() {
                                         <td>{{asg.ass_name}}</td>
                                         <td>{{asg.ass_number}}</td>
                                         <td>
+                                            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
                                             <a href="{% url 'edit_assignment' asg.slug %}">
                                                 <button type="button" class="btn btn-info btn-sm">
                                                             <i class="fa fa-edit"></i>
@@ -263,6 +264,7 @@ $(document).ready(function() {
                                                             Delete
                                                 </button>
                                             </a>
+                                            {% endif %}
                                         </td>
 
                                     </tr>
