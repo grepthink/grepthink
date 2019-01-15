@@ -150,6 +150,19 @@ k
                                 {{ project.creator.username }}
                             </span></a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Members</strong>
+                            &nbsp;
+                            {% for mem in project.members.all %}
+                            {% if mem.username != null %}
+                            <a href="{% url 'profile' mem.username %}">
+                            <span class="label label-primary">
+                                {{ mem.username }}
+                            </span>
+                            </a>
+                            &nbsp;
+                            {% endif %}
+                            {% endfor %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Desired Skills</strong>
                             &nbsp;
                             {% if project.desired_skills != none %}
@@ -174,19 +187,6 @@ k
                                     {{ project.ta.username }}
                                 </span>
                             </a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <strong>Members</strong>
-                            &nbsp;
-                            {% for mem in project.members.all %}
-                            {% if mem.username != null %}
-                            <a href="{% url 'profile' mem.username %}">
-                            <span class="label label-primary">
-                                {{ mem.username }}
-                            </span>
-                            </a>
-                            &nbsp;
-                            {% endif %}
-                            {% endfor %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Scrum Master</strong>
                             &nbsp;
