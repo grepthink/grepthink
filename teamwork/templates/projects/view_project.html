@@ -422,23 +422,34 @@ k
                                         <td>{{asg.description}}</td>
                                         <td class="form-group"  style="text-align:center;">
                                         {% if asg in asg_completed %}
-                                            {% comment %}
+                                            {% if not asg.is_past_due %}
+
+                                            {% if request.user == project.scrum_master %}
                                             <form action="{% url 'tsr_edit' project.slug asg.slug %}">
-                                                <button class="btn btn-info btn-sm" type="submit" value="edit" name="edit">
-                                                    <i class="fa fa-edit"></i> Edit
+                                                <button class="btn btn-info btn-sm" type="submit" name="scrum_master" value="scrum_master">
+                                                    <i class="fa fa-edit"></i> Edit SM
                                                 </button>
                                             </form>
-                                            {% endcomment %}
+                                            {% else %}
+                                            <form action="{% url 'tsr_edit' project.slug asg.slug %}">
+                                                <button class="btn btn-info btn-sm" type="submit" value="member">
+                                                    <i class="fa fa-edit"></i> Edit Member
+                                                </button>
+                                            </form>
+                                            {% endif %}
+
+
+                                            {% endif %}
                                         {% else %}
                                             {% if request.user == project.scrum_master %}
-                                                <form action="{% url 'tsr_update' project.slug asg.slug%}">
-                                                    <button class="btn btn-success btn-sm" type="submit" value="scrum_master_form" name="scrum_master_form">
+                                                <form action="{% url 'create_scrum_master_tsr' project.slug asg.slug %}">
+                                                    <button class="btn btn-success btn-sm" type="submit">
                                                         <i class="fa fa-plus"></i> Scrum Master
                                                     </button>
                                                 </form>
                                             {% else %}
-                                                <form action="{% url 'tsr_update' project.slug asg.slug%}">
-                                                    <button class="btn btn-primary btn-sm" type="submit" value="normal_form" name="normal_form">
+                                                <form action="{% url 'create_member_tsr' project.slug asg.slug %}">
+                                                    <button class="btn btn-primary btn-sm" type="submit">
                                                         <i class="fa fa-plus"></i> Member Form
                                                     </button>
                                                 </form>

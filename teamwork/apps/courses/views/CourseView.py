@@ -1,9 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
 
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
-from teamwork.apps.projects.models import Membership
+from teamwork.apps.projects.models import Membership, Project
+from teamwork.apps.profiles.models import Profile
 from teamwork.apps.courses.forms import AssignmentForm, EditAssignmentForm, CourseUpdateForm
 from teamwork.apps.core.helpers import send_email
 

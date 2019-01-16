@@ -164,6 +164,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ['teamwork.apps.core.models.EmailAddressAuthBackend', 'django.contrib.auth.backends.ModelBackend']
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 

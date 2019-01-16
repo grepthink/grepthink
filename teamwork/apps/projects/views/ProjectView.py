@@ -2,16 +2,22 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.urlresolvers import reverse
 
 import json
 
 # Imported Methods/Classes
 from teamwork.apps.core.models import *
-from teamwork.apps.projects.models import ResourceUpdate
+from teamwork.apps.projects.models import ResourceUpdate, Project
+from teamwork.apps.profiles.models import Alert
 from teamwork.apps.projects.forms import UpdateForm, ResourceForm
+
 from teamwork.apps.projects.views.BaseView import get_user_role
+from teamwork.apps.projects.views.MyProjectsView import *
+from teamwork.apps.courses.views.CourseView import view_one_course
 
 from teamwork.apps.projects.forms import *
+from teamwork.apps.core.helpers import *
 
 @login_required
 def view_one_project(request, slug):
@@ -41,11 +47,8 @@ def view_one_project(request, slug):
     resources = project.get_resources()
     course = project.course.first()
     staff = course.get_staff()
-    print(staff)
-    print(type(staff[0]))
     asgs = sorted(course.assignments.prefetch_related('subs').all(), key=lambda s: s.ass_date)
     asg_completed = []
-
 
     for i in asgs:
         for j in i.subs.prefetch_related('evaluator').all():
@@ -169,6 +172,41 @@ def request_join_project(request, slug):
 
     return view_one_project(request, slug)
 
+def reject_member(request, slug, uname):
+    """
+    Reject Membership
+    """
+    project = get_object_or_404(Project.objects.prefetch_related('pending_members'), slug=slug)
+    mem_to_add = User.objects.get(username=uname)
+
+    # remove member from pending list if he/she was on it
+    pending_members = project.pending_members.all()
+    if mem_to_add in pending_members:
+        for mem in pending_members:
+            if mem == mem_to_add:
+                project.pending_members.remove(mem)
+                project.save()
+
+        Alert.objects.create(
+            sender=request.user,
+            to=mem_to_add,
+            msg="Sorry, " + project.title + " has denied your request",
+            url=reverse('view_one_project',args=[project.slug]),
+            )
+
+    # taken from alert code
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    unread = profile.unread_alerts()
+    for alert in unread:
+        if alert.slug == project.slug:
+            if alert.to.id is user.id:
+                alert.read = True
+                alert.save()
+                return redirect(view_alerts)
+
+    return redirect(view_one_project, slug)
+
 @login_required
 def post_update(request, slug):
     """
@@ -201,7 +239,9 @@ def post_update(request, slug):
 
 @login_required
 def resource_update(request, slug):
-
+    """
+    Post a Resource to the project given the slug
+    """
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
 
     if request.user.profile.isGT:

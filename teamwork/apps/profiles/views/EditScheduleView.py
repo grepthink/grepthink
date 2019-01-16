@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 # Model Imports
-from teamwork.apps.profiles.models import Profile
+from teamwork.apps.profiles.models import Profile, Events
+from teamwork.apps.projects.models import dayofweek
+
 # Form Imports
 
 # View Imports
@@ -52,9 +55,6 @@ def save_event(request, username):
             if profile.avail.all() is not None: profile.avail.all().delete()
 
             profile.save()
-
-            print("\n\nI CLEARED THE SCHEDULE\n")
-
             return HttpResponse("Schedule Cleared")
 
         # List of events as a string (json)
@@ -105,9 +105,5 @@ def save_event(request, username):
 
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
-
-    else:
-        pass
-        #print("\n\nDebug: Request method was not post \n\n")
 
     return HttpResponse("Failure")

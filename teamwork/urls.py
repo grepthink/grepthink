@@ -27,7 +27,7 @@ from teamwork.apps.core import helpers as core_helpers
 
 # Project Imports
 from teamwork.apps.projects.views import BaseView as ProjectBaseView
-from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjectView, TsrView, MeetingsView
+from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjectView, TsrView, MeetingsView, EditTsrView
 
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
@@ -72,10 +72,12 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/$', ProjectView.post_update, name='post_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
+        # Create Scrum Master TSR
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/smaster/$', TsrView.create_scrum_master_tsr, name='create_scrum_master_tsr'),
         # Update TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', TsrView.tsr_update, name='tsr_update'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/member/$', TsrView.create_member_tsr, name='create_member_tsr'),
         # Edit TSR information
-        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<assslug>[^/]+)/$', TsrView.tsr_edit, name='tsr_edit'),
+        url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/edit/$', EditTsrView.tsr_edit, name='tsr_edit'),
         # View TSRs
         url(r'^project/(?P<slug>[^/]+)/view_tsr/$', TsrView.view_tsr, name='view_tsr'),
         # View meeting times
@@ -87,7 +89,7 @@ urlpatterns = [
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectBaseView.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectView.reject_member, name='reject_member'),
         # Email Members of Project
         url(r'^project/(?P<slug>[^/]+)/email_members/$', ProjectBaseView.email_project, name='email_project'),
         # select members (select2)
