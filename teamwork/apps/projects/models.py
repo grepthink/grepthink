@@ -81,7 +81,7 @@ class Tsr(models.Model):
     slug = models.CharField(
         default="",
         max_length=20,
-        unique=True)    
+        unique=True)
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
@@ -428,7 +428,7 @@ class Project(models.Model):
         # proj = Project.objects.filter(membership__in=myProjects)
 
         mem = list(user.membership.all())
-
+        
         claimed = list(user.ta.all())
 
         created = list(user.project_creator.all())
@@ -523,7 +523,6 @@ class ProjectUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
-
 class ResourceUpdate(models.Model):
 
     project = models.ForeignKey(Project)
@@ -539,7 +538,6 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
-
 
 class ProjectChat(models.Model):
 
