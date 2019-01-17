@@ -167,6 +167,10 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
+
+    disable = models.BooleanField(
+        default=False)
+
     # Slug for course, string
     slug = models.CharField(
         # with max length 20

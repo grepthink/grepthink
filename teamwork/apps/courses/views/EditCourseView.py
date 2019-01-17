@@ -12,6 +12,27 @@ from teamwork.apps.profiles.models import Alert
 from teamwork.apps.courses.forms import EditCourseForm
 
 @login_required
+def delete_course(request, slug):
+    """
+    Delete course method
+    """
+    course = get_object_or_404(Course, slug=slug)
+    projects = projects_in_course(slug)
+
+    if request.user.profile.isGT:
+        pass
+    elif not request.user==course.creator:
+        return redirect(view_one_course, course.slug)
+
+    #Runs through each project and deletes them
+    for p in projects:
+        p.delete()
+
+    #deletes course
+    course.delete()
+    return redirect(view_courses)
+
+@login_required
 def edit_course(request, slug):
     """
     Edit course method, creating generic form
@@ -43,6 +64,21 @@ def edit_course(request, slug):
             #redirect them to the /course directory with message
             messages.info(request,'Only Professor can edit course')
             return HttpResponseRedirect('/course')
+
+    # Disable the course
+    if request.POST.get('disable_course'):
+        print("disbaling course")
+        if request.user == course.creator or request.user.profile.isGT:
+            if course.disable:
+                course.disable = False
+                course.save()
+                messages.add_message(request, messages.SUCCESS, course.name +  " has been re-enabled")
+                return redirect(view_one_course, course.slug)
+            else:
+                course.disable = True
+                course.save()
+                messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
+                return HttpResponseRedirect('/course')
 
     # Add a member to the course
     if request.POST.get('members'):
@@ -193,26 +229,3 @@ def lock_interest(request, slug):
 
     course.save()
     return redirect(view_one_course, course.slug)
-
-
-
-@login_required
-def delete_course(request, slug):
-    """
-    Delete course method
-    """
-    course = get_object_or_404(Course, slug=slug)
-    projects = projects_in_course(slug)
-
-    if request.user.profile.isGT:
-        pass
-    elif not request.user==course.creator:
-        return redirect(view_one_course, course.slug)
-
-    #Runs through each project and deletes them
-    for p in projects:
-        p.delete()
-
-    #deletes course
-    course.delete()
-    return redirect(view_courses)
