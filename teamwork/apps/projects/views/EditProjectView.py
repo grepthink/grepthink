@@ -252,6 +252,7 @@ def try_add_member(request, slug, uname):
     """
     project = get_object_or_404(Project.objects.prefetch_related('course', 'members', 'pending_members'), slug=slug)
     course = project.course.first()
+
     mem_to_add = User.objects.get(username=uname)
     mem_courses = Course.get_my_courses(mem_to_add)
     curr_members = project.members.all()
@@ -265,11 +266,11 @@ def try_add_member(request, slug, uname):
 def add_member(request, slug, uname):
     """
     Add a member to a project.
-    - Project declared using slug
-    - User declared using uname
+    - Project grabbed using slug
+    - User grabbed using username
     """
     project = get_object_or_404(Project, slug=slug)
-    mem_to_add = User.objects.get(username=uname)    
+    mem_to_add = User.objects.get(username=uname)
 
     Membership.objects.create(
         user=mem_to_add, project=project, invite_reason='')
@@ -281,8 +282,6 @@ def add_member(request, slug, uname):
         )
 
     adjust_pendinglist(request, project, mem_to_add)
-
-    return True
 
 def adjust_pendinglist(request, project, mem_to_add):
     """
@@ -309,8 +308,13 @@ def adjust_pendinglist(request, project, mem_to_add):
                 alert.save()
 
 def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
-    if not (course in mem_courses and mem_to_add not in [mem for mem in curr_members]):
-        messages.warning(request, "User failed to be added to project. Make sure " + mem_to_add.username + " is enrolled in the course and is not already a member of the project.")
+
+    if (not course in mem_courses):
+        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is not enrolled in the course")
+        return False
+
+    if (mem_to_add in curr_members):
+        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is already a member of the project.")
         return False
 
     if not project.avail_mem:

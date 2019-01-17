@@ -195,7 +195,7 @@ class Course(models.Model):
     assignments=models.ManyToManyField(
         # to Assignment model
         Assignment,
-        related_name='course') # :D hehe -kp
+        related_name='course')
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user

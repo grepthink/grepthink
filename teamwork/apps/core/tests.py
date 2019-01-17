@@ -179,7 +179,7 @@ class SortMatchListTest(TestCase):
         del self.user3
 
         del self.course
-        
+
 # TODO: auto_ros tests
 class AutoSetRosterTest(TestCase):
     """
@@ -208,7 +208,7 @@ class AutoSetRosterTest(TestCase):
 
     def testInitialTesting(self):
         auto = auto_ros(self.course)
-        print(auto)
+        # print(auto)
 
 
 # TODO: by_schedule tests

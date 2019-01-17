@@ -428,7 +428,7 @@ class Project(models.Model):
         # proj = Project.objects.filter(membership__in=myProjects)
 
         mem = list(user.membership.all())
-        
+
         claimed = list(user.ta.all())
 
         created = list(user.project_creator.all())
