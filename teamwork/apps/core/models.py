@@ -15,7 +15,12 @@ from teamwork.apps.projects.models import *
 from teamwork.apps.projects.models import to_bits, from_bits
 
 class EmailAddressAuthBackend(ModelBackend):
-
+    """
+    Authentication backend used to determine if a users email & password are valid.
+    Returns:
+        - None if Email doesn't exist or password doesn't match Email
+        - UserModel object if email and password match
+    """
     def authenticate(self, username=None, password=None, **kwargs):
         UserModel = get_user_model()
 
@@ -52,20 +57,18 @@ def sort(matchList):
         project: the project looking for matches
         interestWeight: the weight the user can assign to interest, or default to 1
         knowWeight: the weight the user can assign to knowing a skill, or defaults to 1
-        leanrWeight: the weight the user can assign to wanting to learn a skill, or default to 1
+        learnWeight: the weight the user can assign to wanting to learn a skill, or default to 1
     returns: a list of the top users that match with a project, based on there cumulative score
         collected after each pass
 """
-
-
 def po_match(project):
     initial = {}
     backup = {}
 
-    # set weights based on criteria
     # locate project course
     course = project.course.first()
 
+    # set weights based on criteria
     if course.limit_weights:
         interestWeight = course.weigh_interest or 1
         knowWeight = course.weigh_know or 1
@@ -81,12 +84,9 @@ def po_match(project):
     for i in interested:
         # generate the dictionary from the interest field, with the user's
         # rating as their initial score, mulitple by weight if given
-        # add if they do not have a membership to a project in this course
-        if Membership.objects.filter(user=i.user, project__course=course):
-            continue
-        else:
+        # if they do not have a membership to a project in this course
+        if not Membership.objects.filter(user=i.user, project__course=course):
             initial[i.user] = [(i.interest * interestWeight), (i.interest * interestWeight), 0, 0, 0]
-
 
     # Skill Matching
     # loop through the desired skills can check the skills table to see who
@@ -164,7 +164,7 @@ def auto_ros(course):
     # Sort the list of projects from least interest to most
     sorted_list = list(reversed(sorted(match_list, key=lambda x: x[-1])))
 
-    # Mark all curent memebers as assigned before assigning
+    # Mark all current members as 'assigned'
     for z in match_list:
         for mem in z[0].members.all():
             assigned.append(mem)
@@ -318,8 +318,9 @@ def by_schedule(user, project):
             saturday_list.append(i)
 
     # Converts to and from bitstring to find FREE time
-    sunday_list = to_bits(sunday_list)  #this is working
-    sunday_list = from_bits(sunday_list)    #this is now working
+    sunday_list = to_bits(sunday_list)
+    sunday_list = from_bits(sunday_list)
+
     # Appends to list
     for i in sunday_list:
         pos_event.append(["Sunday", i[0], i[1], i[2], i[3]])

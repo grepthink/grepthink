@@ -195,7 +195,7 @@ class Course(models.Model):
     assignments=models.ManyToManyField(
         # to Assignment model
         Assignment,
-        related_name='course') # :D hehe -kp
+        related_name='course')
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
@@ -387,7 +387,7 @@ class Enrollment(models.Model):
         # with a default of 0
         default=0)
 
-    # user role in a course
+    # user role in a course; options: professor, student, ta
     role = models.CharField(max_length=24, default="student")
 
     def __str__(self):

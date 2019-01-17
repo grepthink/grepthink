@@ -227,7 +227,7 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-    # the interest in a project can be access through back realtionship
+    # the interest in a project can be access through back relationship
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
@@ -428,7 +428,7 @@ class Project(models.Model):
         # proj = Project.objects.filter(membership__in=myProjects)
 
         mem = list(user.membership.all())
-        
+
         claimed = list(user.ta.all())
 
         created = list(user.project_creator.all())

@@ -62,15 +62,14 @@ def dayofweek(number):
 
 class Events(models.Model):
     """
-    Events: A database model (object) for Events (Availabiliy).
+    Events: A database model (object) for Events (Availability).
 
     Fields:
-        event_name: a field that contains the name of a skill
         day: Day of week
         start_time_hour: Hour an event starts (1-24)
-        start_time_minute: Minute an event starts (1-60)
+        start_time_min: Minute an event starts (1-60)
         end_time_hour: Hour an event ends (1-24)
-        end_time_minute: Minute an event ends (1-60)
+        end_time_min: Minute an event ends (1-60)
 
 
     Methods:
@@ -187,7 +186,7 @@ class Profile(models.Model):
     institution = models.TextField(max_length=100, blank=True)
     location = models.TextField(max_length=100, blank=True)
 
-    # Avail - Availabiliy
+    # Availability
     avail = models.ManyToManyField(Events)
     jsonavail = models.TextField(
                 default='[]')
