@@ -92,18 +92,17 @@ def get_user_courses(self):
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # Get only created courses through the creator relationship
-    elif self.profile.isProf:
-        # my_courses = Course.objects.filter(creator=self)
-        my_courses = self.course_creator.all().extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # If none of the other flags triggered return enrolled classes
+    # NOTE: the following is commented to fix the issue: When a Professor Profile is assigned to a
+    # course as a TA the course would not appear under courses and could only be accessed by URL
+    # elif self.profile.isProf:
+    #     my_courses = self.course_creator.all().extra(\
+    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
     else:
-        # #Gets current user's enrollments, by looking for user in  Enrollment table
+        # Gets current user's enrollments, by looking for user in  Enrollment table
         my_courses = self.enrollment.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    return my_courses
 
+    return my_courses
 
 # Add method to function that returns a list of users enrolled courses
 auth.models.User.add_to_class('get_user_courses', get_user_courses)
@@ -397,7 +396,6 @@ class Enrollment(models.Model):
         Maybe something like,  return u'%s %s' % (self.course, self.title)
         """
         return ("%s"%(self.user.username))
-
 
 class CourseUpdate(models.Model):
     """

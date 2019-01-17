@@ -7,6 +7,15 @@ from django.utils.safestring import mark_safe
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile
+from django.http import HttpResponse
+
+# Model Imports
+from teamwork.apps.profiles.models import Profile, Events
+from teamwork.apps.projects.models import dayofweek
+
+# Form Imports
+
+# View Imports
 
 # Other Imports
 import json

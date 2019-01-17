@@ -86,8 +86,10 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/leave/$', EditProjectView.leave_project, name='leave_project'),
         # Add member to project
         url(r'^project/(?P<slug>[^/]+)/add/(?P<uname>[^/]+)$', EditProjectView.add_member, name='add_member'),
+        # Try add member to project
+        url(r'^project/(?P<slug>[^/]+)/tryadd/(?P<uname>[^/]+)$', EditProjectView.try_add_member, name='try_add_member'),
         # Add member to project
-        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectBaseView.reject_member, name='reject_member'),
+        url(r'^project/(?P<slug>[^/]+)/reject/(?P<uname>[^/]+)$', ProjectView.reject_member, name='reject_member'),
         # Email Members of Project
         url(r'^project/(?P<slug>[^/]+)/email_members/$', ProjectBaseView.email_project, name='email_project'),
         # select members (select2)
