@@ -44,9 +44,8 @@
                     </td>
                     <td class="pull-right">
                         <div class="btn btn-sm pull-right">
-                            {% if alert.alertType == "invitation" %}
-                            {# {% url 'add_member' alert.slug profile.user.username %} #}
-                            <a href="{% url 'add_member' alert.slug profile.user.username %}" style="">
+                            {% if alert.alertType == "invitation" %}                            
+                            <a href="{% url 'try_add_member' alert.slug profile.user.username %}" style="">
                                 <button class="btn-xs btn-primary">
                                     Accept
                                 </button>
