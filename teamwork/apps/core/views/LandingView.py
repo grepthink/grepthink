@@ -29,11 +29,12 @@ def index(request):
         page_name = "Dashboard"
         page_description = "Instructor Control Panel"
         title = "Dashboard"
-        all_courses = Course.get_my_created_courses(request.user)
+        active_courses = Course.get_my_created_courses(request.user).filter(disable=False)
+        disabled_courses = Course.get_my_created_courses(request.user).filter(disable=True)
         return render(request, 'core/dashboard.html', {
                 'page_name' : page_name,
                 'page_description' : page_description, 'title' : title,
-                'all_courses' : all_courses
+                'active_courses' : active_courses, 'disabled_courses': disabled_courses
                 })
 
     if logged_in:
@@ -41,9 +42,9 @@ def index(request):
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
         if request.user.profile.isProf:
-            all_courses = Course.get_my_created_courses(request.user)
+            all_courses = Course.get_my_created_courses(request.user).filter(disable=False)
         else:
-            all_courses = Course.get_my_courses(request.user)
+            all_courses = Course.get_my_courses(request.user).filter(disable=False)
         date_updates = []
         for course in all_courses:
             course_updates = course.get_updates_by_date()

@@ -247,10 +247,12 @@ $(document).ready(function() {
                     <p>
                         This course will still be accessible, but will be filtered out of view except in the sidebar.
                     </p>
-                    <button class="btn btn-warning" name="disable_course" type="submit" value="disable_course">
+                    <a href="{% url 'disable' course.slug %}">
+                    <button type="button" class="btn btn-warning" name="disable">
                         <i class="fa fa-flag"></i>
                         Disable course
                     </button>
+                    </a>
                 </div>
             </div>
         </div>

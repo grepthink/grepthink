@@ -65,21 +65,6 @@ def edit_course(request, slug):
             messages.info(request,'Only Professor can edit course')
             return HttpResponseRedirect('/course')
 
-    # Disable the course
-    if request.POST.get('disable_course'):
-        print("disbaling course")
-        if request.user == course.creator or request.user.profile.isGT:
-            if course.disable:
-                course.disable = False
-                course.save()
-                messages.add_message(request, messages.SUCCESS, course.name +  " has been re-enabled")
-                return redirect(view_one_course, course.slug)
-            else:
-                course.disable = True
-                course.save()
-                messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
-                return HttpResponseRedirect('/course')
-
     # Add a member to the course
     if request.POST.get('members'):
         # Get the members to add, as a list
@@ -229,3 +214,20 @@ def lock_interest(request, slug):
 
     course.save()
     return redirect(view_one_course, course.slug)
+
+def disable(request, slug):
+    """
+    Lock the interest for a course
+    """
+    course = get_object_or_404(Course, slug=slug)
+    if request.user == course.creator or request.user.profile.isGT:
+        if course.disable:
+            course.disable = False
+            course.save()
+            messages.add_message(request, messages.SUCCESS, course.name +  " has been re-enabled")
+            return redirect(view_one_course, course.slug)
+        else:
+            course.disable = True
+            course.save()
+            messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
+            return HttpResponseRedirect('/course')

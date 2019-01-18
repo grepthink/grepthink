@@ -83,7 +83,7 @@ class Assignment(models.Model):
 
         super(Assignment, self).save(*args, **kwargs)
 
-def get_user_courses(self):
+def get_user_active_courses(self):
     """
     Added to auth so that a user object can easily retrieve enrolled courses
     Gets a list of course objects that the user is in
@@ -100,13 +100,34 @@ def get_user_courses(self):
     # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
-        my_courses = self.enrollment.all().extra(\
+        my_courses = self.enrollment.filter(disable=False).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
     return my_courses
 
+def get_user_disabled_courses(self):
+    """
+    Added to auth so that a user object can easily retrieve enrolled courses
+    Gets a list of course objects that the user is in
+    """
+    # Get all courses for a GT Admin
+    if self.profile.isGT:
+        my_courses = Course.objects.all().extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
+    # # Get only created courses through the creator relationship
+    # elif self.profile.isProf:
+    #     # my_courses = Course.objects.filter(creator=self)
+    #     my_courses = self.course_creator.all().extra(\
+    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
+    # If none of the other flags triggered return enrolled classes
+    else:
+        # #Gets current user's enrollments, by looking for user in  Enrollment table
+        my_courses = self.enrollment.filter(disable=True).extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
+    return my_courses
 
 # Add method to function that returns a list of users enrolled courses
-auth.models.User.add_to_class('get_user_courses', get_user_courses)
+auth.models.User.add_to_class('get_user_active_courses', get_user_active_courses)
+auth.models.User.add_to_class('get_user_disabled_courses', get_user_disabled_courses)
 
 class Course(models.Model):
     """
