@@ -250,12 +250,17 @@ $(document).ready(function() {
                     <a href="{% url 'disable' course.slug %}">
                     <button type="button" class="btn btn-warning" name="disable">
                         <i class="fa fa-flag"></i>
+                        {% if not course.disable %}
                         Disable course
+                        {% else %}
+                        Activate Course
+                        {% endif %}
                     </button>
                     </a>
                 </div>
             </div>
         </div>
+        {% if user == course.creator or user.profile.isGT %}
         <div class="col-md-6">
             <div class="box box-danger">
                 <div class="box-header with-border">
@@ -275,6 +280,7 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
+        {% endif %}
 
 
         </form>

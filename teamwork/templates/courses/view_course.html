@@ -129,14 +129,16 @@ $(document).ready(function() {
                     <i class="fa fa-folder-open"></i>
                 </a>
             </li>
-
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
+            {% if not course.disable %}
+
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
+            {% endif %}
 
 
             <li class="pull-right">
@@ -147,13 +149,17 @@ $(document).ready(function() {
             </li>
             {% endif %}
 
+
+            {% if not course.disable %}
             <li class="">
             <a href="{% url 'create_project' %}">
                 Create Project
                 <i class="fa fa-plus"></i>
             </a>
             </li>
+            {% endif %}
 
+            {% if not course.disable %}
             {% if user_role == "ta" %}
             <li class="pull-right">
             <a href="{% url 'claim_projects' course.slug %}">
@@ -163,12 +169,14 @@ $(document).ready(function() {
             </a>
             </li>
             {% endif %}
+            {% endif %}
 
         </ul>
 
         <div class="tab-content" style="background-color: #ecf0f5">
 
             <div class="tab-pane active" id="projects">
+                {% if not course.disable %}
                 {% if user != course.creator %}
                     {% if not user.profile.isGT %}
                         {% if not user_role == "ta" %}
@@ -185,6 +193,7 @@ $(document).ready(function() {
                         {% endif %}
                         {% endif %}
                     {% endif %}
+                {% endif %}
                 {% endif %}
 
                     {% include "projects/partial_project_box.html" with projects=projects course=course%}

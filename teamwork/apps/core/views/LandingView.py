@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 
-from teamwork.apps.courses.models import Course
+from teamwork.apps.courses.models import Course, get_user_active_courses, get_user_disabled_courses
 
 def index(request):
     """
@@ -29,8 +29,8 @@ def index(request):
         page_name = "Dashboard"
         page_description = "Instructor Control Panel"
         title = "Dashboard"
-        active_courses = Course.get_my_created_courses(request.user).filter(disable=False)
-        disabled_courses = Course.get_my_created_courses(request.user).filter(disable=True)
+        active_courses = get_user_active_courses(request.user)
+        disabled_courses = get_user_disabled_courses(request.user)
         return render(request, 'core/dashboard.html', {
                 'page_name' : page_name,
                 'page_description' : page_description, 'title' : title,
@@ -42,9 +42,9 @@ def index(request):
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
         if request.user.profile.isProf:
-            all_courses = Course.get_my_created_courses(request.user).filter(disable=False)
+            all_courses = get_user_active_courses(request.user)
         else:
-            all_courses = Course.get_my_courses(request.user).filter(disable=False)
+            all_courses = get_user_active_courses(request.user)
         date_updates = []
         for course in all_courses:
             course_updates = course.get_updates_by_date()
