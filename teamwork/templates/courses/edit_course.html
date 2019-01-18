@@ -271,12 +271,12 @@ $(document).ready(function() {
                         Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
                         sure you know what you are doing before pressing this button.
                     </p>
-
-
-                    <button class="btn btn-danger" name="DELETE" type="submit" value="delete_course">
+                    <a href="{% url 'delete_course' course.slug %}">
+                    <button type="button" class="btn btn-danger" name="delete_course">
                         <i class="fa fa-trash"></i>
                         Delete course
                     </button>
+                    </a>
                 </div>
             </div>
         </div>
