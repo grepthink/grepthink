@@ -65,7 +65,7 @@ class Assignment(models.Model):
 
     @property
     def is_past_due(self):
-        return date.today() > self.due_date
+        return datetime.datetime.now().date() > self.due_date
 
     def save(self, *args, **kwargs):
         """
