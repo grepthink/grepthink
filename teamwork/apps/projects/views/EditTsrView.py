@@ -24,7 +24,7 @@ def tsr_edit(request, slug, asg_slug):
     page_name = "TSR Edit"
     page_description = "Edit TSR form"
     title = "TSR Edit"
-    
+
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
 
@@ -34,7 +34,9 @@ def tsr_edit(request, slug, asg_slug):
     # List of Members of the Current Project
     members = cur_proj.members.all()
     emails = [member.email for member in members]
-    tsr_list = Tsr.objects.filter(ass_number=asg.ass_number, evaluator=request.user)
+
+    # grab the TSR objects that will be displayed to edit
+    tsr_list = asg.subs.all().filter(evaluator=request.user)
 
     # Determine if Scrum Master
     scrum_master = is_scrum_master(request)

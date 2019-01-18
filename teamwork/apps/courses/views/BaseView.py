@@ -36,8 +36,7 @@ def _courses(request, courses):
 @login_required
 def view_courses(request):
     """
-    Public method that takes a request, retrieves certain course objects from the model,
-    then calls _projects to render the request to template view_projects.html
+    Public method that takes a request, retrieves all course objects associated with request.user    
     """
 
     return _courses(request, get_user_active_courses(request.user))

@@ -227,7 +227,7 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-    # the interest in a project can be access through back realtionship
+    # the interest in a project can be access through back relationship
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
@@ -563,7 +563,6 @@ class ProjectUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
-
 class ResourceUpdate(models.Model):
 
     project = models.ForeignKey(Project)
@@ -579,7 +578,6 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
-
 
 class ProjectChat(models.Model):
 

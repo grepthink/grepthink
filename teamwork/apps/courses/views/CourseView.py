@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
 
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
 from teamwork.apps.projects.models import Membership, Project
@@ -75,7 +77,6 @@ def view_one_course(request, slug):
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
         'user_role':user_role, 'available':available, 'assignments':asgs,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
-
 
 @login_required
 def edit_assignment(request, slug):

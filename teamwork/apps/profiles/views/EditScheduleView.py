@@ -3,13 +3,21 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile
+from django.http import HttpResponse
+
+# Model Imports
+from teamwork.apps.profiles.models import Profile, Events
+from teamwork.apps.projects.models import dayofweek
+
 # Form Imports
 
 # View Imports
 
+# Other Imports
 import json
 
 @login_required
@@ -19,7 +27,6 @@ def edit_schedule(request, username):
     Gets a list of 'events' from a calendar and stores the event as an array of tuples
     Redners profiles/edit_calendar.html
     """
-    from django.utils.safestring import mark_safe
 
     user = get_object_or_404(User, username=username)
     page_name = "Edit Schedule"

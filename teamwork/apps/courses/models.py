@@ -92,16 +92,11 @@ def get_user_active_courses(self):
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # # Get only created courses through the creator relationship
-    # elif self.profile.isProf:
-    #     # my_courses = Course.objects.filter(creator=self)
-    #     my_courses = self.course_creator.all().extra(\
-    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
         my_courses = self.enrollment.filter(disable=False).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
+    
     return my_courses
 
 def get_user_disabled_courses(self):
@@ -113,16 +108,11 @@ def get_user_disabled_courses(self):
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # # Get only created courses through the creator relationship
-    # elif self.profile.isProf:
-    #     # my_courses = Course.objects.filter(creator=self)
-    #     my_courses = self.course_creator.all().extra(\
-    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # If none of the other flags triggered return enrolled classes
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
         my_courses = self.enrollment.filter(disable=True).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
+        
     return my_courses
 
 # Add method to function that returns a list of users enrolled courses
@@ -221,7 +211,7 @@ class Course(models.Model):
     assignments=models.ManyToManyField(
         # to Assignment model
         Assignment,
-        related_name='course') # :D hehe -kp
+        related_name='course')
 
     # creator of a course with a FK to that User object
     # The Fk with generate a set of course object for that user
@@ -413,7 +403,7 @@ class Enrollment(models.Model):
         # with a default of 0
         default=0)
 
-    # user role in a course
+    # user role in a course; options: professor, student, ta
     role = models.CharField(max_length=24, default="student")
 
     def __str__(self):
@@ -422,7 +412,6 @@ class Enrollment(models.Model):
         Maybe something like,  return u'%s %s' % (self.course, self.title)
         """
         return ("%s"%(self.user.username))
-
 
 class CourseUpdate(models.Model):
     """

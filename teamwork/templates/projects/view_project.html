@@ -789,7 +789,7 @@ k
                     <tr>
                         <td> <a href="{% url 'profile' stud.username %}"> {{ stud.email }} </a> </td>
                         <!-- <td> Todo </td> -->
-                        <td> <a href="{% url 'add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
+                        <td> <a href="{% url 'try_add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
                         <td> <a href="{% url 'reject_member' project.slug stud.username %}"><button type="button" class="btn btn-block btn-danger btn-xs">Reject</button> </td>
                     </tr>
                 {% endfor %}

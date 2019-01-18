@@ -12,19 +12,34 @@ function checkTextField(field) {
 onblur="checkTextField(this);" />
 {% block content %}
 
-  <form action="{% url 'tsr_edit' cur_proj.slug ass.slug %}" method="post" role="form">
-    {% csrf_token %}
-    {% for form in forms %}
-      <br>
-      <br>
-      <h3>For {{form.prefix}}</h3>
-      {% for field in form.visible_fields %}
-        <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+<div class="col-md-8">
+    <div class="box box-success">
+      <div class="box-header with-border">
+        <h3 class="box-title">Edit TSR Submission</h3>
+      </div>
+      <div class="box-body">
+          <p class="text-center">
+              <strong>Course:</strong> {{ cur_proj.course.first.name }}
+          </p>
+          <p class="text-center">
+              <strong>Assignment:</strong> {{ ass.ass_name }}
+          </p>
+          <form action="{% url 'tsr_edit' cur_proj.slug ass.slug %}" method="post" role="form">
+            {% csrf_token %}
+            {% for form in forms %}
+              <h3>For {{form.prefix}}</h3>
+              {% for field in form.visible_fields %}
+                <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
 
-        {{ field }}
-        {% endfor %}
-    {% endfor %}
-    <br>
-    <h5> <input type="submit" value="Submit">
-    </form>
+                {{ field }}
+                {% endfor %}
+                <br>
+                <br>
+            {% endfor %}
+            <br>
+            <h5> <input type="submit" value="Save">
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock content %}
