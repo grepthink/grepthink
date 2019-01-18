@@ -133,6 +133,7 @@
                                     </li>
                                  {% endfor %}
                                  {% endif %}
+                                 {% if not user.profile.isGT %}
                                  <li class="treeview active">
                                      <a href="#">
                                          <i class="fa fa-flag-o"></i>
@@ -152,6 +153,7 @@
                                               {% endif %}
                                          </ul>
                                  </li>
+                                 {% endif %}
                             </ul>
 
                     </li>

@@ -230,4 +230,4 @@ def disable(request, slug):
             course.disable = True
             course.save()
             messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
-            return HttpResponseRedirect('/course')
+            return redirect('/course')

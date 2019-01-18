@@ -81,7 +81,7 @@ class Tsr(models.Model):
     slug = models.CharField(
         default="",
         max_length=20,
-        unique=True)    
+        unique=True)
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
@@ -432,6 +432,46 @@ class Project(models.Model):
         claimed = list(user.ta.all())
 
         created = list(user.project_creator.all())
+
+        projects = list(set(mem + created + claimed))
+
+        return projects
+
+    @staticmethod
+    def get_my_active_projects(user):
+        """
+        Gets a list of project objects. Used in views then passed to the template.
+        """
+        # #Gets membership object of current user
+        # myProjects = Membership.objects.filter(user=user)
+        # #Gets project queryset of only projects user is in OR the user created
+        # proj = Project.objects.filter(membership__in=myProjects)
+
+        mem = list(user.membership.filter(course__disable=False))
+
+        claimed = list(user.ta.filter(course__disable=False))
+
+        created = list(user.project_creator.filter(course__disable=False))
+
+        projects = list(set(mem + created + claimed))
+
+        return projects
+
+    @staticmethod
+    def get_my_disabled_projects(user):
+        """
+        Gets a list of project objects. Used in views then passed to the template.
+        """
+        # #Gets membership object of current user
+        # myProjects = Membership.objects.filter(user=user)
+        # #Gets project queryset of only projects user is in OR the user created
+        # proj = Project.objects.filter(membership__in=myProjects)
+
+        mem = list(user.membership.filter(course__disable=True))
+
+        claimed = list(user.ta.filter(course__disable=True))
+
+        created = list(user.project_creator.filter(course__disable=True))
 
         projects = list(set(mem + created + claimed))
 
