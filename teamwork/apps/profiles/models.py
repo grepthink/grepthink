@@ -7,6 +7,8 @@ Database Models for the objects: Skills, Profile
 # Django Imports
 from __future__ import unicode_literals
 
+# Third-party Modules
+import markdown
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
@@ -221,6 +223,9 @@ class Profile(models.Model):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
         return not(self == other)
+
+    def get_bio_as_markdown(self):
+        return markdown.markdown(self.bio, safe_mode='escape')
 
     # Alert functions, self explanitory
     def alerts(self):

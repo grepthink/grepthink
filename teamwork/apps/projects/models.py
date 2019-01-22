@@ -8,9 +8,10 @@ Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 from __future__ import unicode_literals
 
 import random
+from datetime import date
+import datetime
 import string
 from math import floor
-from datetime import datetime
 from decimal import Decimal
 
 # Third-party Modules
@@ -512,7 +513,7 @@ class ProjectUpdate(models.Model):
     update_title = models.CharField(
         max_length=255, default="Default Update Title")
     update = models.TextField(max_length=2000, default="Default Update")
-    date = models.DateTimeField(auto_now_add=True, editable=True)
+    date = models.DateTimeField(editable=True)
     user = models.ForeignKey(User)
 
     class Meta:
@@ -522,6 +523,14 @@ class ProjectUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save
+        """
+        self.date = datetime.datetime.now()
+
+        super(ProjectUpdate, self).save(*args, **kwargs)
 
 class ResourceUpdate(models.Model):
 
