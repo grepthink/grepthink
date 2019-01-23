@@ -6,6 +6,6 @@ Grepthink
 
 Build better teams, one match at a time.
 
-Local environment Setup Guide: 
-        [Contribute.md](/docs/contribute.md)
-      
+[Local environment Setup Guide](/docs/contribute.md)
+
+[Workflow Guide](/docs/contribue-workflow.md)
