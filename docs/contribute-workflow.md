@@ -2,16 +2,15 @@
 
 ## Cloning and forking the repository
 
-1. **Clone the repository.** Click the green "<font color="green">Clone or download</font>" button <font color="blue">①</font>,
-   and copy the url <font color="blue">②</font> and type
-
-   <code>git clone <i>clone-url</i></code>
+1. **Clone the repository.** Click the green "<font color="green">Clone or download</font>" button,
+   and copy the url and type
+   
+   <pre><code>git clone <i>clone-url</i></code></pre>
 
    at the terminal. Replace *`clone-url`* with the url that has been copied to
    your clipboard. For grepthink/grepthink, it will be
    `git@github.com:grepthink/grepthink.git`. If you have not set up your ssh keys with
-   GitHub, use the https url by first clicking the `https` button <font
-   color="blue">③</font>.  
+   GitHub, use the https url by first clicking the `https` button.  
 
    *Note: It is important that you clone from the repo (grepthink/grepthink),* not *your fork of the repo.*
 
@@ -23,10 +22,8 @@
    <code>https://github.com/<i>your-username</i>/grepthink</code> (replace *`your-username`* with
    your GitHub username), and copy the clone url as in step 1. `cd` to your
    clone from step 1 and run
-
-   <code>
-   git remote add <i>your-github-username</i> <i>fork-url</i>
-   </code>
+   
+   <pre><code>git remote add <i>your-github-username fork-url</i></code></pre>   
 
    (replace *`your-github-username`* with your GitHub username and
    *`fork-url`* with the url that was copied to your clipboard). You will be
@@ -78,9 +75,7 @@ grepthink/grepthink).
 
    To create the branch, run
 
-   <code>
-   git checkout -b <i>branch-name</i>
-   </code>
+   <pre><code>git checkout -b <i>branch-name</i></code></pre>
 
    (replace *`branch-name`* with the branch name you chose). This will create a
    new branch and check it out. You can verify this with `git status`.
@@ -103,26 +98,19 @@ grepthink/grepthink).
 4. **Push up your changes.**  Push your changes to your fork. Do this by
    running
 
-   <code>
-   git push <i>your-github-username</i> <i>branch-name</i>
-   </code>
+   <pre><code>git push <i>your-github-username</i> <i>branch-name</i></code></pre>
 
 5. **Make a pull request.** If you then go to your fork on GitHub, you should
    see a button to create a pull request from your branch.
 
-   If you do not see this, go to the GitHub page for your fork <font
-   color="blue">①</font>, select the branch from the branch popup <font
-   color="blue">②</font> and click the pull request button <font
-   color="blue">③</font>.   
+   If you do not see this, go to the GitHub page for your fork, select the branch from the branch popup and click the pull request button.   
 
    Once doing this, you will be presented with a page. This page will show you
    the diff of the changes. Double check them to make sure you are making a
    pull request against the right branch.
 
-   Things to check here are that the base fork is the upstream repo <font
-   color="blue">①</font> (in this case, grepthink/grepthink) and the branch for the
-   upstream repo is master, and that the head fork is your fork <font
-   color="blue">②</font> and the branch is the branch you wish to make the
+   Things to check here are that the base fork is the upstream repo (in this case, grepthink/grepthink) and the branch for the
+   upstream repo is master, and that the head fork is your fork and the branch is the branch you wish to make the
    pull request from.
 
    Enter a descriptive title in the title field and write a short description.    
