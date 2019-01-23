@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from teamwork.apps.courses.models import get_user_courses
+from teamwork.apps.courses.models import get_user_active_courses, get_user_disabled_courses
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.core.urlresolvers import reverse
@@ -38,8 +38,8 @@ def view_courses(request):
     """
     Public method that takes a request, retrieves all course objects associated with request.user    
     """
-    # Returns all courses
-    return _courses(request, get_user_courses(request.user))
+
+    return _courses(request, get_user_active_courses(request.user))
 
 @login_required
 def create_course(request):

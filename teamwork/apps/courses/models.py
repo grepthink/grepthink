@@ -10,11 +10,13 @@ from datetime import date
 import datetime
 import random
 import string
+
 #Other imports
 import uuid
+import markdown
 
-from django.contrib import auth
 # Django modules
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
@@ -83,7 +85,7 @@ class Assignment(models.Model):
 
         super(Assignment, self).save(*args, **kwargs)
 
-def get_user_courses(self):
+def get_user_active_courses(self):
     """
     Added to auth so that a user object can easily retrieve enrolled courses
     Gets a list of course objects that the user is in
@@ -92,20 +94,32 @@ def get_user_courses(self):
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    # NOTE: the following is commented to fix the issue: When a Professor Profile is assigned to a
-    # course as a TA the course would not appear under courses and could only be accessed by URL
-    # elif self.profile.isProf:
-    #     my_courses = self.course_creator.all().extra(\
-    #     select={'lower_name':'lower(name)'}).order_by('lower_name')
     else:
-        # Gets current user's enrollments, by looking for user in  Enrollment table
-        my_courses = self.enrollment.all().extra(\
+        # #Gets current user's enrollments, by looking for user in  Enrollment table
+        my_courses = self.enrollment.filter(disable=False).extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
+
+    return my_courses
+
+def get_user_disabled_courses(self):
+    """
+    Added to auth so that a user object can easily retrieve enrolled courses
+    Gets a list of course objects that the user is in
+    """
+    # Get all courses for a GT Admin
+    if self.profile.isGT:
+        my_courses = Course.objects.all().extra(\
+        select={'lower_name':'lower(name)'}).order_by('lower_name')
+    else:
+        # #Gets current user's enrollments, by looking for user in  Enrollment table
+        my_courses = self.enrollment.filter(disable=True).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
 
     return my_courses
 
 # Add method to function that returns a list of users enrolled courses
-auth.models.User.add_to_class('get_user_courses', get_user_courses)
+auth.models.User.add_to_class('get_user_active_courses', get_user_active_courses)
+auth.models.User.add_to_class('get_user_disabled_courses', get_user_disabled_courses)
 
 class Course(models.Model):
     """
@@ -166,6 +180,10 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
+
+    disable = models.BooleanField(
+        default=False)
+
     # Slug for course, string
     slug = models.CharField(
         # with max length 20
@@ -364,6 +382,10 @@ class Course(models.Model):
         staff.append(self.creator)
 
         return staff
+
+    def get_info_as_markdown(self):
+        return markdown.markdown(self.info, safe_mode='escape')
+
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):

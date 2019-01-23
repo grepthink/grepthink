@@ -67,10 +67,10 @@ class CreateProjectForm(forms.ModelForm):
         # Query for a list of courses that the user can post a project in.
         #   limit_creation will be false if the professor allows students to post.
         postable_courses = Course.objects.filter(
-            enrollment__in=user_courses).filter(limit_creation=False)
+            enrollment__in=user_courses).filter(limit_creation=False).filter(disable=False)
 
         # get courses created by current user
-        created_courses = user.course_creator.all()
+        created_courses = user.course_creator.filter(disable=False)
 
         # get all courses for GT postings
         GT_courses = Course.objects.all()

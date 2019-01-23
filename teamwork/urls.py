@@ -113,7 +113,7 @@ urlpatterns = [
         # View individual course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/$', CourseView.view_one_course, name='view_one_course'),
         # Delete individual course (based on slug)
-        url(r'^course/(?P<slug>[^/]+)/delete/$', EditCourseView.delete_course, name='delete_course'),
+        url(r'^course/(?P<slug>[^/]+)/delete_course/$', EditCourseView.delete_course, name='delete_course'),
         # Drop from a course based on a slug
         #url(r'^course/(?P<slug>[^/]+)/drop/$', course_views.drop_course, name='drop_course'),
         # Edit individual course (based on slug)
@@ -137,7 +137,9 @@ urlpatterns = [
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',CourseView.delete_course_update, name='delete_course_update'),
         # Button to lock interest
-        url(r'^course/(?P<slug>[^/]+)/lock$',EditCourseView.lock_interest, name='lock_interest'),
+        url(r'^course/(?P<slug>[^/]+)/lock/$',EditCourseView.lock_interest, name='lock_interest'),
+        # Button to Disable course
+        url(r'^course/(?P<slug>[^/]+)/disable/$',EditCourseView.disable , name='disable'),
         # link to show interest page
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',InterestView.show_interest, name='show_interest'),
         # select2 for course

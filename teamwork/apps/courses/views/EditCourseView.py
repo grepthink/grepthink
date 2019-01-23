@@ -181,6 +181,50 @@ def edit_course(request, slug):
             {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
+@login_required
+def delete_course(request, slug):
+    """
+    Delete course method
+    """
+    course = get_object_or_404(Course, slug=slug)
+    #students = course.students.all()
+    projects = course.projects.all()
+    assignments = course.assignments.all()
+    course_updates = course.get_updates()
+    course_alerts = Alert.objects.filter(url__contains=course.slug).filter(msg__contains=course.name)
+
+    if request.user.profile.isGT:
+        pass
+    elif not request.user==course.creator:
+        messages.add_message(request, messages.ERROR, "Only Professors can delete a course. Shame on you")
+        return redirect(view_one_course, course.slug)
+
+    # Runs through each project and deletes them
+    for p in projects:
+        for t in p.tsr.all():
+            t.delete()
+        for i in p.interest.all():
+            i.delete()
+        project_alerts = Alert.objects.filter(url__contains=p.slug).filter(msg__contains=p.title)
+        for pa in project_alerts:
+            pa.delete()
+        p.delete()
+
+    for a in assignments:
+        a.delete()
+
+    for c in course_updates:
+        c.delete()
+
+    for ca in course_alerts:
+        ca.delete()
+
+    #deletes course
+    course.delete()
+    return HttpResponseRedirect('/course/')
+
+
+
 def lock_interest(request, slug):
     """
     Lock the interest for a course
@@ -194,25 +238,19 @@ def lock_interest(request, slug):
     course.save()
     return redirect(view_one_course, course.slug)
 
-
-
-@login_required
-def delete_course(request, slug):
+def disable(request, slug):
     """
-    Delete course method
+    Lock the interest for a course
     """
     course = get_object_or_404(Course, slug=slug)
-    projects = projects_in_course(slug)
-
-    if request.user.profile.isGT:
-        pass
-    elif not request.user==course.creator:
-        return redirect(view_one_course, course.slug)
-
-    #Runs through each project and deletes them
-    for p in projects:
-        p.delete()
-
-    #deletes course
-    course.delete()
-    return redirect(view_courses)
+    if request.user == course.creator or request.user.profile.isGT:
+        if course.disable:
+            course.disable = False
+            course.save()
+            messages.add_message(request, messages.SUCCESS, course.name +  " has been re-enabled")
+            return redirect(view_one_course, course.slug)
+        else:
+            course.disable = True
+            course.save()
+            messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
+            return redirect('/course')

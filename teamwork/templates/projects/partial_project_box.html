@@ -1,5 +1,7 @@
+{% load static %}
+
 <head>
-  <link rel="stylesheet" href="css/Tooltip.css">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}"> 
 </head>
 
 {% for project in projects %}
@@ -8,15 +10,15 @@
     <div class="col-md-4">
       <div class="box box-widget widget-user-2">
 
-        <a href="{% url 'view_one_project' project.slug %}" style="none">
+        <a href="{% url 'view_one_project' project.slug %}">
         <!-- Add the bg color to the header using any of the bg-* classes -->
         <div class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
           <div class="widget-user-image">
             <img class="img-circle" src={{project.project_image}} alt="Project Image">
           </div>
           <!-- /.widget-user-image -->
-          <h3 class="widget-user-username">{{project.title}}</h3>
-          <h5 class="widget-user-desc">{{project.tagline}}</h5>
+          <h3 class="widget-user-username" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{project.title}}</h3>
+          <h5 class="widget-user-desc" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{project.tagline}}</h5>
           {% if project.sponsor %}
           <span class="tooltip2 pull-right"><i class='glyphicon glyphicon-info-sign'></i>
                <span class="tooltiptext2">This is a sponsored project</span>
@@ -58,18 +60,17 @@
         </div>
 
       </div><!-- /.box -->
-
-    </a>
     </div>
     {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
     {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
 {% empty %}
-  <div class="alert alert-warning" role="alert">
+    {% if not course.disable %}
+    <div class="alert alert-warning" role="alert">
       <i class="fa fa-warning"></i>
       There are no projects yet. Go ahead and
       <a href="{% url 'create_project' %}" class="alert-link">
           create one now!
       </a>
-  </div>
-
+    </div>
+    {% endif %}
 {% endfor %}
