@@ -107,15 +107,17 @@ class EditProjectTestCase(TestCase):
         self.user2 = create_user("test2", "test2@test.com", "test2")
         self.user3 = create_user("test3", "test3@test.com", "test3")
         self.course1 = create_course("course1", "slug1", self.user1)
-        self.membership1 = create_course_enrollment(self.user1, self.course1, "student")
-        self.membership2 = create_course_enrollment(self.user2, self.course1, "student")
+        self.enrollment1 = create_course_enrollment(self.user1, self.course1, "student")
+        self.enrollment2 = create_course_enrollment(self.user2, self.course1, "student")
         self.project1 = create_project(self.user1, self.user1, self.user1, self.course1, "slug1")
-        self.enrollment1 = create_project_membership(self.user1, self.project1, "invite reason")
+        self.membership1 = create_project_membership(self.user1, self.project1, "invite reason")
         self.client = Client()
 
+    # TODO:
     def tearDown(self):
         pass
 
+    # TODO:
     def test_add_member(self):
         """
         - Successfully add a member
