@@ -175,13 +175,18 @@ def update_course(request, slug):
     page_description = "Update %s"%(course.name) or "Post a new update"
     title = "Update Course"
 
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
+
     if request.user.profile.isGT:
         pass
-    #if user is not a professor or they did not create course
-    elif not course.creator == request.user:
-        #redirect them to the /course directory with message
-        messages.info(request,'Only Professor can post and update')
-        return HttpResponseRedirect('/course')
+    elif not request.user==course.creator:
+        if not user_role == "ta":
+            #redirect them to the /course directory with message
+            messages.info(request,'Only Professor can post and update')
+            return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
