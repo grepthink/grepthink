@@ -1,6 +1,7 @@
+{% load static %}
+
 <head>
-  <link rel="stylesheet" href="css/Tooltip.css">
-  <link rel="stylesheet" href="css/ScrollTitle.css">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}"> 
 </head>
 
 {% for project in projects %}
@@ -59,8 +60,6 @@
         </div>
 
       </div><!-- /.box -->
-
-    </a>
     </div>
     {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
     {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}

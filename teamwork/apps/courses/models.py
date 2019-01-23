@@ -10,11 +10,13 @@ from datetime import date
 import datetime
 import random
 import string
+
 #Other imports
 import uuid
+import markdown
 
-from django.contrib import auth
 # Django modules
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
@@ -96,7 +98,7 @@ def get_user_active_courses(self):
         # #Gets current user's enrollments, by looking for user in  Enrollment table
         my_courses = self.enrollment.filter(disable=False).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-    
+
     return my_courses
 
 def get_user_disabled_courses(self):
@@ -112,7 +114,7 @@ def get_user_disabled_courses(self):
         # #Gets current user's enrollments, by looking for user in  Enrollment table
         my_courses = self.enrollment.filter(disable=True).extra(\
         select={'lower_name':'lower(name)'}).order_by('lower_name')
-        
+
     return my_courses
 
 # Add method to function that returns a list of users enrolled courses
@@ -380,6 +382,10 @@ class Course(models.Model):
         staff.append(self.creator)
 
         return staff
+
+    def get_info_as_markdown(self):
+        return markdown.markdown(self.info, safe_mode='escape')
+
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):

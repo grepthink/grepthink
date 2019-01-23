@@ -41,10 +41,9 @@ def index(request):
         page_name = "Timeline"
         page_description = "Recent Updates from Courses and Projects"
         title = "Timeline"
-        if request.user.profile.isProf:
-            all_courses = get_user_active_courses(request.user)
-        else:
-            all_courses = get_user_active_courses(request.user)
+
+        all_courses = get_user_active_courses(request.user)        
+
         date_updates = []
         for course in all_courses:
             course_updates = course.get_updates_by_date()
