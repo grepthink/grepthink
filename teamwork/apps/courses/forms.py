@@ -77,9 +77,9 @@ class CreateCourseForm(forms.ModelForm):
     #course info field
     info = forms.CharField(
         #Text input
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With length 255
-        max_length=255,
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        #With length 400
+        max_length=400,
         #Field Required
         required=True)
 
