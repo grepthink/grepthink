@@ -238,6 +238,7 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
+        {% if user == course.creator or user.profile.isGT %}
         <div class="col-md-6">
             <div class="box box-warning">
                 <div class="box-header with-border">
@@ -260,7 +261,7 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
-        {% if user == course.creator or user.profile.isGT %}
+
         <div class="col-md-6">
             <div class="box box-danger">
                 <div class="box-header with-border">
