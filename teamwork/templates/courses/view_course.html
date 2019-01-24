@@ -185,7 +185,11 @@ $(document).ready(function() {
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
                                     <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                                        Show interest in these projects!
+                                        {% if all_interests %}
+                                            Resubmit Interest
+                                        {% else %}
+                                            Show interest in these projects!
+                                        {% endif %}
                                     </a>
                                 </div>
                             </div>

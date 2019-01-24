@@ -5,7 +5,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
-from teamwork.apps.projects.models import Membership, Project
+from teamwork.apps.projects.models import Membership, Project, Interest
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.courses.forms import AssignmentForm, EditAssignmentForm, CourseUpdateForm
 from teamwork.apps.core.helpers import send_email
@@ -36,10 +36,12 @@ def view_one_course(request, slug):
         user_role = 'GT'
 
     # Misc list needed
-    projects = course.projects.all()
+    temp_projects = course.projects.all()
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
-    projects = sorted(projects, key=lambda s: s.title.lower())
+    projects = sorted(temp_projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
+
+    all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
 
     staff = course.get_staff()
 
@@ -75,7 +77,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
-        'user_role':user_role, 'available':available, 'assignments':asgs,
+        'user_role':user_role, 'available':available, 'assignments':asgs, 'all_interests':all_interests,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
 @login_required
