@@ -185,9 +185,9 @@ def edit_course(request, slug):
 def delete_course(request, slug):
     """
     Delete course method
+    TODO: delete should be moved to Course model ie: Course.DeleteGraph()
     """
     course = get_object_or_404(Course, slug=slug)
-    #students = course.students.all()
     projects = course.projects.all()
     assignments = course.assignments.all()
     course_updates = course.get_updates()
