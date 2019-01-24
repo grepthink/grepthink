@@ -427,10 +427,9 @@ $(document).ready(function() {
                   <!-- USERS LIST -->
                   <div class="box box-info">
                     <div class="box-header with-border">
-                      <h3 class="box-title">Instructors</h3>
+                      <h3 class="box-title">Professor</h3>
 
                       <div class="box-tools pull-right">
-                        <span class="label label-info">{{ staff|length }}</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
                       </div>
@@ -438,7 +437,34 @@ $(document).ready(function() {
                     <!-- /.box-header -->
                     <div class="box-body no-padding">
                       <ul class="users-list clearfix">
-                      {% for mem in staff %}
+                        <li style="list-style-type: none;">
+                            {% gravatar prof.email 150 %}
+                            <a class="users-list-name" href="{% url 'profile' prof %}">{{ prof }}</a>
+                            <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ prof.email }}" target="_top">{{ prof.email }}</a></span>
+                        </li>
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">TAs</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-info">{{ tas|length }}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                      {% for mem in tas %}
                         <li style="list-style-type: none;">
                             {% gravatar mem.email 150 %}
                             <a class="users-list-name" href="{% url 'profile' mem %}">{{ mem }}</a>
@@ -485,7 +511,7 @@ $(document).ready(function() {
                         {% if studs.username != null %}
                             <a href="{% url 'profile' studs.username %}">
                             <li style="list-style-type: none;">
-                              {% gravatar studs.email 75 %}
+                              {% gravatar studs.email 60 %}
                               </a>
                               <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
                               {% if studs in available %}
@@ -493,7 +519,7 @@ $(document).ready(function() {
                               {% else %}
                               <span class="label label-default" >
                               {% endif %}
-                              <a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
+                              <a href="mailto:{{studs.email}}" target="_top"><font color="black"> {{studs.email}}</font></a></span>
                             </li>
                         {% endif %}
                         {% empty %}

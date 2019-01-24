@@ -44,6 +44,8 @@ def view_one_course(request, slug):
     all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
 
     staff = course.get_staff()
+    tas = course.get_tas()
+    prof = course.creator
 
     # Grab Students in the course
     staff_ids=[o.id for o in staff]
@@ -78,7 +80,7 @@ def view_one_course(request, slug):
     return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
         'user_role':user_role, 'available':available, 'assignments':asgs, 'all_interests':all_interests,
-        'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
+        'page_name' : page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
 
 @login_required
 def edit_assignment(request, slug):
