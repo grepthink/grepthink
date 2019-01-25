@@ -78,15 +78,16 @@ def edit_project(request, slug):
             if this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
                 if request.user == course.creator:
                     # if the professor of the course wants to add members to a project, just add them
-                    add_member(request, slug, uname)
+                    success = add_member(request, slug, uname)
 
-                    # send user that was added an email
-                    subject = "You've been added to a Project"
-                    content = "You have been added to the Project: {0}.\n\n".format(project.title)
-                    send_email(mem_to_add, request.user.email, subject, content)
+                    if success:
+                        # send user that was added an email
+                        subject = "You've been added to a Project"
+                        content = "You have been added to the Project: {0}.\n\n".format(project.title)
+                        send_email(mem_to_add, request.user.email, subject, content)
 
-                    # profAdded bool used to give the correct Success Message
-                    profAdded = True
+                        # profAdded bool used to give the correct Success Message
+                        profAdded = True
                 else:
                     # add user to pending invitations
                     project.pending_invitations.add(mem_to_add)
@@ -242,35 +243,59 @@ def edit_project(request, slug):
         'page_description': page_description, 'title' : title, 'members':members,
         'form': form, 'project': project, 'user':request.user})
 
-def add_member(request, slug, uname):
+def try_add_member(request, slug, uname):
     """
     Add member to project if:
         - They aren't a member already
         - They are a member of the course
+        - The project is still accepting members
     """
     project = get_object_or_404(Project.objects.prefetch_related('course', 'members', 'pending_members'), slug=slug)
     course = project.course.first()
+
     mem_to_add = User.objects.get(username=uname)
     mem_courses = Course.get_my_courses(mem_to_add)
     curr_members = project.members.all()
 
     # ensure user is a member of the course && not a member of the project
-    if course in mem_courses and mem_to_add not in [mem for mem in curr_members]:
-        Membership.objects.create(
-            user=mem_to_add, project=project, invite_reason='')
-        Alert.objects.create(
-            sender=request.user,
-            to=mem_to_add,
-            msg="You were added to " + project.title,
-            url=reverse('view_one_project',args=[project.slug]),
-            )
-        # remove member from pending list if he/she was on it
-        pending_members = project.pending_members.all()
-        if mem_to_add in pending_members:
-            for mem in pending_members:
-                if mem == mem_to_add:
-                    project.pending_members.remove(mem)
-                    project.save()
+    if user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
+        add_member(request, slug, uname)
+
+    return redirect(view_one_project, slug)
+
+def add_member(request, slug, uname):
+    """
+    Add a member to a project.
+    - Project grabbed using slug
+    - User grabbed using username
+    """
+    project = get_object_or_404(Project, slug=slug)
+    mem_to_add = User.objects.get(username=uname)
+
+    Membership.objects.create(
+        user=mem_to_add, project=project, invite_reason='')
+    Alert.objects.create(
+        sender=request.user,
+        to=mem_to_add,
+        msg="You were added to " + project.title,
+        url=reverse('view_one_project',args=[project.slug]),
+        )
+
+    adjust_pendinglist(request, project, mem_to_add)
+
+def adjust_pendinglist(request, project, mem_to_add):
+    """
+    Removes mem_to_add from the projects pending_members list if they are on there.
+    Creates an alert to notify the user that they were added to a project.
+
+    """
+    # remove member from pending list if he/she was on it
+    pending_members = project.pending_members.all()
+    if mem_to_add in pending_members:
+        for mem in pending_members: #TODO: probably a better more python way to remove this item from list
+            if mem == mem_to_add:
+                project.pending_members.remove(mem)
+                project.save()
 
     # taken from alert code
     user = request.user
@@ -282,7 +307,21 @@ def add_member(request, slug, uname):
                 alert.read = True
                 alert.save()
 
-    return redirect(view_one_project, slug)
+def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
+
+    if (not course in mem_courses):
+        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is not enrolled in the course")
+        return False
+
+    if (mem_to_add in curr_members):
+        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is already a member of the project.")
+        return False
+
+    if not project.avail_mem:
+        messages.warning(request, "Project: " + project.title + " is not currently accepting members.")
+        return False
+
+    return True
 
 def leave_project(request, slug):
     """
