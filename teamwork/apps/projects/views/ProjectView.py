@@ -213,6 +213,10 @@ def post_update(request, slug):
     Post an update for a given project
     """
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
+    course = project.course.first()
+
+    page_name = "Project Update"
+    page_description = project.title
 
     if request.user.profile.isGT:
         pass
@@ -234,8 +238,56 @@ def post_update(request, slug):
     else:
         form = UpdateForm(request.user.id)
     return render(request, 'projects/post_update.html',
-                  {'form': form,
-                   'project': project})
+                  {'form': form, 'page_name': page_name, 'page_description': page_description,
+                   'project': project, 'course': course})
+
+@login_required
+def update_project_update(request, slug, id):
+    """
+    Edit an update for a given project
+    """
+    project = get_object_or_404(Project, slug=slug)
+    update = get_object_or_404(ProjectUpdate, id=id)
+    course = project.course.first()
+
+    page_name = "Project Update"
+    page_description = project.title
+
+    if request.user.profile.isGT:
+        pass
+    elif update.user != request.user:
+        return redirect(view_one_project, project.slug)
+
+    if request.method == 'POST':
+        form = UpdateForm(request.user.id, request.POST)
+        if form.is_valid():
+            update.project = project
+            update.update_title = form.cleaned_data.get('update_title')
+            update.update = form.cleaned_data.get('update')
+            if not request.user.profile.isGT:
+                update.user = request.user
+            update.save()
+            return redirect(view_one_project, project.slug)
+    else:
+        form = UpdateForm(request.user.id, instance=update)
+
+    return render(
+            request, 'projects/update_post_update.html',
+            {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'update': update}
+            )
+
+@login_required
+def delete_project_update(request, slug, id):
+    """
+    Delete an update for a given project
+    """
+    project = get_object_or_404(Project, slug=slug)
+    update = get_object_or_404(ProjectUpdate, id=id)
+
+    if update.user == request.user or request.user.prfile.isGT:
+        update.delete()
+
+    return redirect(view_one_project, project.slug)
 
 @login_required
 def resource_update(request, slug):

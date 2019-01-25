@@ -68,6 +68,10 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/edit/$', EditProjectView.edit_project, name='edit_project'),
         # Post update for individual project (based on slug)
         url(r'^project/(?P<slug>[^/]+)/update/$', ProjectView.post_update, name='post_update'),
+        # Edit existing update to project (based on slug and update id)
+        url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', ProjectView.update_project_update, name='update_project_update'),
+        # Delete existing update to project (based on slug and update id)
+        url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',ProjectView.delete_project_update, name='delete_project_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
         # Create Scrum Master TSR

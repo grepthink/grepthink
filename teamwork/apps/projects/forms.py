@@ -322,7 +322,7 @@ class UpdateForm(forms.ModelForm):
         user = User.objects.get(id=uid)
 
     update_title = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}), label="Title",
         max_length=255,
         required=True)
 

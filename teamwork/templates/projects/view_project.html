@@ -249,6 +249,15 @@ k
                         <div class="timeline-item">
                             <div class="timeline-header clearfix">
                                 {{up.update_title}}
+                                {% if user == up.user or user.profile.isGT %}
+                                <span class="pull-right">
+                                    <a href='{% url 'update_project_update' project.slug up.id %}'>
+                                        <button class="btn btn-default btn-xs">
+                                            <i class="fa fa-gear"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                                {% endif %}
                             </div>
                             <div class="timeline-body">
                                 {{up.update}}
