@@ -398,31 +398,31 @@ class TSR(forms.ModelForm):
         required=True)
 
     pos_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Positive Feedback',
         max_length=255,
         required=True)
 
     neg_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Improvement Suggestion',
         max_length=255,
         required=True)
 
     tasks_comp = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Tasks Completed (SCRUM Master only)',
         max_length=255,
         required=True)
 
     perf_assess = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Performance Assessment: Evidence (SCRUM Master Only)',
         max_length=255,
         required=True)
 
     notes = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Notes/Comments (SCRUM Master Only)',
         max_length=255,
         required=True)
