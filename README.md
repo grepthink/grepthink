@@ -8,4 +8,4 @@ Build better teams, one match at a time.
 
 [Local environment Setup Guide](/docs/contribute.md)
 
-[Workflow Guide](/docs/contribute-workflow.md)
+[Workflow Guide](/docs/git-workflow.md)
