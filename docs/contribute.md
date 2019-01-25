@@ -5,8 +5,6 @@ Note: Python 3.6.0 is used. Check your python version with `python --version`
 
 If you don't have [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/) (it comes with python3 on some systems), install it with `pip install virtualenv`
 
-Change to a directory where you want the teamwork-project directory to reside (e.g. `cd Documents/`)
-
 Create a new venv (this will create a new folder with python installed and later django/dependencies)
 ```bash
 $ virtualenv gtdev
