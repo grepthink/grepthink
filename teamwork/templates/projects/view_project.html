@@ -229,7 +229,7 @@ k
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user == project.creator or request.user.profile.isGT%}
+                    {% if user in project.members.all or user == course.creator or request.user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">
@@ -369,7 +369,7 @@ k
                                 </tbody>
                             </table>
                         </div>
-                        {% if request.user in project.members.all %}
+                        {% if request.user in project.members.all or user == course.creator or request.user.profile.isGT%}
                             <a href="{% url 'resource_update' project.slug %}"
                                 class="pull-right" style="padding-top: 10px">
                                 <button class="btn btn-info">
