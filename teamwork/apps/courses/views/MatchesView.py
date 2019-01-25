@@ -68,6 +68,7 @@ def matchstats(request, slug):
     interest_match = {}
 
     cur_project = get_object_or_404(Project, slug=slug)
+    course = cur_project.course.first()
     cur_desiredSkills = cur_project.desired_skills.all()
     matched_students = po_match(cur_project)
 
@@ -99,9 +100,9 @@ def matchstats(request, slug):
     user = request.user
 
     return render(request, 'core/matchstats.html',{
-        'page_name':page_name,'page_description':page_description,
-        'title':title,'skill_match':skill_match, 'cur_project' : cur_project,
-        'interest_match':interest_match
+        'page_name': page_name,'page_description': page_description,
+        'title': title,'skill_match': skill_match, 'cur_project': cur_project,
+        'interest_match': interest_match, 'course': course
         })
 
 @login_required

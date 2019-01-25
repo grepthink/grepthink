@@ -10,6 +10,19 @@
 
 {% endblock stylesheets %}
 
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'view_one_project' cur_project.slug %}"> {{cur_project.title}} </a></li>
+
+<li>Match Stats</li>
+
+{% endblock crumb %}
+
 {% block content %}
 
 <p> Value of Interest varies from 5 (most interested) to 1 (least interested).
