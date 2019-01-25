@@ -8,9 +8,10 @@ Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 from __future__ import unicode_literals
 
 import random
+from datetime import date
+import datetime
 import string
 from math import floor
-from datetime import datetime
 from decimal import Decimal
 
 # Third-party Modules
@@ -81,7 +82,7 @@ class Tsr(models.Model):
     slug = models.CharField(
         default="",
         max_length=20,
-        unique=True)    
+        unique=True)
 
     def __str__(self):
         return(("%d, %s, %s, %d, %s, %s, %s, %s, %s"%(self.ass_number, self.evaluator.email, self.evaluatee.email, self.percent_contribution,
@@ -227,7 +228,7 @@ class Project(models.Model):
         default="*No resources provided*")
 
     # TODO:NEED UPDATES M2M for proper link not query
-    # the interest in a project can be access through back realtionship
+    # the interest in a project can be access through back relationship
     # project.interested.all()
     interest = models.ManyToManyField(
         Interest,
@@ -438,6 +439,46 @@ class Project(models.Model):
         return projects
 
     @staticmethod
+    def get_my_active_projects(user):
+        """
+        Gets a list of project objects. Used in views then passed to the template.
+        """
+        # #Gets membership object of current user
+        # myProjects = Membership.objects.filter(user=user)
+        # #Gets project queryset of only projects user is in OR the user created
+        # proj = Project.objects.filter(membership__in=myProjects)
+
+        mem = list(user.membership.filter(course__disable=False))
+
+        claimed = list(user.ta.filter(course__disable=False))
+
+        created = list(user.project_creator.filter(course__disable=False))
+
+        projects = list(set(mem + created + claimed))
+
+        return projects
+
+    @staticmethod
+    def get_my_disabled_projects(user):
+        """
+        Gets a list of project objects. Used in views then passed to the template.
+        """
+        # #Gets membership object of current user
+        # myProjects = Membership.objects.filter(user=user)
+        # #Gets project queryset of only projects user is in OR the user created
+        # proj = Project.objects.filter(membership__in=myProjects)
+
+        mem = list(user.membership.filter(course__disable=True))
+
+        claimed = list(user.ta.filter(course__disable=True))
+
+        created = list(user.project_creator.filter(course__disable=True))
+
+        projects = list(set(mem + created + claimed))
+
+        return projects
+
+    @staticmethod
     def get_all_projects():
         """
         Gets a list of project objects. Used in views then passed to the template.
@@ -512,7 +553,7 @@ class ProjectUpdate(models.Model):
     update_title = models.CharField(
         max_length=255, default="Default Update Title")
     update = models.TextField(max_length=2000, default="Default Update")
-    date = models.DateTimeField(auto_now_add=True, editable=True)
+    date = models.DateTimeField(editable=True)
     user = models.ForeignKey(User)
 
     class Meta:
@@ -523,6 +564,13 @@ class ProjectUpdate(models.Model):
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save
+        """
+        self.date = datetime.datetime.now()
+
+        super(ProjectUpdate, self).save(*args, **kwargs)
 
 class ResourceUpdate(models.Model):
 
@@ -539,7 +587,6 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
-
 
 class ProjectChat(models.Model):
 

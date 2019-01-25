@@ -7,6 +7,8 @@ Database Models for the objects: Skills, Profile
 # Django Imports
 from __future__ import unicode_literals
 
+# Third-party Modules
+import markdown
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
@@ -62,15 +64,14 @@ def dayofweek(number):
 
 class Events(models.Model):
     """
-    Events: A database model (object) for Events (Availabiliy).
+    Events: A database model (object) for Events (Availability).
 
     Fields:
-        event_name: a field that contains the name of a skill
         day: Day of week
         start_time_hour: Hour an event starts (1-24)
-        start_time_minute: Minute an event starts (1-60)
+        start_time_min: Minute an event starts (1-60)
         end_time_hour: Hour an event ends (1-24)
-        end_time_minute: Minute an event ends (1-60)
+        end_time_min: Minute an event ends (1-60)
 
 
     Methods:
@@ -187,7 +188,7 @@ class Profile(models.Model):
     institution = models.TextField(max_length=100, blank=True)
     location = models.TextField(max_length=100, blank=True)
 
-    # Avail - Availabiliy
+    # Availability
     avail = models.ManyToManyField(Events)
     jsonavail = models.TextField(
                 default='[]')
@@ -222,6 +223,9 @@ class Profile(models.Model):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
         return not(self == other)
+
+    def get_bio_as_markdown(self):
+        return markdown.markdown(self.bio, safe_mode='escape')
 
     # Alert functions, self explanitory
     def alerts(self):
