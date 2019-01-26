@@ -6,54 +6,73 @@ from teamwork.apps.courses.models import Course, get_user_active_courses, get_us
 
 def index(request):
     """
-    The main index of Teamwork, referred to as "Home" in the sidebar.
+    The main index of grepthink, referred to as "Home" in the sidebar.
     Accessible to public and logged in users.
     """
     # TODO: get feed of project updates (or public projects) to display on login
 
-    # Populate with defaults for not logged in user
+    # Render landing page for not logged in user
+    logged_in = request.user.is_authenticated();
+    if not logged_in:
+        return render_landing(request)
+
+    # If the user is a professor, render their dashboard
+    if request.user.profile.isProf:
+        return render_dashboard(request)
+
+    # Otherwise render timeline
+    return render_timeline(request)
+
+def render_dashboard(request):
+    """
+    Display view for logged in professors
+    """
+    page_name = "Dashboard"
+    page_description = "Instructor Control Panel"
+    title = "Dashboard"
+    active_courses = get_user_active_courses(request.user)
+    disabled_courses = get_user_disabled_courses(request.user)
+
+    return render(request, 'core/dashboard.html', {
+            'page_name' : page_name,
+            'page_description' : page_description, 'title' : title,
+            'active_courses' : active_courses, 'disabled_courses': disabled_courses
+            })
+
+def render_landing(request):
+    """
+    Display view for not-logged in users
+    """
     page_name = "Grepthink"
     page_description = "Build Better Teams"
     title = "Welcome"
-    date_updates = None
-    logged_in = request.user.is_authenticated();
 
-    if not logged_in:
-        return render(request, 'core/landing.html', {
-                'page_name' : page_name,
-                'page_description' : page_description, 'title' : title
-                })
+    return render(request, 'core/landing.html', {
+            'page_name' : page_name,
+            'page_description' : page_description, 'title' : title
+            })
 
-    # If the user is a professor, return the dashboard html
-    if logged_in and request.user.profile.isProf:
-        page_name = "Dashboard"
-        page_description = "Instructor Control Panel"
-        title = "Dashboard"
-        active_courses = get_user_active_courses(request.user)
-        disabled_courses = get_user_disabled_courses(request.user)
-        return render(request, 'core/dashboard.html', {
-                'page_name' : page_name,
-                'page_description' : page_description, 'title' : title,
-                'active_courses' : active_courses, 'disabled_courses': disabled_courses
-                })
+def render_timeline(request):
+    """
+    Display view for logged in users that aren't professors
+    """
+    page_name = "Timeline"
+    page_description = "Recent Updates from Courses and Projects"
+    title = "Timeline"
 
-    if logged_in:
-        page_name = "Timeline"
-        page_description = "Recent Updates from Courses and Projects"
-        title = "Timeline"
+    all_courses = get_user_active_courses(request.user)
 
-        all_courses = get_user_active_courses(request.user)
-
-        date_updates = []
-        for course in all_courses:
-            course_updates = course.get_updates_by_date()
-            date_updates.extend(course.get_updates_by_date())
+    date_updates = []
+    for course in all_courses:
+        course_updates = course.get_updates_by_date()
+        date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {
             'page_name' : page_name,
             'page_description' : page_description, 'title' : title,
-            'date_updates' : date_updates, 'logged_in' : logged_in
+            'date_updates' : date_updates, 'logged_in' : True
             })
+
 
 def disable(request, slug):
     """
