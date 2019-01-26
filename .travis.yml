@@ -38,6 +38,7 @@ env:
     # Test against multiple Django versions [5].
     - DJANGO_VERSION="1.10.5"
     - DJANGO_VERSION="1.11"
+    - DJANGO_VERSION="2.1.5"
 
 
 # Install dependencies

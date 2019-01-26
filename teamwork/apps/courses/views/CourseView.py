@@ -78,7 +78,6 @@ def view_one_course(request, slug):
         'user_role':user_role, 'available':available, 'assignments':asgs,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
 
-
 @login_required
 def edit_assignment(request, slug):
     """

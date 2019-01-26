@@ -129,14 +129,16 @@ $(document).ready(function() {
                     <i class="fa fa-folder-open"></i>
                 </a>
             </li>
-
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
+            {% if not course.disable %}
+
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
+            {% endif %}
 
 
             <li class="pull-right">
@@ -147,13 +149,17 @@ $(document).ready(function() {
             </li>
             {% endif %}
 
+
+            {% if not course.disable %}
             <li class="">
             <a href="{% url 'create_project' %}">
                 Create Project
                 <i class="fa fa-plus"></i>
             </a>
             </li>
+            {% endif %}
 
+            {% if not course.disable %}
             {% if user_role == "ta" %}
             <li class="pull-right">
             <a href="{% url 'claim_projects' course.slug %}">
@@ -163,12 +169,14 @@ $(document).ready(function() {
             </a>
             </li>
             {% endif %}
+            {% endif %}
 
         </ul>
 
         <div class="tab-content" style="background-color: #ecf0f5">
 
             <div class="tab-pane active" id="projects">
+                {% if not course.disable %}
                 {% if user != course.creator %}
                     {% if not user.profile.isGT %}
                         {% if not user_role == "ta" %}
@@ -186,8 +194,9 @@ $(document).ready(function() {
                         {% endif %}
                     {% endif %}
                 {% endif %}
+                {% endif %}
 
-                    {% include "projects/partial_project_box.html" with projects=projects %}
+                    {% include "projects/partial_project_box.html" with projects=projects course=course%}
 
             </div>
 
@@ -249,6 +258,7 @@ $(document).ready(function() {
                                         <td>{{asg.ass_name}}</td>
                                         <td>{{asg.ass_number}}</td>
                                         <td>
+                                            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
                                             <a href="{% url 'edit_assignment' asg.slug %}">
                                                 <button type="button" class="btn btn-info btn-sm">
                                                             <i class="fa fa-edit"></i>
@@ -263,6 +273,7 @@ $(document).ready(function() {
                                                             Delete
                                                 </button>
                                             </a>
+                                            {% endif %}
                                         </td>
 
                                     </tr>
@@ -279,9 +290,15 @@ $(document).ready(function() {
 
 
             <div class="tab-pane" id="description">
-                <div>
-                <h3>Description: {{ course.info }}</h3>
+                <div class="box box-success">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Description</h3>
+                  </div>
+                    <div class="box-body">
+                        {{ course.get_info_as_markdown|safe }}
+                    </div>
                 </div>
+
 
                 {% comment %}
 

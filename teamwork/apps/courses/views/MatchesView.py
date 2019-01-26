@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 
-from teamwork.apps.courses.models import Course
+from teamwork.apps.courses.models import Course, get_user_active_courses
 from teamwork.apps.projects.models import Project, Membership
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.core.models import auto_ros, po_match
@@ -23,14 +23,14 @@ def view_matches(request):
     title = "View Matches"
 
     if request.user.profile.isProf:
-        courses = Course.get_my_created_courses(request.user)
+        courses = get_user_active_courses(request.user)
         for course in courses:
             for project in course.projects.all():
                 p_match = po_match(project)
                 project_match_list.extend([(course, project, p_match)])
             course_set.append(course)
     else:
-        my_projects = Project.get_my_projects(request.user)
+        my_projects = Project.get_my_active_projects(request.user)
 
         for project in my_projects:
             p_match = po_match(project)
@@ -119,6 +119,9 @@ def auto_gen(request, slug):
 
     auto = auto_ros(course)
 
+    # needs some documentation/comments/more useful variable name for 'i'
+    # what is auto/i and what is in i[1]?
+    # why do we break if i[1]?
     flag = False
     for i in auto:
         if i[1]:
@@ -127,7 +130,7 @@ def auto_gen(request, slug):
 
     # Get just the projects so partial_project_box.html can loop through easily.
     # Will have to changes this once we get a better ui for autogen.
-    projects = [x[0] for x in auto]
+    projects = [i[0] for i in auto]
 
     return render(request, 'core/auto_gen.html', {
         'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,

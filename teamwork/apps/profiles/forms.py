@@ -112,19 +112,19 @@ class ProfileForm(forms.ModelForm):
 
     name = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
+              max_length=75, required=False)
 
     bio = forms.CharField(
-              widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+              widget=forms.Textarea(attrs={'class': 'form-control'}),
               max_length=500, required=False)
 
     institution = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
+              max_length=100, required=False)
 
     location = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=50, required=False)
+              max_length=100, required=False)
 
     # known_skill = forms.CharField(
     #           widget=forms.TextInput(attrs={'class': 'form-control'}),

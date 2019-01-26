@@ -13,4 +13,4 @@ sendgrid
 django-gravatar2
 xlwt
 stripe
-Django==1.10.5
+Django==1.11.18 

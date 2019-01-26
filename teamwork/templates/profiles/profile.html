@@ -79,7 +79,7 @@
 
     <!-- SHORT BIO -->
     <strong><i class="fa fa-file-text-o margin-r-5"></i> Bio</strong>
-    <p>{{ page_user.profile.bio }}</p>
+    <p>{{ page_user.profile.get_bio_as_markdown|safe }}</p>
 
     <!-- IF USER IS NOT GT -->
     {% if not page_user.profile.isGT %}

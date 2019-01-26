@@ -110,7 +110,7 @@ def view_one_project(request, slug):
 
     mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
     # ======================
-    today = datetime.now().date()
+    today = datetime.datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'temp_tup':fix,
