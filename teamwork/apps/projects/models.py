@@ -139,7 +139,9 @@ class Project(models.Model):
     scrum_master = models.ForeignKey(
         User,
         related_name='scrum_master',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True)
 
     # Short project description
     tagline = models.TextField(
@@ -176,7 +178,8 @@ class Project(models.Model):
         User,
         related_name='ta',
         on_delete=models.CASCADE,
-        default="")
+        blank=True,
+        null=True)
 
     # Location of Weekly meeting with TA
     ta_location = models.TextField(

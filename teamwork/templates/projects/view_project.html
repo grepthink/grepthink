@@ -184,19 +184,23 @@ k
                         <div class="box-body" style="display: none;">
                             <strong>Teacher Assistant</strong>
                             &nbsp;
+                            {% if project.ta %}
                             <a href="{% url 'profile' project.ta.username %}">
                                 <span class="label label-info">
                                     {{ project.ta.username }}
                                 </span>
                             </a>
+                            {% endif %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Scrum Master</strong>
                             &nbsp;
+                            {% if project.scrum_master %}
                             <a href="{% url 'profile' project.scrum_master.username %}">
                                 <span class="label label-info">
                                     {{ project.scrum_master.username }}
                                 </span>
                             </a>
+                            {% endif %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Meeting Location</strong>
                             &nbsp;

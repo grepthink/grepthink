@@ -67,7 +67,7 @@ def create_project(request):
             project.slug = form.cleaned_data.get('slug')
             project.title = form.cleaned_data.get('title')
             project.tagline = form.cleaned_data.get('tagline')
-            project.creator = request.user
+            project.creator = user
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
             project.teamSize = form.cleaned_data.get('teamSize') or 4
@@ -76,17 +76,23 @@ def create_project(request):
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
-            project.scrum_master = request.user
+
+
 
             # Course the project is in
             in_course = form.cleaned_data.get('course')
 
             # Init TA of Project ot be the Professor
-            project.ta = in_course.creator
+            # project.ta = in_course.creator
             project.save()
 
             # Add project to course
             in_course.projects.add(project)
+
+            if not user.profile.isGT:
+                if user not in in_course.get_staff():
+                    project.scrum_master = request.user
+                project.save()
 
             # Local list of memebers, used to create Membership objects
             # Now not getting this list through the form, because this list is created
@@ -122,7 +128,7 @@ def create_project(request):
             # Don't add the professor to the project (will still be owner)
             if profile.isGT:
                 pass
-            elif not profile.isProf:
+            elif user not in in_course.get_staff():
                 Membership.objects.create(
                     user=user, project=project, invite_reason='')
 
