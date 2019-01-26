@@ -342,10 +342,12 @@ class ResourceForm(forms.ModelForm):
 
     src_title = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Title",
         max_length=255,
         required=True)
     src_link = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="URL Link",
         max_length=255,
         required=True)
 

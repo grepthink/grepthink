@@ -351,10 +351,11 @@ k
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <th>Resource Title</th>
+                                        <th>Title</th>
                                         <th>URL Link</th>
                                         <th>Posted By</th>
                                         <th>Posted On</th>
+                                        <th></th>
                                     </tr>
                                     {% for re in resources.all %}
                                     {% if re.src_title != null %}
@@ -363,6 +364,16 @@ k
                                         <td><a href="{{re.src_link}}">{{re.src_link}}</a></td>
                                         <td>{{re.user.username}}</td>
                                         <td>{{re.date}}</td>
+                                        <td>
+                                            {% if user == re.user or user.profile.isGT %}
+                                            <a href="{% url 'update_resource_update' project.slug re.id %}">
+                                                <button type="button" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                     {% endif %}
                                     {% endfor %}

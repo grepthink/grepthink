@@ -74,6 +74,8 @@ urlpatterns = [
         url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',ProjectView.delete_project_update, name='delete_project_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
+        # Add new resource (based on slug)
+        url(r'^project/(?P<slug>[^/]+)/resource/(?P<id>[^/]+)/$', ProjectView.update_resource_update, name='update_resource_update'),
         # Create Scrum Master TSR
         url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/smaster/$', TsrView.create_scrum_master_tsr, name='create_scrum_master_tsr'),
         # Update TSR information
