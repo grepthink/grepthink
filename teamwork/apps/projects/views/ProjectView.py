@@ -284,7 +284,7 @@ def delete_project_update(request, slug, id):
     project = get_object_or_404(Project, slug=slug)
     update = get_object_or_404(ProjectUpdate, id=id)
 
-    if update.user == request.user or request.user.prfile.isGT:
+    if update.user == request.user or request.user.profile.isGT:
         update.delete()
 
     return redirect(view_one_project, project.slug)
@@ -356,3 +356,16 @@ def update_resource_update(request, slug, id):
             request, 'projects/update_resource_update.html',
             {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'resource': resource}
             )
+
+@login_required
+def delete_resource_update(request, slug, id):
+    """
+    Delete an resource for a given project
+    """
+    project = get_object_or_404(Project, slug=slug)
+    resource = get_object_or_404(ResourceUpdate, id=id)
+
+    if resource.user == request.user or request.user.profile.isGT:
+        resource.delete()
+
+    return redirect(view_one_project, project.slug)
