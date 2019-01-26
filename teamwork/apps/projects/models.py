@@ -575,7 +575,7 @@ class ProjectUpdate(models.Model):
 class ResourceUpdate(models.Model):
 
     project = models.ForeignKey(Project)
-    date = models.DateTimeField(auto_now_add=True, editable=True)
+    date = models.DateTimeField(editable=True)
     user = models.ForeignKey(User)
     src_title = models.CharField(max_length=255, default="Default Resource Title")
     src_link = models.URLField(max_length=2000, default="Default Resource Link")
@@ -587,6 +587,14 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save
+        """
+        self.date = datetime.datetime.now()
+
+        super(ResourceUpdate, self).save(*args, **kwargs)
 
 class ProjectChat(models.Model):
 
