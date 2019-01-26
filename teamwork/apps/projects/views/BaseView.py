@@ -71,6 +71,7 @@ def create_project(request):
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
             project.teamSize = form.cleaned_data.get('teamSize') or 4
+            project.no_request = form.cleaned_data.get('no_request')
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0

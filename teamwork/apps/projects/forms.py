@@ -131,6 +131,10 @@ class CreateProjectForm(forms.ModelForm):
         max_length=20,
         required=False)
 
+    no_request = forms.BooleanField(
+        label="Do no allow Request to Join",
+        required=False)
+
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",
         required=False)
@@ -202,6 +206,7 @@ class EditProjectForm(forms.ModelForm):
         if 'instance' in kwargs and kwargs['instance']:
             self.fields['accepting'].initial = kwargs['instance'].avail_mem
             self.fields['sponsor'].initial = kwargs['instance'].sponsor
+            self.fields['no_request'].initial = kwargs['instance'].no_request
             self.fields['scrum_master'].queryset = kwargs['instance'].members.all()
             self.fields['project_owner'].queryset = kwargs['instance'].members.all()
             self.fields['project_owner'].initial = kwargs['instance'].creator
@@ -239,6 +244,10 @@ class EditProjectForm(forms.ModelForm):
     teamSize = forms.IntegerField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True)
+
+    no_request = forms.BooleanField(
+        label="Do no allow Request to Join",
+        required=False)
 
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",

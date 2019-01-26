@@ -157,6 +157,8 @@ class Project(models.Model):
         related_name='membership',
         through='Membership')
 
+    no_request = models.BooleanField(default=False)
+
     # Pending Members that have request to Join the project
     pending_members = models.ManyToManyField(
         User,
