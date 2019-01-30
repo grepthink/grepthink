@@ -33,6 +33,7 @@ env:
     # Note that DATABASE_URL is not set here, see settings.py
     - DEBUG=True
     - SECRET_KEY=s3cr3tk3y
+    - STRIPE_SK=sk_test_Gzs74mPJYYvbjqJgGzYHCzyA
   matrix:
     # Test against multiple Django versions [5].
     - DJANGO_VERSION="1.10.5"

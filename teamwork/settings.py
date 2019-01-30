@@ -72,13 +72,13 @@ EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 
-isProd = config('PRODUCTION', default=False)
+IS_PRODUCTION = config('PRODUCTION', default=False)
 
-if isProd:
-    pass
-    #For Testing, comment out for production
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Stripe Settings
+if IS_PRODUCTION:
+    STRIPE_API_KEY = os.environ.get('STRIPE_SK')
 else:
+    STRIPE_API_KEY = config('STRIPE_SK')
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE_CLASSES = [
