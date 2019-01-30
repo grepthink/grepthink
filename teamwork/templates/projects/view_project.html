@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
   <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
   <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+  <link rel="stylesheet" href="{% static 'css/overflow.css' %}">
 
 {% endblock stylesheets %}
 
@@ -48,10 +49,10 @@ k
 {% block crumb %}
 
 {# Breadcrumb for the course that this project is in #}
-<li><a href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
+<li><a class="overflow" href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
 
 {# Breadcrumb for this project #}
-<li><a href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
+<li><a class="overflow-sm" href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
 
 {% endblock crumb %}
 
@@ -224,7 +225,7 @@ k
                 <ul class="timeline">
                     <!-- timeline time label -->
                     <li class="time-label" style="list-style: none">
-                        <span class="bg-red">
+                        <span class="bg-red overflow">
                             {{project.title}}
                         </span>
                     </li>
@@ -292,7 +293,7 @@ k
                         <ul class="timeline">
                             <!-- timeline time label -->
                             <li class="time-label" style="list-style: none">
-                                <span class="bg-red">
+                                <span class="bg-red overflow">
                                     {{project.title}}
                                 </span>
                             </li>
