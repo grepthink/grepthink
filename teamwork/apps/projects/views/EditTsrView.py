@@ -21,15 +21,17 @@ def tsr_edit(request, slug, asg_slug):
     TODO: pass tsr.evaluator as prefix so we can display username also
     TODO: get scrum_master bool another way, not through url
     """
-    page_name = "TSR Edit"
-    page_description = "Edit TSR form"
-    title = "TSR Edit"
+
 
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
 
     # Assignment object that the TSR's belong to
     asg = get_object_or_404(Assignment, slug=asg_slug)
+
+    page_name = ""
+    page_description = asg.ass_name
+    title = "TSR Edit"
 
     # List of Members of the Current Project
     members = cur_proj.members.all()
@@ -41,6 +43,11 @@ def tsr_edit(request, slug, asg_slug):
     # Determine if Scrum Master
     scrum_master = is_scrum_master(request)
 
+    if (scrum_master):
+        page_name="Scrum Master TSR Edit"
+    else:
+        page_name="Member TSR Edit"
+        
     if request.method == 'POST':
         # For each Tsr displayed, update the values and save the Tsr
         for tsr in tsr_list:

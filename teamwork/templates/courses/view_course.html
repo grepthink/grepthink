@@ -185,7 +185,11 @@ $(document).ready(function() {
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
                                     <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                                        Show interest in these projects!
+                                        {% if all_interests %}
+                                            Resubmit Interest
+                                        {% else %}
+                                            Show interest in these projects!
+                                        {% endif %}
                                     </a>
                                 </div>
                             </div>
@@ -253,7 +257,7 @@ $(document).ready(function() {
                                     {% for asg in assignments %}
                                     <tr>
                                         <td>{{asg.ass_date|date:'Y-m-d'}}</td>
-                                        <td>{{asg.due_date|date:'Y-m-d'}}</td>
+                                        <td>{{asg.due_date|date:'Y-m-d'}}{{asg.due_date|time:'g:i:s'}}</td>
                                         <td>{{asg.ass_type}}</th>
                                         <td>{{asg.ass_name}}</td>
                                         <td>{{asg.ass_number}}</td>
@@ -344,7 +348,7 @@ $(document).ready(function() {
 
                 <h3>Updates</h3>
                 <ul class="timeline">
-                    {% if user == course.creator or user.profile.isGT or user.profile.isTa%}
+                    {% if user == course.creator or user.profile.isGT or user_role == "ta"%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'update_course' course.slug %}'">
@@ -369,7 +373,7 @@ $(document).ready(function() {
                         <div class="timeline-item">
                             <div class="timeline-header clearfix">
                                 {{ update.title }}
-                                {% if user == update.creator or user.profile.isGT or user.profile.isTa %}
+                                {% if user == update.creator or user.profile.isGT or user_role == "ta" %}
                                 <span class="pull-right">
                                     <a href='{% url 'update_course_update' course.slug update.id %}'>
                                         <button class="btn btn-default btn-xs">
@@ -423,10 +427,9 @@ $(document).ready(function() {
                   <!-- USERS LIST -->
                   <div class="box box-info">
                     <div class="box-header with-border">
-                      <h3 class="box-title">Instructors</h3>
+                      <h3 class="box-title">Instructor</h3>
 
                       <div class="box-tools pull-right">
-                        <span class="label label-info">{{ staff|length }}</span>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                         </button>
                       </div>
@@ -434,7 +437,34 @@ $(document).ready(function() {
                     <!-- /.box-header -->
                     <div class="box-body no-padding">
                       <ul class="users-list clearfix">
-                      {% for mem in staff %}
+                        <li style="list-style-type: none;">
+                            {% gravatar prof.email 150 %}
+                            <a class="users-list-name" href="{% url 'profile' prof %}">{{ prof }}</a>
+                            <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ prof.email }}" target="_top">{{ prof.email }}</a></span>
+                        </li>
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">TAs</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-info">{{ tas|length }}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                      {% for mem in tas %}
                         <li style="list-style-type: none;">
                             {% gravatar mem.email 150 %}
                             <a class="users-list-name" href="{% url 'profile' mem %}">{{ mem }}</a>
@@ -481,7 +511,7 @@ $(document).ready(function() {
                         {% if studs.username != null %}
                             <a href="{% url 'profile' studs.username %}">
                             <li style="list-style-type: none;">
-                              {% gravatar studs.email 75 %}
+                              {% gravatar studs.email 60 %}
                               </a>
                               <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
                               {% if studs in available %}
@@ -489,7 +519,7 @@ $(document).ready(function() {
                               {% else %}
                               <span class="label label-default" >
                               {% endif %}
-                              <a href="mailto:{{studs.email}}" target="_top">{{studs.email}}</a></span>
+                              <a href="mailto:{{studs.email}}" target="_top"><font color="black"> {{studs.email}}</font></a></span>
                             </li>
                         {% endif %}
                         {% empty %}

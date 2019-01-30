@@ -36,7 +36,7 @@
                         {% endif %}
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">Your notifications</li>
+                        <li class="header" align="center"><h><strong>Your notifications</strong></h5></li>
                         <li>
                             <ul class="menu">
                                 {% for alert in user.profile.unread_alerts %}
@@ -52,22 +52,31 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="{% avatar_url size=50 %}" class="user-image" alt="User Image">
-                        {# <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span> #}
-                        <span class="hidden-xs">Account</span>
+                        <span class="hidden-xs">{% firstof request.user.get_short_name request.user.get_username %}</span>
+                        {# <span class="hidden-xs">Account</span> #}
                     </a>
                     <ul class="dropdown-menu">
                         {% block user_header %}
+
                         <li class="user-header">
                             <img src="{% avatar_url size=180 %}" class="img-circle" alt="User Image">
                             <p>
                                 {% firstof request.user.get_short_name request.user.get_username %}
-                                <small>Grepper since {{ request.user.date_joined }}</small>
+                                <small>Grepper since {{ request.user.date_joined|date:"M Y" }}</small>
+                                <small>{% if request.user.profile.isGT %}
+                                Developer
+                                {% elif request.user.profile.isProf %}
+                                Instructor
+                                {% else %}
+                                Student
+                                {% endif %}</small>
                             </p>
                         </li>
                         {% endblock %}
 
                         <!-- Menu Footer-->
                         {% block menu_footer %}
+                        {% comment %}
                          <ul class="nav nav-pills nav-stacked">
                                 <li><a style="background: rgba(243, 156, 18, 1);" href="{% url 'profile' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-user"></i>Profile</a></li>
@@ -79,29 +88,35 @@
                          <ul class="nav nav-pills nav-stacked">
                              {% if not user.profile.isProf %}
                              <li>
-                                 <a style="background: rgba(243, 156, 18, 1);" href="{% url 'edit_schedule' user.username %}"
+                                 <a style="background: rgba(0, 150, 255, 1);" href="{% url 'edit_schedule' user.username %}"
                                     class="btn btn-primary btn-flat"><i class="fa fa-wrench"></i>Edit Schedule</a></li>
                              {% endif %}
                          </ul>
                          <ul class="nav nav-pills nav-stacked">
-                                <li><a style="background: rgba(255, 0, 0, 0.5);" href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
+                                <li><a style="background: rgba(255, 0, 0, 0.7);" href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-warning btn-flat">Sign out</a></li>
                          </ul>
+                         {% endcomment %}
 
-                       {% comment %}
                         <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="{% url 'profile' user.username %}"
-                                    class="btn btn-default btn-flat"><i class="fa fa-user"></i> Profile</a>
-                            </div>
-                            <div class="pull-left">
-                                <a href="{% url 'edit_profile' user.username %}"
-                                    class="btn btn-default btn-flat"><i class="fa fa-wrench"></i> Edit Profile</a>
-                            </div>
-                            <div class="pull-right">
-                                {# <a href="{% block logout_url %}{% logout_url %}{% endblock %}" class="btn btn-default btn-flat">Sign out</a> #}
+                            <div class="btn-group">
+                              <a href="{% url 'profile' user.username %}">
+                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);">
+                                      <font color="white">Profile</font>
+                                  </button>
+                              </a>
+                              <a href="{% url 'edit_schedule' user.username %}">
+                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);">
+                                      <font color="white">Edit Schedule</font>
+                                  </button>
+                              </a>
+                              <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
+                                  <button type="button" class="btn btn-flat" style="background: rgba(255, 0, 0, 0.7);">
+                                      <font color="white">Sign Out</font>
+                                  </button>
+                              </a>
                             </div>
                         </li>
-                        {% endcomment %}
+
                         {% endblock %}
                     </ul>
                 </li>

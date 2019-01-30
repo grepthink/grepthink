@@ -2,14 +2,20 @@
 {% load static %}
 {% load i18n %}
 
+{% block crumb %}
+    <li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+    <li>
+        <a href="{% url 'view_one_project' project.slug %}">
+            {{ project.title }}
+        </a>
+    </li>
+{% endblock crumb %}
+
 {% block head %}
 <script src="{% static 'js/project.js' %}"></script>
 {% endblock head %}
 
 {% block content %}
-<div class="page-header">
-    <h1> Post Update for {{ project.title }}</h1>
-</div>
 <div class="box box-primary">
   <div class="box-header with-border">
     <h3 class="box-title">Post Update</h3>

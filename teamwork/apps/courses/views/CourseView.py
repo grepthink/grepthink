@@ -5,7 +5,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
-from teamwork.apps.projects.models import Membership, Project
+from teamwork.apps.projects.models import Membership, Project, Interest
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.courses.forms import AssignmentForm, EditAssignmentForm, CourseUpdateForm
 from teamwork.apps.core.helpers import send_email
@@ -36,12 +36,16 @@ def view_one_course(request, slug):
         user_role = 'GT'
 
     # Misc list needed
-    projects = course.projects.all()
+    temp_projects = course.projects.all()
     # sort the list of projects alphabetical, but not case sensitive (aka by ASCII)
-    projects = sorted(projects, key=lambda s: s.title.lower())
+    projects = sorted(temp_projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
 
+    all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
+
     staff = course.get_staff()
+    tas = course.get_tas()
+    prof = course.creator
 
     # Grab Students in the course
     staff_ids=[o.id for o in staff]
@@ -75,8 +79,8 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
-        'user_role':user_role, 'available':available, 'assignments':asgs,
-        'page_name' : page_name, 'page_description': page_description, 'title': title, 'staff': staff})
+        'user_role':user_role, 'available':available, 'assignments':asgs, 'all_interests':all_interests,
+        'page_name' : page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
 
 @login_required
 def edit_assignment(request, slug):
@@ -175,13 +179,18 @@ def update_course(request, slug):
     page_description = "Update %s"%(course.name) or "Post a new update"
     title = "Update Course"
 
+    if not request.user.profile.isGT:
+        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+    else:
+        user_role = 'GT'
+
     if request.user.profile.isGT:
         pass
-    #if user is not a professor or they did not create course
-    elif not course.creator == request.user:
-        #redirect them to the /course directory with message
-        messages.info(request,'Only Professor can post and update')
-        return HttpResponseRedirect('/course')
+    elif not request.user==course.creator:
+        if not user_role == "ta":
+            #redirect them to the /course directory with message
+            messages.info(request,'Only Professor can post and update')
+            return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
