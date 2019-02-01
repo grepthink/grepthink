@@ -9,6 +9,11 @@
             {{ project.title }}
         </a>
     </li>
+    <li>
+        <a href="{% url 'post_update' project.slug %}">
+            Project Update
+        </a>
+    </li>
 {% endblock crumb %}
 
 {% block head %}

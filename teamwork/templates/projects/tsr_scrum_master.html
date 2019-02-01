@@ -3,12 +3,19 @@
 {% load i18n %}
 
 {% block crumb %}
+    <li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
     <li>
         <a href="{% url 'view_one_project' cur_proj.slug %}">
             {{ cur_proj.title }}
         </a>
     </li>
+    <li>
+        <a href="{% url 'create_scrum_master_tsr' cur_proj.slug ass.slug %}">
+            Scrum Master TSR
+        </a>
+    </li>
 {% endblock crumb %}
+
 
 <script>
 function checkTextField(field) {

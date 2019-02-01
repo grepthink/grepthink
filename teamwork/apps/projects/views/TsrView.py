@@ -19,6 +19,7 @@ def create_member_tsr(request, slug, asg_slug):
 
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
+    course = cur_proj.course.first()
 
     # Assignment object that the TSR's belong to
     asg = get_object_or_404(Assignment, slug=asg_slug)
@@ -51,7 +52,7 @@ def create_member_tsr(request, slug, asg_slug):
             forms.append(form_i)
 
     return render(request, 'projects/tsr_member.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg,
+        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
         'page_name' : page_name, 'page_description': page_description,
         'title': title
     })
@@ -66,6 +67,7 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     title = "Scrum Master TSR"
 
     cur_proj = get_object_or_404(Project, slug=slug)
+    course = cur_proj.course.first()
     asg = get_object_or_404(Assignment, slug=asg_slug)
     today = datetime.now().date()
     members = cur_proj.members.all()
@@ -90,7 +92,7 @@ def create_scrum_master_tsr(request, slug, asg_slug):
             forms.append(form_i)
 
     return render(request, 'projects/tsr_scrum_master.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg,
+        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
         'page_name' : page_name, 'page_description': page_description,
         'title': title
     })
