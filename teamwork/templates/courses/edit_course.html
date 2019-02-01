@@ -111,7 +111,7 @@ $(document).ready(function() {
                 <div class="form-group">
                     {{ form.info.errors }}
                     <label for="{{ form.info.id_for_label }}" class="control-label">
-                    Course Information:
+                    Course Information <a href="https://guides.github.com/features/mastering-markdown/"> [Markdown supported]</a>:
                     </label>
                     {{ form.info }}
                 </div>
@@ -238,6 +238,7 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
+        {% if user == course.creator or user.profile.isGT %}
         <div class="col-md-6">
             <div class="box box-warning">
                 <div class="box-header with-border">
@@ -260,7 +261,7 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
-        {% if user == course.creator or user.profile.isGT %}
+
         <div class="col-md-6">
             <div class="box box-danger">
                 <div class="box-header with-border">

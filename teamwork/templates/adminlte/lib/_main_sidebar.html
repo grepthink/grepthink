@@ -134,6 +134,7 @@
                                  {% endfor %}
                                  {% endif %}
                                  {% if not user.profile.isGT %}
+                                 {% if user.get_user_disabled_courses %}
                                  <li class="treeview active">
                                      <a href="#">
                                          <i class="fa fa-flag-o"></i>
@@ -143,14 +144,14 @@
                                          </span>
                                      </a>
                                          <ul class="treeview-menu">
-                                             {% if user.get_user_disabled_courses %}
+
                                              {% for course in user.get_user_disabled_courses %}
                                                  <li class="">
                                                      <a href="{% url 'view_one_course' course.slug %}"><i class="fa fa-circle-o">
                                                      </i>  {{ course.name }} </a>
                                                  </li>
                                               {% endfor %}
-                                              {% endif %}
+                                  {% endif %}
                                          </ul>
                                  </li>
                                  {% endif %}

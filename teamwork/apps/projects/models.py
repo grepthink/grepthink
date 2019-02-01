@@ -139,7 +139,9 @@ class Project(models.Model):
     scrum_master = models.ForeignKey(
         User,
         related_name='scrum_master',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True)
 
     # Short project description
     tagline = models.TextField(
@@ -156,6 +158,8 @@ class Project(models.Model):
         User,
         related_name='membership',
         through='Membership')
+
+    no_request = models.BooleanField(default=False)
 
     # Pending Members that have request to Join the project
     pending_members = models.ManyToManyField(
@@ -174,7 +178,8 @@ class Project(models.Model):
         User,
         related_name='ta',
         on_delete=models.CASCADE,
-        default="")
+        blank=True,
+        null=True)
 
     # Location of Weekly meeting with TA
     ta_location = models.TextField(
@@ -575,7 +580,7 @@ class ProjectUpdate(models.Model):
 class ResourceUpdate(models.Model):
 
     project = models.ForeignKey(Project)
-    date = models.DateTimeField(auto_now_add=True, editable=True)
+    date = models.DateTimeField(editable=True)
     user = models.ForeignKey(User)
     src_title = models.CharField(max_length=255, default="Default Resource Title")
     src_link = models.URLField(max_length=2000, default="Default Resource Link")
@@ -587,6 +592,14 @@ class ResourceUpdate(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.username, self.project.title)
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save
+        """
+        self.date = datetime.datetime.now()
+
+        super(ResourceUpdate, self).save(*args, **kwargs)
 
 class ProjectChat(models.Model):
 

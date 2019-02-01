@@ -131,6 +131,10 @@ class CreateProjectForm(forms.ModelForm):
         max_length=20,
         required=False)
 
+    no_request = forms.BooleanField(
+        label="Do not allow Request to Join",
+        required=False)
+
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",
         required=False)
@@ -202,6 +206,7 @@ class EditProjectForm(forms.ModelForm):
         if 'instance' in kwargs and kwargs['instance']:
             self.fields['accepting'].initial = kwargs['instance'].avail_mem
             self.fields['sponsor'].initial = kwargs['instance'].sponsor
+            self.fields['no_request'].initial = kwargs['instance'].no_request
             self.fields['scrum_master'].queryset = kwargs['instance'].members.all()
             self.fields['project_owner'].queryset = kwargs['instance'].members.all()
             self.fields['project_owner'].initial = kwargs['instance'].creator
@@ -239,6 +244,10 @@ class EditProjectForm(forms.ModelForm):
     teamSize = forms.IntegerField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True)
+
+    no_request = forms.BooleanField(
+        label="Do no allow Request to Join",
+        required=False)
 
     weigh_interest = forms.IntegerField(
         min_value=0, max_value=5, label="Weight of user interest in project",
@@ -322,7 +331,7 @@ class UpdateForm(forms.ModelForm):
         user = User.objects.get(id=uid)
 
     update_title = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}), label="Title",
         max_length=255,
         required=True)
 
@@ -342,10 +351,12 @@ class ResourceForm(forms.ModelForm):
 
     src_title = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Title",
         max_length=255,
         required=True)
     src_link = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="URL Link",
         max_length=255,
         required=True)
 
@@ -398,31 +409,31 @@ class TSR(forms.ModelForm):
         required=True)
 
     pos_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Positive Feedback',
         max_length=255,
         required=True)
 
     neg_fb = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Improvement Suggestion',
         max_length=255,
         required=True)
 
     tasks_comp = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Tasks Completed (SCRUM Master only)',
         max_length=255,
         required=True)
 
     perf_assess = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Performance Assessment: Evidence (SCRUM Master Only)',
         max_length=255,
         required=True)
 
     notes = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         label='Notes/Comments (SCRUM Master Only)',
         max_length=255,
         required=True)
