@@ -184,13 +184,10 @@ def update_course(request, slug):
     else:
         user_role = 'GT'
 
-    if request.user.profile.isGT:
-        pass
-    elif not request.user==course.creator:
-        if not user_role == "ta":
-            #redirect them to the /course directory with message
-            messages.info(request,'Only Professor can post and update')
-            return HttpResponseRedirect('/course')
+    if user_role == "student":
+        #redirect them to the /course directory with message
+        messages.info(request,'Only Professor can post a course update')
+        return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
@@ -209,7 +206,7 @@ def update_course(request, slug):
             subject = "{0} has posted an update to {1}".format(request.user, course)
             content = "{0}\n\n www.grepthink.com".format(new_update.content)
             send_email(students_in_course, "noreply@grepthink.com", subject, content)
-            messages.add_message(request, messages.SUCCESS, "Email Sent!")
+            messages.add_message(request, messages.SUCCESS, "Posted and Email Sent!")
 
             return redirect(view_one_course, course.slug)
     else:

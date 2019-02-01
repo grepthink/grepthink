@@ -132,7 +132,7 @@ class CreateProjectForm(forms.ModelForm):
         required=False)
 
     no_request = forms.BooleanField(
-        label="Do no allow Request to Join",
+        label="Do not allow Request to Join",
         required=False)
 
     weigh_interest = forms.IntegerField(

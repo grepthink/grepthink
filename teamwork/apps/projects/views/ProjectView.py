@@ -218,7 +218,7 @@ def post_update(request, slug):
     page_name = "Project Update"
     page_description = project.title
 
-    if request.user.profile.isGT:
+    if request.user.profile.isGT or request.user in course.get_staff():
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
@@ -234,6 +234,7 @@ def post_update(request, slug):
             new_update.update_title = form.cleaned_data.get('update_title')
             new_update.user = request.user
             new_update.save()
+            messages.add_message(request, messages.SUCCESS, "Project update posted!")
             return redirect(view_one_project, project.slug)
     else:
         form = UpdateForm(request.user.id)
@@ -267,6 +268,7 @@ def update_project_update(request, slug, id):
             if not request.user.profile.isGT:
                 update.user = request.user
             update.save()
+            messages.add_message(request, messages.SUCCESS, "Project update edited")
             return redirect(view_one_project, project.slug)
     else:
         form = UpdateForm(request.user.id, instance=update)
@@ -285,6 +287,7 @@ def delete_project_update(request, slug, id):
     update = get_object_or_404(ProjectUpdate, id=id)
 
     if update.user == request.user or request.user.profile.isGT:
+        messages.add_message(request, messages.ERROR, "Project update deleted")
         update.delete()
 
     return redirect(view_one_project, project.slug)
@@ -300,12 +303,12 @@ def resource_update(request, slug):
     page_name = "Add Resource"
     page_description = project.title
 
-    if request.user.profile.isGT:
+    if request.user.profile.isGT or request.user in course.get_staff():
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
         #redirect them with a message
-        messages.info(request, 'Only current members can post an update for a project!')
+        messages.info(request, 'Only current members can post a resource for a project!')
         return HttpResponseRedirect('/project/all')
 
     if request.method == 'POST':
@@ -316,6 +319,7 @@ def resource_update(request, slug):
             new_update.src_title = form.cleaned_data.get('src_title')
             new_update.user = request.user
             new_update.save()
+            messages.add_message(request, messages.SUCCESS, "Project resource added")
             return redirect(view_one_project, project.slug)
     else:
         form = ResourceForm(request.user.id)
@@ -348,6 +352,7 @@ def update_resource_update(request, slug, id):
             if not request.user.profile.isGT:
                 resource.user = request.user
             resource.save()
+            messages.add_message(request, messages.SUCCESS, "Project resource edited")
             return redirect(view_one_project, project.slug)
     else:
         form = ResourceForm(request.user.id, instance=resource)
@@ -366,6 +371,7 @@ def delete_resource_update(request, slug, id):
     resource = get_object_or_404(ResourceUpdate, id=id)
 
     if resource.user == request.user or request.user.profile.isGT:
+        messages.add_message(request, messages.ERROR, "Project resource deleted")
         resource.delete()
 
     return redirect(view_one_project, project.slug)

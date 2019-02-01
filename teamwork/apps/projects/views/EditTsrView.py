@@ -25,6 +25,7 @@ def tsr_edit(request, slug, asg_slug):
 
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
+    course = cur_proj.course.first()
 
     # Assignment object that the TSR's belong to
     asg = get_object_or_404(Assignment, slug=asg_slug)
@@ -47,7 +48,7 @@ def tsr_edit(request, slug, asg_slug):
         page_name="Scrum Master TSR Edit"
     else:
         page_name="Member TSR Edit"
-        
+
     if request.method == 'POST':
         # For each Tsr displayed, update the values and save the Tsr
         for tsr in tsr_list:
@@ -86,7 +87,7 @@ def tsr_edit(request, slug, asg_slug):
             forms.append(form_i)
 
     return render(request, 'projects/tsr_edit.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg,
+        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
         'page_name' : page_name, 'page_description': page_description,
         'title': title
     })

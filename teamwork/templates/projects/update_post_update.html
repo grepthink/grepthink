@@ -9,6 +9,11 @@
             {{ project.title }}
         </a>
     </li>
+    <li>
+        <a href='{% url 'update_project_update' project.slug update.id %}'>
+            Edit Project Update
+        </a>
+    </li>
 {% endblock crumb %}
 
 {% block head %}
