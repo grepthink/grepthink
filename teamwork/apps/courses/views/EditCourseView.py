@@ -74,7 +74,7 @@ def edit_course(request, slug):
         if added:
             messages.add_message(request, messages.SUCCESS, "Successfully added member(s) to course.")
         else:
-            messages.add_message(request, messages.SUCCESS, "Failed to successfully add member(s) to course.")
+            messages.add_message(request, messages.SUCCESS, "Student(s) already added to course .")
 
         # return redirect(edit_course, slug)
 
