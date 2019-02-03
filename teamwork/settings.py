@@ -69,8 +69,9 @@ EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
+EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_API_KEY')
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
+DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'
 
 isProd = config('PRODUCTION', default=False)
 
