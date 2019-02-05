@@ -146,3 +146,9 @@ class ProfileForm(forms.ModelForm):
         # fields = ['name', 'bio', 'institution', 'location',
         #         'known_skill', 'learn_skill']
         fields = ['name', 'bio', 'institution', 'location']
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.CharField()   
+    class Meta:
+        model= User
+        fields=['email']
