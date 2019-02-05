@@ -110,6 +110,26 @@ def create_project(request):
                     project.desired_skills.add(desired_skill)
                     project.save()
 
+#------------------------------------------------------------------------------------------------
+            if request.POST.get('desired_techs'):
+                techs = request.POST.getlist('desired_techs')
+                for s in techs:
+                    s_lower = s.lower()
+                    # Check if lowercase version of tech is in db
+                    if Techs.objects.filter(tech=s_lower):
+                        # Skill already exists, then pull it up
+                        desired_tech = Techs.objects.get(tech=s_lower)
+                    else:
+                        # Add the new skill to the Skills table
+                        desired_tech = Techs.objects.create(tech=s_lower)
+                        # Save the new object
+                        desired_tech.save()
+                    # Add the skill to the project (as a desired_skill)
+                    project.desired_techs.add(desired_tech)
+                    project.save()
+
+#------------------------------------------------------------------------------------------------
+
             # Loop through the members in the object and make m2m rows for them
             for i in members:
                 i_user = User.objects.get(username=i)

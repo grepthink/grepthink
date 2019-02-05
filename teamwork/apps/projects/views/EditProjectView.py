@@ -198,6 +198,34 @@ def edit_project(request, slug):
         project.desired_skills.remove(to_delete)
         return redirect(edit_project, slug)
 
+#--------------------------------------------------------------------------------------------    
+    if request.POST.get('desired_techs'):
+        techs = request.POST.getlist('desired_techs')
+        for s in techs:
+            s_lower = s.lower()
+            # Check if lowercase version of skill is in db
+            if Techs.objects.filter(tech=s_lower):
+                # Skill already exists, then pull it up
+                desired_tech = Techs.objects.get(tech=s_lower)
+            else:
+                # Add the new skill to the Skills table
+                desired_tech = Techs.objects.create(tech=s_lower)
+                # Save the new object
+                desired_tech.save()
+            # Add the skill to the project (as a desired_skill)
+            project.desired_techs.add(desired_tech)
+            project.save()
+        return redirect(view_one_project, project.slug)
+
+    if request.POST.get('remove_desired_tech'):
+        tech_name = request.POST.get('remove_desired_tech')
+        to_delete = Techs.objects.get(tech=tech_name)
+        project.desired_techs.remove(to_delete)
+        return redirect(edit_project, slug)    
+
+
+#--------------------------------------------------------------------------------------------
+
     if request.method == 'POST':
         form = EditProjectForm(request.user.id, request.POST, members=members)
 
@@ -391,5 +419,35 @@ def create_desired_skills(request):
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
+#----------------------------------------------------------------------------------
+def add_desired_techs(request, slug):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+def create_desired_techs(request):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+#----------------------------------------------------------------------------------
 
     return HttpResponse("Failure")
