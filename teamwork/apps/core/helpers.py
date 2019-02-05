@@ -5,6 +5,7 @@ from sendgrid.helpers.mail import *
 
 from django.http import JsonResponse
 from django.db.models import Q
+from django.conf import settings
 
 # Django
 from django.contrib.auth.models import User
@@ -28,7 +29,7 @@ from teamwork.apps.courses.models import Course
             content    -- content of the email
 
     IF Authorization error occurs its because:
-        1. you dont have sendgrid.env file in root. Get from Discord (8/11)
+        1. you dont have sendgrid.env file in root. Ask Kevin for this
         2. need to run 'source ./sendgrid.env'
 """
 def send_email(recipients, gt_email, subject, content):
@@ -53,21 +54,16 @@ def send_email(recipients, gt_email, subject, content):
     else:
         return HttpResponseBadRequest("Bad Request")
 
+
     # Handle email sending
-    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    sg = sendgrid.SendGridAPIClient(apikey=settings.EMAIL_SENDGRID_KEY)
 
-    # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
-    # but I'm not sure how the Mail() constructor below works without it.
-    # to_email = Email("initial_email@grepthink.com", "Grepthink")
-    to_email = Email("noemail@notset.com", "Grepthink")
+    mail = Mail()
+    mail.from_email = Email(gt_email)
+    mail.subject = subject
+    mail.add_content(Content("text/plain", content))
 
-    from_email = Email(gt_email)
-
-    # TODO: Content should be formatted in a professional way. I believe markup is/can be supported.
-    final_content = Content("text/plain", content)
-    mail = Mail(from_email, subject, to_email, final_content)
-
-    # add multiple emails to the outgoing Mail object
+    # add recipients to the outgoing Mail object
     # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
     for email in student_email_list:
         p = Personalization()
@@ -79,8 +75,11 @@ def send_email(recipients, gt_email, subject, content):
 
     # Send the Email
     response = sg.client.mail.send.post(request_body=mail.get())
+    # print(response.status_code)
+    # print(response.body)
+    # print(response.headers)
 
-    return HttpResponse("Email Sent!") 
+    return HttpResponse("Email Sent!")
 
 
 """
