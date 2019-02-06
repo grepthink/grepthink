@@ -198,18 +198,20 @@ def edit_project(request, slug):
         project.desired_skills.remove(to_delete)
         return redirect(edit_project, slug)
 
-#--------------------------------------------------------------------------------------------    
+#-------------------------------------------------------------------------------------------- 
+    
+    #Add technologies to the project   
     if request.POST.get('desired_techs'):
         techs = request.POST.getlist('desired_techs')
-        for s in techs:
-            s_lower = s.lower()
+        for x in techs:
+            x_lower = x.lower()
             # Check if lowercase version of skill is in db
-            if Techs.objects.filter(tech=s_lower):
+            if Techs.objects.filter(tech=x_lower):
                 # Skill already exists, then pull it up
-                desired_tech = Techs.objects.get(tech=s_lower)
+                desired_tech = Techs.objects.get(tech=x_lower)
             else:
                 # Add the new skill to the Skills table
-                desired_tech = Techs.objects.create(tech=s_lower)
+                desired_tech = Techs.objects.create(tech=x_lower)
                 # Save the new object
                 desired_tech.save()
             # Add the skill to the project (as a desired_skill)
@@ -217,6 +219,7 @@ def edit_project(request, slug):
             project.save()
         return redirect(view_one_project, project.slug)
 
+    #Remove desired technologies from the project 
     if request.POST.get('remove_desired_tech'):
         tech_name = request.POST.get('remove_desired_tech')
         to_delete = Techs.objects.get(tech=tech_name)
@@ -430,8 +433,8 @@ def add_desired_techs(request, slug):
         if q is not None:
             results = Techs.objects.filter(
                 Q( tech__contains = q ) ).order_by( 'tech' )
-        for s in results:
-            data['items'].append({'id': s.tech, 'text': s.tech})
+        for x in results:
+            data['items'].append({'id': x.tech, 'text': x.tech})
         return JsonResponse(data)
 
 def create_desired_techs(request):
@@ -444,8 +447,8 @@ def create_desired_techs(request):
         if q is not None:
             results = Techs.objects.filter(
                 Q( tech__contains = q ) ).order_by( 'tech' )
-        for s in results:
-            data['items'].append({'id': s.tech, 'text': s.tech})
+        for x in results:
+            data['items'].append({'id': x.tech, 'text': x.tech})
         return JsonResponse(data)
 
 #----------------------------------------------------------------------------------
