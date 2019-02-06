@@ -244,9 +244,7 @@ $(document).ready(function() {
                   <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
                   </select>
                 </div>
-
-                
-
+               
                 <label>Remove Desired Skills</label> <br />
                 {% for skill in project.desired_skills.all %}
                     <button class="btn btn-danger btn-sm" name="remove_desired_skill" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
@@ -256,15 +254,14 @@ $(document).ready(function() {
                 {% endfor %}
 
               </div>
+     
 
-
-        <div class="box box-info">
+ <!--        <div class="box box-info">
           <div class="box-header with-border">
             <h3 class="box-title">Add Desired Technologies to {{project.title}}</h3>
           </div>
 
-
-                <div class="box-body">
+              <div class="box-body">
 
                <div class="form-group">
                   <label>Add Desired Technologies</label>
@@ -277,15 +274,36 @@ $(document).ready(function() {
                     <button class="btn btn-danger btn-sm" name="remove_desired_tech" value="{{tech.tech}}"><i class="fa fa-trash"></i> {{tech.tech}}
                     </button>
                 {% empty %}
+                <lead>No desired skills to remove</lead>
                 {% endfor %}
 
               </div>
-
-
-
-
-        </div>
+        </div> -->
     </div>
+
+           <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Add Desired Technologies to {{project.title}}</h3>
+          </div>
+
+              <div class="box-body">
+
+               <div class="form-group">
+                  <label>Add Desired Technologies</label>
+                  <select class="form-control s2_desired_techs" id="desired_techs" name="desired_techs" multiple="multiple" style="width: 100%;"> 
+                  </select>
+                </div>
+
+                <label>Remove Desired Technologies</label> <br />
+                {% for skill in project.desired_techs.all %}
+                    <button class="btn btn-danger btn-sm" name="remove_desired_tech" value="{{tech.tech}}"><i class="fa fa-trash"></i> {{tech.tech}}
+                    </button>
+                {% empty %}
+                <lead>No desired skills to remove</lead>
+                {% endfor %}
+
+              </div>
+        </div>
 
  <div class="col-md-6">
      <div class="box box-info">
@@ -420,7 +438,6 @@ $(document).ready(function() {
           </label>
           {{ form.weigh_know }}
       </div>
-
 
       <div class="form-group">
           {{ form.weigh_learn.errors }}
