@@ -275,6 +275,17 @@ class EmailTests(TestCase):
         response = send_email(recipient_list, "gtemail@test.com", "test_single_recipient", "email content")
         self.assertTrue(response.content.decode("utf-8") == 'Email Sent!')
 
+    def test_successful_emaillist(self):
+        recipient_list = []
+        recipient_list.append(self.recipient1.email)
+        recipient_list.append(self.recipient2.email)
+        response = send_email(recipient_list, "gtemail@test.com", "test_single_recipient", "email content")
+        self.assertTrue(response.content.decode("utf-8") == 'Email Sent!')
+
+    def test_bad_request(self):
+        response = send_email(724, "gtemail@test.com", "test_bad_request", "email content")
+        self.assertTrue(response.content.decode("utf-8") == 'Bad Request')
+
 # TODO: parse csv tests
 class ParseCsvTests(TestCase):
 
