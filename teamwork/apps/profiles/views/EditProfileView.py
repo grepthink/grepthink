@@ -162,10 +162,8 @@ def edit_profile_helper(request, username):
     tempProfile = User.objects.get(username=username)
     profile = Profile.objects.get(user=tempProfile)
 
-        #grab profile for the current user
+    #grab profile for the current user
        
-        
-
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
 
@@ -196,5 +194,4 @@ def edit_profile_helper(request, username):
         tempProfile.save()
         profile.save()
     
-    else:
-        email=form(instance=request.user.email)
+
