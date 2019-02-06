@@ -22,17 +22,17 @@ from teamwork.apps.projects.models import Project
 from teamwork.apps.courses.models import Course
 
 
-"""
-    Params: recipients -- QuerySet of students
-            from_email -- The address that the email will come from (can be anything we want)
-            subject    -- subject of the email
-            content    -- content of the email
-
-    IF Authorization error occurs its because:
-        1. you dont have sendgrid.env file in root. Ask Kevin for this
-        2. need to run 'source ./sendgrid.env'
-"""
 def send_email(recipients, gt_email, subject, content):
+    """
+        Params: recipients -- QuerySet of students
+                from_email -- The address that the email will come from (can be anything we want)
+                subject    -- subject of the email
+                content    -- content of the email
+
+        IF Authorization error occurs its because:
+            1. you dont have sendgrid.env file in root. Ask KP for this.
+            2. need to run 'source ./sendgrid.env'
+    """
 
     # Check if the recipients list is empty
     if not recipients:
@@ -81,43 +81,21 @@ def send_email(recipients, gt_email, subject, content):
 
     return HttpResponse("Email Sent!")
 
-
-"""
-    Not yet being used, attempted to use w/ Email attachments
-"""
-def handle_file(uploaded_file):
-
-    with open(uploaded_file, 'wbr+') as f:
-        print("Name:",f.name)
-
-        if f.multiple_chunks(chunk_size=none):
-            # then read chunk by chunk
-            for chunk in uploaded_file.chunks():
-                data.write(chunk)
-        # else safe to read all at once
-        else:
-            data = f.read()
-
-
-    encoded = base64.b64encode(data)
-    return encoded
-
-
-"""
-parse csv file
-
-Expects csv file to contain headers containing: first name, last name, email
-
-return dict. Key (string) = FirstName, Lastname
-             Value (string)= Email
-"""
 def parse_csv(csv_file):
-    print(csv_file)
-    data = {}
+    """
+    parse csv file
 
+    Expects csv file to contain headers containing: first name, last name, email
+
+    return dict. Key (string) = FirstName, Lastname
+                 Value (string)= Email
+    """
+    data = {}
     contents = csv_file.read().decode("utf-8")
+
     # split contents of csv on new line, iterable is needed for csv.reader
     lines = contents.splitlines()
+
     # does all the backend splitting of csv, from 'csv' module
     reader = csv.reader(lines)
     header = ""
