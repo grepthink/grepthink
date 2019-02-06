@@ -28,14 +28,11 @@
           <div class="box-footer no-padding">
             <ul class="nav nav-stacked" style="overflow:hidden; white-space: nowrap;text-overflow:ellipsis ">                        
               <li>       
-                <a>Course
+                <a>Course:
                   &nbsp;
-                  {% for course in a_courses %}  
-                  <span style="margin:2px" class="label label-warning">                                    
-                    {{course.name}}                                  
-                  </span>
-                  {% endfor %} 
-                  
+                  <span style="margin-right:3px" class="label label-warning">
+                    {{project.course.first}}                
+                  </span>                       
                 </a>
                 
               </li>             

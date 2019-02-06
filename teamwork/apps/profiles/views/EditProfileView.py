@@ -12,6 +12,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
 from django.contrib import messages
 import json
+from teamwork.apps.profiles.views import BaseView
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():
@@ -157,19 +158,22 @@ def edit_profile_helper(request, username):
         Helper function that saves profile information from the ProfileForm
     """
 
-    if request.user.profile.isGT:
-        tempProfile = User.objects.get(username=username)
-        profile = Profile.objects.get(user=tempProfile)
-    else:
+    
+    tempProfile = User.objects.get(username=username)
+    profile = Profile.objects.get(user=tempProfile)
+
         #grab profile for the current user
-        profile = Profile.objects.get(user=request.user)
+       
+        
 
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
+
     if form.is_valid():
 
         # grab each form element from the clean form
         bio = form.cleaned_data.get('bio')
+        email= form.cleaned_data.get('email')
         name = form.cleaned_data.get('name')
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
@@ -178,6 +182,8 @@ def edit_profile_helper(request, username):
         #if data is entered, save it to the profile for the following
         if name:
             profile.name = name
+        if email:
+            tempProfile.email=email
         if bio:
             profile.bio = bio
         if institution:
@@ -186,5 +192,9 @@ def edit_profile_helper(request, username):
             profile.location = location
         if ava:
             profile.avatar = ava
-
+    
+        tempProfile.save()
         profile.save()
+    
+    else:
+        email=form(instance=request.user.email)
