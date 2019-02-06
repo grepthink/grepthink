@@ -30,7 +30,7 @@ def send_email(recipients, gt_email, subject, content):
                 content    -- content of the email
 
         IF Authorization error occurs its because:
-            1. you dont have sendgrid.env file in root. Get from Discord (8/11)
+            1. you dont have sendgrid.env file in root. Ask KP for this.
             2. need to run 'source ./sendgrid.env'
     """
 
