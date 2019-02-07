@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+
+{% block crumb %}
+    <li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+    <li>
+        <a href="{% url 'view_one_project' cur_proj.slug %}">
+            {{ cur_proj.title }}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'tsr_edit' cur_proj.slug ass.slug %}">
+            TSR Edit
+        </a>
+    </li>
+{% endblock crumb %}
+
 <script>
 function checkTextField(field) {
     if (field.value == '') {
@@ -11,11 +26,11 @@ function checkTextField(field) {
 <input type="text" name="checking" id="checking"
 onblur="checkTextField(this);" />
 {% block content %}
-
+<div class = "row">
 <div class="col-md-8">
     <div class="box box-success">
       <div class="box-header with-border">
-        <h3 class="box-title">Edit TSR Submission</h3>
+        <h3 class="box-title">TSR Edit</h3>
       </div>
       <div class="box-body">
           <p class="text-center">
@@ -27,19 +42,30 @@ onblur="checkTextField(this);" />
           <form action="{% url 'tsr_edit' cur_proj.slug ass.slug %}" method="post" role="form">
             {% csrf_token %}
             {% for form in forms %}
-              <h3>For {{form.prefix}}</h3>
+              <h4>For {{form.prefix}}</h4>
               {% for field in form.visible_fields %}
                 <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
-
                 {{ field }}
                 {% endfor %}
                 <br>
-                <br>
             {% endfor %}
-            <br>
-            <h5> <input type="submit" value="Save">
+            <div class="form-group">
+                <div class="pull-left">
+                <a href="{% url 'view_one_project' cur_proj.slug %}">
+                    <button class="btn btn-default" type="button">
+                        Cancel
+                    </button>
+                </a>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-success" type="submit" name="SUBMIT">
+                        Save changes
+                    </button>
+                </div>
+            </div>
             </form>
         </div>
     </div>
+</div>
 </div>
 {% endblock content %}

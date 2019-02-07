@@ -10,6 +10,11 @@
 
 {% endblock stylesheets %}
 
+{% block crumb %}
+<li><a href="{% url 'view_matches' %}"> My Matches </a></li>
+<li><a href="{% url 'matchstats' cur_project.slug %}"> MatchStats </a></li>
+{% endblock crumb %}
+
 {% block content %}
 
 <p> Value of Interest varies from 5 (most interested) to 1 (least interested).

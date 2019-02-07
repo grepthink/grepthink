@@ -43,7 +43,6 @@
 
 {% endblock stylesheets %}
 
-k
 {# Add the breadcrumbs for this page #}
 {% block crumb %}
 
@@ -92,9 +91,9 @@ k
             </li>
 
             <!-- COGWHEEL -->
-
+            {% if request.user in staff or request.user.profile.isGT or user in project.members.all%}
             <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
-
+            {% endif %}
             <!-- EMAIL STUDENTS IN PROJECT -->
             {% if request.user in staff %}
             <li class="pull-right">
@@ -106,6 +105,7 @@ k
             <!-- REQUEST TO JOIN PROJECT BUTTON -->
 
             {% if not request.user in staff %}
+            {% if not project.no_request%}
             {% if not user in project.members.all %}
             {% if requestButton %}
             <li class="pull-right">
@@ -121,6 +121,7 @@ k
                 <i class="fa fa-undo"></i>
             </a>
             </li>
+            {% endif %}
             {% endif %}
             {% endif %}
             {% endif %}
@@ -182,19 +183,23 @@ k
                         <div class="box-body" style="display: none;">
                             <strong>Teacher Assistant</strong>
                             &nbsp;
+                            {% if project.ta %}
                             <a href="{% url 'profile' project.ta.username %}">
                                 <span class="label label-info">
                                     {{ project.ta.username }}
                                 </span>
                             </a>
+                            {% endif %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Scrum Master</strong>
                             &nbsp;
+                            {% if project.scrum_master %}
                             <a href="{% url 'profile' project.scrum_master.username %}">
                                 <span class="label label-info">
                                     {{ project.scrum_master.username }}
                                 </span>
                             </a>
+                            {% endif %}
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <strong>Meeting Location</strong>
                             &nbsp;
@@ -229,7 +234,7 @@ k
                         </span>
                     </li>
                     <!-- /.timeline-label -->
-                    {% if user in project.members.all or user == project.creator or request.user.profile.isGT%}
+                    {% if user in project.members.all or user in course.get_staff or request.user.profile.isGT%}
                     <li style="list-style: none"
                         onclick="window.location =
                         '{% url 'post_update' project.slug %}'">
@@ -249,6 +254,15 @@ k
                         <div class="timeline-item">
                             <div class="timeline-header clearfix">
                                 {{up.update_title}}
+                                {% if user == up.user or user.profile.isGT %}
+                                <span class="pull-right">
+                                    <a href='{% url 'update_project_update' project.slug up.id %}'>
+                                        <button class="btn btn-default btn-xs">
+                                            <i class="fa fa-gear"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                                {% endif %}
                             </div>
                             <div class="timeline-body">
                                 {{up.update}}
@@ -342,10 +356,11 @@ k
                             <table class="table table-striped">
                                 <tbody>
                                     <tr>
-                                        <th>Resource Title</th>
+                                        <th>Title</th>
                                         <th>URL Link</th>
                                         <th>Posted By</th>
                                         <th>Posted On</th>
+                                        <th></th>
                                     </tr>
                                     {% for re in resources.all %}
                                     {% if re.src_title != null %}
@@ -354,13 +369,23 @@ k
                                         <td><a href="{{re.src_link}}">{{re.src_link}}</a></td>
                                         <td>{{re.user.username}}</td>
                                         <td>{{re.date}}</td>
+                                        <td style="word-break: break-all;">
+                                            {% if user == re.user or user.profile.isGT %}
+                                            <a href="{% url 'update_resource_update' project.slug re.id %}">
+                                                <button type="button" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                     {% endif %}
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        {% if request.user in project.members.all %}
+                        {% if request.user in project.members.all or user in course.get_staff or request.user.profile.isGT%}
                             <a href="{% url 'resource_update' project.slug %}"
                                 class="pull-right" style="padding-top: 10px">
                                 <button class="btn btn-info">
@@ -731,8 +756,6 @@ k
                                     </a>
                                 </li>
                             {% endfor %}
-                            </a>
-                          </li>
                         </ul>
                       </div>
                       <!-- /.Members List -->

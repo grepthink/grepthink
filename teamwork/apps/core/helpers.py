@@ -5,6 +5,7 @@ from sendgrid.helpers.mail import *
 
 from django.http import JsonResponse
 from django.db.models import Q
+from django.conf import settings
 
 # Django
 from django.contrib.auth.models import User
@@ -21,17 +22,17 @@ from teamwork.apps.projects.models import Project
 from teamwork.apps.courses.models import Course
 
 
-"""
-    Params: recipients -- QuerySet of students
-            from_email -- The address that the email will come from (can be anything we want)
-            subject    -- subject of the email
-            content    -- content of the email
-
-    IF Authorization error occurs its because:
-        1. you dont have sendgrid.env file in root. Get from Discord (8/11)
-        2. need to run 'source ./sendgrid.env'
-"""
 def send_email(recipients, gt_email, subject, content):
+    """
+        Params: recipients -- QuerySet of students
+                from_email -- The address that the email will come from (can be anything we want)
+                subject    -- subject of the email
+                content    -- content of the email
+
+        IF Authorization error occurs its because:
+            1. you dont have sendgrid.env file in root. Ask KP for this.
+            2. need to run 'source ./sendgrid.env'
+    """
 
     # Check if the recipients list is empty
     if not recipients:
@@ -53,21 +54,16 @@ def send_email(recipients, gt_email, subject, content):
     else:
         return HttpResponseBadRequest("Bad Request")
 
+
     # Handle email sending
-    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    sg = sendgrid.SendGridAPIClient(apikey=settings.EMAIL_SENDGRID_KEY)
 
-    # TODO: not sure what to put here in the to_email as of now.  Don't really need this initial email to be added,
-    # but I'm not sure how the Mail() constructor below works without it.
-    # to_email = Email("initial_email@grepthink.com", "Grepthink")
-    to_email = Email("noemail@notset.com", "Grepthink")
+    mail = Mail()
+    mail.from_email = Email(gt_email)
+    mail.subject = subject
+    mail.add_content(Content("text/plain", content))
 
-    from_email = Email(gt_email)
-
-    # TODO: Content should be formatted in a professional way. I believe markup is/can be supported.
-    final_content = Content("text/plain", content)
-    mail = Mail(from_email, subject, to_email, final_content)
-
-    # add multiple emails to the outgoing Mail object
+    # add recipients to the outgoing Mail object
     # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
     for email in student_email_list:
         p = Personalization()
@@ -79,46 +75,27 @@ def send_email(recipients, gt_email, subject, content):
 
     # Send the Email
     response = sg.client.mail.send.post(request_body=mail.get())
+    # print(response.status_code)
+    # print(response.body)
+    # print(response.headers)
 
-    return HttpResponse("Email Sent!") 
+    return HttpResponse("Email Sent!")
 
-
-"""
-    Not yet being used, attempted to use w/ Email attachments
-"""
-def handle_file(uploaded_file):
-
-    with open(uploaded_file, 'wbr+') as f:
-        print("Name:",f.name)
-
-        if f.multiple_chunks(chunk_size=none):
-            # then read chunk by chunk
-            for chunk in uploaded_file.chunks():
-                data.write(chunk)
-        # else safe to read all at once
-        else:
-            data = f.read()
-
-
-    encoded = base64.b64encode(data)
-    return encoded
-
-
-"""
-parse csv file
-
-Expects csv file to contain headers containing: first name, last name, email
-
-return dict. Key (string) = FirstName, Lastname
-             Value (string)= Email
-"""
 def parse_csv(csv_file):
-    print(csv_file)
-    data = {}
+    """
+    parse csv file
 
+    Expects csv file to contain headers containing: first name, last name, email
+
+    return dict. Key (string) = FirstName, Lastname
+                 Value (string)= Email
+    """
+    data = {}
     contents = csv_file.read().decode("utf-8")
+
     # split contents of csv on new line, iterable is needed for csv.reader
     lines = contents.splitlines()
+
     # does all the backend splitting of csv, from 'csv' module
     reader = csv.reader(lines)
     header = ""

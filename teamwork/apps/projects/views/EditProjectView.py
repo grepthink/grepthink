@@ -208,6 +208,7 @@ def edit_project(request, slug):
             project.avail_mem = form.cleaned_data.get('accepting')
             project.sponsor = form.cleaned_data.get('sponsor')
             project.teamSize = form.cleaned_data.get('teamSize')
+            project.no_request = form.cleaned_data.get('no_request')
             project.weigh_interest = form.cleaned_data.get('weigh_interest') or 0
             project.weigh_know = form.cleaned_data.get('weigh_know') or 0
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
@@ -310,11 +311,11 @@ def adjust_pendinglist(request, project, mem_to_add):
 def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
 
     if (not course in mem_courses):
-        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is not enrolled in the course")
+        messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
         return False
 
     if (mem_to_add in curr_members):
-        messages.warning(request, "User failed to be added to the project." + mem_to_add.username + " is already a member of the project.")
+        messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is already a member of the project.")
         return False
 
     if not project.avail_mem:
