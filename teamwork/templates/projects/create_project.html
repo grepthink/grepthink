@@ -65,6 +65,19 @@ $(document).ready(function() {
           page: params.page
         };
       },
+       
+  // $(".s2_desired_techs").select2({
+  //   ajax: {
+  //     url: "ajax/add_desired_techs/",
+  //     dataType: 'json',
+  //     delay: 250,
+  //     data: function (params) {
+  //       return {
+  //         q: params.term, // search term
+  //         page: params.page
+  //       };
+  //     },
+
       processResults: function (data, params) {
         // parse the results into the format expected by Select2
         // since we are using custom formatting functions we do not need to
@@ -184,6 +197,14 @@ $(document).ready(function() {
           <a class='desired-skills-tooltip' data-toggle="tooltip" data-placement="right" title="List the skills that a potential team member should have. These will be used to recommend team members to you.">
           <i class='glyphicon glyphicon-info-sign'></i></a>
           <select class="form-control s2_desired_skills" id="desired_skills" name="desired_skills" multiple="multiple" style="width: 100%;">
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Search and Add Desired Techs</label>
+          <a class='desired-techs-tooltip' data-toggle="tooltip" data-placement="right" title="List the technologies that a potential team member should have. These will be used to recommend team members to you.">
+          <i class='glyphicon glyphicon-info-sign'></i></a>
+          <select class="form-control s2_desired_techs" id="desired_techs" name="desired_techs" multiple="multiple" style="width: 100%;">
           </select>
         </div>
 
