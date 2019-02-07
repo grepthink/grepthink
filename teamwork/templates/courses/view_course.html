@@ -130,15 +130,20 @@ $(document).ready(function() {
                 </a>
             </li>
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
-            {% if not course.disable %}
-
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="disabled slug-tooltip" data-toggle="tooltip" data-placement="left" title="Course must be active to Create Assignment">
+                    <font color="#989898"> Create Assignment
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
             <li class="">
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create Assignment
                     <i class="fa fa-plus"></i>
                 </a>
-            </li>
             {% endif %}
+            </li>
 
 
             <li class="pull-right">
@@ -149,26 +154,36 @@ $(document).ready(function() {
             </li>
             {% endif %}
 
-
-            {% if not course.disable %}
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="disabled slug-tooltip" data-toggle="tooltip" data-placement="left" title="Course must be active to Create Project">
+                    <font color="#989898"> Create Project
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
             <li class="">
-            <a href="{% url 'create_project' %}">
-                Create Project
-                <i class="fa fa-plus"></i>
-            </a>
-            </li>
+                <a href="{% url 'create_project' %}">
+                    Create Project
+                    <i class="fa fa-plus"></i>
+                </a>
             {% endif %}
+            </li>
 
-            {% if not course.disable %}
             {% if user_role == "ta" %}
+            {% if course.disable %}
+            <li class=" pull-right disabled">
+                <a aria-expanded="false" class="disabled slug-tooltip" data-toggle="tooltip" data-placement="left" title="Course must be active to Claim Projects">
+                    <font color="#989898"> Claim Projects
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
             <li class="pull-right">
-            <a href="{% url 'claim_projects' course.slug %}">
-            <!-- <a href="#claim" data-toggle="tab" aria-expanded="false"> -->
-                Claim Projects
-                <i class="fa fa-plus"></i>
-            </a>
-            </li>
+                <a href="{% url 'claim_projects' course.slug %}">
+                    Claim Projects
+                    <i class="fa fa-plus"></i>
+                </a>
             {% endif %}
+            </li>
             {% endif %}
 
         </ul>
