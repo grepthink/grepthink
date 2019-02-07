@@ -12,8 +12,4 @@ omit =
     manage.py
     *__init__*
     # Omit any file with admin (admin.py)
-    *admin*
-    */apps.py
-    */*test*.py
-    */forms.py
-    wsgi.py
+    *admin*   
