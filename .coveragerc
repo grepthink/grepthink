@@ -13,3 +13,6 @@ omit =
     *__init__*
     # Omit any file with admin (admin.py)
     *admin*   
+    *wsgi.py
+    */apps.py
+    */*test*.py
