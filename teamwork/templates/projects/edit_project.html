@@ -210,7 +210,7 @@ $(".s2_desired_techs").select2({
 
           {% endif %}
 
-
+         
         </div>
 
 
@@ -236,7 +236,7 @@ $(".s2_desired_techs").select2({
           <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
         </div>
 
-        
+        <div class="col-md-offset-6">
         <div class="box-body">
 
           <div class="form-group">
@@ -254,7 +254,7 @@ $(".s2_desired_techs").select2({
           {% endfor %}
 
         </div>
-
+         </div>
       </div>
 
       <div class="box box-info">
@@ -280,25 +280,25 @@ $(".s2_desired_techs").select2({
 
       </div>
     </div>
+     </div>
 
-
- <div class="col-md-6">
+    <div class="col-md-6">
       <div class="box box-info">
-         <div class="box-header with-border">
-           <h3 class="box-title">Project Members</h3>
-         </div>
+       <div class="box-header with-border">
+         <h3 class="box-title">Project Members</h3>
+       </div>
 
-         <div class="box-body">
+       <div class="box-body">
          <!-- TEMPORARY -->
-           <ul class="nav nav-pills nav-stacked">
+         <ul class="nav nav-pills nav-stacked">
 
           <!-- PROJECT OWNER DROPDOWN -->
-           <div class="form-group">
+          <div class="form-group">
             <label>
               Project Owner:
             </label>
             {{ form.project_owner }}
-           </div>
+          </div>
 
           <!-- SCRUM MASTER DROPDOWN -->
           <div class="form-group">
@@ -361,6 +361,7 @@ $(".s2_desired_techs").select2({
 
                </div>
              </div>
+
 
 
              <div class="col-md-6">
@@ -431,6 +432,8 @@ $(".s2_desired_techs").select2({
         </div> <!-- Box 3 -->
 
       </div> <!-- Col 3 -->
+
+
 
       <div class="col-md-6">
         <div class="box box-danger">
