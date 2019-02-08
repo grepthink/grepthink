@@ -51,40 +51,40 @@ class Skills(models.Model):
         super(Skills, self).save(*args, **kwargs)
 
 
-#-----------------------------------------------------------------------
-class Techs(models.Model):
-    """
-    Skills: A database model (object) for skills.
+# #-----------------------------------------------------------------------
+# class Techs(models.Model):
+#     """
+#     Skills: A database model (object) for skills.
 
-    Fields:
-        skill: a field that contains the name of a skill
+#     Fields:
+#         skill: a field that contains the name of a skill
 
-    Methods:
-        __str__(self):                  Human readeable representation of the skill object.
-        save(self, *args, **kwargs):    Overides the default save operator...
+#     Methods:
+#         __str__(self):                  Human readeable representation of the skill object.
+#         save(self, *args, **kwargs):    Overides the default save operator...
 
-        """
-    # skill, a string
-    tech = models.CharField(max_length=255,default="")
+#         """
+#     # skill, a string
+#     tech = models.CharField(max_length=255,default="")
 
-    def __str__(self):
-        return self.tech
-    class Meta:
-        # Verbose name is the same as class name in this case.
-        verbose_name = "Tech"
-        # Multiple Skill objects are referred to as Projects.
-        verbose_name_plural = "Techs"
-        ordering = ('tech',)
+#     def __str__(self):
+#         return self.tech
+#     class Meta:
+#         # Verbose name is the same as class name in this case.
+#         verbose_name = "Tech"
+#         # Multiple Skill objects are referred to as Projects.
+#         verbose_name_plural = "Techs"
+#         ordering = ('tech',)
 
-    def save(self, *args, **kwargs):
-        """
-        Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
-        """
-        super(Techs, self).save(*args, **kwargs)
-#-----------------------------------------------------------------------
+#     def save(self, *args, **kwargs):
+#         """
+#         Overides the default save operator...
+#         Bassically a way to check if the Project object exists in the database. Will be helpful later.
+#         self.pk is the primary key of the Project object in the database!
+#         I don't know what super does...
+#         """
+#         super(Techs, self).save(*args, **kwargs)
+# #-----------------------------------------------------------------------
 
 # Converts a number into a weekday
 def dayofweek(number):
@@ -240,8 +240,8 @@ class Profile(models.Model):
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 
-    known_techs = models.ManyToManyField(Techs, related_name="known", default="")
-    learn_techs = models.ManyToManyField(Techs, related_name="learn", default="")
+    # known_techs = models.ManyToManyField(Techs, related_name="known", default="")
+    # learn_techs = models.ManyToManyField(Techs, related_name="learn", default="")
 
     claimed_projects = models.ManyToManyField('projects.Project', related_name="claimed_projects", default="")
 
