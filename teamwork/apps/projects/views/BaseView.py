@@ -118,10 +118,10 @@ def create_project(request):
                     x_lower = x.lower()
                     # Check if lowercase version of tech is in db
                     if Techs.objects.filter(tech=x_lower):
-                        # Skill already exists, then pull it up
+                        # Techs already exists, then pull it up
                         desired_tech = Techs.objects.get(tech=x_lower)
                     else:
-                        # Add the new skill to the Skills table
+                        # Add the new Tech to the Tech table
                         desired_tech = Techs.objects.create(tech=x_lower)
                         # Save the new object
                         desired_tech.save()

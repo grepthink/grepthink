@@ -53,26 +53,16 @@ class Interest(models.Model):
         return("%d"%(self.interest))
 
 class Techs(models.Model):
-    """
-    Skills: A database model (object) for skills.
-
-    Fields:
-        skill: a field that contains the name of a skill
-
-    Methods:
-        __str__(self):                  Human readeable representation of the skill object.
-        save(self, *args, **kwargs):    Overides the default save operator...
-
-        """
-    # skill, a string
     tech = models.CharField(max_length=255,default="")
 
     def __str__(self):
         return self.tech
+
+    
     class Meta:
         # Verbose name is the same as class name in this case.
         verbose_name = "Tech"
-        # Multiple Skill objects are referred to as Projects.
+        # Multiple Tech objects are referred to as Techs.
         verbose_name_plural = "Techs"
         ordering = ('tech',)
 
