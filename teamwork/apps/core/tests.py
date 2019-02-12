@@ -2,6 +2,7 @@ from django.core.urlresolvers import resolve
 from django.test import TestCase
 
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from teamwork.apps.core.views import *
 from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
@@ -290,6 +291,7 @@ class EmailTests(TestCase):
 class ParseCsvTests(TestCase):
 
     def setUp(self):
+        self.csv_path = settings.PROJECT_DIR
         pass
 
     def tearDown(self):

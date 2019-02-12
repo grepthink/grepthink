@@ -69,11 +69,14 @@ def show_interest(request, slug):
             #Gets first choice, creates interest object for it
 
             # Clear all interest objects where user is current user and for this course, avoid duplicates
+            for project in cur_course.projects.all():
+                user_interests = Interest.objects.filter(project_interest=project, user=request.user)
+                if user_interests is not None: user_interests.delete()
+
             # all_interests = Interest.objects.filter(project_interest=projects)
             # interests = all_interests.filter(user=user)
-            interests = Interest.objects.filter(project_interest=projects, user=user)
-
-            if interests is not None: interests.delete()
+            # interests = Interest.objects.filter(project_interest=projects, user=user)
+            # if interests is not None: interests.delete()
 
             projectCount = len(projects)
 
