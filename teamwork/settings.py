@@ -36,7 +36,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 INSTALLED_APPS = [
 
-    # 'projects.app.Techs',
+    'projects.app.ProjectConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
