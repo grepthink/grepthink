@@ -115,7 +115,7 @@ def edit_project(request, slug):
         elif profAdded:
             messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
+            messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.")
 
         return redirect(view_one_project, project.slug)
 
