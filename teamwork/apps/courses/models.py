@@ -72,7 +72,7 @@ class Assignment(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Assignment object exists in the database. Will be helpful later.
+        Basically a way to check if the Assignment object exists in the database. Will be helpful later.
         self.pk is the primary key of the Course object in the database!
         """
 

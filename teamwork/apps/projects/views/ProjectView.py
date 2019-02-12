@@ -32,6 +32,7 @@ def view_one_project(request, slug):
                                                                                                               'members',
                                                                                                               'members__profile',
                                                                                                               'desired_skills',
+                                                                                                              'desired_techs',
                                                                                                               'course',
                                                                                                               'course__assignments',
                                                                                                               'pending_members',

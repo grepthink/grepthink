@@ -117,6 +117,12 @@ class CreateProjectForm(forms.ModelForm):
     #     max_length=255,
     #     required=False)
 
+
+    # desired_techs = forms.CharField(
+    #       widget=forms.TextInput(attrs={'class': 'form-control'}),
+    #       max_length=255,
+    #       required=False)
+
     course = forms.ModelChoiceField(
         widget=forms.RadioSelect,
         queryset=Course.objects.all(),
