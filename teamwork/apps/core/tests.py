@@ -1,9 +1,9 @@
 from django.core.urlresolvers import resolve
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from django.contrib.auth.models import User
 from django.conf import settings
-
+from django.urls import reverse
 from teamwork.apps.core.views import *
 from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
 from teamwork.apps.core.helpers import *
@@ -304,3 +304,32 @@ class SearchTests(TestCase):
 
     def tearDown(self):
         pass
+
+class CoreViewsTests(TestCase):
+    def setUp(self):
+        self.user1 = create_user("test1", "test1@test.com", "test1")
+        self.client = Client()
+
+    def tearDown(self):
+        del self.client
+
+    def test_view_about(self):
+        response = self.client.get(reverse('about'))
+        self.assertTrue(response.status_code == 200)
+
+    def test_view_contact(self):
+        response = self.client.get(reverse('contact'))
+        self.assertTrue(response.status_code == 200)
+
+    def test_view_landing(self):
+        response = self.client.post('/')
+        self.assertTrue(response.status_code == 200)
+
+    def test_view_login_unauth(self):
+        response = self.client.post('/login')
+        self.assertTrue(response.status_code == 200)
+
+    def test_view_login_auth(self):
+        self.client.login(username='test1', password='test1')
+        response = self.client.post('/login')        
+        self.assertTrue(response.status_code == 200)
