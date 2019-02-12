@@ -113,6 +113,10 @@ class ProfileForm(forms.ModelForm):
     name = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
               max_length=75, required=False)
+    
+    email = forms.CharField(
+              widget=forms.TextInput(attrs={'class': 'form-control'}),
+              required=False)
 
     bio = forms.CharField(
               widget=forms.Textarea(attrs={'class': 'form-control'}),
@@ -145,4 +149,5 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         # fields = ['name', 'bio', 'institution', 'location',
         #         'known_skill', 'learn_skill']
-        fields = ['name', 'bio', 'institution', 'location']
+        fields = ['name', 'email','bio', 'institution', 'location']
+
