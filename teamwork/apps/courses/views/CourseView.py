@@ -41,7 +41,15 @@ def view_one_course(request, slug):
     projects = sorted(temp_projects, key=lambda s: s.title.lower())
     date_updates = course.get_updates_by_date()
 
-    all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
+    # all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
+
+    has_shown_interest = False
+    for project in temp_projects:
+        user_interests = Interest.objects.filter(project_interest=project, user=request.user)
+
+        if user_interests:
+            has_shown_interest = True
+            break
 
     staff = course.get_staff()
     tas = course.get_tas()
@@ -79,7 +87,7 @@ def view_one_course(request, slug):
 
     return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
         'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
-        'user_role':user_role, 'available':available, 'assignments':asgs, 'all_interests':all_interests,
+        'user_role':user_role, 'available':available, 'assignments':asgs, 'has_shown_interest':has_shown_interest,
         'page_name' : page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
 
 @login_required

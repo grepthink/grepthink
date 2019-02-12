@@ -50,7 +50,7 @@ class Interest(models.Model):
     interest_reason = models.CharField(max_length=100)
 
     def __str__(self):
-        return("%d"%(self.interest))
+        return("%d - %s: %s"%(self.interest, self.user.username, self.interest_reason))
 
 class Tsr(models.Model):
     """

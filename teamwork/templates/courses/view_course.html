@@ -199,8 +199,8 @@
                             {% if projects %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
-                                    <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                                        {% if all_interests %}
+                                    <a href="{% url 'show_interest' course.slug %}" class="alert-link">                                        
+                                        {% if has_shown_interest %}
                                             Resubmit Interest
                                         {% else %}
                                             Show interest in these projects!
