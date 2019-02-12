@@ -52,6 +52,29 @@ class Interest(models.Model):
     def __str__(self):
         return("%d"%(self.interest))
 
+class Techs(models.Model):
+    tech = models.CharField(max_length=255,default="")
+
+    def __str__(self):
+        return self.tech
+
+    
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Tech"
+        # Multiple Tech objects are referred to as Techs.
+        verbose_name_plural = "Techs"
+        ordering = ('tech',)
+
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Project object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Project object in the database!
+        I don't know what super does...
+        """
+        super(Techs, self).save(*args, **kwargs)
+
 class Tsr(models.Model):
     """
     TSR objects relate a user and tsr fields, along with assignment information

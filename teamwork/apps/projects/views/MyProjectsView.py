@@ -29,4 +29,7 @@ def _projects(request, active, inactive):
     title = "My Projects"
     return render(request, 'projects/view_projects.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'active': active, 'inactive': inactive,})
+        'active': active, 'inactive': inactive})
+
+def techs(request):
+    return render(request, 'projects/view_projects.html',{})
