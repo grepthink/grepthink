@@ -12,27 +12,42 @@ from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
 from teamwork.apps.courses.models import *
 
-def create_project(creator, scrum_master, ta, course, slug):
+def create_project(creator, scrum_master, teacher_assistant, course, slug):
+    """
+    Creates a project in a course and returns it
+    """
     project = Project.objects.create(creator=creator,
                                   scrum_master=scrum_master,
-                                  ta=ta,
+                                  ta=teacher_assistant,
                                   slug=slug)
     course.projects.add(project)
     course.save()
     return project
 
 def create_user(username, email, password):
+    """
+    Creates a user and returns it
+    """    
     # Create a test user as an attribute of ProjectTestCase, for future use
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
 
 def create_course(name, slug, creator):
+    """
+    Creates a course and returns it
+    """
     return Course.objects.create(name=name, slug=slug, creator=creator)
 
 def create_course_enrollment(user, course, role):
+    """
+    Enrolls the user in the course with a given role and returns enrollment object
+    """
     return Enrollment.objects.create(user=user, course=course, role=role)
 
 def create_project_membership(user, project, invite_reason):
+    """
+    Creates membership of a user in a project and returns the membership object
+    """
     return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
 
 class AuthenticateWithEmailTest(TestCase):
@@ -56,7 +71,7 @@ class AuthenticateWithEmailTest(TestCase):
         Attempt to authenticate user w/ correct email address and pw and assert user object is returned
         """
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='groupthink')
-        self.assertTrue(type(user) is User)
+        self.assertTrue(isinstance(user, User))
 
     def testAuthenticateFail(self):
         """
@@ -136,22 +151,22 @@ class FindProjectMatchesTest(TestCase):
         del self.interest1
         del self.interest2
 
-    def testMatchWithoutScheduleBonus(self):
+    def test_match_without_schedule_bonus(self):
         """
         Runs po_match, with User2 showing interest 5, and User3 showing interest 4. Users schedules are NOT set.
         """
-        matchesList = po_match(self.project)
+        matches_list = po_match(self.project)
 
         # Assert User2 is the first (Gave a interest of 5)
-        self.assertTrue(matchesList[0][0] == self.user2)
+        self.assertTrue(matches_list[0][0] == self.user2)
 
         # Assert User3 is the second (Gave an interest of 4)
-        self.assertTrue(matchesList[1][0] == self.user3)
+        self.assertTrue(matches_list[1][0] == self.user3)
 
         # Assert User2's score is greater than User3's
-        self.assertTrue(matchesList[0][1][0] > matchesList[1][1][0])
+        self.assertTrue(matches_list[0][1][0] > matches_list[1][1][0])
 
-    def testMatchWithProjectDesiringSkills(self):
+    def test_match_with_project_desiring_skills(self):
         """
         Runs po_match, with the project desiring the skill User3 knows. Users schedules are NOT set.
         """
@@ -168,7 +183,7 @@ class FindProjectMatchesTest(TestCase):
 
 
     # TODO:
-    def testMatchWithScheduleBonus(self):
+    def test_match_with_schedule_bonus(self):
         """
         Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
         """
@@ -187,7 +202,7 @@ class SortMatchListTest(TestCase):
         self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
 
         # create course
-        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+        self.course = Course.objects.create(name='TestCourse', slug='Test1', creator=self.user1)
 
     def tearDown(self):
         """
@@ -202,6 +217,7 @@ class SortMatchListTest(TestCase):
 # TODO: auto_ros tests
 class AutoSetRosterTest(TestCase):
     """
+    Auto set roster test cases
     """
     def setUp(self):
         """
@@ -213,7 +229,7 @@ class AutoSetRosterTest(TestCase):
         self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
 
         # create course
-        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+        self.course = Course.objects.create(name='TestCourse', slug='Test1', creator=self.user1)
 
     def tearDown(self):
         """
@@ -225,7 +241,10 @@ class AutoSetRosterTest(TestCase):
 
         del self.course
 
-    def testInitialTesting(self):
+    def test_auto_ros(self):
+        """
+        TODO: test the auto_ros function
+        """
         auto = auto_ros(self.course)
 
 # TODO: by_schedule tests
@@ -331,5 +350,5 @@ class CoreViewsTests(TestCase):
 
     def test_view_login_auth(self):
         self.client.login(username='test1', password='test1')
-        response = self.client.post('/login')        
+        response = self.client.post('/login')
         self.assertTrue(response.status_code == 200)
