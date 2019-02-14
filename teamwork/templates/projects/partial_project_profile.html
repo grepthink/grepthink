@@ -2,6 +2,7 @@
 
 
 {% for project in projects %}
+
     {% if forloop.first %}<div class="row">{% endif %}
     <div class="col-md-4">
         <a href="{% url 'view_one_project' project.slug %}" style="none">
@@ -23,9 +24,19 @@
           </div><!-- /.box-header -->
           </a>
 
-
+          
           <div class="box-footer no-padding">
-            <ul class="nav nav-stacked" style="overflow:hidden; white-space: nowrap;text-overflow:ellipsis">
+            <ul class="nav nav-stacked" style="overflow:hidden; white-space: nowrap;text-overflow:ellipsis ">                        
+              <li>       
+                <a>Course:
+                  &nbsp;
+                  <span style="margin-right:3px" class="label label-warning">
+                    {{project.course.first.name}}                
+                  </span>                       
+                </a>
+                
+              </li>             
+                
               <li><a href="#">Skills:
                   {% if project.desired_skills != none %}
                   {% for skill in project.desired_skills.all %}
@@ -40,10 +51,12 @@
                   {% endif %}
 
                   {% endfor %}
+                  
                   {% endif %}
               </a></li>
 
             <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator }}</span></a></li>
+           
           </ul>
         </div>
 
