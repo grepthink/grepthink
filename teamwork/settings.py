@@ -31,6 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG is set in .env file. See etc/example.env
 DEBUG = config('DEBUG', default=False, cast=bool)
+USE_POSTGRES_LOCAL = config('USE_POSTGRES_LOCAL', default=False, cast=bool)
 
 # Application definition
 
@@ -136,8 +137,14 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
-
-# Setup the database using dj based on the DATABASE_URL set in .env
+# Connect to postgres db described by POSTGRES_DATABASE_URL in .env file
+elif USE_POSTGRES_LOCAL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('POSTGRES_DATABASE_URL')
+        )
+    }
+# Connect to sqlite3 db described by DATABASE_URL in .env file
 else:
     DATABASES = {
         'default': dj_database_url.config(

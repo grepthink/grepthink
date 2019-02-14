@@ -4,6 +4,7 @@ from teamwork.apps.courses.models import get_user_active_courses, get_user_disab
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from teamwork.apps.courses.forms import JoinCourseForm
 from teamwork.apps.courses.models import Course, Enrollment
