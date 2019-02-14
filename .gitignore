@@ -1,11 +1,5 @@
-# teamwork-project .gitignore
-
-# Ignoring migrations during development
-#**/migrations/*
-
 # Ignore media folder
 teamwork/media/**
-# media/csv_files/**
 
 # Database files
 .DS_Store
@@ -14,6 +8,9 @@ teamwork/media/**
 # Sublime Text Project Workspace
 *.sublime-project
 *.sublime-workspace
+
+# Vscode
+*.vscode/
 
 # Suggestions from heroku-django-template
 venv

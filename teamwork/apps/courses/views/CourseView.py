@@ -136,7 +136,7 @@ def edit_assignment(request, slug):
             ass.ass_number = ass_number
             ass.save()
         else:
-            print("FORM ERRORS: ", form.errors)
+            print("FORM ERRORS: ", assignmentForm.errors)
 
         return redirect(view_one_course,course.slug)
 
