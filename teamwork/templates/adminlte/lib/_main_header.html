@@ -98,22 +98,24 @@
                          {% endcomment %}
 
                         <li class="user-footer">
+
                             <div class="btn-group">
-                              <a href="{% url 'profile' user.username %}">
-                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);">
-                                      <font color="white">Profile</font>
-                                  </button>
-                              </a>
-                              <a href="{% url 'edit_schedule' user.username %}">
-                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);">
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
-                              <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
-                                  <button type="button" class="btn btn-flat" style="background: rgba(255, 0, 0, 0.7);">
-                                      <font color="white">Sign Out</font>
-                                  </button>
-                              </a>
+                                <!-- <button class="btn btn-block btn-default btn-lg"> -->
+                                <a href="{% url 'profile' user.username %}">
+                                    <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);">
+                                        <font color="white">Profile</font>
+                                    </button>
+                                </a>
+                                <a href="{% url 'edit_schedule' user.username %}">
+                                    <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);">
+                                        <font color="white">Edit Schedule</font>
+                                    </button>
+                                </a>
+                                <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
+                                    <button type="button" class="btn btn-default" style="background: rgba(255, 0, 0, 0.7);">
+                                        <font color="white">Sign Out</font>
+                                    </button>
+                                </a>
                             </div>
                         </li>
 
