@@ -31,6 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG is set in .env file. See etc/example.env
 DEBUG = config('DEBUG', default=False, cast=bool)
+USE_POSTGRES_LOCAL = config('USE_POSTGRES_LOCAL', default=False, cast=bool)
 
 # Application definition
 
@@ -69,17 +70,23 @@ EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Grepthink Team <initial_email@grepthink.com>'
 
-isProd = config('PRODUCTION', default=False)
-
-if isProd:
-    pass
-    #For Testing, comment out for production
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if DEBUG:
+    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_TEST_KEY')
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_API_KEY')
+
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'
+
+# isProd = config('PRODUCTION', default=False)
+#
+# if isProd:
+#     pass
+#     #For Testing, comment out for production
+#     #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,8 +137,14 @@ if 'TRAVIS' in os.environ:
             'PORT':     '',
         }
     }
-
-# Setup the database using dj based on the DATABASE_URL set in .env
+# Connect to postgres db described by POSTGRES_DATABASE_URL in .env file
+elif USE_POSTGRES_LOCAL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('POSTGRES_DATABASE_URL')
+        )
+    }
+# Connect to sqlite3 db described by DATABASE_URL in .env file
 else:
     DATABASES = {
         'default': dj_database_url.config(

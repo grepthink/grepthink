@@ -4,73 +4,73 @@
 {% load i18n %}
 {% load gravatar %}
 
-{# following 2 blocks copied from edit_project.html #}
 {% block javascript %}
-{{block.super}}
-<script src="{% static 'js/select2.full.min.js' %}"></script>
+    {{block.super}}
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
 
-<script type="text/javascript">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 
-$(document).ready(function() {
-  $(".select2").select2({
-    ajax: {
-      url: "ajax/select_projects/",
-      dataType: 'json',
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term, // search term
-          page: params.page
-        };
-      },
-      processResults: function (data, params) {
-        // parse the results into the format expected by Select2
-        // since we are using custom formatting functions we do not need to
-        // alter the remote JSON data, except to indicate that infinite
-        // scrolling can be used
-        params.page = params.page || 1;
+    <script type="text/javascript">
 
-        console.log(data);
-        console.log(params);
+    $(document).ready(function() {
+      $(".select2").select2({
+        ajax: {
+          url: "ajax/select_projects/",
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term, // search term
+              page: params.page
+            };
+          },
+          processResults: function (data, params) {
+            // parse the results into the format expected by Select2
+            // since we are using custom formatting functions we do not need to
+            // alter the remote JSON data, except to indicate that infinite
+            // scrolling can be used
+            params.page = params.page || 1;
 
-        return {
-          results: data.items,
-          pagination: {
-            more: (params.page * 30) < data.total_count
-          }
-        };
-      },
-      cache: true
-    },
-    placeholder: "Search for Projects to Claim",
-    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-    minimumInputLength: 1,
-    //templateResult: formatRepo, // omitted for brevity, see the source of this page
-    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-  });
+            console.log(data);
+            console.log(params);
 
-});
+            return {
+              results: data.items,
+              pagination: {
+                more: (params.page * 30) < data.total_count
+              }
+            };
+          },
+          cache: true
+        },
+        placeholder: "Search for Projects to Claim",
+        //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 1,
+        //templateResult: formatRepo, // omitted for brevity, see the source of this page
+        //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+      });
 
-</script>
+    });
 
+    </script>
 {% endblock javascript %}
 
 
 {% block stylesheets %}
-<!-- Select2 -->
-<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
-<link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
 
-  {{block.super}}
-<!-- for multi dropdowns and other goodies -->
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    {{block.super}}
 
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+    <!-- for multi dropdowns and other goodies -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Select2 css -->
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
 {% endblock stylesheets %}
 
 
@@ -130,16 +130,21 @@ $(document).ready(function() {
                 </a>
             </li>
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
-            {% if not course.disable %}
-
-            <li class="">
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="slug-tooltip" data-toggle="tooltip" data-placement="top" title="Course must be active to Create Assignment!">
+                    <font color="#989898"> Create Assignment
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            </li>
+            {% else %}
+            <li>
                 <a href="#assignments" data-toggle="tab" aria-expanded="false">
                     Create Assignment
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
             {% endif %}
-
 
             <li class="pull-right">
                 <a href="#admin" data-toggle="tab" aria-expanded="false">
@@ -149,26 +154,36 @@ $(document).ready(function() {
             </li>
             {% endif %}
 
-
-            {% if not course.disable %}
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="slug-tooltip" data-toggle="tooltip" data-placement="top" title="Course must be active to Create Project!">
+                    <font color="#989898"> Create Project
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
             <li class="">
-            <a href="{% url 'create_project' %}">
-                Create Project
-                <i class="fa fa-plus"></i>
-            </a>
-            </li>
+                <a href="{% url 'create_project' %}">
+                    Create Project
+                    <i class="fa fa-plus"></i>
+                </a>
             {% endif %}
+            </li>
 
-            {% if not course.disable %}
             {% if user_role == "ta" %}
+            {% if course.disable %}
+            <li class=" pull-right disabled">
+                <a aria-expanded="false" class="disabled slug-tooltip" data-toggle="tooltip" data-placement="left" title="Course must be active to Claim Projects">
+                    <font color="#989898"> Claim Projects
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
             <li class="pull-right">
-            <a href="{% url 'claim_projects' course.slug %}">
-            <!-- <a href="#claim" data-toggle="tab" aria-expanded="false"> -->
-                Claim Projects
-                <i class="fa fa-plus"></i>
-            </a>
-            </li>
+                <a href="{% url 'claim_projects' course.slug %}">
+                    Claim Projects
+                    <i class="fa fa-plus"></i>
+                </a>
             {% endif %}
+            </li>
             {% endif %}
 
         </ul>
@@ -184,8 +199,8 @@ $(document).ready(function() {
                             {% if projects %}
                             <div class="row">
                                 <div class="alert alert-info" role="alert">
-                                    <a href="{% url 'show_interest' course.slug %}" class="alert-link">
-                                        {% if all_interests %}
+                                    <a href="{% url 'show_interest' course.slug %}" class="alert-link">                                        
+                                        {% if has_shown_interest %}
                                             Resubmit Interest
                                         {% else %}
                                             Show interest in these projects!
@@ -258,7 +273,7 @@ $(document).ready(function() {
                                     <tr>
                                         <td>{{asg.ass_date|date:'Y-m-d'}}</td>
                                         <td>{{asg.due_date|date:'Y-m-d'}}{{asg.due_date|time:'g:i:s'}}</td>
-                                        <td>{{asg.ass_type}}</th>
+                                        <td>{{asg.ass_type}}</td>
                                         <td>{{asg.ass_name}}</td>
                                         <td>{{asg.ass_number}}</td>
                                         <td>
@@ -509,17 +524,25 @@ $(document).ready(function() {
 
                         {% for studs in students %}
                         {% if studs.username != null %}
-                            <a href="{% url 'profile' studs.username %}">
+
                             <li style="list-style-type: none;">
-                              {% gravatar studs.email 60 %}
+                              <a href="{% url 'profile' studs.username %}">
+                                  {% gravatar studs.email 60 %}
                               </a>
-                              <a class="users-list-name" href="{% url 'profile' studs.username %}">{% firstof studs.user.get_short_name studs.get_username %}</a>
+
+                              <a class="users-list-name" href="{% url 'profile' studs.username %}">
+                                  {% firstof studs.user.get_short_name studs.get_username %}
+                              </a>
+
                               {% if studs in available %}
-                              <span class="label label-danger" >
+                                <span class="label label-danger" >
                               {% else %}
-                              <span class="label label-default" >
+                                <span class="label label-default" >
                               {% endif %}
-                              <a href="mailto:{{studs.email}}" target="_top"><font color="black"> {{studs.email}}</font></a></span>
+                                  <a href="mailto:{{studs.email}}" target="_top">
+                                      <font color="black"> {{studs.email}}</font>
+                                  </a>
+                                </span>
                             </li>
                         {% endif %}
                         {% empty %}
@@ -691,9 +714,8 @@ $(document).ready(function() {
                 </ol>
             </div>
             {% endif %}
-        </div>
-
     </div>
+
 </div>
 
 {% endblock content %}

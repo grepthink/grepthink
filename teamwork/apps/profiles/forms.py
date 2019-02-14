@@ -8,21 +8,19 @@ from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
 
 from .models import *
 
-
 def SignupDomainValidator(value):
     """
     public method that takes a value
     """
-    grepthinkers = ['rmonroe@grepthink.com', 'mgates@grepthink.com',
-                   'sdougher@grepthink.com', 'kpannell@grepthink.com']
 
-    # Block any @grepthink email
-    if 'grepthink' in value and (value not in grepthinkers):
-        raise ValidationError('@grepthink is reserved for employees only. Please use a valid email')
+    # Block any email containing grepthink
+    if 'grepthink' in value:
+        raise ValidationError('\'grepthink\' is reserved for employees only. Please use a valid email.')
+    # Currently will never enter this elif block
     elif ('*' not in ALLOWED_SIGNUP_DOMAINS):
         try:
             domain = value[value.index("@"):]
-            #GrepThink accounts only
+
             if (domain not in ALLOWED_SIGNUP_DOMAINS):
                 raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
 
