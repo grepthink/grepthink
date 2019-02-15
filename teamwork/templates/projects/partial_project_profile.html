@@ -26,6 +26,14 @@
 
           <div class="box-footer no-padding">
             <ul class="nav nav-stacked" style="overflow:hidden; white-space: nowrap;text-overflow:ellipsis">
+              <li>       
+                <a>Course:
+                  &nbsp;
+                  <span style="margin-right:3px" class="label label-warning">
+                    {{project.course.first.name}}                
+                  </span>                       
+                </a>  
+              </li> 
               <li><a href="#">Skills:
                   {% if project.desired_skills != none %}
                   {% for skill in project.desired_skills.all %}
