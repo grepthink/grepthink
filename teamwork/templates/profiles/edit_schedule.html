@@ -129,10 +129,21 @@
           // Allow "more" link when too many events.
           eventLimit: true,
           events:events,
-
+          eventOverlap:false,
           // Allow selection for select function.
           selectable: true,
           selectHelper: true,
+          selectConstraint:{
+            start: '00:01', 
+            end: '23:59', 
+          },
+          //Double click event to delete
+          eventRender: function(event, element) {
+            element.bind('dblclick', function() {
+              console.log(event)  
+              $('#calendar').fullCalendar('removeEvents', event._id);
+            });
+          },
 
           // Function called on select event.
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
