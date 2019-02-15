@@ -225,6 +225,11 @@ class Project(models.Model):
         related_name="desired",
         default="")
 
+    desired_techs = models.ManyToManyField(
+        Techs,
+        related_name="technologies",
+        default="")
+
 
 #-------------------------------------------------------
 
