@@ -40,11 +40,11 @@ def send_email(recipients, gt_email, subject, content):
 
     student_email_list = []
 
-    if type(recipients) is User:
+    if isinstance(recipients, User):
         # only 1 member
         student_email_list.append(Email(recipients.email))
-    elif type(recipients) is list:
-        if type(recipients[0]) is str:
+    elif isinstance(recipients, list):
+        if isinstance(recipients[0], str):
             for student in recipients:
                 student_email_list.append(Email(student))
         else:
@@ -63,12 +63,19 @@ def send_email(recipients, gt_email, subject, content):
     mail.subject = subject
     mail.add_content(Content("text/plain", content))
 
-    # add recipients to the outgoing Mail object
-    # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
-    for email in student_email_list:
+    if settings.DEBUG:
+        # if debug send email to grepthink email
         p = Personalization()
-        p.add_to(email)
+        # If you wish to receive emails to personal email you can refactor the below email. Please don't update repo though.
+        p.add_to(Email("testing@grepthink.com"))
         mail.add_personalization(p)
+    else:
+        # add recipients to the outgoing Mail object
+        # creating Personalization instances makes it so everyone can't see everyone elses emails in the 'to:' of the email
+        for email in student_email_list:
+            p = Personalization()
+            p.add_to(email)
+            mail.add_personalization(p)
 
     # The following line was giving SSL Certificate errors.
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
