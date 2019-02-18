@@ -117,7 +117,7 @@
 {% block crumb %}
 
 {# Breadcrumb for the course that this project is in #}
-<li><a href="{% url 'profile' user.username %}"> {{user.username}} </a></li>
+<li><a href="{% url 'profile' page_username %}"> {{page_username}} </a></li>
 {% endblock crumb %}
 
 {% block content %}

@@ -170,7 +170,7 @@ urlpatterns = [
 
         # PROFILE
         url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
-        url(r'^user/(?P<username>[^/]+)/view_schedule/$',ViewSchedule.about, name='view_schedule'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/$',ViewSchedule.load_schedule, name='view_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),

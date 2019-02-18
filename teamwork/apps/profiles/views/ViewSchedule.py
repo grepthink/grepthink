@@ -13,5 +13,6 @@ from django.http import HttpResponse
 from teamwork.apps.profiles.models import Profile, Events
 from teamwork.apps.projects.models import dayofweek
 
-def about(request,username):
-    return render(request,'profiles/view_schedule.html')
+def load_schedule(request,username):
+   
+    return render(request,'profiles/view_schedule.html',{'page_username':username})
