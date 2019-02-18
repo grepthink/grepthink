@@ -50,9 +50,6 @@ def save_events(request, username):
         profile.jsonavail = json.dumps(event_list)
         profile.save()
 
-        # If user already has a schedule, delete it
-        if profile.avail.all() is not None: profile.avail.all().delete()
-
         # For each event
         for event in event_list:
             # Create event object
