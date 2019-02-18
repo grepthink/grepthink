@@ -27,6 +27,7 @@
 <script src="{% static 'js/fullcalendar.min.js' %}"></script>
 
 <script>
+    events = JSON.parse(JSON.stringify({{json_events}}))
     $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           header: {
@@ -46,7 +47,7 @@
           defaultView: 'agendaWeek',
 
           defaultDate: '2017-04-12',
-
+          // slotDuration:'00:15:00',         //change event duration
           // Can click day/week names to navigate views
           navLinks: true,
 
@@ -58,7 +59,7 @@
 
           // Allow "more" link when too many events.
           eventLimit: true,
-        
+          events:events,
           eventOverlap:false,
           // Allow selection for select function.
           selectable: true,
@@ -67,7 +68,7 @@
             start: '00:01', 
             end: '23:59', 
           },
-          //Double click event to delete
+          //Double click on event to delete
           eventRender: function(event, element) {
             element.bind('dblclick', function() {
               console.log(event)  
@@ -78,6 +79,7 @@
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
           select: function(start, end) {
             // Title is always Busy in edit_schedule
+            console.log('selected' + start.format() + 'to' + end.format())
             var title = 'Busy';
             // Event Object to be passed to renderEvent
             var eventData;
