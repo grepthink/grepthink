@@ -55,7 +55,7 @@
           allDaySlot: false,
 
           // Allow users to resize events.
-          editable: true,
+          editable: false,
 
           // Allow "more" link when too many events.
           eventLimit: true,
@@ -80,23 +80,27 @@
           select: function(start, end) {
             // Title is always Busy in edit_schedule
             console.log('selected' + start.format() + 'to' + end.format())
-            var title = 'Busy';
+            var title = 'Appointment';
             // Event Object to be passed to renderEvent
             var eventData;
-
+            
             // Always true (likely change this to a check for "all day")
             if (title) {
               // Populate the Event Object. TODO: Add attributes.
               eventData = {
                 title: title,
                 start: start,
-                end: end
+                end: end,
+                color:'red',
+                editable:true
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.
+              
               $('#calendar').fullCalendar('renderEvent', eventData, true);
 
             }
+
             // Unselct event area before exiting select method.
             $('#calendar').fullCalendar('unselect');
           },
