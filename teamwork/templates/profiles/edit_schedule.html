@@ -142,6 +142,12 @@
             element.on('dblclick',event, function() {
               $('#calendar').fullCalendar('removeEvents', event._id);
             });
+            element.popover({
+              animation:true,
+              delay: 300,
+              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+              trigger: 'hover'
+            });
           },
 
           // Function called on select event.
