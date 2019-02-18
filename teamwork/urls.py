@@ -31,7 +31,7 @@ from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjec
 
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
-from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
+from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView,ViewSchedule
 
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
@@ -170,6 +170,7 @@ urlpatterns = [
 
         # PROFILE
         url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/$',ViewSchedule.about, name='view_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
