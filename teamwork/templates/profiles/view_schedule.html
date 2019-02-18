@@ -28,6 +28,50 @@
 
 <script>
     events = JSON.parse(JSON.stringify({{json_events}}))
+    $(document).ready(function() {
+    // Function triggered by submit button
+    // verfies events and then calls helper function
+    // postEvents to send all client side events to server.
+    $('#submit-events').on('submit', function(event){
+        // Prevent default behavior of submit form.
+        event.preventDefault();
+        // Get map of all events added on client side so far.
+        var eventsOnSubmit = $('#calendar').fullCalendar('clientEvents');
+        console.log(eventsOnSubmit)
+          // Prepare to send event list to server.
+          postEvents(eventsOnSubmit);
+    });
+    
+    function postEvents(cEvents) {
+          $.ajax({
+              url: 'ajax/save_events/',
+              type: 'POST',
+              data: {
+                // Need to stringfy cEvents (circular structure), but must first
+                // iterate through and create a simplier representation.
+                jsonEvents: JSON.stringify(cEvents.map(function (e)
+                {
+                    return {
+                        start: e.start,
+                        end: e.end,
+                        title: e.title,
+                    }
+                }))
+              },
+              success: function (response) {
+                // Get the response from server and process it
+                // In this case simply alert the user.
+                alert(response);
+              },
+              error: function (xhr) {
+                // Open JS debugger if ya goofed. Alert with last object.
+                // This should really trigger a 500 server error.
+                debugger;
+                alert(xhr);
+            }
+          });
+      }
+
     $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           header: {
@@ -107,7 +151,8 @@
             $('#calendar').fullCalendar('unselect');
           },
 
-      }) // End fullCalendar initialization.
+      })
+     }) // End fullCalendar initialization.
 
 </script>
 {% endblock javascript %}
@@ -129,14 +174,9 @@
 {% endblock crumb %}
 
 {% block content %}
-<section class="content">
 
-        <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-              Did you forget to fill out your schedule?
-        </div>
-        
+<section class="content">
+          
               <div class="row">
                   <div class="box box-primary">
                     <div class="box-body no-padding">
@@ -151,6 +191,12 @@
                   <!-- /. box -->
           
               </div>
+              <div class="pull-right">
+                  <form method="POST" id="submit-events">
+                    {% csrf_token %}
+                    <input type="submit" name "submit" value="Set Appointment">
+                  </form>
+                </div>
 
               <!-- /.row -->
         
