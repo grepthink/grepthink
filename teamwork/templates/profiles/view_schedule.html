@@ -68,7 +68,12 @@
             end: '23:59', 
           },
           //Double click event to delete
-
+          eventRender: function(event, element) {
+            element.bind('dblclick', function() {
+              console.log(event)  
+              $('#calendar').fullCalendar('removeEvents', event._id);
+            });
+          },
           // Function called on select event.
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
           select: function(start, end) {
@@ -112,7 +117,7 @@
 {% block crumb %}
 
 {# Breadcrumb for the course that this project is in #}
-<li><a href="{% url 'edit_profile' user.username %}"> {{user.username}} </a></li>
+<li><a href="{% url 'profile' user.username %}"> {{user.username}} </a></li>
 {% endblock crumb %}
 
 {% block content %}
@@ -136,15 +141,11 @@
                     <!-- /.box-body -->
                   </div>
                   <!-- /. box -->
-        
-        
+          
               </div>
-        
-        
+
               <!-- /.row -->
         
         </section>
-        
-        
         
 {% endblock content %}
