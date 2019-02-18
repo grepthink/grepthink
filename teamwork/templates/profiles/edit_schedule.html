@@ -139,8 +139,7 @@
           },
           //Double click event to delete
           eventRender: function(event, element) {
-            element.bind('dblclick', function() {
-              console.log(event)  
+            element.on('dblclick',event, function() {
               $('#calendar').fullCalendar('removeEvents', event._id);
             });
           },

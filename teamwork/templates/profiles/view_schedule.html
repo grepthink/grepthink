@@ -70,9 +70,11 @@
           },
           //Double click on event to delete
           eventRender: function(event, element) {
-            element.bind('dblclick', function() {
-              console.log(event)  
-              $('#calendar').fullCalendar('removeEvents', event._id);
+            element.on('dblclick',event, function() {
+              console.log(event.title)
+              if(event.title !== 'Busy'){
+                $('#calendar').fullCalendar('removeEvents', event._id)
+              }    
             });
           },
           // Function called on select event.
@@ -100,7 +102,7 @@
               $('#calendar').fullCalendar('renderEvent', eventData, true);
 
             }
-
+            
             // Unselct event area before exiting select method.
             $('#calendar').fullCalendar('unselect');
           },
