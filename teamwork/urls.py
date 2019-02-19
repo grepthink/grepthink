@@ -31,7 +31,7 @@ from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjec
 
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
-from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView,ViewSchedule
+from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
 
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
@@ -106,7 +106,9 @@ urlpatterns = [
         url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', EditProjectView.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_techs/$', EditProjectView.add_desired_techs, name='add_desired_techs'),
         url(r'^project/create/ajax/add_desired_skills/$', EditProjectView.create_desired_skills, name='create_desired_skills'),
+        url(r'^project/create/ajax/add_desired_techs/$', EditProjectView.create_desired_techs, name='create_desired_techs'),
 
         # COURSE
         # Delete individual assignment (based on slug)
@@ -170,8 +172,6 @@ urlpatterns = [
 
         # PROFILE
         url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
-        url(r'^user/(?P<username>[^/]+)/view_schedule/$',ViewSchedule.load_schedule, name='view_schedule'),
-        url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/save_events/$', ViewSchedule.save_events, name='save_events'),
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
