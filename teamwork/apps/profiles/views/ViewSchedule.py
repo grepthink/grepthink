@@ -10,7 +10,7 @@ from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponse
 
 # Model Imports
-from teamwork.apps.profiles.models import Profile, Events
+from teamwork.apps.profiles.models import Profile, Events,Alert
 from teamwork.apps.projects.models import dayofweek
 
 import json
@@ -21,7 +21,7 @@ def load_schedule(request,username):
     page_description= "Viewing %s's Schedule"%(username)
     title="View Schedule"
     profile = Profile.objects.filter(user__username=username).first()
-    print(profile)
+    
 
     readable = ""
     if profile.jsonavail:
@@ -29,15 +29,18 @@ def load_schedule(request,username):
         readable = jsonDec.decode(profile.jsonavail)
 
     meetings = mark_safe(profile.jsonavail)
-    print(meetings)
+    page_user= mark_safe(str(username))
+    
+    
 
-    return render(request,'profiles/view_schedule.html',{'page_username':username,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
+    return render(request,'profiles/view_schedule.html',{'page_username':page_user,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
 
 @csrf_exempt
 def save_events(request, username):
     #grab profile for the one who get appointments
     profile = Profile.objects.filter(user__username=username).first()
-    print(profile)
+    
+
 
     if request.method == 'POST':
 
@@ -82,9 +85,21 @@ def save_events(request, username):
 
             profile.avail.add(busy)
             profile.save()
+            make_alert(request,username)
 
-
+       
         return HttpResponse("Schedule Saved")
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
-
+        
     return HttpResponse("Failure")
+
+def make_alert(request,username):
+    user_profile = User.objects.get(username=username)
+    
+    Alert.objects.create(
+        sender=request.user,
+        to=user_profile,
+        msg=request.user.username + " has updated their appointment with" + username,
+        url="",
+        read=False,
+    )
