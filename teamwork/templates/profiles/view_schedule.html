@@ -28,7 +28,7 @@
 
 <script>
     events = JSON.parse(JSON.stringify({{json_events}}))
-    // page_user= JSON.parse(JSON.stringify({{page_username}}))
+    var current_user=JSON.parse(JSON.stringify('{{page_username}}'));
     
     $(document).ready(function() {
     // Function triggered by submit button
@@ -39,7 +39,7 @@
         event.preventDefault();
         // Get map of all events added on client side so far.
         var eventsOnSubmit = $('#calendar').fullCalendar('clientEvents');
-        console.log(eventsOnSubmit)
+        
           // Prepare to send event list to server.
           postEvents(eventsOnSubmit);
     });
@@ -57,6 +57,7 @@
                         start: e.start,
                         end: e.end,
                         title: e.title,
+                        initiator:e.initiator,
                     }
                 }))
               },
@@ -64,9 +65,9 @@
                 // Get the response from server and process it
                 // In this case simply alert the user.
                 alert(response);
-                setTimeout(function() {
-                  location.reload();  //Refresh page
-                }, 300);
+                // setTimeout(function() {
+                //   location.reload();  //Refresh page
+                // }, 300);
               },
               error: function (xhr) {
                 // Open JS debugger if ya goofed. Alert with last object.
@@ -121,22 +122,31 @@
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {
               console.log(event.title)
-              if(event.title !== 'Busy'){
+              if(event.title !== 'Busy' && event.initiator == current_user){
                 $('#calendar').fullCalendar('removeEvents', event._id)
               }    
             });
-            element.popover({
-              animation:true,
-              delay: 300,
-              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
-              trigger: 'hover'
-            });
+            if(event.initiator != current_user){
+              element.popover({
+                animation:true,
+                delay: 300,
+                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                trigger: 'hover'
+              });
+            }else{
+              element.popover({
+                animation:true,
+                delay: 300,
+                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                trigger: 'hover'
+              });
+            }
           },
           // Function called on select event.
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
           select: function(start, end) {
             // Title is always Busy in edit_schedule
-            console.log('selected' + start.format() + 'to' + end.format())
+            
             var title = 'Appointment';
             // Event Object to be passed to renderEvent
             var eventData;
@@ -149,7 +159,8 @@
                 start: start,
                 end: end,
                 color:'red',
-                editable:true
+                editable:true,
+                initiator:current_user
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.

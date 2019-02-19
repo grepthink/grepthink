@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-
+from django.core.urlresolvers import reverse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponse
@@ -29,10 +29,8 @@ def load_schedule(request,username):
         readable = jsonDec.decode(profile.jsonavail)
 
     meetings = mark_safe(profile.jsonavail)
-    page_user= mark_safe(str(username))
+    page_user= request.user.username
     
-    
-
     return render(request,'profiles/view_schedule.html',{'page_username':page_user,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
 
 @csrf_exempt
@@ -40,8 +38,6 @@ def save_events(request, username):
     #grab profile for the one who get appointments
     profile = Profile.objects.filter(user__username=username).first()
     
-
-
     if request.method == 'POST':
 
         # List of events as a string (json)
@@ -49,7 +45,7 @@ def save_events(request, username):
 
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
-
+     
         profile.jsonavail = json.dumps(event_list)
         profile.save()
 
@@ -99,7 +95,7 @@ def make_alert(request,username):
     Alert.objects.create(
         sender=request.user,
         to=user_profile,
-        msg=request.user.username + " has updated their appointment with" + username,
-        url="",
+        msg=request.user.username + " has updated their appointment with " + username,
+        url=reverse('edit_schedule',args=[username]),
         read=False,
     )
