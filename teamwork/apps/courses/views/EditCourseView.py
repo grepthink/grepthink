@@ -98,7 +98,7 @@ def edit_course(request, slug):
                 removed = True
         if removed:
             messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
-        else: #changed the error message
+        else:
             messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
 
         # return redirect(edit_course, slug)
@@ -129,7 +129,7 @@ def edit_course(request, slug):
                     msg="You were added to: " + course.name + " as a TA",
                     url=reverse('view_one_course',args=[course.slug]),
                     )
-        
+
         messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
 
         # return redirect(edit_course, slug)
