@@ -12,7 +12,7 @@ def index(request):
     # TODO: get feed of project updates (or public projects) to display on login
 
     # Render landing page for not logged in user
-    logged_in = request.user.is_authenticated();
+    logged_in = request.user.is_authenticated()
     if not logged_in:
         return render_landing(request)
 
