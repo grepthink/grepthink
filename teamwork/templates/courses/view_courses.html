@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %} All Courses {% endblock %}
+
+{% block head %}
+<link href="{% static 'css/courses.css' %}" rel="stylesheet">
+{% endblock head %}
+
+<!-- {% block crumb %}
+<li><a href="{% url 'view_course' %}">Courses</a></li>
+{% endblock crumb %} -->
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-10">
+        <section class="courses" clearfix>
+
+            {% if request.user.profile.isProf %}
+            <div class="small-box bg-green" style="border-radius: 10px">
+              <div class="inner">
+                <h3>Create a new Course</h3>
+              </div>
+              <div class="icon">
+                <i class="fa fa-plus"></i>
+              </div>
+              <a href="{% url 'create_course' %}" class="small-box-footer" style="border-radius: 10px">
+                Create <i class="fa fa-arrow-circle-right"></i>
+              </a>
+            </div>
+            {% endif %}
+
+            {% for course in courses %}
+
+            <div class="small-box bg-aqua" style="border-radius: 10px">
+              <div class="inner">
+                <h3>{{course.name}}</h3>
+
+                <p>{{course.term}}  {{course.year}}</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-book"></i>
+              </div>
+              <a href="{% url 'view_one_course' course.slug %}" class="small-box-footer" style="border-radius: 10px">
+                More info <i class="fa fa-arrow-circle-right"></i>
+              </a>
+          </div>
+
+          {% comment %}
+            <div class="box box-widget widget-user-2">
+                <a href="{% url 'view_one_course' course.slug %}" style="none">
+
+              <!-- Add the bg color to the header using any of the bg-* classes -->
+             <div class="widget-user-header bg-primary">
+                <!-- /.widget-user-image -->
+                <h3 class="widget-user-username"><strong>{{course.name}}</strong></h3>
+                <h5 class="widget-user-desc"><span class="pull-right">{{course.term}}  {{course.year}}</span></h5>
+
+              </div><!-- /.box-header -->
+          </a>
+            <div class="box-footer ">
+                  <ul class="nav nav-stacked">
+                      <li><p style="font-size:20px; margin-left: 20px">{{ course.info }}</p></li>
+                  </ul>
+              </div>
+          </div><!-- /.box -->
+          {% endcomment %}
+            {% empty %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fa fa-warning"></i>
+                There are no courses yet. Go ahead and
+                {% if user.profile.isProf %}
+                    <a href="{% url 'create_course' %}" class="alert-link">
+                    create one now!
+                {% else %}
+                    <a href="{% url 'join_course' %}" class="alert-link">
+                        join one now!
+                {% endif %}
+                    </a>
+                </div>
+                {% endfor %}
+
+
+            </section>
+        </div>
+    </div>
+
+{% comment %}
+      <div class="box box-widget widget-user-2">
+
+
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header">
+          <!-- /.widget-user-image -->
+          <h3 class="widget-user-username">{{course.name}}</h3>
+          <h3 class="widget-user-username">{{course.term}}</h3>
+          <h3 class="widget-user-username">{{course.year}}</h3>
+        </div><!-- /.box-header -->
+
+        <div class="box-footer no-padding">
+          {{ course.info }}
+        </div>
+      </div><!-- /.box -->
+      {% endcomment %}
+
+    <!--paginator-->
+
+    {% endblock content %}

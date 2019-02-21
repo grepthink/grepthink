@@ -1,0 +1,33 @@
+.ScrollStyle
+{
+    max-height: 400px;
+    overflow-y: auto;
+}
+.smallScrollStyle
+{
+    max-height: 50px;
+    overflow-y: auto;
+}
+.largeScrollStyle
+{
+    max-height: 550px;
+    overflow-y: auto;
+}
+.ScrollStyleProfile
+{
+    max-height: 240px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.ScrollStyleProfilesm
+{
+    max-height: 130px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.emailScroll
+{
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

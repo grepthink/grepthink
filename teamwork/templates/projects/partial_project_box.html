@@ -1,0 +1,76 @@
+{% load static %}
+
+<head>
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}"> 
+</head>
+
+{% for project in projects %}
+
+    {% if forloop.first %}<div class="row">{% endif %}
+    <div class="col-md-4">
+      <div class="box box-widget widget-user-2">
+
+        <a href="{% url 'view_one_project' project.slug %}">
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
+          <div class="widget-user-image">
+            <img class="img-circle" src={{project.project_image}} alt="Project Image">
+          </div>
+          <!-- /.widget-user-image -->
+          <h3 class="widget-user-username" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{project.title}}</h3>
+          <h5 class="widget-user-desc" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{project.tagline}}</h5>
+          {% if project.sponsor %}
+          <span class="tooltip2 pull-right"><i class='glyphicon glyphicon-info-sign'></i>
+               <span class="tooltiptext2">This is a sponsored project</span>
+          </span>
+          {% endif %}
+        </div><!-- /.box-header -->
+        </a>
+
+
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+            <li><a href="#">Accepting Members
+              {% if project.avail_mem %}
+              <span class="pull-right badge bg-green">
+                  Yes
+              {% else %}
+              <span class="pull-right badge bg-red">
+                  No
+              {% endif %}
+            </span></a></li>
+            <!-- <li><a href="#">Sponsored <span class="pull-right badge bg-aqua">
+              {% if project.sponsor %}
+                  Yes
+              {% else %}
+                  No
+              {% endif %}
+            </span></a></li> -->
+            <li><a href="#">Members
+                {% if project.avail_mem %}
+                  <span class="pull-right badge bg-green">
+                {% else %}
+                   <span class="pull-right badge bg-red">
+                {% endif %}
+                    {{ project.members.all.count }}
+                  </span>
+            </a></li>
+            <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator.email }}</span></a></li>
+          </ul>
+        </div>
+
+      </div><!-- /.box -->
+    </div>
+    {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+    {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+{% empty %}
+    {% if not course.disable %}
+    <div class="alert alert-warning" role="alert">
+      <i class="fa fa-warning"></i>
+      There are no projects yet. Go ahead and
+      <a href="{% url 'create_project' %}" class="alert-link">
+          create one now!
+      </a>
+    </div>
+    {% endif %}
+{% endfor %}

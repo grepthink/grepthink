@@ -1,0 +1,81 @@
+{% extends "adminlte/login.html" %}
+
+{# Hard coded title because title and site_title not sent to login since auth_views is used #}
+{% block title %}
+{{ title|default:_('Login') }} | {{ site_title|default:_('GrepThink') }}
+{% endblock title %}
+
+{% block content %}
+
+{% block logo %}
+
+<div class="login-logo">
+    <a href="{% block logo_href %}/{% endblock %}">
+        {% block logo_text %} <b>Grep</b>Think {% endblock logo_text %}
+    </a>
+</div>
+{% endblock logo %}
+
+{% block form %}
+
+{% block login_form %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                &times;
+                </button>
+                {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <form method="post" action="{% url 'login' %}" role="form">
+        {% csrf_token %}
+        <div class="form-group has-feedback {% if form.username.errors %} has-error {% endif %}">
+            <label for="username"> Email or Username </label>
+            <a class='username-tooltip' data-toggle="tooltip" data-placement="left" title="For example: if the email you signed up with is sammyslug@ucsc.edu, sign in with your username 'sammyslug' or 'sammyslug@ucsc.edu'">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+            <input type="text" class="form-control" id="username" name="username">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            {% for error in form.username.errors %}
+                <label class="control-label">{{ error }}</label>
+            {% endfor %}
+        </div>
+        <div class="form-group has-feedback {% if form.password.errors %} has-error {% endif %}">
+            <label for="password"> Password </label>
+            <input type="password" class="form-control" id="password" name="password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            {% for error in form.password.errors %}
+                <label class="control-label">{{ error }}</label>
+            {% endfor %}
+        </div>
+
+        <div class="row">
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'signup' %}" class="btn btn-link">Create a <b>Student/TA</b> account</a>
+        </div>
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'profSignup' %}" class="btn btn-link">Create an <b>Instructor</b> account</a>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+        </div>
+        <div class="col-xs-8">
+            <a class="text-left" href="{% url 'password_reset' %}" class="btn btn-link">Forgot Password</a>
+        </div>
+        <!-- /.col -->
+      </div>
+
+{# TODO: take this out or impliment it - andgates #}
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    </form>
+{% endblock login_form %}
+
+{% endblock form %}
+
+{% endblock content %}

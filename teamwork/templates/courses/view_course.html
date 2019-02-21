@@ -1,0 +1,721 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+{% load gravatar %}
+
+{% block javascript %}
+    {{block.super}}
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+      $(".select2").select2({
+        ajax: {
+          url: "ajax/select_projects/",
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term, // search term
+              page: params.page
+            };
+          },
+          processResults: function (data, params) {
+            // parse the results into the format expected by Select2
+            // since we are using custom formatting functions we do not need to
+            // alter the remote JSON data, except to indicate that infinite
+            // scrolling can be used
+            params.page = params.page || 1;
+
+            console.log(data);
+            console.log(params);
+
+            return {
+              results: data.items,
+              pagination: {
+                more: (params.page * 30) < data.total_count
+              }
+            };
+          },
+          cache: true
+        },
+        placeholder: "Search for Projects to Claim",
+        //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 1,
+        //templateResult: formatRepo, // omitted for brevity, see the source of this page
+        //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+      });
+
+    });
+
+    </script>
+{% endblock javascript %}
+
+
+{% block stylesheets %}
+
+    {{block.super}}
+
+    <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+    <!-- for multi dropdowns and other goodies -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Select2 css -->
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+{% endblock stylesheets %}
+
+
+{% block crumb %}
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+{% endblock crumb %}
+
+{% block content %}
+
+<div>
+
+    {% if user == course.creator %}
+    <div class="alert alert-success" role="alert">
+        You are an instructor of this course.
+    </div>
+    {% elif user_role == "ta" %}
+        <div class="alert alert-success" role="alert">
+        You are a teaching assistant for this course
+        </div>
+    {% elif user not in course.students.all %}
+        {% if not user.profile.isGT %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fa fa-warning"></i>
+                You are not a member of this course.
+            </div>
+        {% endif %}
+    {% endif %}
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="">
+                <a href="#description" data-toggle="tab" aria-expanded="true">
+                    Description
+                    <i class="fa fa-info-circle"></i>
+                </a>
+            </li>
+            <li class="active">
+                <a href="#projects" data-toggle="tab"aria-expanded="false">
+                    Projects
+                    <i class="fa fa-code-fork"></i>
+                </a>
+            <li class="">
+                <a href="#members" data-toggle="tab" aria-expanded="false">
+                    Members
+                    <i class="fa fa-group"></i>
+                </a>
+            </li>
+
+            <li class="">
+                <a href="#Viewassignments" data-toggle="tab" aria-expanded="false">
+                    View Assignments
+                    <i class="fa fa-folder-open"></i>
+                </a>
+            </li>
+            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="slug-tooltip" data-toggle="tooltip" data-placement="top" title="Course must be active to Create Assignment!">
+                    <font color="#989898"> Create Assignment
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a href="#assignments" data-toggle="tab" aria-expanded="false">
+                    Create Assignment
+                    <i class="fa fa-plus"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="pull-right">
+                <a href="#admin" data-toggle="tab" aria-expanded="false">
+                    Admin Tools
+                    <i class="fa fa-gear"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% if course.disable %}
+            <li class="disabled">
+                <a aria-expanded="false" class="slug-tooltip" data-toggle="tooltip" data-placement="top" title="Course must be active to Create Project!">
+                    <font color="#989898"> Create Project
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
+            <li class="">
+                <a href="{% url 'create_project' %}">
+                    Create Project
+                    <i class="fa fa-plus"></i>
+                </a>
+            {% endif %}
+            </li>
+
+            {% if user_role == "ta" %}
+            {% if course.disable %}
+            <li class=" pull-right disabled">
+                <a aria-expanded="false" class="disabled slug-tooltip" data-toggle="tooltip" data-placement="left" title="Course must be active to Claim Projects">
+                    <font color="#989898"> Claim Projects
+                    <i class="fa fa-plus"></i></font>
+                </a>
+            {% else %}
+            <li class="pull-right">
+                <a href="{% url 'claim_projects' course.slug %}">
+                    Claim Projects
+                    <i class="fa fa-plus"></i>
+                </a>
+            {% endif %}
+            </li>
+            {% endif %}
+
+        </ul>
+
+        <div class="tab-content" style="background-color: #ecf0f5">
+
+            <div class="tab-pane active" id="projects">
+                {% if not course.disable %}
+                {% if user != course.creator %}
+                    {% if not user.profile.isGT %}
+                        {% if not user_role == "ta" %}
+                        {% if not course.limit_interest %}
+                            {% if projects %}
+                            <div class="row">
+                                <div class="alert alert-info" role="alert">
+                                    <a href="{% url 'show_interest' course.slug %}" class="alert-link">                                        
+                                        {% if has_shown_interest %}
+                                            Resubmit Interest
+                                        {% else %}
+                                            Show interest in these projects!
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+                {% endif %}
+
+                    {% include "projects/partial_project_box.html" with projects=projects course=course%}
+
+            </div>
+
+            <div class="tab-pane" id="assignments">
+            <div class="row">
+            <div class="col-md-6">
+                <div class="box box-success">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Create Assignment</h3>
+                        </div>
+
+                        <div class="box-body">
+                            <form action="{% url 'view_one_course' course.slug %}" method="post" role="form">
+                            {% for field in assignmentForm.visible_fields %}
+                            {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                            <input type="submit" value="Save Assignment">
+                            </form>
+                        </div>
+                </div>
+            </div>
+            </div>
+            </div>
+
+            <!-- /.tab-pane View Assignments -->
+            <div class="tab-pane" id="Viewassignments">
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Assignments</h3>
+                        <div class="box-body no-padding">
+                            <style>
+                                th {
+                                  background-color: #00A65A;
+                                  color: white;
+                                }
+                                tr {
+                                    background-color: white;
+                                }
+                            </style>
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th>Assigned</th>
+                                        <th>Due</th>
+                                        <th>Type</th>
+                                        <th>Name</th>
+                                        <th>Number</th>
+                                        <th></th>
+                                    </tr>
+                                    {% for asg in assignments %}
+                                    <tr>
+                                        <td>{{asg.ass_date|date:'Y-m-d'}}</td>
+                                        <td>{{asg.due_date|date:'Y-m-d'}}{{asg.due_date|time:'g:i:s'}}</td>
+                                        <td>{{asg.ass_type}}</td>
+                                        <td>{{asg.ass_name}}</td>
+                                        <td>{{asg.ass_number}}</td>
+                                        <td>
+                                            {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
+                                            <a href="{% url 'edit_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-info btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+
+
+                                            <a href="{% url 'delete_assignment' asg.slug %}">
+                                                <button type="button" class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash"></i>
+                                                            Delete
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- /.tab-pane End View Assignments -->
+
+
+
+            <div class="tab-pane" id="description">
+                <div class="box box-success">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Description</h3>
+                  </div>
+                    <div class="box-body">
+                        {{ course.get_info_as_markdown|safe }}
+                    </div>
+                </div>
+
+
+                {% comment %}
+
+                <div class="row">
+
+                  <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow" onclick="window.location ='{% url 'update_course' course.slug %}'">
+                      <div class="inner">
+                        <h3>{{course.students.all.count}}</h3>
+
+                        <p>Course Members</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                    <div class="col-lg-3 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                      <div class="inner">
+                        <h3>{{course.projects.all.count}}</h3>
+
+                        <p>Projects</p>
+                      </div>
+                      <div class="icon">
+                        <i class="ion ion-briefcase"></i>
+                      </div>
+                      <a href="#" class="small-box-footer">
+                        View All <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div> <!-- ./col -->
+
+                </div> <!-- ./row -->
+
+                {% endcomment %}
+
+                <h3>Updates</h3>
+                <ul class="timeline">
+                    {% if user == course.creator or user.profile.isGT or user_role == "ta"%}
+                    <li style="list-style: none"
+                        onclick="window.location =
+                        '{% url 'update_course' course.slug %}'">
+                        <i class="fa fa-plus bg-green"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ecf0f5">
+                            <div class="timeline-header">
+                                Add an update
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                    {% for date_update in date_updates %}
+                    <li class="time-label" style="list-style: none">
+                        <span class="bg-blue">
+                            {{ date_update.date|date:"M d, Y" }}
+                        </span>
+                    </li>
+                    {% for update in date_update.updates %}
+                    <li style="list-style: none">
+                        <i class="fa fa-comments bg-blue"></i>
+                        <div class="timeline-item">
+                            <div class="timeline-header clearfix">
+                                {{ update.title }}
+                                {% if user == update.creator or user.profile.isGT or user_role == "ta" %}
+                                <span class="pull-right">
+                                    <a href='{% url 'update_course_update' course.slug update.id %}'>
+                                        <button class="btn btn-default btn-xs">
+                                            <i class="fa fa-gear"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="timeline-body">
+                                {{ update.content }}
+                            </div>
+                            <div class="timeline-footer clearfix">
+                                <span class="label label-primary"
+                                    onclick="window.location =
+                                    '{% url 'profile' update.creator.username %}'">
+                                    {{ update.creator.username }}
+                                </span>
+                                <i class="pull-right">
+                                    Posted {{ update.date_post }}
+                                    {% if update.date_post != update.date_edit %}
+                                    , edited {{ update.date_edit }}
+                                    {% endif %}
+                                </i>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    {% empty %}
+                    <li style="list-style: none">
+                        <i class="fa fa-times bg-red"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ecf0f5">
+                            <div class="timeline-header">
+                                There are no updates
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    <li style="list-style: none">
+                        <i class="fa fa-clock-o"></i>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="tab-pane" id="members">
+            <div class="row">
+
+                <div class="col-md-3">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Instructor</h3>
+
+                      <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                        <li style="list-style-type: none;">
+                            {% gravatar prof.email 150 %}
+                            <a class="users-list-name" href="{% url 'profile' prof %}">{{ prof }}</a>
+                            <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ prof.email }}" target="_top">{{ prof.email }}</a></span>
+                        </li>
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">TAs</h3>
+
+                      <div class="box-tools pull-right">
+                        <span class="label label-info">{{ tas|length }}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                      <ul class="users-list clearfix">
+                      {% for mem in tas %}
+                        <li style="list-style-type: none;">
+                            {% gravatar mem.email 150 %}
+                            <a class="users-list-name" href="{% url 'profile' mem %}">{{ mem }}</a>
+                            <span class="users-list-date" style="word-wrap: break-word;"><a href="mailto:{{ mem.email }}" target="_top">{{ mem.email }}</a></span>
+                        </li>
+                      {% endfor %}
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
+
+                <div class="col-md-9">
+                  <!-- USERS LIST -->
+                  <div class="box box-info">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Students</h3>
+                      <div class="box-tools pull-right">
+                        <span class="tooltip2"><span class="label label-info">{{ students|length }}</span>
+                           <span class="tooltiptext2">Total Members of the class
+                           </span>
+                        </span>
+
+                        <span class="tooltip2"><span class="label label-danger">{{ available|length }}</span>
+                             <span class="tooltiptext2">Members in <span class="label label-danger"> </span> are not in a group
+                             </span>
+                         </span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding largeScrollStyle">
+                      <ul class="users-list clearfix">
+
+                        {% for studs in students %}
+                        {% if studs.username != null %}
+
+                            <li style="list-style-type: none;">
+                              <a href="{% url 'profile' studs.username %}">
+                                  {% gravatar studs.email 60 %}
+                              </a>
+
+                              <a class="users-list-name" href="{% url 'profile' studs.username %}">
+                                  {% firstof studs.user.get_short_name studs.get_username %}
+                              </a>
+
+                              {% if studs in available %}
+                                <span class="label label-danger" >
+                              {% else %}
+                                <span class="label label-default" >
+                              {% endif %}
+                                  <a href="mailto:{{studs.email}}" target="_top">
+                                      <font color="black"> {{studs.email}}</font>
+                                  </a>
+                                </span>
+                            </li>
+                        {% endif %}
+                        {% empty %}
+                        <p>There are no students enrolled in this course</p>
+                        {% endfor %}
+                      </ul>
+                      <!-- /.users-list -->
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- <div class="box-footer text-center">
+                      <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                    </div> -->
+                    <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+                </div>
+
+                </div>
+            </div>
+
+            <div class="tab-pane" id="claim">
+
+                <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        Select Multiple projects using Ctrl(PC) or Command(OSX)
+                    </p>
+                </div>
+
+                <div class="col-md-1">
+
+                    <select multiple="" size=10>
+                        {% for proj in course.projects.all %}
+                            <option>
+                                {{ proj.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button>Claim</button>
+                    <form method="get">
+                        {% csrf_token %}
+                        <input type="submit" value="claim" name="claimBtn" id="claimBtn" class="btn btn-success"/>
+                    </form>
+                </div>
+                    <div class="col-md-1">
+
+
+                      <select multiple="" size=10>
+                        <option>option 1</option>
+                        <option>option 2</option>
+                        <option>option 3</option>
+                        <option>option 4</option>
+                        <option>option 5</option>
+                      </select>
+                      <button>Remove</button>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <label>Claim Projects</label>
+                        <select class="form-control select2" id="claim_projects" name="claim_projects" multiple="multiple" style="width: 100%;">
+                        </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            {% if user == course.creator  or user.profile.isGT or user_role == "ta"%}
+            <div class="tab-pane" id="admin">
+
+
+
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Admin Tools</h3>
+                    </div>
+                    <div class="box-body">
+
+                        <a href="{% url 'edit_course' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-edit"></i>
+                                    Edit Course
+
+                        </button>
+                        </a>
+
+                        <a href="{% url 'view_statistics' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-line-chart"></i>
+                                    View Course Statistics
+                        </button>
+                        </a>
+
+                        <a href="{% url 'email_roster' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-envelope-o"></i>
+                                    Email Roster
+                        </button>
+                        </a>
+
+                        <a href="{% url 'upload_csv' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-envelope-o"></i>
+                                    Email Roster w/ CSV Upload
+                        </button>
+                        </a>
+
+                        {% if not course.limit_interest %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block" name="lock">
+                                    <i class="fa fa-lock"></i>
+                                    Lock Interest
+                        </button>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'lock_interest' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block" name="lock">
+                                    <i class="fa fa-unlock"></i>
+                                    Unlock Interest
+                        </button>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'auto_gen' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-users"></i>
+                                    Auto-Generate Teams
+                        </button>
+                        </a>
+
+                        <a href="{% url 'export_xls' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-internet-explorer"></i>
+                                    Export course to Spreadsheet
+                        </button>
+                        </a>
+
+                        <a href="{% url 'export_interest' course.slug %}">
+                        <button type="button" class="btn btn-default btn-block">
+                                    <i class="fa fa-file-excel-o"></i>
+                                    Export preference data
+                        </button>
+                        </a>
+
+                    </div>
+                </div>
+
+                <h3>Invite Students</h3>
+                <p>
+                    Students can join your Course two ways:
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Using the <a href="{% url 'upload_csv' course.slug %}">
+                                    Email Roster w/ CSV Upload
+                            </a> Button above and emailing the Course's AddCode (<i>{{ course.addCode }}</i>).
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Add Current GrepThink users using <a href="{% url 'edit_course' course.slug %}">
+                                    Edit Course Info
+                            </a>
+                        </p>
+                    </li>
+
+                </ol>
+            </div>
+            {% endif %}
+    </div>
+
+</div>
+
+{% endblock content %}

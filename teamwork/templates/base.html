@@ -1,0 +1,72 @@
+{% extends 'adminlte/base.html' %}
+
+{# Generic page title. Pass title in the return dictionary of your view. #}
+{% block title %}
+{{ title|default:_('GrepThink') }} | {{ site_title|default:_('GrepThink') }}
+{% endblock title %}
+
+{# Is there any reason to override the meta block... - andgates #}
+{% block meta %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	{# Introducing skin.js for changing the light/dark theme #}
+	<script type="text/javascript" src="/static/js/skin.js"></script>
+{% endblock %}
+
+{# In case we want to add custom stylesheets to base #}
+{% block stylesheets %}
+  {# Gets the stylesheets in the template above this file: adminlte/base.html #}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+
+
+
+{# Inject "skin-green-light" into the class of body #}
+{% block body_class %} skin-green-light {% endblock %}
+
+{# Contains the page_name, page_description, and breadcrumbs #}
+{% block content_header %}
+{% if user.profile.isGT %}
+    <div class="alert alert-error" role="alert">
+        <strong>GT OVERRIDE IN EFFECT</strong>
+    </div>
+{% endif %}
+  <section class="content-header">
+    <h1>
+        {% block page_name %}
+          {{ page_name|default:_('GrepThink') }}
+        {% endblock page_name%}
+        {% comment %}
+          If you don't want a description, copy this into your template:
+          {% block no_description %}{% endblock %}
+
+          http://django-adminlte2.readthedocs.io/en/latest/templates_and_blocks.html#no-description
+        {% endcomment %}
+        {% block no_description %}
+
+          <small>
+            {% block page_description %}
+            {{ page_description|default:_('Default Description') }}
+            {% endblock page_description %}
+          </small>
+
+        {% endblock no_description %}
+    </h1>
+    {% block breadcrumbs %}
+        {# Breadcrumb implementation left to developers #}
+        <ol class="breadcrumb">
+          <li><a href="{% url 'index' %}"><i class="fa fa-dashboard"></i>Home</a></li>
+          {# Add your breadcrumbs in the crumb block #}
+          {% block crumb %}
+          {% endblock crumb %}
+        </ol>
+    {% endblock breadcrumbs %}
+  </section>
+{% endblock content_header %}
+
+
+{% block content %}
+
+{% endblock content %}

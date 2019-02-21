@@ -1,0 +1,15 @@
+# Coverage Config
+#
+# [1] http://coverage.readthedocs.io/en/latest/source.html#execution
+# [2] https://github.com/coveralls-clients/coveralls-python#tips-for-coveragerc-config
+
+
+# Omit Django files [1]
+
+[run]
+omit =
+    */migrations/*
+    manage.py
+    *__init__*
+    # Omit any file with admin (admin.py)
+    *admin*   

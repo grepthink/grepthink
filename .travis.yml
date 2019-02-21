@@ -1,0 +1,27 @@
+language: python
+python:
+- '3.6'
+services: postgresql
+env:
+  global:
+    - DEBUG=True
+    - SECRET_KEY=s3cr3tk3y    
+  matrix:
+    - DJANGO_VERSION="1.11"
+    - DJANGO_VERSION="2.1.5"
+install:
+- pip install -q Django==$DJANGO_VERSION
+- pip install coverage
+- pip install flake8
+- pip install coveralls
+- pip install -r requirements.txt
+before_script:
+- psql -c "CREATE DATABASE travisdb;" -U postgres
+- python manage.py --version
+- python manage.py makemigrations auth core profiles projects courses
+- python manage.py migrate
+script:
+- flake8 --select=T003
+- coverage run --source='.' manage.py test
+after_success:
+- coveralls

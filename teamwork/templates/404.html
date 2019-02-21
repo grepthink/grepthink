@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block page_description %}
+{{ page_description|default:_('404 Error') }}
+{% endblock page_description %}
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+<li class="active"><a href="/whoareyou"><i class="fa fa-dashboard"></i>404 Error</a></li>
+
+{% endblock crumb %}
+
+{% block content %}   
+    <!-- Main content -->
+    <section class="content">
+      <div class="error-page">
+        <h2 class="headline text-yellow">404</h2>
+
+        <div class="error-content">
+          <h3><i class="fa fa-warning text-yellow"></i> Oops! Page not found.</h3>
+
+          <p>
+            We <code>grepped</code> as hard as we could but we just couldn't find the page you were looking for.
+            Why not go format one of your <a href="{% url 'view_projects' %}">projects</a> with some sweet markdown.
+          </p>
+
+          <form class="search-form">
+            <div class="input-group">
+              <input type="text" name="search" class="form-control" placeholder="Search">
+
+              <div class="input-group-btn">
+                <button type="submit" name="submit" class="btn btn-warning btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.input-group -->
+          </form>
+        </div>
+        <!-- /.error-content -->
+      </div>
+      <!-- /.error-page -->
+    </section>
+    <!-- /.content -->
+
+{% endblock content %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+  <script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Show Interest</h1>
+</div>
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Interest</h3>
+    </div>
+    <form action="{% url 'show_interest' cur_course.slug %}" method="post" role="form">
+    <div class="box-body">
+        {% csrf_token %}
+        {{ form.status }}
+        {% for field in form.visible_fields %}
+          <div class="form-group{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+              <label class="control-label">{{ error }}</label>
+            {% endfor %}
+          </div>
+        {% endfor %}
+    </div>
+    <div class="box-body">
+    <div class="form-group">
+       <div class="pull-right">
+          <input type="submit" value="Show Interest">
+       </div>
+    </div>
+    </div>
+    </form>
+</div>
+{% endblock content %}

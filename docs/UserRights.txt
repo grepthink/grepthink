@@ -1,0 +1,36 @@
+Current User Roles:
+
+Professor
+TA
+Student
+GT
+Course Creator
+Project Creator
+
+
+Types of Tasks
+
+Courses:
+
+Edit:               GT, Course Creator, TA
+Create Course       GT, Professor
+Delete Course       GT, Course Creator
+Add Members         GT, Course Creator, TA
+Remove Members      GT, Course Creator, TA
+Create Assignments  GT, Course Creator, TA
+Delete Assignments  GT, Course Creator, TA
+
+Projects:
+
+Create              GT, Professor, TA, Student
+Edit                GT, Professor, TA, Students in Project(doesn't matter if Scrum Master etc)
+Delete              GT, Professor, TA, Project Creator
+Add Members         GT, Professor, TA, Students in Project
+Remove Members      GT, Professor, TA, Project Creator
+Adjust/Promote      GT, Professor, TA, Students in Project
+View TSR Results    GT, Professor, TA, Students in Project
+
+Profiles:
+
+Edit                GT, If profile is yours
+Delete              If profile is yours

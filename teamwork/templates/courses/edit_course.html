@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+<!-- JAVASCRIPT BLOCK -->
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/edit_select_members/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for members by CruzId",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+});
+</script>
+{% endblock javascript %}
+
+<!-- LOAD CSS STYLESHEETS -->
+{% block stylesheets %}
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+{% endblock stylesheets %}
+
+<!-- LOAD JS SCRIPT FILES -->
+{% block head %}
+<script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+
+{% block content %}
+
+<!-- OLD BREADCRUMB -->
+<!-- <ol class="breadcrumb">
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'edit_course' course.slug %}">
+            Edit course
+        </a>
+    </li>
+</ol> -->
+
+<!-- THIS FOLLOWING BREADCRUMB IS STILL BEING USED EVEN THOUGH COMMENTED, DOESN' WORK IF UNCOMMENTED -->
+<!-- {% block crumb %}
+<li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+<li><a href="{% url 'edit_course' course.slug %}">Edit Course</a></li>
+{% endblock crumb %} -->
+
+<div class="row">
+    <!-- BEGINNING OF FORM -->
+    <form action="{% url 'edit_course' course.slug %}" method="post" role="form"
+        class="clearfix" enctype="multipart/form-data">
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Edit Course</h3>
+                </div>
+
+            <div class="box-body">
+                    {% csrf_token %}
+                    {{ form.status }}
+                <div class="form-group">
+                    {{ form.name.errors }}
+                    <label for="{{ form.name.id_for_label }}" class="control-label">
+                    Course Name:
+                    </label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.info.errors }}
+                    <label for="{{ form.info.id_for_label }}" class="control-label">
+                    Course Information <a href="https://guides.github.com/features/mastering-markdown/"> [Markdown supported]</a>:
+                    </label>
+                    {{ form.info }}
+                </div>
+            </div>
+
+            <div class="box-body">
+            <div class="form-group">
+              <label>Add Members</label>
+              <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Add students by CruzId">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+              <select class="form-control select2" id="members" name="members" multiple="multiple" style="width: 100%;">
+              </select>
+            </div>
+            </div>
+
+            <div class="box-body">
+            <div class="form-group">
+              <label>Remove Members</label>
+              <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Remove students by CruzId">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+              <select class="form-control select2" id="remove_user" name="remove_user" multiple="multiple" style="width: 100%;">
+              </select>
+            </div>
+            </div>
+            <div class="box-body">
+            <div class="form-group">
+                <div class="pull-left">
+                <a href="{% url 'view_one_course' course.slug %}">
+                    <button class="btn btn-default" type="button">
+                        Cancel
+                    </button>
+                </a>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-success" type="submit" name="SUBMIT">
+                        Save changes
+                    </button>
+                </div>
+            </div>
+            </div>
+
+        </div>
+            <div class="box box-info">
+              <div class="box-header with-border">
+                <h3 class="box-title">TA Management</h3>
+              </div>
+              <div class="box-body">
+              {# Need to fix button grouping #}
+                <div class="box-header with-border">
+                    <label>Add TA</label>
+                    <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Add TA by CruzId, they will have same access as professor?">
+                            <i class='glyphicon glyphicon-info-sign'></i></a>
+                  <select class="form-control select2" id="ta" name="ta" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+                <div class="box-header with-border">
+                <label>Remove TA</label>
+                    {% for mem in tas %}
+                        <button class="btn btn-danger btn-sm" name="remove_ta" value="{{mem.user.username}}"><i class="fa fa-trash"></i> {{mem.user.username}}
+                        </button>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Optional Settings</h3>
+                </div>
+
+                <div class="box-body">
+                    <div class="form-group">
+                        {{ form.limit_creation.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Only allow professors to create projects?">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_creation.id_for_label }}" class="control-label">
+                        Only Allow Professors to Create Projects?
+                        </label>
+                        {{ form.limit_creation }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.limit_weights.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Enables the next three options">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_weights.id_for_label }}" class="control-label">
+                        Limit Weights?
+                        </label>
+                        {{ form.limit_weights }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_interest.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of interest when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_interest.id_for_label }}" class="control-label">
+                        Weight of User Interest in Projects:
+                        </label>
+                        {{ form.weigh_interest }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_know.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of known skills when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_know.id_for_label }}" class="control-label">
+                        Weight of Skills users already know:
+                        </label>
+                        {{ form.weigh_know }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_learn.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of skills a user wants to learn when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_learn.id_for_label }}" class="control-label">
+                        Weight of Skills users want to learn:
+                        </label>
+                        {{ form.weigh_learn }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if user == course.creator or user.profile.isGT %}
+        <div class="col-md-6">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Disable Course</h3>
+                </div>
+                <div class="box-body">
+                    <p>
+                        This course will still be accessible, but will be filtered out of view except in the sidebar.
+                    </p>
+                    <a href="{% url 'disable' course.slug %}">
+                    <button type="button" class="btn btn-warning" name="disable">
+                        <i class="fa fa-flag"></i>
+                        {% if not course.disable %}
+                        Disable course
+                        {% else %}
+                        Activate Course
+                        {% endif %}
+                    </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Delete Course</h3>
+                </div>
+                <div class="box-body">
+                    <p>
+                        Note that deleting a course is <strong>IRREVERSIBLE</strong>, please make
+                        sure you know what you are doing before pressing this button.
+                    </p>
+                    <a href="{% url 'delete_course' course.slug %}">
+                    <button type="button" class="btn btn-danger" name="delete_course">
+                        <i class="fa fa-trash"></i>
+                        Delete course
+                    </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock content %}

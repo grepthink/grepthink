@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+
+{% endblock stylesheets %}
+
+{% block crumb %}
+<li><a href="{% url 'view_matches' %}"> My Matches </a></li>
+<li><a href="{% url 'matchstats' cur_project.slug %}"> MatchStats </a></li>
+{% endblock crumb %}
+
+{% block content %}
+
+<p> Value of Interest varies from 5 (most interested) to 1 (least interested).
+</p>
+<h3>MatchStats: {{ cur_project }}</h3>
+
+{% for key, value in skill_match.items %}
+
+
+{% if forloop.first %}<div class="row">{% endif %}
+<div class="col-md-4">
+<a href="{% url 'profile' key %}" style="none">
+  <!-- <div class="box box-widget widget-user-2"> -->
+  <div class="panel panel-default">
+    <!-- Add the bg color to the header using any of the bg-* classes -->
+    <!-- <div class="widget-user-header bg-primary ">
+      <h3 class="widget-user-username">{{ key }}</h3>
+      {#<h5 class="widget-user-desc"> </h5> #}
+    </div> /.box-header -->
+    <div class="panel-heading bg-primary">
+        <h3 class="panel-title">{{ key }}</h3>
+    </div>
+</a>
+
+
+
+	<div class="box-footer no-padding">
+        <ul class="nav nav-stacked">
+            <li><a href="#"><strong>Skills Valued:</strong> <span class="pull-right badge bg-red">
+                {% for skill in value %}
+            		{{ skill }}
+                {% endfor %}
+            </span></a></li>
+
+        <li>
+            <a href="#">
+
+        {% for key2, value2 in interest_match.items %}
+
+            {% if key == key2 %}
+            <span> <strong>Value of Interest:</strong> {{ value2.0 }} </span><br />
+                <strong>Interest Reason:</strong>
+                <span> {{ value2.1 }} </span>
+            </br/>
+
+
+            {% endif %}
+        {% endfor %}
+        </a></li>
+    </ul>
+
+    </div>
+
+
+  </div><!-- /.box -->
+</div>
+{% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+{% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+ {% endfor %}
+
+
+{% endblock content %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%if not logged_in%}
+    <h1 id="grepthink">grepthink</h1>
+
+    <h4 id="whatisgrepthink">What is grepthink?</h4>
+    <small>Let's ask *greppy the guppy* :</small>
+
+    <ul>
+    <li>grepthink facilitates team formation for the purpose of developing and collaborating on group projects in an educational environment.</li>
+
+    <li>The platform allows professors to create private and organized spaces for students to post project ideas and join existing projects.</li>
+
+    <li>Using user profiles, grepthink will match students with other member of their class based on technical skills, schedule, prior coursework, project ideas, and interests.</li>
+    </ul>
+
+    <h4 id="motivation">Motivation</h4>
+
+    <ul>
+    <li>Traditional team forming for group projects is a haphazard process that puts stress on individuals and leads to disjoint groups.</li>
+
+    <li>Current tools used for group projects (i.e. Google Sheets, Piazza Forms) are unorganized and lack functionality.</li>
+
+    <li>By matching students based on their profiles and project goals, grepthink will help create groups that work and learn better together.</li>
+
+    <li>It is also a reaction to the faculty to student ratio at UCSC. Many classes now have to rely on group projects to make grading possible. This can be a great learning experience but can be a hurdle for many students that struggle to find a group they fit into.</li>
+    </ul>
+{% else %}
+{% block timeline %}
+    {% comment %}
+    {% if user.profile.isProf %}
+
+    {% else%}
+    {% endcomment %}
+    <ul class="timeline">
+        {% for date_update in date_updates %}
+        <li class="time-label" style="list-style: none">
+            <span class="bg-blue">
+                {{ date_update.date |date:"M d, Y" }}
+            </span>
+        </li>
+            {% for update in date_update.updates %}
+            <li style="list-style: none">
+                <i class="fa fa-comments bg-blue"></i>
+                <div class="timeline-item">
+                    <div class="timeline-header clearfix">
+                        {{ update.title }}
+
+                    </div>
+                    <div class="timeline-body">
+                        {{ update.content }}
+                    </div>
+                    <div class="timeline-footer clearfix">
+                        <span class="label label-primary"
+                            onclick="window.location =
+                            '{% url 'profile' update.creator.username %}'">
+                            {{ update.creator.username }}
+                        </span>
+                        <span class="label label-primary"
+                            onclick="window.location =
+                            '{% url 'view_one_course' update.course.slug %}'">
+                            {{ update.course.name }}
+                        </span>
+                        <i class="pull-right">
+                            Posted {{ update.date_post }}
+                            {% if update.date_post != update.date_edit %}
+                            , edited {{ update.date_edit }}
+                            {% endif %}
+                        </i>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        {% empty %}
+        <li style="list-style: none">
+            <i class="fa fa-times bg-red"></i>
+            <div class="timeline-item"
+                style="background-color: #ecf0f5">
+                <div class="timeline-header">
+                    There are no updates
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+        <li style="list-style: none">
+            <i class="fa fa-clock-o"></i>
+        </li>
+    </ul>
+    {# {% endif %} #}
+{% endblock timeline %}
+{% endif %}
+
+
+{% endblock content %}

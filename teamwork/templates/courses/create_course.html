@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+<script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+
+<!-- {% block crumb %}
+<li><a href="{% url 'create_course' %}">Create Course</a></li>
+{% endblock crumb %} -->
+
+<div class="row">
+    <form action="{% url 'create_course' %}" method="post" role="form"
+        enctype="multipart/form-data" class="clearfix" onSubmit="document.getElementById('submit').disabled=true;">
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Create Course</h3>
+                </div>
+
+                <div class="box-body">
+                    {% csrf_token %}
+                    {{ form.status }}
+                    {{ form.non_field_errors }}
+
+                    <div class="form-group">
+                        {{ form.name.errors }}
+                        <label for="{{ form.name.id_for_label }}" class="control-label">
+                        Course Name:
+                        </label>
+                        {{ form.name }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.info.errors }}
+                        <label for="{{ form.info.id_for_label }}" class="control-label">
+                        Course Information <a href="https://guides.github.com/features/mastering-markdown/"> [Markdown supported]</a>:
+                        </label>
+                        {{ form.info }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.term.errors }}
+                        <label for="{{ form.term.id_for_label }}" class="control-label">
+                        Term:
+                        </label>
+                        {{ form.term }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.slug.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Unique Name">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.term.id_for_label }}" class="control-label">
+                        Slug:
+                        </label>
+                        {{ form.slug }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Optional Settings</h3>
+                </div>
+
+                <div class="box-body">
+                    <div class="form-group">
+                        {{ form.limit_creation.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Only allow professors to create projects?">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_creation.id_for_label }}" class="control-label">
+                        Only Allow Professors to Create Projects?
+                        </label>
+                        {{ form.limit_creation }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.limit_weights.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Enables the next three options">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.limit_weights.id_for_label }}" class="control-label">
+                        Limit Weights?
+                        </label>
+                        {{ form.limit_weights }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_interest.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of interest when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_interest.id_for_label }}" class="control-label">
+                        Weight of User Interest in Projects:
+                        </label>
+                        {{ form.weigh_interest }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_know.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of known skills when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_know.id_for_label }}" class="control-label">
+                        Weight of Skills users already know:
+                        </label>
+                        {{ form.weigh_know }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.weigh_learn.errors }}
+                        <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="Overrides weight of skills a user wants to learn when matching">
+                        <i class='glyphicon glyphicon-info-sign'></i></a>
+                        <label for="{{ form.weigh_learn.id_for_label }}" class="control-label">
+                        Weight of Skills users want to learn:
+                        </label>
+                        {{ form.weigh_learn }}
+                    </div>
+
+                    <div class="box-footer">
+                        <div class="pull-left">
+                            <a href="{% url 'view_course' %}">
+                                <button class="btn btn-danger" type="button">
+                                Cancel
+                                </button>
+                            </a>
+                        </div>
+                        <div class="pull-right">
+                            <button class="btn btn-success" type="submit" name="SUBMIT" id="submit">
+                                Create Course
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block crumb %}
+    <li><a href="{% url 'view_one_course' course.slug %}">{{ course.name }}</a></li>
+    <li>
+        <a href="{% url 'view_one_project' project.slug %}">
+            {{ project.title }}
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'post_update' project.slug %}">
+            Project Update
+        </a>
+    </li>
+{% endblock crumb %}
+
+{% block head %}
+<script src="{% static 'js/project.js' %}"></script>
+{% endblock head %}
+
+{% block content %}
+<div class="box box-primary">
+  <div class="box-header with-border">
+    <h3 class="box-title">Post Update</h3>
+  </div>
+  <form action="{% url 'post_update' project.slug %}" method="post" role="form"
+      class="clearfix">
+  <div class="box-body">
+      {% csrf_token %}
+      {{ form.status }}
+      {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+          <label for="{{ field.label }}" class="control-label">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+          <label class="control-label">{{ error }}</label>
+          {% endfor %}
+      </div>
+      {% endfor %}
+   </div>
+   <div class="box-body">
+   <div class="form-group">
+      <div class="pull-left">
+      <a href="{% url 'view_one_project' project.slug %}">
+          <button class="btn btn-danger" type="button">
+              Cancel
+          </button>
+      </a>
+      </div>
+      <div class="pull-right">
+          <button class="btn btn-success" type="submit" name="SUBMIT">
+              Post Update
+          </button>
+      </div>
+  </div>
+  </div>
+  </form>
+
+</div>
+
+
+{% endblock content %}

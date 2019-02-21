@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# Clear out javascript block at bottom of page so we can import specific js #}
+{% block javascript %}
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+<script>
+    events = JSON.parse(JSON.stringify({{json_events}}))
+    console.log(events)
+    $(document).ready(function() {
+        $('#calendar').fullCalendar({
+                      // Only show agendaWeek view for edit_schedule
+            header: {
+              left: 'none',
+              center: 'none',
+              right: 'none'
+            },
+            // Day of week shouldn't contain hard coded date.
+            columnFormat: 'ddd',
+            businessHours: {
+                // days of week. an array of zero-based day of week integers (0=Sunday)
+                dow: [ 1, 2, 3, 4, 5], // Monday - Friday
+
+                start: '8:00', // a start time (10am in this example)
+                end: '22:00', // an end time (6pm in this example)
+            },
+            defaultView: 'agendaWeek',
+
+            defaultDate: '2017-04-12',
+
+            // Can click day/week names to navigate views
+            navLinks: true,
+
+            // Allow users to resize events.
+            editable: true,
+
+            // Allow "more" link when too many events.
+            eventLimit: true,
+            events: events,
+        });
+    });
+</script>
+
+{% endblock javascript %}
+
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+
+{% endblock stylesheets %}
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a></li>
+
+{% endblock crumb %}
+
+
+
+{% block content %}
+
+<section class="content">
+
+<div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+      Did you forget to fill out your schedule?
+</div>
+
+      <div class="row">
+          <div class="box box-primary">
+            <div class="box-body no-padding">
+              <!-- THE CALENDAR -->
+              <div id="calendar">
+
+              </div>
+              <!-- /.calendar -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /. box -->
+      </div>
+      <!-- /.row -->
+
+</section>
+
+
+
+{% endblock content %}

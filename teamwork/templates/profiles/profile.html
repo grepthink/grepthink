@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load static %}
+{% load gravatar %}
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+
+{% endblock stylesheets %}
+
+<!-- BREADCRUMB -->
+{% block crumb %}
+<li><a href="{% url 'profile' page_user.username %}">Profile</a></li>
+{% endblock crumb %}
+
+{% block content %}
+<!-- PROFILE HEADER -->
+<div class="box box-primary">
+    <div class="box-body box-profile">
+
+        <div class="text-center">
+        {% gravatar page_user.email 150 %}
+        </div>
+
+        <h3 class="profile-username text-center">{{page_user.profile.name}}</h3>
+
+        <p class="text-muted text-center">{{page_user.email}}</p>
+        <p class="text-muted text-center">{{page_user.username}}</p>
+
+
+        <!-- <ul class="nav nav-pills nav-stacked">
+        <li>
+            <a href="{% url 'edit_profile' user.username %}"
+                class="btn btn-default">Edit Profile</a>
+        </li>
+        <li>
+            <a href="{% url 'edit_schedule' user.username %}"
+               class="btn btn-default btn-flat">Set Availability</a>
+        </li>
+        </ul> -->
+    </div>
+</div>
+
+<!-- INFORMATION BOX -->
+<div class="box sm-box-solid">
+    <!-- BOX HEADER -->
+  <div class="box-header with-border">
+    <h3 class="box-title">About Me</h3>
+    <span class="pull-right">
+        {% if user.profile.isGT or page_user == request.user %}
+            <a href="{% url 'edit_profile' page_user.username %}">
+                <button class="btn btn-primary btn-flat">Edit Profile</button>
+            </a>
+            <a href="{% url 'edit_schedule' user.username %}">
+               <button class="btn btn-primary btn-flat">Edit Schedule</button>
+            </a>
+        {% endif %}
+        {% if request.user != page_user %}
+            <a href="{% url 'view_schedule' page_user.username %}">
+                <button class="btn btn-primary btn-flat">View Schedule</button>
+            </a>
+        {% endif %}
+        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+    </span>
+
+  </div>
+
+  <!-- BOX BODY -->
+  <div class="box-body">
+
+    <!-- INSTITUTION -->
+    <strong><i class="fa fa-book margin-r-5"></i> Institution</strong>
+    <p class="text-muted">{{page_user.profile.institution}}</p><hr>
+
+    <!-- LOCATION -->
+    <strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
+    <p class="text-muted">{{ page_user.profile.location }}</p><hr>
+
+    <!-- SHORT BIO -->
+    <strong><i class="fa fa-file-text-o margin-r-5"></i> Bio</strong>
+    <p>{{ page_user.profile.get_bio_as_markdown|safe }}</p>
+
+    <!-- IF USER IS NOT GT -->
+    {% if not page_user.profile.isGT %}
+        <!-- IF USER IS NOT A PROFESSOR -->
+        {% if not page_user.profile.isProf %}
+            <hr>
+            <strong><i class="fa fa-pencil margin-r-5"></i> Known Skills</strong>
+            {# p tag has different default padding -- using for now #}
+            <p>
+               {% for skill in page_user.profile.known_skills.all %}
+                <span class="label label-primary">{{ skill.skill }}</span>
+               {% endfor%}
+            </p><hr>
+
+            <strong><i class="fa fa-pencil margin-r-5"></i> Skills I Want to Learn</strong>
+            <p>
+               {% for skill in page_user.profile.learn_skills.all %}
+                <span class="label label-warning">{{ skill.skill }}</span>
+               {% endfor%}
+            </p>
+
+        {% endif %}
+    {% endif %}
+  </div>
+</div>
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Projects</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfile">
+        {% include "projects/partial_project_profile.html" with projects=projects %}
+    </div>
+
+  <!-- /.box-body -->
+</div>
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Courses</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfilesm">
+
+
+        {% for course in courses %}
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <a href="{% url 'view_one_course' course.slug %}" class="info-box-footer" style="border-radius: 10px">
+          <div class="info-box bg-aqua">
+            <span class="info-box-icon"><i class="fa fa-book"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">{{course.name}}</span>
+              <p>{{course.term}}&nbsp;{{course.year}}</p>
+
+              More info <i class="fa fa-arrow-circle-right"></i>
+
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+          </a>
+        </div>
+
+        {% empty %}
+
+         They are not in any courses.
+
+        {% endfor %}
+    </div>
+
+  <!-- /.box-body -->
+</div>
+
+{% endblock content %}

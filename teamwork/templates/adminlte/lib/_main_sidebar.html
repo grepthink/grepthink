@@ -1,0 +1,201 @@
+{% load adminlte_helpers %}
+
+{% load static %}
+
+<!-- Left side column. contains the sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+    {% if user.is_authenticated %}
+        <!-- Sidebar user panel -->
+        {% block user_panel %}
+        <div class="user-panel">
+            <div class="pull-left image">
+
+            <!-- Set the user image in sidebar -->
+            <img src="{% avatar_url size=90 %}" class="img-circle" alt="User Image">
+
+            </div>
+            <div class="pull-left info">
+                <p> <a href="{% url 'profile' user.username %}">
+                    {% firstof user.get_short_name user.get_username %}
+                    </a>
+                </p>
+                <a href="{% url 'profile' user.username %}"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        {% endblock %}
+    {% endif %}
+
+
+        <!-- search form -->
+        <div class="sidebar-form">
+          <form action="{% url 'search' %}" method="post" role="form" class="clearfix" enctype="multipart/form-data">
+          {% csrf_token %}
+            <div class="input-group">
+                <input type="text" id="search-menu" name="q" class="form-control" placeholder="Search..."
+                       autocomplete="off">
+                <span class="input-group-btn">
+            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+            </button>
+          </span>
+            </div>
+          </form>
+        </div>
+
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        {% block nav_links_ul %}
+        <ul class="sidebar-menu">
+            {% block nav_links_outer %}
+            <li class="header">{% block nav_heading %}MAIN NAVIGATION{% endblock %}</li>
+
+            {% block nav_links %}
+
+
+              {% if user.is_authenticated %}
+              <li>
+                  <a href="{% url 'index' %}">
+                      <i class="fa fa-dashboard"></i>
+                      <span>Home</span>
+                  </a>
+              </li>
+                  <!-- <li>
+                      <a href="{% url 'profile' user.username %}">
+                          <i class="fa fa-user"></i>
+                          <span>Profile</span>
+                      </a>
+                  </li> -->
+                  <li>
+                      {% if not user.profile.isGT %}
+                      <a href="{% url 'edit_schedule' user.username %}">
+                          <i class="fa fa-calendar-plus-o"></i>
+                          <span>Edit Schedule</span>
+                      </a>
+                      {% endif %}
+                  </li>
+
+
+                    <li>
+                        <a href="{% url 'create_project' %}">
+                            <i class="fa fa-pencil"></i>
+                            <span>Create Project</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'view_projects' %}">
+                            <i class="fa fa-briefcase"></i>
+                            <span>My Projects</span>
+                        </a>
+                    </li>
+                        <li>
+                            <a href="{% url 'view_matches' %}">
+                                <i class="fa fa-handshake-o"></i>
+                                <span>My Matches</span>
+                            </a>
+                        </li>
+                    {% if user.profile.isProf or user.profile.isGT%}
+                      <li>
+                          <a href="{% url 'create_course' %}">
+                              <i class="fa fa-plus"></i>
+                              <span>Create Course</span>
+                          </a>
+                      </li>
+                    {% endif %}
+                    {% if not user.profile.isProf %}
+                        {% if not user.profile.isGT %}
+                            <li>
+                                <a href="{% url 'join_course' %}">
+                                  <i class="fa fa-plus"></i>
+                                  <span>Join Course</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                    {# Hard coded to active. Haven't found a good way to dynamically set active class #}
+                    <li class="treeview active">
+                        <a href="{% url 'view_course' %}">
+                            <i class="fa fa-graduation-cap"></i>
+                                <span>My Courses</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                            <ul class="treeview-menu">
+                                {% if user.get_user_active_courses %}
+                                <li><a href="{% url 'view_course' %}"><i class="fa fa-circle-o"></i> View All </a></li>
+                                {% for course in user.get_user_active_courses %}
+                                    <li class="">
+                                        <a href="{% url 'view_one_course' course.slug %}"><i class="fa fa-circle-o">
+                                        </i>  {{ course.name }} </a>
+                                    </li>
+                                 {% endfor %}
+                                 {% endif %}
+                                 {% if not user.profile.isGT %}
+                                 {% if user.get_user_disabled_courses %}
+                                 <li class="treeview active">
+                                     <a href="#">
+                                         <i class="fa fa-flag-o"></i>
+                                             <span>Inactive Courses</span>
+                                         <span class="pull-right-container">
+                                             <i class="fa fa-angle-left pull-right"></i>
+                                         </span>
+                                     </a>
+                                         <ul class="treeview-menu">
+
+                                             {% for course in user.get_user_disabled_courses %}
+                                                 <li class="">
+                                                     <a href="{% url 'view_one_course' course.slug %}"><i class="fa fa-circle-o">
+                                                     </i>  {{ course.name }} </a>
+                                                 </li>
+                                              {% endfor %}
+                                  {% endif %}
+                                         </ul>
+                                 </li>
+                                 {% endif %}
+                            </ul>
+
+                    </li>
+
+                {% endif %}
+
+
+                <!-- Logged out sidebar links -->
+                {% if not user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'index' %}">
+                            <i class="fa fa-dashboard"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'about' %}">
+                            <i class="fa fa-lightbulb-o"></i>
+                            <span>About</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'login' %}">
+                            <i class="fa fa-sign-in"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'signup' %}">
+                            <i class="fa fa-user"></i>
+                            <span>Signup</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+            {% endblock nav_links %}
+            {% endblock nav_links_outer %}
+        </ul>
+        {% endblock nav_links_ul %}
+    </section>
+    <!-- /.sidebar -->
+</aside>

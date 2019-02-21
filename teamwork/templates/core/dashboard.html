@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Active Courses</h3>
+
+              <!-- Hiding prof search NOT IMPLEMENTED
+              <div class="box-tools">
+                <div class="input-group input-group-sm" style="width: 150px;">
+                  <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                </div>
+                </div>
+              </div> -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tbody>
+                <tr>
+                  <th style="text-align: center;">Course</th>
+                  <th style="text-align: center;">Edit</th>
+                  <th style="text-align: center;">Statistics</th>
+                  <th style="text-align: center;">Post Update</th>
+                  <th style="text-align: center;">Lock Interest</th>
+                  <th style="text-align: center;">Disable</th>
+                  <th style="text-align: center;">Add Code</th>
+                  <th style="text-align: center;">Course Size</th>
+                </tr>
+                {% for course in active_courses %}
+                <tr align="center">
+                  <td>
+                    <a style="link" href="{% url 'view_one_course' course.slug %}">
+                    <button class="btn btn-block btn-default btn-lg">
+                    {{course.name}}
+                    </button>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'edit_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <i class="glyphicon glyphicon-edit"></i> Edit
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'view_statistics' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <i class="glyphicon glyphicon-stats"></i> Stats
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'update_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                    <i class="glyphicon glyphicon-upload"></i>
+                    Post Update
+                    </a>
+                  </td>
+                  <td>
+                     {% if not course.limit_interest %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-lock"></i>
+                             Lock
+                         </a>
+                     {% else %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-unlock"></i>
+                             Unlock
+                         </a>
+                     {% endif %}
+                   </td>
+                   <td>
+                      <a href="{% url 'landing_disable' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                          <i class="glyphicon glyphicon-remove"></i>
+                          Disable
+                      </a>
+                    </td>
+                    <td><i>{{course.addCode}}</i></td>
+                    <td><span class="label label-success">{{course.students.all.count}}</span><td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td>Please</td>
+                  <td>Create</td>
+                  <td>a</td>
+                  <td>course</td>
+                  <td>first</td>
+                  <td><span class="label label-success">thanks</span></td>
+                </tr>
+                {% endfor %}
+              </tbody></table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+</div>
+<div class="row">
+        <div class="col-xs-12">
+          <div class="box collapsed-box">
+            <div class="box-header">
+              <h3 class="box-title">Disabled Courses</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tbody>
+                <tr>
+                  <th style="text-align: center;">Course</th>
+                  <th style="text-align: center;">Edit</th>
+                  <th style="text-align: center;">Statistics</th>
+                  <th style="text-align: center;">Post Update</th>
+                  <th style="text-align: center;">Lock Interest</th>
+                  <th style="text-align: center;">Enable</th>
+                  <th style="text-align: center;">Add Code</th>
+                  <th style="text-align: center;">Course Size</th>
+                </tr>
+                {% for course in disabled_courses %}
+                <tr align="center">
+                  <td>
+                    <a style="link" href="{% url 'view_one_course' course.slug %}">
+                    <button class="btn btn-block btn-default btn-lg">
+                    {{course.name}}
+                    </button>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'edit_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <i class="glyphicon glyphicon-edit"></i> Edit
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'view_statistics' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                      <i class="glyphicon glyphicon-stats"></i> Stats
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'update_course' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                    <i class="glyphicon glyphicon-upload"></i>
+                    Post Update
+                    </a>
+                  </td>
+                  <td>
+                     {% if not course.limit_interest %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-lock"></i>
+                             Lock
+                         </a>
+                     {% else %}
+                         <a href="{% url 'lock_interest' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                             <i class="fa fa-unlock"></i>
+                             Unlock
+                         </a>
+                     {% endif %}
+                   </td>
+                   <td>
+                      <a href="{% url 'landing_disable' course.slug %}" class="btn btn-app" style="text-decoration: none; color: #666;">
+                          <i class="glyphicon glyphicon-ok"></i>
+                          Activate
+                      </a>
+                    </td>
+                   <td><i>{{course.addCode}}</i></td>
+                   <td><span class="label label-success">{{course.students.all.count}}</span><td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td>Please</td>
+                  <td>Create</td>
+                  <td>a</td>
+                  <td>course</td>
+                  <td>first</td>
+                  <td><span class="label label-success">thanks</span></td>
+                </tr>
+                {% endfor %}
+              </tbody></table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+</div>
+{% endblock content %}

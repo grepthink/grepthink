@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<!-- {% block crumb %}
+<li><a href="{% url 'view_projects' %}">My Projects</a></li>
+{% endblock crumb %} -->
+
+<div class="box box-success sm-box-solid">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Active Projects</h6>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfile">
+        {% include "projects/partial_project_profile.html" with projects=active %}
+    </div>
+
+  <!-- /.box-body -->
+</div>
+
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Inactive Projects</h6>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="box-body ScrollStyleProfile">
+        {% include "projects/partial_project_profile.html" with projects=inactive %}
+    </div>
+
+  <!-- /.box-body -->
+</div>
+
+{% endblock content %}

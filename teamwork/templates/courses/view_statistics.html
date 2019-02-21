@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/stats.css' %}">
+
+{% endblock stylesheets %}
+
+{% block title %} Statistics {% endblock %}
+
+<!-- {% block crumb %}
+<li><a href="{% url 'view_one_course' cur_course.slug %}">{{ cur_course.name }}</a></li>
+<li><a href="">Course Statistics</a></li>
+{% endblock crumb %} -->
+
+{% block content %}
+<section class="statistics">
+    <div class="row">
+        <div class="col-md-6">
+             <div class="box box-primary">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         <h2 class="panel-title"><b>In Project VS Not in Project</b>
+                         </h2>
+                     </div>
+                     <div class="panel-body" style="position: relative; min-height: 170px; min-width: 100px">
+                        <input type="hidden" id="total_students" name="variable" value="{{ num_total }}">
+                        <input type="hidden" id="total_projects" name="variable" value="{{ num_projects }}">
+                        <input type="hidden" id="students_not" name="variable" value="{{ num_not }}">
+                        <input type="hidden" id="students_projects" name="variable" value="{{ num_in }}">
+                        <div style="position: absolute; width: 70px, height: 70px;">
+                            <canvas id="doughnutChart" style="z-index: 1;"></canvas>
+
+
+                        </div>
+                        <div style="position: absolute; top: 10px; right: 10px">
+                                <ul class="legend">
+                                    <li><h3><span class="in"></span> IN <b>{{num_in}}</b></h3></li>
+                                    <li><h3><span class="out"></span> OUT <b>{{num_not}}</b></h3></li>
+                                </ul>
+                            </div>
+                     </div>
+
+                     <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+                     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+                     <script type="text/javascript" src="{% static 'js/stats.js' %}"></script>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-6">
+             <div class="box box-primary">
+                 <div class="panel panel-default">
+                     <div class="panel-heading">
+                         <h2 class="panel-title"><b>Students Not in Projects:</b> {{students_projects_not|length}}
+                         </h2>
+                     </div>
+                     <div class="panel-body ScrollStyle">
+                         <p>
+                             {% for student in students_projects_not %}
+                                 <li>{{student.username}}</li>
+                             {% endfor %}
+                         </p></br>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <div class="row">
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Projects:</b> {{cleanup_projects|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body ScrollStyle">
+                        <p>
+                            {% for project in cleanup_projects %}
+                                <li>{{project.title}}</li>
+                                <ul>
+                                    {% for mem in project.members.all %}
+                                        <li>{{mem.username}}</li>
+
+                                    {% endfor %}
+                                </ul>
+                            {% endfor %}
+                        </p></br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title"><b>Emails:</b> {{emails|length}}
+                        </h2>
+                    </div>
+                    <div class="panel-body ScrollStyle">
+                        <p>
+                            {% for student_email in emails %}
+                                <li>{{student_email}}</li>
+                            {% endfor %}
+                        </p></br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

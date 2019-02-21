@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block content %}
+    <html>
+      <head>
+        <script src="{% static 'js/projects.js' %}"></script>
+        <style>
+          table {
+            border-collapse: collapse;
+            width: 100%;
+          }
+
+          th, td {
+            text-align: left;
+            padding: 8px;
+          }
+          th {
+            background-color: #4CAF50;
+            color: black;
+          }
+        </style>
+      </head>
+    </html>
+
+    <h2>TSR Form Evaluations</h2>
+    {% for tsrset in tsrs%}
+    <h2>For Sprint {{tsrset.number}}</h2>
+  <table>
+      <tr>
+        <th>Student</th>
+        <th>Evaluators</th>
+        <th>%Contributions</th>
+        <th>Positive Feedbacks</th>
+        <th>Negative Feedbacks</th>
+        <th> Tasks Completed </th>
+        <th> Performance Assessment </th>
+        <th> Notes </th>
+
+      </tr>
+
+    {% for tsrdict in tsrset.dict %}
+      <tr>
+        <td>  <a href="mailto:{{tsr.evaluatee.email}}">{{tsrdict.email}}</a></td>
+        {% for tsr in tsrdict.tsr %}
+        <td>
+            <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
+            <p>
+        </td>
+
+        <td>
+          {% if contribute_levels.high < tsr.percent_contribution%}
+            <div style="color:blue">{{tsr.percent_contribution}}</div>
+          {% else %}
+          {% if contribute_levels.low < tsr.percent_contribution %}
+            <div style="color:green">{{tsr.percent_contribution}}</div>
+          {%else%}
+            <div style="color:red">{{tsr.percent_contribution}}</div>
+          {% endif %}
+          {% endif %}
+            <p>
+        </td>
+
+        <td>
+    	     {{tsr.positive_feedback}}
+        </td>
+
+        <td>
+          {{tsr.negative_feedback}}
+        </td>
+
+        <td>
+          {{tsr.tasks_completed}}
+        </td>
+        <td>
+          {{tsr.performance_assessment}}
+        </td>
+        <td>
+          {{tsr.notes}}
+        </td>
+      </tr>
+      <td>
+      {% endfor %}
+    </td>
+    {% endfor %}
+  </table>
+  <br>
+  <h3>Average Scores</h3><br>
+  <table>
+    <tr>
+      <th>student</th>
+      <th>average score</th>
+    </tr>
+  {% for avgs in tsrset.averages %}
+  <tr>
+    <td>{{avgs.email}}</td>
+    <td>
+      {% if contribute_levels.high < avgs.avg%}
+          <div style="color:blue">{{avgs.avg}}</div>
+      {% else %}
+      {% if contribute_levels.low < avgs.avg %}
+        <div style="color:green">{{avgs.avg}}</div>
+      {%else%}
+
+        <div style="color:red">{{avgs.avg}}</div>
+      {% endif %}
+      {% endif %}
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+  {% endfor %}
+<!-- {{tsr.tasks_completed}} {{tsr.performance_assessment}}
+{{tsr.notes}}
+{{tsr.ass_number}} -->
+    {% for tsrset in tsrs%}
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <h3 class="box-title">Sprint {{ tsrset.number }}</h3>
+
+        <div class="box-tools">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="box-body no-padding">
+       <ul class="nav nav-pills nav-stacked">
+
+                <table class="table table-hover">
+                           <tbody>
+                           <tr>
+                             <th>User</th>
+                             <th>Evaluators</th>
+                             <th>Contribution</th>
+                             <th>Positive Feedback</th>
+                             <th>Negative Feedback</th>
+                             <th>Tasks Completed</th>
+                             <th>Performance Assessment</th>
+                             <th>Notes</th>
+                           </tr>
+
+                           {% for tsrdict in tsrset.dict %}
+                             <tr>
+                               <td>
+                                   <a href="mailto:{{tsr.evaluatee.email}}">{{tsrdict.email}}</a>
+                               </td>
+                               {% for tsr in tsrdict.tsr %}
+                               <td>
+                                   <a href="mailto:{{tsr.evaluator.email}}">{{tsr.evaluator.email}}</a>
+                                   <p>
+                               </td>
+
+                               <td>
+                                 {% if contribute_levels.high < tsr.percent_contribution%}
+                                   <div style="color:blue">{{tsr.percent_contribution}}</div>
+                                 {% else %}
+                                 {% if contribute_levels.low < tsr.percent_contribution %}
+                                   <div style="color:green">{{tsr.percent_contribution}}</div>
+                                 {%else%}
+                                   <div style="color:red">{{tsr.percent_contribution}}</div>
+                                 {% endif %}
+                                 {% endif %}
+                                   <p>
+                               </td>
+
+                               <td>
+                           	     {{tsr.positive_feedback}}
+                               </td>
+
+                               <td>
+                                 {{tsr.negative_feedback}}
+                               </td>
+
+                               <td>
+                                 {{tsr.tasks_completed}}
+                               </td>
+                               <td>
+                                 {{tsr.performance_assessment}}
+                               </td>
+                               <td>
+                                 {{tsr.notes}}
+                               </td>
+                             </tr>
+                             <td>
+                             {% endfor %}
+                           </td>
+                           {% endfor %}
+
+                           </tbody>
+               </table>
+       </ul>
+     </div>
+
+      <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <h3 class="box-title">Average Scores</h3>
+
+        <div class="box-tools">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+          </button>
+        </div>
+
+      </div>
+    <div class="box-body no-padding">
+     <ul class="nav nav-pills nav-stacked">
+         <table>
+           <tr>
+             <th>Student</th>
+             <th>Average Score</th>
+           </tr>
+         {% for avgs in tsrset.averages %}
+         <tr>
+           <td>{{ avgs.email }}</td>
+           <td>
+             {% if contribute_levels.high < avgs.avg%}
+                 <div style="color:blue">{{avgs.avg}}</div>
+             {% else %}
+             {% if contribute_levels.low < avgs.avg %}
+               <div style="color:green">{{avgs.avg}}</div>
+             {%else%}
+
+               <div style="color:red">{{avgs.avg}}</div>
+             {% endif %}
+             {% endif %}
+             </td>
+         </tr>
+         {% endfor %}
+       </table>
+   </ul>
+   </div>
+   </div>
+       
+  {% endfor %}
+
+{% endblock content %}

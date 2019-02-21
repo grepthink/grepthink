@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+    {{block.super}}
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+{% endblock stylesheets %}
+
+{% block crumb %}
+<li><a href="{% url 'view_matches' %}"> My Matches </a></li>
+{% endblock crumb %}
+
+{% block content %}
+
+{% if not user.profile.isProf%}
+<section class="matches">
+    <p>
+        This page shows prospective students in each or your courses that would work well with your projects based
+        on their skills, schedule, and interest in that project.
+    </p>
+    {% for p_match_tup in project_match_list %}
+    {% if forloop.first %}<div class="row">{% endif %}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ p_match_tup.0.title }}</h3>
+                </div>
+                <div class="panel-body ScrollStyle">
+                    <p class="lead">
+                        {{ p_match_tup.0.tagline }}
+                    </p>
+                    <p>
+                        <strong>Owner</strong>
+                        <span class="label label-primary">
+                            {{ p_match_tup.0.creator }}
+                        </span>
+                    </p>
+                    <p><strong>Current Members</strong>
+                        {% for mem in p_match_tup.0.members.all %}
+                        {% if mem.username != null %}
+                        <a href="{% url 'profile' mem.username %}">
+                        <span class="label label-primary">
+                                <i class="fa fa-user"></i>
+                                {{ mem.username }}
+                        </span>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </p>
+                    {% comment %}
+                    {% if p_match_tup.1 %}
+                    <button class="btn btn-default btn-sm" name="matchstats" value="{{p_match_tup.1}}">Match Stats
+                    </button>
+                    <a href="{% url 'matchstats' p_match_tup.0.slug %}"><p> MatchStats </p> </a>
+                    {% endif %}
+                    {% endcomment %}
+                    <p>The following students may work well with this project:
+                       <span class="tooltip2"><i class='glyphicon glyphicon-info-sign'></i>
+                            <span class="tooltiptext2">Color shows interest score. <br />
+                                <span class="label label-success">5</span>
+                                <span class="label label-info">4</span>
+                                <span class="label label-primary">3</span>
+                                <span class="label label-warning">2</span>
+                                <span class="label label-danger">1</span>
+                            </span>
+                        </span>
+                    </p>
+
+                    <p>
+                    <ol>
+                        {% for match in p_match_tup.1 %}
+                        <li>
+                            <a href="{% url 'profile' match.0.username %}">
+                            {% if match.1.1 == 5 %}
+                                <span class="label label-success">
+                            {% elif match.1.1 == 4 %}
+                                <span class="label label-info">
+                            {% elif match.1.1 == 3 %}
+                                <span class="label label-primary">
+                            {% elif match.1.1 == 2 %}
+                                <span class="label label-warning">
+                            {% else %}
+                                <span class="label label-danger">
+                            {% endif %}
+                                <i class="fa fa-user"></i>
+                                {{ match.0.username }}
+                            </span>
+                            </a>
+                        </li>
+                        {% empty %}
+                        <h3>
+                            <font color="red">Could not find any matches for this project</font>
+                        </h3>
+                        {% endfor %}
+                    </ol>
+                    </p>
+                </div>
+                <div class="panel-footer clearfix">
+
+                  {% if request.user.username == p_match_tup.0.creator %}
+                  <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.0.slug %}">
+                      <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                      </button>
+                  </a>
+                    <a href="{% url 'edit_project' p_match_tup.0.slug %}">
+                        <button class="btn btn-success">
+                            <i class="fa fa-edit"></i>
+                            Edit
+                        </button>
+                    </a>
+                  {% endif %}
+                  <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.0.slug %}">
+                      <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                      </button>
+                  </a>
+                    <a href="{% url 'view_one_project' p_match_tup.0.slug %}"
+                        class="pull-right">
+                        <button class="btn btn-info">
+                            <i class="fa fa-eye"></i>
+                            View
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
+        {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+    {% empty %}
+        <div class="alert alert-warning" role="alert">
+            <i class="fa fa-warning"></i>
+            There are no projects yet. Go ahead and
+            <a href="{% url 'create_project' %}" class="alert-link">
+                create one now!
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+</section>
+
+{% else %}
+{# Professor match view #}
+<section class="prof-matches">
+    <p>
+        This page shows prospective students in each or your courses that would work well with a specific project based
+        on their skills, schedule, and interest in that project.
+    </p>
+{% for course in course_set %}
+<div class="box box-solid  collapsed-box">
+  <div class="box-header with-border">
+    <h3 class="box-title">{{course.name}}</h3>
+
+    <div class="box-tools">
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="box-body no-padding">
+    <!-- <h2 class="page-header">{{course.name}}</h2> -->
+    <!-- <div class="row"> -->
+        {% for p_match_tup in project_match_list %}
+            {% if course.name == p_match_tup.0.name %}
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ p_match_tup.1.title }}</h3>
+                        </div>
+                        <div class="panel-body ScrollStyle">
+                            <p>
+                                <strong>Owner</strong>
+                                <span class="label label-primary">
+                                    {{ p_match_tup.1.creator }}
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Current Members</strong>
+                                {% for mem in p_match_tup.1.members.all %}
+                                    {% if mem.username != null %}
+                                    <a href="{% url 'profile' mem.username %}">
+                                    <span class="label label-primary">
+                                            <i class="fa fa-user"></i>
+                                            {{ mem.username }}
+                                    </span>
+                                    </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+
+                            {% comment %}
+                            {% if p_match_tup.1 %}
+                            <a style="display:block" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                                <button class="btn btn-default btn-xs" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                                </button>
+                            </a>
+                            {% endif %}
+                            {% endcomment %}
+
+                            <p>The following students may work well with this project: </p>
+                            <p>
+                            <div class="tooltip">Hover over me
+                                <span class="tooltiptext">Tooltip text</span>
+                            </div>
+                            <ol>
+                                {% for match in p_match_tup.2 %}
+                                <li>
+                                    <a href="{% url 'profile' match.0.username %}">
+                                    {% if match.1.1 == 5 %}
+                                        <span class="label label-success">
+                                    {% elif match.1.1 == 4 %}
+                                        <span class="label label-info">
+                                    {% elif match.1.1 == 3 %}
+                                        <span class="label label-primary">
+                                    {% elif match.1.1 == 2 %}
+                                        <span class="label label-warning">
+                                    {% else %}
+                                        <span class="label label-danger">
+                                    {% endif %}
+                                        <i class="fa fa-user"></i>
+                                        {{ match.0.username }}
+                                    </span>
+                                    </a>
+                                </li>
+                                {% empty %}
+                                <h6>
+                                    <font color="red">Could not find any matches for this project</font>
+                                </h6>
+                                {% endfor %}
+                            </ol>
+                            </p>
+                        </div>
+                        <div class="panel-footer clearfix">
+                          {% if request.user.username == p_match_tup.1.creator %}
+                          <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                              <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                              </button>
+                          </a>
+                            <a href="{% url 'edit_project' p_match_tup.1.slug %}">
+                                <button class="btn btn-success">
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+                                </button>
+                            </a>
+                          {% endif %}
+                          {% if p_match_tup.1 %}
+                          <a style="display:block" class="pull-left" href="{% url 'matchstats' p_match_tup.1.slug %}">
+                              <button class="btn btn-info btn-sm" name="matchstats" value="{{p_match_tup.2}}">Match Stats
+                              </button>
+                          </a>
+                          {% endif %}
+                            <a href="{% url 'view_one_project' p_match_tup.1.slug %}"
+                                class="pull-right">
+                                <button class="btn btn-primary">
+                                    <i class="fa fa-eye"></i>
+                                    View
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+            {# If the projects list is empty, display empty message #}
+            <div class="alert alert-warning" role="alert">
+                <i class="fa fa-warning"></i>
+                There are no projects yet in your course. Go ahead and
+                <a href="{% url 'create_project' %}" class="alert-link">
+                    create one now!
+                </a>
+            </div>
+        {% endfor %}
+    <!-- </div> {# end course row div #} -->
+    </div>
+</div>
+{% empty %}
+    {# If the courses list is empty, display empty message #}
+    <div class="alert alert-warning" role="alert">
+        <i class="fa fa-warning"></i>
+        You have no courses. Go ahead and
+        <a href="{% url 'create_course' %}" class="alert-link">
+            create one now!
+        </a>
+    </div>
+{% endfor %}
+</section>
+{% endif %}
+
+{% endblock content %}

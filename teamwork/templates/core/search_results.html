@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load gravatar %}
+
+{% block content %}
+
+
+
+
+{% include "projects/partial_project_list.html" with projects=project_results box_label='Search Results' %}
+
+<div class="row">
+
+  <div class="col-md-12">
+    <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">Users</h3>
+
+        <div class="box-tools pull-right">
+          <span class="label label-primary">Search Results</span>
+          <span class="label label-danger">{{user_results.all.count}}</span>
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+
+      </div> <!-- /.box-header -->
+
+      <div class="box-body">
+        <ul class="users-list clearfix">
+          {% for u in user_results.all %}
+          {% if u.username != null %}
+            <li style="list-style-type: none;">
+              <a href="{% url 'profile' u.username %}">
+                  <div class="img-circle">
+                  {% gravatar u.email 50 %}
+                  </div>
+              </a>
+              <a class="users-list-name" href="{% url 'profile' u.username %}">{% firstof u.user.get_short_name u.get_username %}</a>
+              <span class="users-list-date"><a href="mailto:{{u.email}}" target="_top">{{u.email}}</a></span>
+            </li>
+          {% endif %}
+          {% empty %}
+          No users found matching that query
+          {% endfor %}
+        </ul>
+      </div> <!-- /.box-body -->
+      <div class="box-footer text-center">
+        <!-- Disabled until it can be implimented -andgates -->
+        <!-- <a href="javascript:void(0)" class="uppercase">View All Users</a> -->
+      </div><!-- /.box-footer -->
+    </div><!--/.box -->
+  </div><!-- Col -->
+
+</div> <!-- Row -->
+
+<div class="row">
+
+  <div class="col-md-12">
+    <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">Courses</h3>
+
+        <div class="box-tools pull-right">
+          <span class="label label-primary">Search Results</span>
+          <span class="label label-danger">{{course_results.all.count}}</span>
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+
+      </div> <!-- /.box-header -->
+
+      <div class="box-body ">
+
+
+
+          {% for course in course_results %}
+
+              <div class="small-box bg-aqua" style="border-radius: 10px">
+                <div class="inner">
+                  <h3>{{course.name}}</h3>
+
+                  <p>{{course.term}}  {{course.year}}</p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-book"></i>
+                </div>
+                <a href="{% url 'view_one_course' course.slug %}" class="small-box-footer" style="border-radius: 10px">
+                  More info <i class="fa fa-arrow-circle-right"></i>
+                </a>
+                </div>
+
+
+          {% empty %}
+
+            </h3> No courses found matching that query.</h3>
+
+          {% endfor %}
+
+
+
+
+
+      </div><!-- /.box-body -->
+
+    </div><!--/.box -->
+  </div><!-- Col -->
+
+</div> <!-- Row -->
+
+
+{% endblock content %}

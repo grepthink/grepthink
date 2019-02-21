@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+{# following 2 blocks copied from edit_project.html #}
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $(".select2").select2({
+    ajax: {
+      url: "ajax/edit_select_members/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        console.log(data);
+        console.log(params);
+
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    placeholder: "Search for members to add",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
+  $(".s2_known_skills").select2({
+    ajax: {
+      url: "ajax/edit_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+  $(".s2_learn_skills").select2({
+    ajax: {
+      url: "ajax/edit_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
+      },
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+    });
+});
+
+</script>
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+  {{block.super}}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+{% if user.profile.isGT %}
+<form action="{% url 'edit_profile' profile %}" method="post" role="form" enctype="multipart/form-data">
+{% else %}
+<form action="{% url 'edit_profile' user.username %}" method="post" role="form" enctype="multipart/form-data">
+{% endif %}
+
+ <div class="row">
+    <div class="col-md-6 clearfix">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Edit Profile</h3>
+            </div>
+
+
+              <div class="box-body">
+                  {% csrf_token %}
+                  {{ form.status }}
+                  <div class="form-group">
+                    <label>Full Name</label>
+                    {{ form.name }}
+                  </div>
+                  <div class="form-group">
+                    <label>Primary Email</label>
+                    {{ form.email }}
+                  </div>
+                  <div class="form-group">
+                    <label>Institution</label>
+                    {{ form.institution }}
+                  </div>
+
+                  <div class="form-group">
+                    <label>Location</label>
+                    {{ form.location }}
+                  </div>
+
+                  <div class="form-group">
+                    <label>Bio <a href="https://guides.github.com/features/mastering-markdown/">[Markdown supported]</a>:</label>
+                    {{ form.bio }}
+                  </div>
+
+                  <div class="box-footer">
+                      <div class="pull-left">
+                          {% if user.profile.isGT %}
+                           <a href="{% url 'profile' profile.user.username %}">
+                          {% else %}
+                           <a href="{% url 'profile' user.username %}">
+                          {% endif %}
+                              <button class="btn btn-danger" type="button">
+                                  Cancel
+                              </button>
+                          </a>
+                      </div>
+                      <div class="pull-right">
+                          <button class="btn btn-success" type="submit" name="SUBMIT">
+                              Save Changes
+                          </button>
+                      </div>
+                  </div>
+                </div>
+
+          </div>
+          <div class="box box-danger">
+               <div class="box-header with-border">
+                 <h3 class="box-title">Delete Account</h3>
+               </div>
+               <div class="box-body">
+                   <span>Warning, this is a permanent deletion of your account</span>
+                   <div class="pull-right">
+                     <button class="btn btn-danger btn-sm" name="delete_profile" value="delete_profile"><i class="fa fa-trash"> </i>
+                         Delete Account?
+                     </button>
+                   </div>
+               </div>
+
+          </div>
+        </div>
+        <div class="col-md-6 clearfix">
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Add Skills</h3>
+          </div>
+
+              <div class="box-body">
+                <div class="form-group">
+                  <label>Add Known Skills</label>
+                  <select class="form-control s2_known_skills" id="known_skills" name="known_skills" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Add Skills You Want to Learn</label>
+                  <select class="form-control s2_learn_skills" id="learn_skills" name="learn_skills" multiple="multiple" style="width: 100%;">
+                  </select>
+                </div>
+              </div>
+
+        </div>
+        </div>
+        <div class="col-md-6 clearfix">
+        <div class="box box-danger">
+          <div class="box-header with-border">
+            <h3 class="box-title">Remove Skills</h3>
+          </div>
+          <div class="box-body">
+          {# Need to fix button grouping #}
+            <div class="box-header with-border">
+            <label>Known Skills</label>
+            {% if user.profile.isGT %}
+        {#     <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
+            {% else %}
+            {# <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
+            {% endif %}
+                {% csrf_token %}
+                {% for skill in known_skills_list %}
+                    <button class="btn btn-danger btn-sm" name="known_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                    </button>
+                {% empty %}
+                <lead>No known skills to remove</lead>
+                {% endfor %}
+            {# </form> #}
+            </div>
+            <div class="box-header with-border">
+            <label>Skills you want to Learn</label>
+            {% if user.profile.isGT %}
+            {# <form action="{% url 'edit_profile' profile %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
+            {% else %}
+            {# <form action="{% url 'edit_profile' user.username %}" method="post" role="form" class="clearfix" enctype="multipart/form-data"> #}
+            {% endif %}
+                {% csrf_token %}
+                {% for skill in learn_skills_list %}
+                    <button class="btn btn-danger btn-sm" name="learn_remove" value="{{skill.skill}}"><i class="fa fa-trash"></i> {{skill.skill}}
+                    </button>
+                {% empty %}
+                <lead>No skills you want to learn to remove</lead>
+                {% endfor %}
+            {# </form> #}
+            </div>
+          </div>
+        </div>
+</div>
+
+
+
+    <div class="col-md-6 clearfix">
+        <div class="box box-primary">
+           <div class="box-header with-border">
+             <h3 class="box-title">Avatar</h3>
+           </div>
+           <div class="box-body">
+               <div class="form-group">
+                 Grepthink currently uses uses <b>Gravatar</b> for users' Avatars, sign up <a href="https://en.gravatar.com/">here</a> with the email you used to sign up for Grepthink
+               </div>
+           </div>
+       </div>
+           {# next element in row #}
+
+    </div>
+
+</form>
+
+
+
+</div>
+
+
+{% endblock content %}

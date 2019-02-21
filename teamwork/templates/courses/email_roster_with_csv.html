@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block head %}
+<script src="{% static 'js/course.js' %}"></script>
+{% endblock head %}
+
+<!-- {% block crumb %}
+<li><a href="{% url 'view_course' %}">Courses</a></li>
+<li><a href="{% url 'view_one_course' slug %}">{{ course.name }}</a></li>
+<li><a href="">Email Roster w/ CSV</a></li>
+{% endblock crumb %} -->
+
+{% block content %}
+
+<div class="col-md-3">
+
+          <a href="{% url 'view_one_course' slug %}">
+            <button type="button" class="btn btn-primary btn-block margin-bottom">Back to Course</button>
+          </a>
+
+          <div class="box box-solid">
+              <div class="box-header with-border">
+              <h3 class="box-title">Course Addcode</h3>
+
+              </div>
+              <div class="box-body no-padding">
+               <ul class="nav nav-pills nav-stacked">
+                      <li><a> {{ addcode }}</a></li>
+               </ul>
+             </div>
+          </div>
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <h3 class="box-title">Recipients ( {{ count }} )</h3>
+
+              <div class="box-tools smallScrollStyle">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+              </div>
+
+            </div>
+
+            <div class="box-body no-padding emailScroll">
+             <ul style="list-style-type:none" >
+                 {% for stud in students %}
+                    <li> <a href="#">{{ stud }} </a></li>
+                 {% endfor %}
+             </ul>
+            </div>
+
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+</div>
+
+
+<div class="col-md-9">
+<div class="box box-primary">
+
+    <div class="box-header with-border">
+      <h3 class="box-title">Compose New Message</h3>
+    </div>
+
+<form action="{% url 'email_csv' slug %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.status }}
+    <!-- /.box-header -->
+    <div class="box-body">
+
+        <div class="form-group">
+            <strong>Subject</strong>
+            {{form.subject}}
+        </div>
+
+        <div class="form-group">
+            <strong>Body</strong>
+            {{form.content}}
+        </div>
+
+{% comment %}
+        <div class="form-group">
+            <div class="btn btn-default btn-file">
+              <i class="fa fa-paperclip"></i> Attachment
+              <input type="file" name="attachment">
+            </div>
+            <p class="help-block">Max. 32MB</p>
+        </div>
+{% endcomment %}
+
+    </div>
+
+    <!-- /.box-body -->
+    <div class="box-footer">
+      <div class="pull-right">
+        <button class="btn btn-primary" type="submit" name="SUBMIT"><i class="fa fa-envelope-o"></i> Send</button>
+      </div>
+      <a href="{% url 'view_one_course' slug %}"><button type="button" class="btn btn-default"><i class="fa fa-times"></i> Discard</button></a>
+    </div>
+</form>
+    <!-- /.box-footer -->
+</div>
+</div>
+
+{% endblock content %}

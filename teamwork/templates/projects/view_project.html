@@ -1,0 +1,830 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{# Clear out javascript block at bottom of page so we can import specific js #}
+{% block javascript %}
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+
+<!-- Slimscroll -->
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+
+<script src="{% static 'js/fastclick.js' %}"></script>
+
+<script src="{% static 'js/moment.min.js' %}"></script>
+
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+
+<script src="{% static 'js/schedule.js' %}"></script>
+
+
+{% endblock javascript %}
+
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <!-- fullCalendar 2.2.5-->
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fullcalendar.print.css' %}" media="print">
+  <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+
+{% endblock stylesheets %}
+
+{# Add the breadcrumbs for this page #}
+{% block crumb %}
+
+{# Breadcrumb for the course that this project is in #}
+<li><a href="{% url 'view_one_course' course.slug %}"> {{course.name}} </a></li>
+
+{# Breadcrumb for this project #}
+<li><a href="{% url 'view_one_project' project.slug %}"> {{project.title}} </a></li>
+
+{% endblock crumb %}
+
+
+{% block content %}
+
+<div>
+    <!-- Custom Tabs -->
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Description</a></li>
+            <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Updates</a></li>
+            <li class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Resources</a></li>
+            <!-- <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Meeting Times</a></li> -->
+            {% if user in project.members.all %}
+            <li class=""><a href="#tab_5" data-toggle="tab"
+                aria-expanded="false">TSR</a></li>
+            {% endif %}
+            {% if request.user in staff or request.user.profile.isGT %}
+            <li class=""><a href="#tab_6" data-toggle="tab" aria-expanded="false">View TSR</a></li>
+            {% endif %}
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Project Tools <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'edit_project' project.slug %}">Edit</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'post_update' project.slug %}">Post Update</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'resource_update' project.slug %}">Add Resource</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'view_meetings' project.slug %}">Meeting Times </a></li>
+
+                    {% if user in project.members.all %}
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'leave_project' project.slug %}">Leave Project </a></li>
+                    {% endif %}
+
+                </ul>
+            </li>
+
+            <!-- COGWHEEL -->
+            {% if request.user in staff or request.user.profile.isGT or user in project.members.all%}
+            <li class="pull-right"><a href="{% url 'edit_project' project.slug %}" class="text-muted"><i class="fa fa-gear"></i></a></li>
+            {% endif %}
+            <!-- EMAIL STUDENTS IN PROJECT -->
+            {% if request.user in staff %}
+            <li class="pull-right">
+            <a href="{% url 'email_project' project.slug %}">
+                Email Project Members
+            </a>
+            </li>
+            {% endif %}
+            <!-- REQUEST TO JOIN PROJECT BUTTON -->
+
+            {% if not request.user in staff %}
+            {% if not project.no_request%}
+            {% if not user in project.members.all %}
+            {% if requestButton %}
+            <li class="pull-right">
+            <a href="{% url 'request_to_join' project.slug %}">
+                Request To Join Project
+                <i class="fa fa-plus"></i>
+            </a>
+            </li>
+            {% else %}
+            <li class="pull-right">
+            <a href="{% url 'request_to_join' project.slug %}">
+                Cancel Your Request to Join
+                <i class="fa fa-undo"></i>
+            </a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% endif %}
+
+
+        </ul>
+
+        <div class="tab-content">
+            <!-- TAB 1 -->
+            <div class="tab-pane active" id="tab_1">
+                <div class="content">
+                    {{ project.get_content_as_markdown|safe }}
+                </div>
+                <div>
+                    <div class="box box-success collapsed-box">
+                        <div class="box-header with-border">
+                            <strong>Project Owner</strong>
+                            &nbsp;
+                            <a href="{% url 'profile' project.creator.username %}">
+                            {% if project.creator.profile.isGT %}
+                                <span class="label label-success">
+                            {% elif project.creator.profile.isProf %}
+                                <span class="label label-warning">
+                            {% else %}
+                                <span class="label label-info">
+                            {% endif %}
+                                {{ project.creator.username }}
+                            </span></a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Members</strong>
+                            &nbsp;
+                            {% for mem in project.members.all %}
+                            {% if mem.username != null %}
+                            <a href="{% url 'profile' mem.username %}">
+                            <span class="label label-primary">
+                                {{ mem.username }}
+                            </span>
+                            </a>
+                            &nbsp;
+                            {% endif %}
+                            {% endfor %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Desired Skills</strong>
+                            &nbsp;
+                            {% if project.desired_skills != none %}
+                            {% for skill in project.desired_skills.all %}
+                            <span class="label label-warning">
+                                {{ skill.skill }}
+                            </span>
+                            &nbsp;
+                            {% endfor %}
+                            {% endif %}
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">More Info</button>
+                            </div>
+                            <!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body" style="display: none;">
+                            <strong>Teacher Assistant</strong>
+                            &nbsp;
+                            {% if project.ta %}
+                            <a href="{% url 'profile' project.ta.username %}">
+                                <span class="label label-info">
+                                    {{ project.ta.username }}
+                                </span>
+                            </a>
+                            {% endif %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Scrum Master</strong>
+                            &nbsp;
+                            {% if project.scrum_master %}
+                            <a href="{% url 'profile' project.scrum_master.username %}">
+                                <span class="label label-info">
+                                    {{ project.scrum_master.username }}
+                                </span>
+                            </a>
+                            {% endif %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Meeting Location</strong>
+                            &nbsp;
+                            {% if project.ta_location == "" %}
+                                N/A
+                            {% else %}
+                                {{ project.ta_location }}
+                            {% endif %}
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <strong>Meeting Time</strong>
+                            &nbsp;
+                            {% if project.ta_time == "" %}
+                                N/A
+                            {% else%}
+                                {{ project.ta_time }}
+                            {% endif %}
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2 - Updates -->
+            <div class="tab-pane" id="tab_2">
+
+                <h3>Updates</h3>
+                <ul class="timeline">
+                    <!-- timeline time label -->
+                    <li class="time-label" style="list-style: none">
+                        <span class="bg-red">
+                            {{project.title}}
+                        </span>
+                    </li>
+                    <!-- /.timeline-label -->
+                    {% if user in project.members.all or user in course.get_staff or request.user.profile.isGT%}
+                    <li style="list-style: none"
+                        onclick="window.location =
+                        '{% url 'post_update' project.slug %}'">
+                        <i class="fa fa-plus bg-green"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ffffff">
+                            <div class="timeline-header">
+                                Add an update
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                    {% for up in updates.all %}
+                    <li style="list-style: none">
+                        <i class="fa fa-comments bg-blue"></i>
+                        <div class="timeline-item">
+                            <div class="timeline-header clearfix">
+                                {{up.update_title}}
+                                {% if user == up.user or user.profile.isGT %}
+                                <span class="pull-right">
+                                    <a href='{% url 'update_project_update' project.slug up.id %}'>
+                                        <button class="btn btn-default btn-xs">
+                                            <i class="fa fa-gear"></i>
+                                        </button>
+                                    </a>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="timeline-body">
+                                {{up.update}}
+                            </div>
+                            <div class="timeline-footer clearfix">
+                                <span class="label label-primary"
+                                    onclick="window.location =
+                                    '{% url 'profile' up.user.username %}'">
+                                    {{up.user.username}}
+                                </span>
+                                <i class="pull-right">
+                                    Posted {{up.date}}
+                                </i>
+                            </div>
+                        </div>
+                    </li>
+
+                    {% empty %}
+                    <li style="list-style: none">
+                        <i class="fa fa-times bg-red"></i>
+                        <div class="timeline-item"
+                            style="background-color: #ffffff">
+                            <div class="timeline-header">
+                                There are no updates
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    <li style="list-style: none">
+                        <i class="fa fa-clock-o"></i>
+                    </li>
+                </ul>
+
+
+
+                {% comment %}
+                <!-- row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- The time line -->
+                        <ul class="timeline">
+                            <!-- timeline time label -->
+                            <li class="time-label" style="list-style: none">
+                                <span class="bg-red">
+                                    {{project.title}}
+                                </span>
+                            </li>
+                            <!-- /.timeline-label -->
+                            <!-- timeline item -->
+                            {% for up in updates.all %}
+                            {% if up.update_title != null %}
+                            <li style="list-style: none">
+                                <i class="fa fa-envelope bg-blue"></i>
+
+                                <div class="timeline-item">
+                                    <span class="time"><i class="fa fa-clock-o"></i> {{up.date}} </span>
+
+                                    <h3 class="timeline-header">{{up.update_title}}</h3>
+
+                                    <div class="timeline-body">
+                                        {{up.update}}
+                                    </div>
+                                    <div class="timeline-footer">
+                                        <a class="btn btn-primary btn-xs">{{up.user.username}}</a>
+                                        <a class="btn btn-danger btn-xs">{{project.title}}</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- END timeline item -->
+                            {% endif %}
+                            {% endfor %}
+
+                            <li style="list-style: none">
+                                <i class="fa fa-clock-o bg-gray"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+                {% endcomment %}
+            </div>
+            <!-- /.tab-pane End Updates -->
+
+            <!-- /.tab-pane Resources -->
+            <div class="tab-pane" id="tab_3">
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Resources</h3>
+                        <div class="box-body no-padding">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>URL Link</th>
+                                        <th>Posted By</th>
+                                        <th>Posted On</th>
+                                        <th></th>
+                                    </tr>
+                                    {% for re in resources.all %}
+                                    {% if re.src_title != null %}
+                                    <tr>
+                                        <td>{{re.src_title}}</td>
+                                        <td><a href="{{re.src_link}}">{{re.src_link}}</a></td>
+                                        <td>{{re.user.username}}</td>
+                                        <td>{{re.date}}</td>
+                                        <td style="word-break: break-all;">
+                                            {% if user == re.user or user.profile.isGT %}
+                                            <a href="{% url 'update_resource_update' project.slug re.id %}">
+                                                <button type="button" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                </button>
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if request.user in project.members.all or user in course.get_staff or request.user.profile.isGT%}
+                            <a href="{% url 'resource_update' project.slug %}"
+                                class="pull-right" style="padding-top: 10px">
+                                <button class="btn btn-info">
+                                    <i class="fa fa-book"></i>
+                                    Post Resource
+                                </button>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- /.tab-pane End Resources -->
+
+            <!-- /.tab-pane request meeting -->
+            <div class="tab-pane" id="tab_4">
+                {% for p in meetings %}
+                  <br>{{p}}</br>
+                {% endfor %}
+                <a href="{% url 'view_meetings' project.slug %}"> Meeting Times </a>
+            </div>
+
+            <!-- TSR Tab -->
+            <div class="tab-pane" id="tab_5">
+                <div class="row">
+                    <div class="col-md-12">
+                    <h3 class="box-title">Assignments</h3>
+                        <div class="box-body no-padding">
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th style="width:5%;">Assigned</th>
+                                        <th style="width:5%;">Due</th>
+                                        <th style="width:1%;">Type</th>
+                                        <th style="width:5%;">Name</th>
+                                        <th style="width:1%;">Number</th>
+                                        <th style="width:20%;">Description</th>
+                                        <th style="width:5%;"> </th>
+                                    </tr>
+                                    {% for asg in assignments %}
+                                    <tr>
+                                        <td>{{asg.ass_date|date:'Y-m-d'}}</td>
+                                        <td>
+                                            {% if asg not in asg_completed %}
+                                                {% if asg.due_date < today %}
+                                                    <span class="tooltip2">
+                                                       <span class="tooltiptext2">Assignment will be marked <strong>LATE</strong></span>
+                                                       <span style="color:red;">{{asg.due_date|date:'Y-m-d'}}</span>
+                                                    </span>
+                                                {% else %}
+                                                    {{asg.due_date|date:'Y-m-d'}}
+                                                {% endif %}
+                                            {% else %}
+                                                {{asg.due_date|date:'Y-m-d'}}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{asg.ass_type}}</td>
+                                        <td>{{asg.ass_name}}</td>
+                                        <td style="text-align:center;">{{asg.ass_number}}</td>
+                                        <td>{{asg.description}}</td>
+                                        <td class="form-group"  style="text-align:center;">
+                                        {% if asg in asg_completed %}
+                                            {% if not asg.is_past_due %}
+
+                                            {% if request.user == project.scrum_master %}
+                                            <form action="{% url 'tsr_edit' project.slug asg.slug %}">
+                                                <button class="btn btn-info btn-sm" type="submit" name="scrum_master" value="scrum_master">
+                                                    <i class="fa fa-edit"></i> Edit SM
+                                                </button>
+                                            </form>
+                                            {% else %}
+                                            <form action="{% url 'tsr_edit' project.slug asg.slug %}">
+                                                <button class="btn btn-info btn-sm" type="submit" value="member">
+                                                    <i class="fa fa-edit"></i> Edit Member
+                                                </button>
+                                            </form>
+                                            {% endif %}
+
+
+                                            {% endif %}
+                                        {% else %}
+                                            {% if request.user == project.scrum_master %}
+                                                <form action="{% url 'create_scrum_master_tsr' project.slug asg.slug %}">
+                                                    <button class="btn btn-success btn-sm" type="submit">
+                                                        <i class="fa fa-plus"></i> Scrum Master
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <form action="{% url 'create_member_tsr' project.slug asg.slug %}">
+                                                    <button class="btn btn-primary btn-sm" type="submit">
+                                                        <i class="fa fa-plus"></i> Member Form
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- View TSR Tab -->
+            <div class="tab-pane" id="tab_6">
+            <style>
+              table {
+                border-collapse: collapse;
+                width: 100%;
+              }
+
+              th, td {
+                text-align: left;
+                padding: 8px;
+              }
+              th {
+                background-color: #00A65A;
+                color: white;
+              }
+            </style>
+            {% for ass in assigned_tsrs %}
+            <div class="box box-solid  collapsed-box">
+              <div class="box-header with-border">
+                <h3 class="box-title">Evaluation #{{ ass.ass_number }}</h3>
+
+                <div class="box-tools">
+                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                  </button>
+                </div>
+
+              </div>
+
+              <div class="box-body no-padding">
+               <ul class="nav nav-pills nav-stacked">
+
+                        <table class="table table-hover" style="table-layout: fixed; width: 100%">
+                                   <tbody>
+                                   <tr>
+                                     <th style="width:5%;">Student</th>
+                                     <th style="width:6%;">Evaluators</th>
+                                     <th style="width:9%; text-align:center;">Contribution (%)</th>
+                                     <th style="width:16%;">Positive Feedback</th>
+                                     <th style="width:16%;">Negative Feedback</th>
+                                     <th style="width:16%; border-left-color: #CCCCCC; border-left-style: solid;">Tasks Completed</th>
+                                     <th style="width:16%;">Performance Assessment</th>
+                                     <th style="width:16%;">Notes</th>
+                                   </tr>
+                                   {% for i in temp_tup %}
+                                        {% if i.ass_number == ass.ass_number %}
+                                            {% ifchanged i.evaluatee %}
+                                                <tr style="border-top-color: #CCCCCC; border-top-style: solid;">
+                                                <td style="width:5%;">
+                                                <a href="{% url 'profile' i.evaluator.username %}">
+                                               {{i.evaluatee.username}}</a>
+                                            {% else %}
+                                                <tr>
+                                                <td>
+                                                &nbsp;
+                                            {% endifchanged %}
+
+
+                                        </td>
+                                        <td style="width:6%;">
+                                        {% if i.late %}
+                                            <span class="tooltip2">
+                                               <span class="tooltiptext2">Indicates Late Submission
+                                               </span>
+                                               <a href="{% url 'profile' i.evaluator.username %}">
+
+                                               <span style="color:red;">{{i.evaluator.username}}</span></a>
+                                            </span>
+                                        {% else %}
+                                        <a href="{% url 'profile' i.evaluator.username %}">
+
+                                        {{i.evaluator.username}}</a>
+                                        {% endif %}
+                                       </td>
+                                       <td style="text-align:center; width:9%;">
+                                         {% if contribute_levels.high < i.percent_contribution%}
+                                             <div style="color:blue">{{i.percent_contribution}}</div>
+                                         {% else %}
+                                             {% if contribute_levels.low < i.percent_contribution %}
+                                               <div style="color:green">{{i.percent_contribution}}</div>
+                                             {%else%}
+                                               <div style="color:red">{{i.percent_contribution}}</div>
+                                             {% endif %}
+                                         {% endif %}
+                                           <p>
+                                       </td>
+                                       <td style="text-align:justify; width:16%; word-break: break-all;">
+                                         {{i.positive_feedback}}
+                                       </td >
+                                       <td style="text-align:justify; width:16%; word-break: break-all;">
+                                         {{i.negative_feedback}}
+                                       </td>
+                                       <td style="text-align:justify; border-left-color: #CCCCCC; border-left-style: solid; width:16%; word-break: break-all">
+                                         {{i.tasks_completed}}
+                                       </td>
+                                       <td style="text-align:justify; width:16%; word-break: break-all;">
+                                         {{i.performance_assessment}}
+                                       </td>
+                                       <td style="text-align:justify; width:16%; word-break: break-all">
+                                        {{i.notes}}
+                                      </td>
+                                      </tr>
+                                      {% endif %}
+                                   {% endfor %}
+                                   </tbody>
+                       </table>
+               </ul>
+             </div>
+
+              <!-- /.box-body -->
+            </div>
+            {% endfor %}
+
+                <div class="box box-solid">
+                  <div class="box-header with-border">
+                    <h3 class="box-title">Average Contributions</h3>
+
+                    <div class="box-tools">
+                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                <div class="box-body no-padding">
+                 <ul class="nav nav-pills nav-stacked">
+                     <table class="table table-hover">
+                     <tbody>
+                       <tr>
+                         <th>Student</th>
+                         <th>Contribution (%)</th>
+                       </tr>
+                    {% for avg in avgs %}
+                     <tr>
+                       <td>
+                           <a href="{% url 'profile' avg.0.username %}">
+
+                           {{ avg.0.username }}</a>
+
+                       </td>
+                       <td>
+                         {% if contribute_levels.high < avg.1 %}
+                             <div style="color:blue">{{avg.1}}</div>
+                         {% else %}
+                         {% if contribute_levels.low < avg.1 %}
+                           <div style="color:green">{{avg.1}}</div>
+                         {%else%}
+
+                           <div style="color:red">{{avg.1}}</div>
+                         {% endif %}
+                         {% endif %}
+                        </td>
+                     </tr>
+                     {% endfor %}
+                     </tbody>
+                   </table>
+               </ul>
+               </div>
+               </div>
+
+
+            </div>
+
+
+
+
+
+
+            {% comment %}
+            <!-- /.tab-pane chat -->
+            <div class="tab-pane" id="tab_7">
+                  <!-- DIRECT CHAT SUCCESS -->
+                  <div class="box box-success direct-chat direct-chat-success" >
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Team Chat</h3>
+
+
+
+                      <div class="box-tools pull-right">
+                        <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="3 New Messages">3</span>
+
+                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="" data-widget="chat-pane-toggle" data-original-title="Members">
+                          <i class="fa fa-comments"></i></button>
+
+                      </div>
+                    </div>
+                    <!-- /.box-header -->
+
+                    <div class="box-body">
+                      <!-- Conversations are loaded here -->
+                      <div class="direct-chat-messages" style="height: 400px">
+                        {% for msg in project_chat %}
+                            {% if msg.author == request.user %}
+                                <!-- Message  author pull to the right -->
+                                <div class="direct-chat-msg right">
+                                  <div class="direct-chat-info clearfix">
+                                    <span class="direct-chat-name pull-right">{{msg.author.username}}</span>
+                                    <span class="direct-chat-timestamp pull-left">{{msg.date}}</span>
+                                  </div>
+                                  <!-- /.direct-chat-info -->
+                                  {% if msg.author.profile.avatar %}
+                                    <img class="direct-chat-img pull-right" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                  {% else %}
+                                    <img class="direct-chat-img pull-right" src="{% gravatar page_user.email 150 %}" alt="User Image">
+                                  {% endif %}
+                                  <div class="direct-chat-text" style="word-wrap: break-word;">
+                                    {{msg.content}}
+                                  </div>
+                                  <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            {% else %}
+                                <!-- Message non-author Default to the left -->
+                                <div class="direct-chat-msg">
+                                  <div class="direct-chat-info clearfix">
+                                    <span class="direct-chat-name pull-left">{{msg.author.username}}</span>
+                                    <span class="direct-chat-timestamp pull-right">{{msg.date}}</span>
+                                  </div>
+                                  <!-- /S.direct-chat-info -->
+
+                                  {% if msg.author.profile.avatar %}
+                                    <img class="direct-chat-img" src="{{ msg.author.profile.avatar.url }}" alt="User Image">
+                                  {% else %}
+                                    <img class="direct-chat-img pull-right" src="{% gravatar page_user.email 150 %}" alt="User Image">
+                                  {% endif %}
+                                  <div class="direct-chat-text" style="word-wrap: break-word;">
+                                    {{msg.content}}
+                                  </div>
+                                  <!-- /.direct-chat-text -->
+                                </div>
+                                <!-- /.direct-chat-msg -->
+                            {% endif%}
+
+                        {% empty %}
+                            <div align="center"><font color="grey" size="3">No messages</font></div>
+                        {% endfor %}
+
+                      </div>
+                      <!--/.direct-chat-messages-->
+
+                      <!-- Load Members -->
+                      <div class="direct-chat-contacts">
+                        <ul class="contacts-list">
+                            {% for mem in project.members.all %}
+                                <li>
+                                    <a href="{% url 'profile' mem.username %}">
+                                      {% if mem.profile.avatar %}
+                                        <img class="contacts-list-img" src="{{ mem.profile.avatar.url }}" alt="User Image">
+                                      {% else %}
+                                        <img class="direct-chat-img pull-right" src="{% gravatar page_user.email 150 %}" alt="User Image">
+                                      {% endif %}
+
+                                      <div class="contacts-list-info">
+                                            <span class="contacts-list-name">
+                                              {{mem.username}}
+                                            </span>
+                                      </div>
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li>
+                                    <a href="#">
+                                      There are no current members on the team
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                      </div>
+                      <!-- /.Members List -->
+                    </div>
+                    <!-- /.box-body -->
+
+                    <!-- box footer -->
+                    <div class="box-footer">
+                      <form action="#tab_7" method="POST">
+                      {% csrf_token %}
+                        <div class="input-group">
+                          <input type="text" name="content" placeholder="Type Message ..." class="form-control">
+                              <span class="input-group-btn">
+                                <button type="submit" class="btn btn-success btn-flat">Send</button>
+                              </span>
+                        </div>
+                      </form>
+                    </div>
+                    <!-- /.box-footer-->
+                </div>
+                <!--/.direct-chat -->
+            </div>
+            <!-- /.tab-pane chat -->
+            {% endcomment %}
+
+        </div>
+        <!-- /.tab-content -->
+    </div>
+    <!-- nav-tabs-custom -->
+</div>
+
+<!-- Pending Members Box -->
+{% if user in project.members.all or user == project.creator%}
+<div class="box sm-box-solid collapsed-box">
+
+    <div class="box-header with-border">
+        <h6 class="box-title">Pending Requests to Join: ( {{ pending_count }} )</h6>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body no-padding">
+        <ul class="nav nav-pills nav-stacked">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                  <th>Email Address</th>
+                  <!-- <th style="width:50%">Request Date</th> -->
+                  <th style="width: 40px"></th>
+                  <th style="width: 40px"></th>
+                </tr>
+                {% for stud in pending_members %}
+                    <tr>
+                        <td> <a href="{% url 'profile' stud.username %}"> {{ stud.email }} </a> </td>
+                        <!-- <td> Todo </td> -->
+                        <td> <a href="{% url 'try_add_member' project.slug stud.username %}"> <button type="button" class="btn btn-block btn-primary btn-xs">Accept</button> </a></td>
+                        <td> <a href="{% url 'reject_member' project.slug stud.username %}"><button type="button" class="btn btn-block btn-danger btn-xs">Reject</button> </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </ul>
+    </div>
+
+  <!-- /.box-body -->
+</div>
+
+{% endif %}
+
+
+{% endblock content %}

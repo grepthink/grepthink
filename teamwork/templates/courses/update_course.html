@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block crumb %}
+    <li><a href="{% url 'view_course' %}">Courses</a></li>
+    <li>
+        <a href="{% url 'view_one_course' course.slug %}">
+            {{ course.name }}
+        </a>
+    </li>
+{% endblock crumb %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10">
+        <form action="{% url 'update_course' course.slug %}" method="post"
+            role="form" class="clearfix">
+            {% csrf_token %}
+            {{ form.status }}
+            {% for field in form.visible_fields %}
+            <div class="form-group{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.label }}" class="control-label">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% for error in field.errors %}
+                <label class="control-label">{{ error }}</label>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="pull-left">
+                <a href="{% url 'view_one_course' course.slug %}">
+                    <button class="btn btn-danger" type="button">
+                        Cancel
+                    </button>
+                </a>
+            </div>
+            <div class="pull-right">
+                <button class="btn btn-success" type="submit" name="SUBMIT">
+                    Post Update
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
