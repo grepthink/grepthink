@@ -8,6 +8,7 @@ from .models import Interest, Membership, Project, ProjectUpdate, ResourceUpdate
 admin.site.register(Project)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 admin.site.unregister(Techs)
 admin.site.register(Techs)
@@ -15,6 +16,14 @@ admin.site.register(Techs)
 =======
 
 >>>>>>> 7e7f500... Merge pull request #2 from Hnguyen1997/Nikki
+=======
+
+admin.site.unregister(Techs)
+admin.site.register(Techs)
+
+
+
+>>>>>>> 9f4e50f... Merge branch 'master' into Anisha
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)
