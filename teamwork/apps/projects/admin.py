@@ -6,6 +6,11 @@ from .models import Interest, Membership, Project, ProjectUpdate, ResourceUpdate
 
 # Register the following models for the admin site
 admin.site.register(Project)
+<<<<<<< HEAD
+=======
+admin.site.unregister(Techs)
+admin.site.register(Techs)
+>>>>>>> 33b79e9... fixing env problem
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)
