@@ -206,7 +206,12 @@ class Project(models.Model):
         Skills,
         related_name="desired",
         default="")
-
+#---------------------------------------------------------------------------------
+    desired_techs = models.ManyToManyField(
+        Techs,
+        related_name="technologies",
+        default="")
+#----------------------------------------------------------------------------------
     # True when the proejct is accepting new members. False when project is full.
     avail_mem = models.BooleanField(
         default=True)

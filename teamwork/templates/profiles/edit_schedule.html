@@ -96,44 +96,35 @@
       }
 
 
-      // Intilize the calendar. Options and callbacks set below.
+      // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
-          // Only show agendaWeek view for edit_schedule
+          // Show agenda month for editing schedules
+          defaultView: 'month',
+
+          // HEADER
           header: {
-            left: 'month,agendaWeek,agendaDay',
+
+            left: 'agendaDay,agendaWeek,month',
             center: 'title',
-            right: 'prev,today,next'
+            right: 'today prev,next'
           },
-          // footer: {
-          //   left: 'custom1,custom2',
-          //   center: '',
-          //   right: 'prev,next'
-          // },
-          //------Custom buttons, customize how you want
-          // customButtons: {
-          //   custom1: {
-          //     text: 'custom 1',
-          //     click: function() {
-          //       alert('clicked custom button 1!');
-          //     }
-          //   },
-          //   custom2: {
-          //     text: 'custom 2',
-          //     click: function() {
-          //       alert('clicked custom button 2!');
-          //     }
-          //   }
-          // },
-          // Day of week shouldn't contain hard coded date.
+          titleFormat: 'MMMM YYYY',
+
+          // FOOTER
+          // automatically set to default: false 
+
+          // column format for day view
           columnFormat: 'dddd',
+
+
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
-              dow: [ 1, 2, 3, 4, 5], // Monday - Friday
+              dow: [0, 1, 2, 3, 4, 5, 6], // Monday - Friday
 
               start: '8:00', // a start time (10am in this example)
               end: '22:00', // an end time (6pm in this example)
           },
-          defaultView: 'month',
+
 
           // Can click day/week names to navigate views
           navLinks: true,
