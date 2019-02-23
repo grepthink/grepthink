@@ -61,6 +61,11 @@
                <button class="btn btn-primary btn-flat">Edit Schedule</button>
             </a>
         {% endif %}
+        {% if request.user != page_user %}
+            <a href="{% url 'view_schedule' page_user.username %}">
+                <button class="btn btn-primary btn-flat">View Schedule</button>
+            </a>
+        {% endif %}
         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
     </span>
 
