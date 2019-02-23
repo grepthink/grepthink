@@ -1,5 +1,19 @@
 {% load adminlte_helpers i18n %}
 {% load static %}
+<!-- add this style for Light/Dark theme -->
+<style>
+    .navbar-nav > .user-menu > .dropdown-menu{
+        width:320px;
+    }
+
+    .navbar-nav > .user-menu  .user-footer{
+        text-align:center;
+    }
+
+    .btn-group{
+        text-align:center;
+    }
+</style>
 
 <header class="main-header">
     <!-- Logo -->
@@ -100,6 +114,7 @@
                         <li class="user-footer">
 
                             <div class="btn-group">
+
                                 <!-- <button class="btn btn-block btn-default btn-lg"> -->
                                 <a href="{% url 'profile' user.username %}">
                                     <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);">
@@ -111,11 +126,18 @@
                                         <font color="white">Edit Schedule</font>
                                     </button>
                                 </a>
+                                <!-- main code of the Light/Dark theme switch -->
+              							  <a href="javascript:switchSkin()">
+                                  <button type="button" class="btn btn-flat  btn-info" style="margin:2px 0">
+                                      <font color="white">Switch Theme</font>
+                                  </button>
+                              </a>
                                 <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
                                     <button type="button" class="btn btn-default" style="background: rgba(255, 0, 0, 0.7);">
                                         <font color="white">Sign Out</font>
                                     </button>
                                 </a>
+                              
                             </div>
                         </li>
 
