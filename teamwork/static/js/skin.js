@@ -12,6 +12,9 @@ var start;
             if (document.readyState == "complete") {
 
                try{
+                  if(current_skin==1){
+                     $('body.skin-blue').removeClass(skins[0]);
+                  }
                   $('body.skin-blue').addClass(skins[current_skin]);
                   clearInterval(start);
                }catch(err){
