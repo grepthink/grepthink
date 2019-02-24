@@ -31,6 +31,23 @@ def edit_skills(request, username):
 
     return HttpResponse("Failure")
 
+def edit_techs(request, username):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
 @login_required
 def edit_profile(request, username):
     """
@@ -158,10 +175,15 @@ def edit_profile_helper(request, username):
         Helper function that saves profile information from the ProfileForm
     """
 
-    
+    if request.user.profile.isGT:
+        tempProfile = User.objects.get(username=username)
+        profile = Profile.objects.get(user=tempProfile)
+    else:
         #grab profile for the current user
-    tempProfile = User.objects.get(username=username)
-    profile = Profile.objects.get(user=tempProfile)
+        profile = Profile.objects.get(user=request.user)
+        tempProfile = User.objects.get(username=username)
+        #grab profile for the current user
+
 
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)

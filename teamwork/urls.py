@@ -106,7 +106,9 @@ urlpatterns = [
         url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', EditProjectView.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_techs/$', EditProjectView.add_desired_techs, name='add_desired_techs'),
         url(r'^project/create/ajax/add_desired_skills/$', EditProjectView.create_desired_skills, name='create_desired_skills'),
+        url(r'^project/create/ajax/add_desired_techs/$', EditProjectView.create_desired_techs, name='create_desired_techs'),
 
         # COURSE
         # Delete individual assignment (based on slug)
