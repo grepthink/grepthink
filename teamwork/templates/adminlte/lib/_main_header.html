@@ -115,8 +115,8 @@
                          {% endcomment %}
 
                         <li class="user-footer">
-
                             <div class="btn-group">
+<<<<<<< HEAD
 <<<<<<< HEAD
                               <a href="{% url 'profile' user.username %}">
 <<<<<<< HEAD
@@ -125,11 +125,17 @@
 							  <!-- need to add margin:2px 0 for Light/Dark theme -->
                                   <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);margin:2px 0">
 >>>>>>> b93c358... Light/Dark Theme redo for the new version of code with the way to do it
+=======
+                              <a href="{% url 'profile' user.username %}">
+							  <!-- need to add margin:2px 0 for Light/Dark theme -->
+                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);margin:2px 0">
+>>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
                                       <font color="white">Profile</font>
                                   </button>
                               </a>
 							  <!-- need to add margin:2px 0 for Light/Dark theme -->
                               <a href="{% url 'edit_schedule' user.username %}">
+<<<<<<< HEAD
                                   <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);">
                                       <font color="white">Edit Schedule</font>
                                   </button>
@@ -156,10 +162,19 @@
                                 <!-- main code of the Light/Dark theme switch -->
               							  <a href="javascript:switchSkin()">
 >>>>>>> b468345... Merge branch 'staging' into czhao
+=======
+                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);margin:2px 0">
+                                      <font color="white">Edit Schedule</font>
+                                  </button>
+                              </a>
+							  <!-- main code of the Light/Dark theme switch -->
+							  <a href="javascript:switchSkin()">
+>>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
                                   <button type="button" class="btn btn-flat  btn-info" style="margin:2px 0">
                                       <font color="white">Switch Theme</font>
                                   </button>
                               </a>
+<<<<<<< HEAD
 <<<<<<< HEAD
 							  <!-- add style="display:block;clear:both;" and margin:2px 0;width:100%; for Light/Dark theme -->
                               <a href="{% block logout_url %}{% logout_url %}{% endblock %}"style="display:block;clear:both;">
@@ -176,6 +191,14 @@
                                 </a>
                               
 >>>>>>> b468345... Merge branch 'staging' into czhao
+=======
+							  <!-- add style="display:block;clear:both;" and margin:2px 0;width:100%; for Light/Dark theme -->
+                              <a href="{% block logout_url %}{% logout_url %}{% endblock %}"style="display:block;clear:both;">
+                                  <button type="button" class="btn btn-flat" style="background: rgba(255, 0, 0, 0.7);margin:2px 0;width:100%;">
+                                      <font color="white">Sign Out</font>
+                                  </button>
+                              </a>
+>>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
                             </div>
                         </li>
 
