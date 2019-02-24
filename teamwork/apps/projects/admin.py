@@ -9,6 +9,7 @@ admin.site.register(Project)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 admin.site.unregister(Techs)
 admin.site.register(Techs)
@@ -21,15 +22,21 @@ admin.site.register(Techs)
 
 =======
 >>>>>>> a88ad43... Merge pull request #1 from Hnguyen1997/Anisha
+=======
+
+>>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
 admin.site.unregister(Techs)
 admin.site.register(Techs)
 
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 9f4e50f... Merge branch 'master' into Anisha
 =======
 >>>>>>> a88ad43... Merge pull request #1 from Hnguyen1997/Anisha
+=======
+>>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)
