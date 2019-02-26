@@ -181,7 +181,7 @@ def edit_profile_helper(request, username):
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
-        tempProfile = User.objects.get(username=username)
+        profileUser = User.objects.get(username=username)
         #grab profile for the current user
 <<<<<<< HEAD
 
@@ -206,7 +206,11 @@ def edit_profile_helper(request, username):
         if name:
             profile.name = name
         if email:
+<<<<<<< HEAD
             profileUser.email=email
+=======
+            profileUser.email = email
+>>>>>>> 65d3b74... some fixing
         if bio:
             profile.bio = bio
         if institution:
