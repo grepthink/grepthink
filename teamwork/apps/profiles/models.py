@@ -206,10 +206,7 @@ class Profile(models.Model):
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 
-#------------------------------------------------------------------------------------
-    known_techs = models.ManyToManyField(Techs, related_name="known_technologies", default="")
-    learn_techs = models.ManyToManyField(Techs, related_name="learn_technologies", default="")
-#-------------------------------------------------------------------------------------
+
 
     claimed_projects = models.ManyToManyField('projects.Project', related_name="claimed_projects", default="")
 
