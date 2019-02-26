@@ -1,4 +1,5 @@
 # Django Imports
+from __future__ import print_function
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +13,10 @@ from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
 from teamwork.apps.projects.models import dayofweek
+from oauth2client import tools
+from oauth2client.file import Storage
+from oauth2client.client import flow_from_clientsecrets
+from googleapiclient.discovery import build
 
 # Form Imports
 
@@ -19,6 +24,13 @@ from teamwork.apps.projects.models import dayofweek
 
 # Other Imports
 import json
+import httplib2
+import os
+import datetime
+
+SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+CLIENT_SECRET_FILE = 'credentials.json'
+flags = tools.argparser.parse_args([])
 
 @login_required
 def edit_schedule(request, username):
@@ -111,3 +123,42 @@ def save_event(request, username):
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     return HttpResponse("Failure")
+
+@login_required
+def import_schedule(request,username):
+    store = Storage('storage.json')
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        credentials = tools.run_flow(flow, store,flags)
+        print('Storing credentials to' + str(store))
+    
+
+    http = credentials.authorize(httplib2.Http())
+    service = build('calendar', 'v3', http=http)
+    get_calendar(credentials,service)
+    return HttpResponse("API RESPONDING")
+ 
+def get_calendar(credentials,service):
+    """Shows basic usage of the Google Calendar API.
+ 
+    Creates a Google Calendar API service object and outputs a list of the next
+    10 events on the user's calendar.
+    """
+    
+
+    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    print('Getting the upcoming 10 events')
+    events_result = service.events().list(calendarId='primary', timeMin=now,
+                                        maxResults=50, singleEvents=True,
+                                        orderBy='startTime').execute()
+    events = events_result.get('items', [])
+
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        start = event['start'].get('dateTi  me', event['start'].get('date'))
+        print(start, event['summary'])
+
+
+    
