@@ -577,6 +577,10 @@ class Techs(models.Model):
         """
         super(Techs, self).save(*args, **kwargs)
 #-----------------------------------------------------------------------
+#------------------------------------------------------------------------------------
+    known_techs = models.ManyToManyField(Techs, related_name="known_technologies", default="")
+    learn_techs = models.ManyToManyField(Techs, related_name="learn_technologies", default="")
+#-------------------------------------------------------------------------------------
 
 class ProjectUpdate(models.Model):
     """
