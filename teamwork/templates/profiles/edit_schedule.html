@@ -281,13 +281,13 @@
 {% block content %}
 
 <section class="content">
-
+  
 <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4><i class="icon fa fa-warning"></i> Alert!</h4>
       Did you forget to fill out your schedule?
 </div>
-
+    <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
       <div class="row">
           <div class="box box-primary">
             <div class="box-body no-padding">
