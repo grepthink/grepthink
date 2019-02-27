@@ -100,12 +100,12 @@
       $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           header: {
-            left: 'none',
-            center: 'none',
-            right: 'none'
+            left: 'month,agendaWeek,agendaDay',
+            center: 'title',
+            right: 'prev,today,next'
           },
           // Day of week shouldn't contain hard coded date.
-          columnFormat: 'ddd',
+          columnFormat: 'dddd M/D',
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
@@ -115,7 +115,6 @@
           },
           defaultView: 'agendaWeek',
 
-          defaultDate: '2017-04-12',
 
           // Can click day/week names to navigate views
           navLinks: true,
@@ -218,6 +217,8 @@
       Did you forget to fill out your schedule?
 </div>
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
+    <a href="" class="btn btn-warning" role="button">Refresh</a>
+    <a href="" class="btn btn-success" role="button">Export</a>
       <div class="row">
           <div class="box box-primary">
             <div class="box-body no-padding">

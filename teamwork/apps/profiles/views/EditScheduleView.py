@@ -5,10 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-
+from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
@@ -145,11 +145,12 @@ def import_schedule(request,username):
         end = event['end'].get('dateTime',event['start'].get('date'))
         this_event={'title':title,'start':start,'end':end}
         events_list.append(this_event)
-        # print(start,end,event['summary'])
+    
+    profile = Profile.objects.get(user=request.user)
+    profile.jsonavail = json.dumps(events_list)
+    profile.save()
 
-    print(events_list)
-   
-    return HttpResponse("API RESPONDING")
+    return HttpResponseRedirect("/")
  
 def get_calendar(credentials,service):
     """Shows basic usage of the Google Calendar API.
