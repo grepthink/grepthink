@@ -17,6 +17,7 @@ from oauth2client import tools
 from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from googleapiclient.discovery import build
+from itertools import *
 
 # Form Imports
 
@@ -45,7 +46,7 @@ def edit_schedule(request, username):
     page_description = "Edit %s's Schedule"%(user.username)
     title = "Edit Schedule"
     profile = Profile.objects.get(user=user)
-
+    
     #gets current avaliability
     readable = ""
     if profile.jsonavail:
@@ -75,7 +76,7 @@ def save_event(request, username):
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
-
+      
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
@@ -136,7 +137,18 @@ def import_schedule(request,username):
 
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
-    get_calendar(credentials,service)
+    result_events=get_calendar(credentials,service)
+    events_list=[]
+    for event in result_events:
+        title= event['summary']
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        end = event['end'].get('dateTime',event['start'].get('date'))
+        this_event={'title':title,'start':start,'end':end}
+        events_list.append(this_event)
+        # print(start,end,event['summary'])
+
+    print(events_list)
+   
     return HttpResponse("API RESPONDING")
  
 def get_calendar(credentials,service):
@@ -145,7 +157,6 @@ def get_calendar(credentials,service):
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
-    
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 10 events')
@@ -154,11 +165,7 @@ def get_calendar(credentials,service):
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTi  me', event['start'].get('date'))
-        print(start, event['summary'])
+    return events
 
 
     
