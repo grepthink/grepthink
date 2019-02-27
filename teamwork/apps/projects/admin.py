@@ -24,6 +24,7 @@ admin.site.register(Techs)
 >>>>>>> a88ad43... Merge pull request #1 from Hnguyen1997/Anisha
 =======
 
+<<<<<<< HEAD
 >>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
 admin.site.unregister(Techs)
 admin.site.register(Techs)
@@ -37,6 +38,11 @@ admin.site.register(Techs)
 >>>>>>> a88ad43... Merge pull request #1 from Hnguyen1997/Anisha
 =======
 >>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
+=======
+# admin.site.unregister(Techs)
+admin.site.register(Techs)
+
+>>>>>>> b34c307... made changes to admin.py
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)
