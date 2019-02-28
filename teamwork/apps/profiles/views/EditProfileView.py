@@ -158,10 +158,14 @@ def edit_profile_helper(request, username):
         Helper function that saves profile information from the ProfileForm
     """
 
-    
+    if request.user.profile.isGT:
+        tempProfile = User.objects.get(username=username)
+        profile = Profile.objects.get(user=tempProfile)
+    else:
         #grab profile for the current user
-    tempProfile = User.objects.get(username=profile.username)
-    profile = Profile.objects.get(user=tempProfile)
+        profile = Profile.objects.get(user=request.user)
+        profileUser = User.objects.get(username=profile.user)
+        #grab profile for the current user
 
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
@@ -179,7 +183,7 @@ def edit_profile_helper(request, username):
         if name:
             profile.name = name
         if email:
-            tempProfile.email=email
+            profileUser.email = email
         if bio:
             profile.bio = bio
         if institution:
@@ -190,4 +194,4 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
 
         profile.save()
-        tempProfile.save()
+        profileUser.save()

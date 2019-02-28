@@ -117,7 +117,6 @@ def edit_project(request, slug):
         else:
             if (not course in mem_courses):
                 messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
-                # return False
             else:
                 messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
