@@ -31,23 +31,6 @@ def edit_skills(request, username):
 
     return HttpResponse("Failure")
 
-def edit_techs(request, username):
-    if request.method == 'GET' and request.is_ajax():
-        # JSON prefers dictionaries over lists.
-        data = dict()
-        # A list in a dictionary, accessed in select2 ajax
-        data['items'] = []
-        q = request.GET.get('q')
-        if q is not None:
-            results = Techs.objects.filter(
-                Q( tech__contains = q ) ).order_by( 'tech' )
-        for s in results:
-            data['items'].append({'id': s.tech, 'text': s.tech})
-        return JsonResponse(data)
-
-
-    return HttpResponse("Failure")
-
 @login_required
 def edit_profile(request, username):
     """
@@ -184,12 +167,17 @@ def edit_profile_helper(request, username):
         profileUser = User.objects.get(username=profile.user)
         #grab profile for the current user
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
     profileUser = User.objects.get(username=profile.username)
     profile = Profile.objects.get(user=profileUser)
 >>>>>>> 43e8b3d... made changes to the files
+=======
+    tempProfile = User.objects.get(username=profile.username)
+    profile = Profile.objects.get(user=tempProfile)
+>>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
 
 =======
 >>>>>>> b85c19e... merge with shreya changes
@@ -210,10 +198,14 @@ def edit_profile_helper(request, username):
             profile.name = name
         if email:
 <<<<<<< HEAD
+<<<<<<< HEAD
             profileUser.email=email
 =======
             profileUser.email = email
 >>>>>>> 65d3b74... some fixing
+=======
+            tempProfile.email=email
+>>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
         if bio:
             profile.bio = bio
         if institution:
@@ -224,4 +216,4 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
 
         profile.save()
-        profileUser.save()
+        tempProfile.save()
