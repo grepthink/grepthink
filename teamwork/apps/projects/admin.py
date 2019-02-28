@@ -20,6 +20,7 @@ admin.site.register(Techs)
 >>>>>>> 7e7f500... Merge pull request #2 from Hnguyen1997/Nikki
 =======
 
+<<<<<<< HEAD
 =======
 >>>>>>> a88ad43... Merge pull request #1 from Hnguyen1997/Anisha
 =======
@@ -43,6 +44,11 @@ admin.site.register(Techs)
 admin.site.register(Techs)
 
 >>>>>>> b34c307... made changes to admin.py
+=======
+# admin.site.unregister(Techs)
+admin.site.register(Techs)
+
+>>>>>>> b85c19e... merge with shreya changes
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)

@@ -185,11 +185,14 @@ def edit_profile_helper(request, username):
         #grab profile for the current user
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 =======
     profileUser = User.objects.get(username=profile.username)
     profile = Profile.objects.get(user=profileUser)
 >>>>>>> 43e8b3d... made changes to the files
 
+=======
+>>>>>>> b85c19e... merge with shreya changes
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
