@@ -194,4 +194,4 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
 
         profile.save()
-        tempProfile.save()
+        profileUser.save()
