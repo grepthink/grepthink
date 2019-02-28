@@ -169,6 +169,7 @@ def edit_profile_helper(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -181,6 +182,8 @@ def edit_profile_helper(request, username):
 >>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
 =======
 >>>>>>> e9cf835... delete edit techs from editprojectview
+=======
+>>>>>>> 09299ee... Merge branch 'master' into shreya
 
 =======
 >>>>>>> b85c19e... merge with shreya changes
@@ -203,6 +206,7 @@ def edit_profile_helper(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             profileUser.email=email
 =======
             profileUser.email = email
@@ -213,6 +217,9 @@ def edit_profile_helper(request, username):
 =======
             profileUser.email = email
 >>>>>>> e9cf835... delete edit techs from editprojectview
+=======
+            profileUser.email = email
+>>>>>>> 09299ee... Merge branch 'master' into shreya
         if bio:
             profile.bio = bio
         if institution:
