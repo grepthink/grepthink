@@ -184,7 +184,6 @@ def edit_profile_helper(request, username):
         profileUser = User.objects.get(username=username)
         #grab profile for the current user
 
-
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():

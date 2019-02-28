@@ -115,7 +115,10 @@ def edit_project(request, slug):
         elif profAdded:
             messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.")
+            if (not course in mem_courses):
+                messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
+                # return False
+            #messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
         return redirect(view_one_project, project.slug)
 
@@ -294,6 +297,7 @@ def add_member(request, slug, uname):
     - Project grabbed using slug
     - User grabbed using username
     """
+
     project = get_object_or_404(Project, slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
