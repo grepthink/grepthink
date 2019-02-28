@@ -242,11 +242,12 @@
               // Populate the Event Object. TODO: Add attributes.
               eventData = {
                 title: title,
-                start: start,
-                end: end
+                start: start.format(),
+                end: end.format(),
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.
+              console.log(eventData)
               $('#calendar').fullCalendar('renderEvent', eventData, true);
 
             }
@@ -297,8 +298,8 @@
       Did you forget to fill out your schedule?
 </div>
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
-    <a href="" class="btn btn-warning" role="button">Refresh</a>
-    <a href="" class="btn btn-success" role="button">Export</a>
+    <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->
+    <a href="{% url 'export_schedule' user.username %}" class="btn btn-success" role="button">Export</a>
       <div class="row">
           <div class="box box-primary">
             <div class="box-body no-padding">

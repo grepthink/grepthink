@@ -29,7 +29,7 @@ import httplib2
 import os
 import datetime
 
-SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'credentials.json'
 flags = tools.argparser.parse_args([])
 
@@ -167,6 +167,37 @@ def get_calendar(credentials,service):
     events = events_result.get('items', [])
 
     return events
+
+
+@login_required
+def export_schedule(request,username):
+    store = Storage('storage.json')
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        credentials = tools.run_flow(flow, store,flags)
+        print('Storing credentials to' + str(store))
+    
+    http = credentials.authorize(httplib2.Http())
+    service = build('calendar', 'v3', http=http)
+
+    profile = Profile.objects.get(user=request.user)
+    
+    readable=""
+    if profile.jsonavail:
+        jsonDec = json.decoder.JSONDecoder()
+        readable = jsonDec.decode(profile.jsonavail)
+
+
+    EVENT={'summary':'','start':{'dateTime':''},'end':{'dateTime':''}}
+    for event in readable:
+        EVENT['summary']=event['title']
+        EVENT['start']['dateTime']=event['start']
+        EVENT['end']['dateTime']=event['end']
+        print(EVENT['start'],EVENT['end'])
+        send=service.events().insert(calendarId='primary',sendNotifications=True,body=EVENT).execute()
+
+    return HttpResponseRedirect("/")
 
 
     
