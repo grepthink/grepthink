@@ -168,6 +168,7 @@ def edit_profile_helper(request, username):
         #grab profile for the current user
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -178,6 +179,8 @@ def edit_profile_helper(request, username):
     tempProfile = User.objects.get(username=profile.username)
     profile = Profile.objects.get(user=tempProfile)
 >>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
+=======
+>>>>>>> e9cf835... delete edit techs from editprojectview
 
 =======
 >>>>>>> b85c19e... merge with shreya changes
@@ -199,6 +202,7 @@ def edit_profile_helper(request, username):
         if email:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             profileUser.email=email
 =======
             profileUser.email = email
@@ -206,6 +210,9 @@ def edit_profile_helper(request, username):
 =======
             tempProfile.email=email
 >>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
+=======
+            profileUser.email = email
+>>>>>>> e9cf835... delete edit techs from editprojectview
         if bio:
             profile.bio = bio
         if institution:
