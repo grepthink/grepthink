@@ -3,6 +3,14 @@
 {% load static %}
 {% load i18n %}
 
+{% block stylesheets %}
+
+  {{ block.super }}
+
+  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+
+{% endblock stylesheets %}
+
 {% block content %}
 
 <!-- BREADCRUMB -->

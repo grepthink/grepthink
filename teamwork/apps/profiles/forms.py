@@ -148,3 +148,8 @@ class ProfileForm(forms.ModelForm):
         # fields = ['name', 'bio', 'institution', 'location',
         #         'known_skill', 'learn_skill']
         fields = ['name', 'email','bio', 'institution', 'location']
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['email'].validators.append(UniqueEmailValidator)
+        self.fields['email'].validators.append(SignupDomainValidator)
