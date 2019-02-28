@@ -181,7 +181,7 @@ def edit_profile_helper(request, username):
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
-        profileUser = User.objects.get(username=username)
+        profileUser = User.objects.get(username=profile.user)
         #grab profile for the current user
 
     #request.FILES is passed for File storing
