@@ -97,8 +97,6 @@ def create_course(request):
     else:
         form = CreateCourseForm(request.user.id)
 
-
-
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
