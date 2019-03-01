@@ -191,14 +191,14 @@
               element.popover({
                 animation:true,
                 delay: 300,
-                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
+                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + ending, 
                 trigger: 'hover'
               });
             }else{
               element.popover({
                 animation:true,
                 delay: 300,
-                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
+                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + ending, 
                 trigger: 'hover'
               });
             }
