@@ -86,6 +86,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             left: 'month,agendaWeek,agendaDay',
             center: 'title',
             right: 'prev,today,next'
@@ -118,6 +119,14 @@
           },
           // Day of week shouldn't contain hard coded date.
           columnFormat: 'dddd',
+=======
+            left: 'month,agendaWeek,agendaDay',
+            center: 'title',
+            right: 'prev,today,next'
+          },
+          // Day of week shouldn't contain hard coded date.
+          columnFormat: 'dddd M/D',
+>>>>>>> 04fdb38... all day & multi-day event show up (fix strange submit bug after import)
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
@@ -144,13 +153,16 @@
 =======
 >>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
 
+<<<<<<< HEAD
 >>>>>>> 9f4e50f... Merge branch 'master' into Anisha
+=======
+>>>>>>> 04fdb38... all day & multi-day event show up (fix strange submit bug after import)
           // slotDuration:'00:15:00',         //change event duration
           // Can click day/week names to navigate views
           navLinks: true,
 
           // Here Sean -andgates
-          allDaySlot: false,
+          allDaySlot: true,
 
           // Allow users to resize events.
           editable: false,
@@ -174,18 +186,19 @@
                 $('#calendar').fullCalendar('removeEvents', event._id)
               }    
             });
+            var ending = event.end ? "\nEnd: " + event.end.format('LT') : ""
             if(event.initiator != current_user){
               element.popover({
                 animation:true,
                 delay: 300,
-                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
                 trigger: 'hover'
               });
             }else{
               element.popover({
                 animation:true,
                 delay: 300,
-                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
                 trigger: 'hover'
               });
             }
