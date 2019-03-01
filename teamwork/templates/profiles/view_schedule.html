@@ -81,12 +81,12 @@
     $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           header: {
-            left: 'none',
-            center: 'none',
-            right: 'none'
+            left: 'month,agendaWeek,agendaDay',
+            center: 'title',
+            right: 'prev,today,next'
           },
           // Day of week shouldn't contain hard coded date.
-          columnFormat: 'ddd',
+          columnFormat: 'dddd M/D',
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
@@ -96,13 +96,12 @@
           },
           defaultView: 'agendaWeek',
 
-          defaultDate: '2017-04-12',
           // slotDuration:'00:15:00',         //change event duration
           // Can click day/week names to navigate views
           navLinks: true,
 
           // Here Sean -andgates
-          allDaySlot: false,
+          allDaySlot: true,
 
           // Allow users to resize events.
           editable: false,
@@ -126,18 +125,19 @@
                 $('#calendar').fullCalendar('removeEvents', event._id)
               }    
             });
+            var ending = event.end ? "\nEnd: " + event.end.format('LT') : ""
             if(event.initiator != current_user){
               element.popover({
                 animation:true,
                 delay: 300,
-                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                content: "NOT YOUR" + "\n" + event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
                 trigger: 'hover'
               });
             }else{
               element.popover({
                 animation:true,
                 delay: 300,
-                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+                content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + ending, 
                 trigger: 'hover'
               });
             }

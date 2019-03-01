@@ -30,7 +30,7 @@ import os
 import datetime
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'
-CLIENT_SECRET_FILE = 'credentials.json'
+CLIENT_SECRET_FILE = 'client_secret.json'
 flags = tools.argparser.parse_args([])
 
 @login_required
@@ -76,7 +76,7 @@ def save_event(request, username):
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
-      
+        print(jsonEvents)
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
@@ -127,6 +127,7 @@ def save_event(request, username):
 
 @login_required
 def import_schedule(request,username):
+    #otain credentials if it's non-existed
     store = Storage('storage.json')
     credentials = store.get()
     if not credentials or credentials.invalid:
@@ -137,32 +138,44 @@ def import_schedule(request,username):
 
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
-    result_events=get_calendar(credentials,service)
-    events_list=[]
-    for event in result_events:
-        title= event['summary']
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        end = event['end'].get('dateTime',event['start'].get('date'))
-        this_event={'title':title,'start':start,'end':end}
-        events_list.append(this_event)
+
+    result_events=get_calendar(credentials,service) #obtain list of calendar events
     
-    profile = Profile.objects.get(user=request.user)
-    profile.jsonavail = json.dumps(events_list)
+    events_list=[]
+    for event in result_events:         # append calendar information into the list with corrected format for FullCalendar
+        title= event['summary']
+        if(event['start'].get('dateTime') is not None):             #get timed event from Google Calendar
+            start=event['start'].get('dateTime')
+            end=event['end'].get('dateTime')
+            this_event={'title':title,'start':start,'end':end}
+            print(this_event)
+        elif(event['start'].get('date') == event['end'].get('date')):  #get all-day event from Google Calendar
+            start=event['start'].get('date')
+            this_event={'title':title,'start':start}
+            print(this_event)
+        else:
+            start=event['start'].get('date')                        #get multi-day spanned event from Google Calendar
+            end=event['end'].get('date')
+            this_event={'title':title,'start':start,'end':end}                                                     
+            print(this_event)
+            
+        events_list.append(this_event)                              #add all events into one list
+
+
+    print(events_list)  
+    
+    profile = Profile.objects.get(user=request.user)        
+    profile.jsonavail = json.dumps(events_list)     #save calendar events into profile.jsonavail
     profile.save()
 
     return HttpResponseRedirect("/")
  
 def get_calendar(credentials,service):
-    """Shows basic usage of the Google Calendar API.
- 
-    Creates a Google Calendar API service object and outputs a list of the next
-    10 events on the user's calendar.
-    """
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 10 events')
     events_result = service.events().list(calendarId='primary', timeMin=now,
-                                        maxResults=50, singleEvents=True,
+                                        maxResults=250, singleEvents=True,
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
@@ -171,6 +184,7 @@ def get_calendar(credentials,service):
 
 @login_required
 def export_schedule(request,username):
+    #obtain credentials if it's non-existed
     store = Storage('storage.json')
     credentials = store.get()
     if not credentials or credentials.invalid:
@@ -182,13 +196,12 @@ def export_schedule(request,username):
     service = build('calendar', 'v3', http=http)
 
     profile = Profile.objects.get(user=request.user)
-    
     readable=""
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(profile.jsonavail)
 
-
+    #put data from profile.jsonavail into google calendar format and send
     EVENT={'summary':'','start':{'dateTime':''},'end':{'dateTime':''}}
     for event in readable:
         EVENT['summary']=event['title']

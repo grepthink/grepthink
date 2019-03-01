@@ -108,7 +108,7 @@
           columnFormat: 'dddd M/D',
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
-              dow: [ 1, 2, 3, 4, 5], // Monday - Friday
+              dow: [1, 2, 3, 4, 5], // Monday - Friday
 
               start: '8:00', // a start time (10am in this example)
               end: '22:00', // an end time (6pm in this example)
@@ -120,7 +120,7 @@
           navLinks: true,
 
           // Here Sean -andgates
-          allDaySlot: false,
+          allDaySlot: true,
 
           // Allow users to resize events.
           editable: true,
@@ -139,12 +139,15 @@
           //Double click event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {
+              console.log(event)
               $('#calendar').fullCalendar('removeEvents', event._id);
             });
+
+            var ending = event.end ? "\nEnd: " + event.end.format('LT') : ""
             element.popover({
               animation:true,
               delay: 300,
-              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + ending,
               trigger: 'hover'
             });
           },
@@ -162,8 +165,8 @@
               // Populate the Event Object. TODO: Add attributes.
               eventData = {
                 title: title,
-                start: start.format(),
-                end: end.format(),
+                start: start,
+                end: end,
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.
