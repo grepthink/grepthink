@@ -360,12 +360,21 @@ $(".s2_desired_techs").select2({
 
 
 
-               <!-- <div class="col-md-6"> -->
+               <div class="col-md-6">
                <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">Optional Settings</h3>
                 </div>
                 <div class="box-body">
+                  <div class="form-group">
+                    {{ form.no_request.errors }}
+                    <a class='team-size-tooltip' data-toogle='tooltip' data-placement="left" title="Check to block users from requesting to join your project.">
+                    <i class = 'glyphicon glyphicon-info-sign'></i></a>
+                    <label for="{{ form.no_request.id_for_label }}" class="control-label">
+                      Lock request to join:
+                    </label>
+                      {{ form.no_request }}
+                  </div>
                   <div class="form-group">
                     {{ form.teamSize.errors }}
                     <label for="{{ form.teamSize.id_for_label }}" class="control-label">
