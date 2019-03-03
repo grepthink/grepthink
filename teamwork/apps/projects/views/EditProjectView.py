@@ -25,7 +25,6 @@ def edit_project(request, slug):
     """
     project = get_object_or_404(Project.objects.prefetch_related('members', 'course').select_related('creator'), slug=slug)
     course = project.course.first()
-    project_owner = project.creator.profile
     members = project.members.all()
 
     # Populate page info with edit project title/name
@@ -43,13 +42,12 @@ def edit_project(request, slug):
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
 
-    if request.POST.get('delete_project'):
-        print("deleting project")
+    if request.POST.get('delete_project'):        
         # Rights: GT, Professor, TA, Project Creator
         if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or user_role == "ta":
             project.delete()
         else:
-            messages.warning(request,'Only project owner can delete project.')
+            messages.warning(request, 'Only project owner can delete project.')
 
         return HttpResponseRedirect('/project/all')
 
@@ -118,7 +116,7 @@ def edit_project(request, slug):
             if (not course in mem_courses):
                 messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
             else:
-                messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
+                messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.")
 
         return redirect(view_one_project, project.slug)
 
@@ -200,7 +198,7 @@ def edit_project(request, slug):
         to_delete = Skills.objects.get(skill=skillname)
         project.desired_skills.remove(to_delete)
         return redirect(edit_project, slug)
-#-----------------------------------------------------------------
+
     if request.POST.get('desired_techs'):
         techs = request.POST.getlist('desired_techs')
         for s in techs:
@@ -224,7 +222,7 @@ def edit_project(request, slug):
         to_delete = Techs.objects.get(tech=tech_name)
         project.desired_techs.remove(to_delete)
         return redirect(edit_project, slug)
-#-----------------------------------------------------------------
+
     if request.method == 'POST':
         form = EditProjectForm(request.user.id, request.POST, members=members)
 
@@ -260,12 +258,7 @@ def edit_project(request, slug):
             # Not sure if view_one_project redirect will work...
             return redirect(view_one_project, project.slug)
     else:
-        form = EditProjectForm(request.user.id, instance=project, members=members)
-
-        # TEMPORARILIY COMMENTED OUT, DUE TO JULLIG HAVING TROUBLE ADDING MEMBERS
-        # if members:
-        #     form.fields['project_owner'].required = True
-        #     form.fields['scrum_master'].required = True
+        form = EditProjectForm(request.user.id, instance=project, members=members)        
 
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title, 'members':members,
@@ -307,7 +300,7 @@ def add_member(request, slug, uname):
         sender=request.user,
         to=mem_to_add,
         msg="You were added to " + project.title,
-        url=reverse('view_one_project',args=[project.slug]),
+        url=reverse('view_one_project', args=[project.slug]),
         )
 
     adjust_pendinglist(request, project, mem_to_add)
@@ -365,7 +358,7 @@ def leave_project(request, slug):
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
 
 
-    if (f_user not in members):
+    if f_user not in members:
         messages.warning(request, "You cannot leave a project you are not a member of!")
         HttpResponseRedirect('project/all')
     # check if they were the only member of the project
@@ -419,7 +412,7 @@ def create_desired_skills(request):
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
-#--------------------------------------------------------------------------
+
 def add_desired_techs(request, slug):
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -462,8 +455,4 @@ def edit_techs(request, username):
             data['items'].append({'id': s.tech, 'text': s.tech})
         return JsonResponse(data)
 
-
-    return HttpResponse("Failure")
-
-#--------------------------------------------------------------------------
     return HttpResponse("Failure")

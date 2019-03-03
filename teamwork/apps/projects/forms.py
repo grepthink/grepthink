@@ -112,11 +112,6 @@ class CreateProjectForm(forms.ModelForm):
     sponsor = forms.BooleanField(
         initial=False, label='Sponsored?', required=False)
 
-    # desired_skills = forms.CharField(
-    #     widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #     max_length=255,
-    #     required=False)
-
     course = forms.ModelChoiceField(
         widget=forms.RadioSelect,
         queryset=Course.objects.all(),

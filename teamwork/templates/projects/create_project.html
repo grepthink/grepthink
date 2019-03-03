@@ -48,6 +48,7 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
+
   $(".s2_desired_skills").select2({
     ajax: {
       url: "ajax/add_desired_skills/",
@@ -58,8 +59,31 @@ $(document).ready(function() {
           q: params.term, // search term
           page: params.page
         };
+      },         
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+        return {
+          results: data.items,
+          pagination: {
+            more: (params.page * 30) < data.total_count
+          }
+        };
       },
-       
+      cache: true
+    },
+    tags: true,
+    placeholder: "Search skills",
+    //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+    minimumInputLength: 1,
+    maximumInputLength: 25,
+    //templateResult: formatRepo, // omitted for brevity, see the source of this page
+    //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+  });
+
   $(".s2_desired_techs").select2({
     ajax: {
       url: "ajax/add_desired_techs/",
@@ -87,7 +111,7 @@ $(document).ready(function() {
       cache: true
     },
     tags: true,
-    placeholder: "Search skills",
+    placeholder: "Search Technologies",
     //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
     minimumInputLength: 1,
     maximumInputLength: 25,
@@ -95,6 +119,7 @@ $(document).ready(function() {
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
 });
+
 </script>
 
 {% endblock javascript %}
@@ -221,7 +246,7 @@ $(document).ready(function() {
 
         <div class="form-group">
             {{ form.slug.errors }}
-            <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="This will be the URL of your project. Leave blank for a randomly generated URL. You will not be able to edit this after project creation.">
+            <a class='slug-tooltip' data-toggle="tooltip" data-placement="left" title="This will be used in the URL of your project. Leave blank for a randomly generated URL. You will not be able to edit this after project creation.">
             <i class='glyphicon glyphicon-info-sign'></i></a>
             <label for="{{ form.slug.id_for_label }}" class="control-label">
             Custom URL Slug:

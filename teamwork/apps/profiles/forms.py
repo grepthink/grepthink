@@ -107,6 +107,8 @@ class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['email'].validators.append(UniqueEmailValidator)
+        self.fields['email'].validators.append(SignupDomainValidator)
 
     name = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -126,30 +128,10 @@ class ProfileForm(forms.ModelForm):
 
     location = forms.CharField(
               widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=100, required=False)
-
-    # known_skill = forms.CharField(
-    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #           max_length=255, required=False)
-    #
-    #
-    # learn_skill = forms.CharField(
-    #           widget=forms.TextInput(attrs={'class': 'form-control'}),
-    #           max_length=255, required=False)
+              max_length=100, required=False)    
 
     avatar = forms.ImageField(required=False)
 
-# past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
-
-
     class Meta:
-      # was model=Skills not sure why or why it was working. This works also
         model = Profile
-        # fields = ['name', 'bio', 'institution', 'location',
-        #         'known_skill', 'learn_skill']
-        fields = ['name', 'email','bio', 'institution', 'location']
-
-    def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
-        self.fields['email'].validators.append(UniqueEmailValidator)
-        self.fields['email'].validators.append(SignupDomainValidator)
+        fields = ['name', 'email','bio', 'institution', 'location']    
