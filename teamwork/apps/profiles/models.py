@@ -50,6 +50,8 @@ class Skills(models.Model):
         """
         super(Skills, self).save(*args, **kwargs)
 
+
+
 # Converts a number into a weekday
 def dayofweek(number):
     return {
@@ -203,6 +205,8 @@ class Profile(models.Model):
 
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
+
+
 
     claimed_projects = models.ManyToManyField('projects.Project', related_name="claimed_projects", default="")
 

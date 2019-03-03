@@ -115,7 +115,10 @@ def edit_project(request, slug):
         elif profAdded:
             messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
+            if (not course in mem_courses):
+                messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
+            else:
+                messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
         return redirect(view_one_project, project.slug)
 
@@ -197,7 +200,31 @@ def edit_project(request, slug):
         to_delete = Skills.objects.get(skill=skillname)
         project.desired_skills.remove(to_delete)
         return redirect(edit_project, slug)
+#-----------------------------------------------------------------
+    if request.POST.get('desired_techs'):
+        techs = request.POST.getlist('desired_techs')
+        for s in techs:
+            s_lower = s.lower()
+            # Check if lowercase version of skill is in db
+            if Techs.objects.filter(tech=s_lower):
+                # Skill already exists, then pull it up
+                desired_tech = Techs.objects.get(tech=s_lower)
+            else:
+                # Add the new skill to the Skills table
+                desired_tech = Techs.objects.create(tech=s_lower)
+                # Save the new object
+                desired_tech.save()
+            # Add the skill to the project (as a desired_skill)
+            project.desired_techs.add(desired_tech)
+            project.save()
+        return redirect(view_one_project, project.slug)
 
+    if request.POST.get('remove_desired_tech'):
+        tech_name = request.POST.get('remove_desired_tech')
+        to_delete = Techs.objects.get(tech=tech_name)
+        project.desired_techs.remove(to_delete)
+        return redirect(edit_project, slug)
+#-----------------------------------------------------------------
     if request.method == 'POST':
         form = EditProjectForm(request.user.id, request.POST, members=members)
 
@@ -270,6 +297,7 @@ def add_member(request, slug, uname):
     - Project grabbed using slug
     - User grabbed using username
     """
+
     project = get_object_or_404(Project, slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
@@ -391,6 +419,51 @@ def create_desired_skills(request):
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
+#--------------------------------------------------------------------------
+def add_desired_techs(request, slug):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+def create_desired_techs(request):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+def edit_techs(request, username):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
 
 
+    return HttpResponse("Failure")
+
+#--------------------------------------------------------------------------
     return HttpResponse("Failure")
