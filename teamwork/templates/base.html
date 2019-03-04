@@ -24,7 +24,10 @@
 
 
 {# Inject "skin-green-light" into the class of body #}
-{% block body_class %} skin-green-light {% endblock %}
+
+{% block body_class %}
+{{ user.profile.theme }}
+{% endblock %}
 
 {# Contains the page_name, page_description, and breadcrumbs #}
 {% block content_header %}

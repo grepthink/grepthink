@@ -20,6 +20,7 @@ import codecs
 
 from teamwork.apps.projects.models import Project
 from teamwork.apps.courses.models import Course
+from teamwork.apps.profiles.models import Profile
 
 
 def send_email(recipients, gt_email, subject, content):
@@ -224,3 +225,19 @@ def search(request):
                 context['course_results'] = course_results
 
     return render(request, 'core/search_results.html', context)
+
+def switch_theme(request):
+    """
+    switches the current theme from light to dark and vice-versa
+    """
+    profile = Profile.objects.get(user=request.user)
+    
+    if profile.theme == "skin-green-light":
+        profile.theme = "skin-green"
+    else:
+        profile.theme = "skin-green-light"
+
+    print(profile.theme)
+    profile.save()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

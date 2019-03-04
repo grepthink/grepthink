@@ -44,7 +44,7 @@ urlpatterns = [
         # CORE AND SIGNUP
         url(r'^$', LandingView.index, name='index'),
         # Button to Disable course
-        url(r'^(?P<slug>[^/]+)/disable/$',LandingView.disable , name='landing_disable'),
+        url(r'^(?P<slug>[^/]+)/disable/$', LandingView.disable, name='landing_disable'),
         # /about/
         url(r'^about/$', AboutView.about, name='about'),
         # /signup/
@@ -58,6 +58,7 @@ urlpatterns = [
         url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
             auth_views.password_reset_confirm, name='password_reset_confirm'),
         url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
+        url(r'^theme_switch/$', core_helpers.switch_theme, name='switch_theme'),
 
         # PROJECT
         # /create_project/

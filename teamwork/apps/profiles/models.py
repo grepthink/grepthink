@@ -216,6 +216,8 @@ class Profile(models.Model):
     # don't believe this is used anywhere 9/24
     isTa = models.BooleanField(default=False)
 
+    theme = models.TextField(max_length=25, default="skin-green-light")
+
     def __str__(self):
         string = "%s (%s)"%(self.user.email, self.name)
         return string
