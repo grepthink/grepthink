@@ -170,6 +170,7 @@ def edit_profile_helper(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -187,6 +188,9 @@ def edit_profile_helper(request, username):
 
 =======
 >>>>>>> b85c19e... merge with shreya changes
+=======
+
+>>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
@@ -207,6 +211,7 @@ def edit_profile_helper(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             profileUser.email=email
 =======
             profileUser.email = email
@@ -220,6 +225,9 @@ def edit_profile_helper(request, username):
 =======
             profileUser.email = email
 >>>>>>> 09299ee... Merge branch 'master' into shreya
+=======
+            profileUser.email = email
+>>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
         if bio:
             profile.bio = bio
         if institution:

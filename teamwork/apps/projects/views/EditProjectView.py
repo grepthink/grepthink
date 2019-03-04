@@ -119,11 +119,14 @@ def edit_project(request, slug):
                 messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 # return False
 =======
 >>>>>>> 9184221... fix according to requested changes
 =======
 >>>>>>> 09299ee... Merge branch 'master' into shreya
+=======
+>>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
             else:
                 messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
