@@ -12,8 +12,6 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
 from django.contrib import messages
 
-import json
-
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -116,13 +114,7 @@ def edit_profile(request, username):
             # handles saving bio information also
             edit_profile_helper(request, username)
             # stay on edit_profile page
-            return redirect(edit_profile, username)
-
-        #handle deleting avatar
-        if request.POST.get('delete_avatar'):
-            avatar = request.POST.get('delete_avatar')
-            profile.avatar.delete()
-            form = ProfileForm(instance=profile)
+            return redirect(edit_profile, username)        
 
         #handle deleting profile
         if request.POST.get('delete_profile'):
@@ -159,13 +151,12 @@ def edit_profile_helper(request, username):
     """
 
     if request.user.profile.isGT:
-        tempProfile = User.objects.get(username=username)
-        profile = Profile.objects.get(user=tempProfile)
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
-        profileUser = User.objects.get(username=profile.user)
-        #grab profile for the current user
+        user = User.objects.get(username=profile.user)        
 
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
@@ -173,7 +164,7 @@ def edit_profile_helper(request, username):
 
         # grab each form element from the clean form
         bio = form.cleaned_data.get('bio')
-        email= form.cleaned_data.get('email')
+        email = form.cleaned_data.get('email')
         name = form.cleaned_data.get('name')
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
@@ -183,7 +174,7 @@ def edit_profile_helper(request, username):
         if name:
             profile.name = name
         if email:
-            profileUser.email = email
+            user.email = email
         if bio:
             profile.bio = bio
         if institution:
@@ -194,4 +185,4 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
 
         profile.save()
-        profileUser.save()
+        user.save()

@@ -104,9 +104,15 @@ class SignUpForm(forms.ModelForm):
         return self.cleaned_data
 
 class ProfileForm(forms.ModelForm):
-
+    """
+    Basic Edit Profile form
+    """
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
+
+        if 'instance' in kwargs and kwargs['instance']:
+            self.fields['email'].initial = kwargs['instance'].user.email;
+
         self.fields['email'].validators.append(UniqueEmailValidator)
         self.fields['email'].validators.append(SignupDomainValidator)
 
@@ -134,4 +140,4 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['name', 'email','bio', 'institution', 'location']    
+        fields = ['name', 'email', 'bio', 'institution', 'location']
