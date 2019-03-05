@@ -162,6 +162,7 @@ def edit_profile_helper(request, username):
         tempProfile = User.objects.get(username=username)
         profile = Profile.objects.get(user=tempProfile)
     else:
+<<<<<<< HEAD
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
         profileUser = User.objects.get(username=profile.user)
@@ -189,6 +190,12 @@ def edit_profile_helper(request, username):
 =======
 >>>>>>> b85c19e... merge with shreya changes
 =======
+=======
+        #grab profile for the current user
+        profile = Profile.objects.get(user=request.user)
+        profileUser = User.objects.get(username=profile.user)
+        #grab profile for the current user
+>>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 
 >>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
     #request.FILES is passed for File storing
@@ -212,6 +219,7 @@ def edit_profile_helper(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             profileUser.email=email
 =======
             profileUser.email = email
@@ -228,6 +236,9 @@ def edit_profile_helper(request, username):
 =======
             profileUser.email = email
 >>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
+=======
+            profileUser.email = email
+>>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
         if bio:
             profile.bio = bio
         if institution:

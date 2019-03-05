@@ -17,6 +17,7 @@ admin.site.register(Techs)
 =======
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 7e7f500... Merge pull request #2 from Hnguyen1997/Nikki
 =======
 
@@ -49,6 +50,11 @@ admin.site.register(Techs)
 admin.site.register(Techs)
 
 >>>>>>> b85c19e... merge with shreya changes
+=======
+# admin.site.unregister(Techs)
+admin.site.register(Techs)
+
+>>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 admin.site.register(Membership)
 admin.site.register(ProjectUpdate)
 admin.site.register(ResourceUpdate)

@@ -120,6 +120,7 @@ def edit_project(request, slug):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 # return False
 =======
 >>>>>>> 9184221... fix according to requested changes
@@ -127,6 +128,8 @@ def edit_project(request, slug):
 >>>>>>> 09299ee... Merge branch 'master' into shreya
 =======
 >>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
+=======
+>>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
             else:
                 messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
