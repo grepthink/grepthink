@@ -186,10 +186,23 @@
           },
           //Double click on event to delete
           eventRender: function(event, element) {
-            element.on('dblclick',event, function() {
+            element.on('click',event, function() {
               console.log(event.title)
               if(event.title !== 'Busy' && event.initiator == current_user){
-                $('#calendar').fullCalendar('removeEvents', event._id)
+                event_start=moment(event.start).format('MMMM Do YYYY, h:mm:ss a')
+                event_end=moment(event.end).format('MMMM Do YYYY, h:mm:ss a ')
+                $('#eventModal').modal('show');
+                $('#eventModal').modal('handleUpdate');
+                $('#eventModalTitle').html(event.title);
+                $('#eventModalStart').html(event_start);
+                $('#eventModalEnd').html(event_end);
+                $('#eventDelete').click(event,function(){
+                  $('#calendar').fullCalendar('removeEvents', event._id);
+                });
+              }else{
+                $('#noteventModal').modal('show');
+                $('#noteventModalTitle').html(event.title)
+                
               }    
             });
             var ending = event.end ? "\nEnd: " + event.end.format('LT') : ""
@@ -289,7 +302,46 @@
                 </div>
 
               <!-- /.row -->
-        
+              <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalEdit" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="eventModalTitle"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <h2 id="eventModalStart"></h2>
+                      <span>To</span>
+                      <h2 id="eventModalEnd"></h2>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal" id="eventDelete">Delete Event</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" id="noteventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="noteventModalTitle"></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <h3>Not Your Appointment</h3>            
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </section>
         
 {% endblock content %}
