@@ -9,7 +9,7 @@ from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponseRedirect
-
+from django.db import models
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
 from teamwork.apps.projects.models import dayofweek
@@ -144,36 +144,38 @@ def import_schedule(request,username):
     events_list=[]
     for event in result_events:         # append calendar information into the list with corrected format for FullCalendar
         title= event['summary']
-        if(event['start'].get('dateTime') is not None):             #get timed event from Google Calendar
+        if(event['start'].get('dateTime') is not None):             #get timed events from Google Calendar
             start=event['start'].get('dateTime')
             end=event['end'].get('dateTime')
-            this_event={'title':title,'start':start,'end':end}
-            print(this_event)
-        elif(event['start'].get('date') == event['end'].get('date')):  #get all-day event from Google Calendar
-            start=event['start'].get('date')
-            this_event={'title':title,'start':start}
-            print(this_event)
+            this_event={'title':title,'start':start,'end':end}       
         else:
-            start=event['start'].get('date')                        #get multi-day spanned event from Google Calendar
+            start=event['start'].get('date')                        #get all-day events from Google
             end=event['end'].get('date')
-            this_event={'title':title,'start':start,'end':end}                                                     
-            print(this_event)
-            
-        events_list.append(this_event)                              #add all events into one list
+            this_event={'title':title,'start':start,'end':end}                                                             
+        
+        events_list.append(this_event)                             
 
 
-    print(events_list)  
+
+    profile = Profile.objects.get(user=request.user)
+    string_profile = json.loads(profile.jsonavail)
     
-    profile = Profile.objects.get(user=request.user)        
-    profile.jsonavail = json.dumps(events_list)     #save calendar events into profile.jsonavail
+    profile.jsonavail = '[]'                #Empty profile.jsonavail
     profile.save()
+    print(profile.jsonavail)                 
+    google_events=json.loads(json.dumps(events_list))       
 
+
+    #save calendar events into profile.jsonavail
+    profile.jsonavail = json.dumps(string_profile+google_events)
+    print(profile.jsonavail)
+    profile.save()    
     return HttpResponseRedirect("/")
  
 def get_calendar(credentials,service):
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
+    print('Getting the upcoming events')
     events_result = service.events().list(calendarId='primary', timeMin=now,
                                         maxResults=250, singleEvents=True,
                                         orderBy='startTime').execute()
