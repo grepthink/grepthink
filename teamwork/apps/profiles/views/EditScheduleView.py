@@ -9,7 +9,7 @@ from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponseRedirect
-from django.db import models
+
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
 from teamwork.apps.projects.models import dayofweek
