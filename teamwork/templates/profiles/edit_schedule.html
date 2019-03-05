@@ -75,9 +75,9 @@
                 jsonEvents: JSON.stringify(cEvents.map(function (e)
                 {
                     return {
+                        title: e.title,
                         start: e.start,
                         end: e.end,
-                        title: e.title,
                     }
                 }))
               },
@@ -104,6 +104,7 @@
           // HEADER
           header: {
 
+
             left: 'agendaDay,agendaWeek,month',
             center: 'title',
             right: 'today prev,next'
@@ -114,23 +115,27 @@
           // automatically set to default: false 
 
           // column format for day view
-          columnFormat: 'dddd',
+          columnFormat: 'dddd M/D',
 
 
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [0, 1, 2, 3, 4, 5, 6], // Monday - Friday
 
+
               start: '8:00', // a start time (10am in this example)
               end: '22:00', // an end time (6pm in this example)
           },
+
+          defaultView: 'month',
+
 
 
           // Can click day/week names to navigate views
           navLinks: true,
 
           // Here Sean -andgates
-          allDaySlot: false,
+          allDaySlot: true,
 
           // Allow users to resize events.
           editable: true,
@@ -142,23 +147,32 @@
           // Allow selection for select function.
           selectable: true,
           selectHelper: true,
-          selectConstraint:{
-            start: '00:01', 
-            end: '23:59', 
-          },
+        
+        
           //Double click event to delete
           eventRender: function(event, element) {
-            element.on('dblclick',event, function() {
-              $('#calendar').fullCalendar('removeEvents', event._id);
+            element.on('click',event, function(){
+              event_start=moment(event.start).format('MMMM Do YYYY, h:mm:ss a')
+              event_end=moment(event.end).format('MMMM Do YYYY, h:mm:ss a ')
+              $('#eventModal').modal('show');
+              $('#eventModal').modal('handleUpdate');
+              $('#eventModalTitle').html(event.title);
+              $('#eventModalStart').html(event_start);
+              $('#eventModalEnd').html(event_end);
+              $('#eventDelete').click(event,function(){
+                $('#calendar').fullCalendar('removeEvents', event._id);
+              });
             });
-            element.popover({
+            var ending = event.end ? "\nEnd: " + event.end.format('LT') : ""
+            element.popover({         //Popover when hover over event
               animation:true,
               delay: 300,
-              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + "End: " + event.end.format('LT'), 
+              content: event.title + "\n" + "Start: " + event.start.format('LT') + "\n" + ending,
               trigger: 'hover'
             });
           },
 
+        
           // Function called on select event.
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
           select: function(start, end) {
@@ -172,11 +186,12 @@
               // Populate the Event Object. TODO: Add attributes.
               eventData = {
                 title: title,
-                start: start,
-                end: end
+                start: start.format("YYYY-MM-DD HH:mm Z"),
+                end: end.format("YYYY-MM-DD HH:mm Z")
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.
+              console.log(eventData)
               $('#calendar').fullCalendar('renderEvent', eventData, true);
 
             }
@@ -220,13 +235,15 @@
 {% block content %}
 
 <section class="content">
-
+   
 <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4><i class="icon fa fa-warning"></i> Alert!</h4>
       Did you forget to fill out your schedule?
 </div>
-
+    <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
+    <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->
+    <a href="{% url 'export_schedule' user.username %}" class="btn btn-success" role="button">Export</a>
       <div class="row">
           <div class="box box-primary">
             <div class="box-body no-padding">
@@ -256,10 +273,30 @@
 
 
       </div>
-
+      
 
       <!-- /.row -->
-
+      <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalEdit" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="eventModalTitle"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h2 id="eventModalStart"></h2>
+              <span>To</span>
+              <h2 id="eventModalEnd"></h2>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal" id="eventDelete">Delete Event</button>
+            </div>
+          </div>
+        </div>
+      </div> 
 </section>
 
 

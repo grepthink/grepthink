@@ -1,17 +1,23 @@
 # Django Imports
+from __future__ import print_function
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-
+from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events
 from teamwork.apps.projects.models import dayofweek
+from oauth2client import tools
+from oauth2client.file import Storage
+from oauth2client.client import flow_from_clientsecrets
+from googleapiclient.discovery import build
+from itertools import *
 
 # Form Imports
 
@@ -19,6 +25,13 @@ from teamwork.apps.projects.models import dayofweek
 
 # Other Imports
 import json
+import httplib2
+import os
+import datetime
+
+SCOPES = 'https://www.googleapis.com/auth/calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+flags = tools.argparser.parse_args([])
 
 @login_required
 def edit_schedule(request, username):
@@ -33,7 +46,7 @@ def edit_schedule(request, username):
     page_description = "Edit %s's Schedule"%(user.username)
     title = "Edit Schedule"
     profile = Profile.objects.get(user=user)
-
+    
     #gets current avaliability
     readable = ""
     if profile.jsonavail:
@@ -63,7 +76,7 @@ def save_event(request, username):
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
-
+        print(jsonEvents)
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
@@ -111,3 +124,95 @@ def save_event(request, username):
         #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     return HttpResponse("Failure")
+
+@login_required
+def import_schedule(request,username):
+    #otain credentials if it's non-existed
+    store = Storage('storage.json')
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        credentials = tools.run_flow(flow, store,flags)
+        print('Storing credentials to' + str(store))
+    
+
+    http = credentials.authorize(httplib2.Http())
+    service = build('calendar', 'v3', http=http)
+
+    result_events=get_calendar(credentials,service) #obtain list of calendar events
+    
+    events_list=[]
+    for event in result_events:         # append calendar information into the list with corrected format for FullCalendar
+        title= event['summary']
+        if(event['start'].get('dateTime') is not None):             #get timed events from Google Calendar
+            start=event['start'].get('dateTime')
+            end=event['end'].get('dateTime')
+            this_event={'title':title,'start':start,'end':end}       
+        else:
+            start=event['start'].get('date')                        #get all-day events from Google
+            end=event['end'].get('date')
+            this_event={'title':title,'start':start,'end':end}                                                             
+        
+        events_list.append(this_event)                             
+
+
+
+    profile = Profile.objects.get(user=request.user)
+    string_profile = json.loads(profile.jsonavail)
+    
+    profile.jsonavail = '[]'                #Empty profile.jsonavail
+    profile.save()
+    print(profile.jsonavail)                 
+    google_events=json.loads(json.dumps(events_list))       
+
+
+    #save calendar events into profile.jsonavail
+    profile.jsonavail = json.dumps(string_profile+google_events)
+    print(profile.jsonavail)
+    profile.save()    
+    return HttpResponseRedirect("/")
+ 
+def get_calendar(credentials,service):
+
+    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    print('Getting the upcoming events')
+    events_result = service.events().list(calendarId='primary', timeMin=now,
+                                        maxResults=250, singleEvents=True,
+                                        orderBy='startTime').execute()
+    events = events_result.get('items', [])
+
+    return events
+
+
+@login_required
+def export_schedule(request,username):
+    #obtain credentials if it's non-existed
+    store = Storage('storage.json')
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        credentials = tools.run_flow(flow, store,flags)
+        print('Storing credentials to' + str(store))
+    
+    http = credentials.authorize(httplib2.Http())
+    service = build('calendar', 'v3', http=http)
+
+    profile = Profile.objects.get(user=request.user)
+    readable=""
+    if profile.jsonavail:
+        jsonDec = json.decoder.JSONDecoder()
+        readable = jsonDec.decode(profile.jsonavail)
+
+    #put data from profile.jsonavail into google calendar format and send
+    EVENT={'summary':'','start':{'dateTime':''},'end':{'dateTime':''}}
+    for event in readable:
+        EVENT['summary']=event['title']
+        EVENT['start']['dateTime']=event['start']
+        EVENT['end']['dateTime']=event['end']
+        print(EVENT['start'],EVENT['end'])
+        send=service.events().insert(calendarId='primary',sendNotifications=True,body=EVENT).execute()
+
+    return HttpResponseRedirect("/")
+
+
+    
