@@ -28,6 +28,7 @@ import json
 import httplib2
 import os
 import datetime
+import requests
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -76,7 +77,7 @@ def save_event(request, username):
 
         # List of events as a string (json)
         jsonEvents = request.POST.get('jsonEvents')
-        print(jsonEvents)
+        
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
 
@@ -87,37 +88,37 @@ def save_event(request, username):
         if profile.avail.all() is not None: profile.avail.all().delete()
 
         # For each event
-        for event in event_list:
-            # Create event object
-            busy = Events()
+        # for event in event_list:
+        #     # Create event object
+        #     busy = Events()
 
-            # Get data
-            #function assumes start day and end day are the same
-            day = event['start'][8] + event['start'][9]
-            day = int(day)
-            s_hour = event['start'][11] + event['start'][12]
-            s_minute = event['start'][14] + event['start'][15]
+        #     # Get data
+        #     #function assumes start day and end day are the same
+        #     day = event['start'][8] + event['start'][9]
+        #     day = int(day)
+        #     s_hour = event['start'][11] + event['start'][12]
+        #     s_minute = event['start'][14] + event['start'][15]
 
-            s_hour = int(s_hour)
-            s_minute = int(s_minute)
+        #     s_hour = int(s_hour)
+        #     s_minute = int(s_minute)
 
-            e_hour = event['end'][11] + event['end'][12]
-            e_minute = event['end'][14] + event['end'][15]
-            e_hour = int(e_hour)
-            e_minute = int(e_minute)
+        #     e_hour = event['end'][11] + event['end'][12]
+        #     e_minute = event['end'][14] + event['end'][15]
+        #     e_hour = int(e_hour)
+        #     e_minute = int(e_minute)
 
-            # Assign data
-            busy.day = dayofweek(day)
-            busy.start_time_hour = s_hour
-            busy.start_time_min = s_minute
-            busy.end_time_hour = e_hour
-            busy.end_time_min = e_minute
+        #     # Assign data
+        #     busy.day = dayofweek(day)
+        #     busy.start_time_hour = s_hour
+        #     busy.start_time_min = s_minute
+        #     busy.end_time_hour = e_hour
+        #     busy.end_time_min = e_minute
 
-            # Save event
-            busy.save()
+        #     # Save event
+        #     busy.save()
 
-            profile.avail.add(busy)
-            profile.save()
+        #     profile.avail.add(busy)
+        #     profile.save()
 
 
         return HttpResponse("Schedule Saved")
@@ -130,12 +131,17 @@ def import_schedule(request,username):
     #otain credentials if it's non-existed
     store = Storage('storage.json')
     credentials = store.get()
+    # if credentials existed, get new access token 
+    # if(credentials):
+    #     r=requests.post(https://accounts.google.com/o/oauth2/token)
+   
+    #if credentials is invalid or not existed
     if not credentials or credentials.invalid:
         flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         credentials = tools.run_flow(flow, store,flags)
-        print('Storing credentials to' + str(store))
+        cred = credentials_to_dict(credentials)                             #turn credentials to dict
+        print(cred)
     
-
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
 
@@ -147,6 +153,8 @@ def import_schedule(request,username):
         if(event['start'].get('dateTime') is not None):             #get timed events from Google Calendar
             start=event['start'].get('dateTime')
             end=event['end'].get('dateTime')
+            start=start.replace('-08:00','')
+            end=end.replace('-08:00','')
             this_event={'title':title,'start':start,'end':end}       
         else:
             start=event['start'].get('date')                        #get all-day events from Google
@@ -156,15 +164,14 @@ def import_schedule(request,username):
         events_list.append(this_event)                             
 
 
-
     profile = Profile.objects.get(user=request.user)
     string_profile = json.loads(profile.jsonavail)
     
     profile.jsonavail = '[]'                #Empty profile.jsonavail
     profile.save()
-    print(profile.jsonavail)                 
+    print(profile.jsonavail)
+    print('\n')              
     google_events=json.loads(json.dumps(events_list))       
-
 
     #save calendar events into profile.jsonavail
     profile.jsonavail = json.dumps(string_profile+google_events)
@@ -214,5 +221,12 @@ def export_schedule(request,username):
 
     return HttpResponseRedirect("/")
 
-
+def credentials_to_dict(credentials):
+      return {'access_token': credentials.access_token,
+          'refresh_token': credentials.refresh_token,
+          'token_uri': credentials.token_uri,
+          'client_id': credentials.client_id,
+          'client_secret': credentials.client_secret,
+          'scopes': credentials.scopes,
+          'invalid': credentials.invalid}
     
