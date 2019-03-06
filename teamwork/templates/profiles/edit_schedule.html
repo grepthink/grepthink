@@ -151,7 +151,7 @@
         
           //Double click event to delete
           eventRender: function(event, element) {
-            element.on('click',event, function(){
+            element.on('dblclick',event, function(){
               event_start=moment(event.start).format('MMMM Do YYYY, h:mm:ss a')
               event_end=moment(event.end).format('MMMM Do YYYY, h:mm:ss a ')
               $('#eventModal').modal('show');

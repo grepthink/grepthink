@@ -122,7 +122,7 @@
           },
           //Double click on event to delete
           eventRender: function(event, element) {
-            element.on('click',event, function() {
+            element.on('dblclick',event, function() {
               console.log(event.title)
               if(event.title !== 'Busy' && event.initiator == current_user){
                 event_start=moment(event.start).format('MMMM Do YYYY, h:mm:ss a')
