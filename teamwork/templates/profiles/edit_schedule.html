@@ -300,8 +300,8 @@
               // Populate the Event Object. TODO: Add attributes.
               eventData = {
                 title: title,
-                start: start.format("YYYY-MM-DD HH:mm Z"),
-                end: end.format("YYYY-MM-DD HH:mm Z")
+                start: start.format(),
+                end: end.format()
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.
