@@ -153,8 +153,8 @@ def import_schedule(request,username):
         if(event['start'].get('dateTime') is not None):             #get timed events from Google Calendar
             start=event['start'].get('dateTime')
             end=event['end'].get('dateTime')
-            start=start.replace('-08:00','')
-            end=end.replace('-08:00','')
+            start=start[:-6]
+            end=end[:-6]
             this_event={'title':title,'start':start,'end':end}       
         else:
             start=event['start'].get('date')                        #get all-day events from Google
@@ -212,13 +212,21 @@ def export_schedule(request,username):
 
     #put data from profile.jsonavail into google calendar format and send
     EVENT={'summary':'','start':{'dateTime':''},'end':{'dateTime':''}}
+    EVENT_all={'summary':'','start':{'date':''},'end':{'date':''}}
     for event in readable:
-        EVENT['summary']=event['title']
-        EVENT['start']['dateTime']=event['start']
-        EVENT['end']['dateTime']=event['end']
-        print(EVENT['start'],EVENT['end'])
-        send=service.events().insert(calendarId='primary',sendNotifications=True,body=EVENT).execute()
-
+        if('T' in event['start'] or 'T' in event['end']):
+            EVENT['summary']=event['title']
+            EVENT['start']['dateTime']=event['start']+'-07:00'
+            EVENT['end']['dateTime']=event['end']+'-07:00'
+            print(EVENT['start'],EVENT['end'])
+            send=service.events().insert(calendarId='primary',sendNotifications=True,body=EVENT).execute()
+        else:
+            EVENT_all['summary']=event['title']
+            EVENT_all['start']['date']=event['start']
+            EVENT_all['end']['date']=event['end']
+            print(EVENT_all['start'],EVENT_all['end'])
+            send=service.events().insert(calendarId='primary',sendNotifications=True,body=EVENT_all).execute()
+       
     return HttpResponseRedirect("/")
 
 def credentials_to_dict(credentials):
