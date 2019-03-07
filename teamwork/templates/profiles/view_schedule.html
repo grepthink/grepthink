@@ -120,6 +120,12 @@
             start: '00:01', 
             end: '23:59', 
           },
+
+           //Limit the user to set the appointment 
+          selectOverlap: function(event){
+            return event.rendering === 'background';
+          },
+          
           //Double click on event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {

@@ -147,8 +147,12 @@
           // Allow selection for select function.
           selectable: true,
           selectHelper: true,
-        
-        
+
+           //Limit the user to set the appointment 
+          selectOverlap: function(event){
+            return event.rendering === 'background';
+          },
+          
           //Double click event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function(){
