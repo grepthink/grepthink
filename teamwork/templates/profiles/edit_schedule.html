@@ -113,6 +113,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             left: 'month,agendaWeek,agendaDay',
 =======
 
@@ -162,14 +163,28 @@
 
             left: 'agendaDay,agendaWeek,month',
 >>>>>>> 58eb5bf... light/dark theme fix test 2(don't merge)
+=======
+            left: 'today prev,next',
+>>>>>>> b21ccf8... Merge pull request #9 from Hnguyen1997/nikki-2
             center: 'title',
-            right: 'today prev,next'
+            right: 'agendaDay,agendaWeek,month'
           },
-          titleFormat: 'MMMM YYYY',
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
 
           // FOOTER
           // automatically set to default: false 
 
+<<<<<<< HEAD
           // column format for day view
           columnFormat: 'dddd M/D',
 
@@ -212,6 +227,8 @@
           columnFormat: 'dddd M/D',
 <<<<<<< HEAD
 >>>>>>> 420b64e... save imported event to profile. (weird bug when create busy time in edit_schedule after import)
+=======
+>>>>>>> b21ccf8... Merge pull request #9 from Hnguyen1997/nikki-2
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
 <<<<<<< HEAD
@@ -265,16 +282,19 @@
 
           defaultView: 'month',
 
-
           // Can click day/week names to navigate views
           navLinks: true,
           // Here Sean -andgates
+<<<<<<< HEAD
 <<<<<<< HEAD
           allDaySlot: true,
 
 =======
           allDaySlot: false,
 >>>>>>> 3fe2cc7... Changes made to the calendar UI
+=======
+          allDaySlot: false,
+>>>>>>> b21ccf8... Merge pull request #9 from Hnguyen1997/nikki-2
           // Allow users to resize events.
           editable: true,
           // Allow "more" link when too many events.
