@@ -17,6 +17,29 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+
+import google.oauth2.credentials
+class Credentials(models.Model):
+    user=models.OneToOneField(User)
+    access_token=models.TextField(default="")
+    refresh_token=models.TextField(default="")
+    client_id=models.TextField(default="")
+    client_secret=models.TextField(default="")
+    scopes=models.TextField(default="")
+    invalid=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Credential"
+        # Multiple Skill objects are referred to as Projects.
+        verbose_name_plural = "Credentials"
+        ordering = ('user',)
+
+    def save(self, *args, **kwargs):   
+       super(Credentials, self).save(*args, **kwargs) # Call the real save() method
+
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.
