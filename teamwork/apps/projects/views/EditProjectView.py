@@ -112,8 +112,8 @@ def edit_project(request, slug):
 
         if added:
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
-        elif profAdded:
-            messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
+        elif this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+            messages.add_message(request, messages.SUCCESS, "Grepper(s) have been added to the project.")
         else:
             if (not course in mem_courses):
                 messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
