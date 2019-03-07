@@ -129,10 +129,9 @@ def save_event(request, username):
 
 @login_required
 def import_schedule(request,username):
-    #otain credentials if it's non-existed
-    service, credentials =get_credentials(username)    
-    result_events=get_calendar(credentials,service) #obtain list of calendar events
+    service, credentials = get_credentials(username)    #otain credentials if it's non-existed
     
+    result_events = get_calendar(credentials,service) #obtain list of calendar events
     events_list=[]
     for event in result_events:         # append calendar information into the list with corrected format for FullCalendar
         title= event['summary']
@@ -177,8 +176,7 @@ def get_calendar(credentials,service):
 
 @login_required
 def export_schedule(request,username):
-    #obtain credentials if it's non-existed
-    service, credentials = get_credentials(username) 
+    service, credentials = get_credentials(username) #obtain credentials if it's non-existed
 
     profile = Profile.objects.get(user=request.user)
     readable=""
@@ -244,46 +242,3 @@ def get_credentials(username):
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
     return (service,credentials)
-# 
-
-
-
-
-    # if(creden is None ):             #if no credentials found
-    #     flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-    #     credentials = tools.run_flow(flow, store,flags)
-    #     cred = credentials_to_dict(credentials)
-    #     print(cred)
-    #     creden=Credentials.objects.create(user=usr,access_token=cred['access_token'],refresh_token=cred['refresh_token'],client_id=cred['client_id'],client_secret=cred['client_secret'],scopes=cred['scopes'],invalid=cred['invalid'])
-    #     creden.save()
-    #     http = credentials.authorize(httplib2.Http())
-    #     service = build('calendar', 'v3', http=http)
-    #     return service
-    # elif(creden.invalid):           #if credentials invalid
-    #     cred.delete()
-    #     flow = flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-    #     credentials = tools.run_flow(flow, store,flags)
-    #     cred = credentials_to_dict(credentials)
-    #     print(cred)
-    #     creden=Credentials.objects.create(user=usr,access_token=cred['access_token'],refresh_token=cred['refresh_token'],client_id=cred['client_id'],client_secret=cred['client_secret'],scopes=cred['scopes'],invalid=cred['invalid'])
-    #     creden.save()
-    #     http = credentials.authorize(httplib2.Http())
-    #     service = build('calendar', 'v3', http=http)
-    #     return service
-    # else:                           #if credentials exist and
-    #     payload={'refresh_token':creden.refresh_token,'client_id':creden.client_id,'client_secret':creden.client_secret,'grant_type':'refresh_token'}
-    #     r=requests.post('https://oauth2.googleapis.com/token',data=payload)
-    #     new_token=json.loads(r.text)
-    #     print(new_token)
-    #     credentials = google.oauth2.credentials.Credentials(
-    #         token=new_token['access_token'],
-    #         refresh_token=creden.refresh_token ,
-    #         id_token=None,
-    #         token_uri='https://oauth2.googleapis.com/token',
-    #         client_id=creden.client_id,
-    #         client_secret=creden.client_secret)
-    #     print("GOT HEREEEE")
-    #     creden.acess_token=new_token['access_token']
-    #     creden.save()
-    #     service=build('calendar','v3',credentials=credentials)
-    #     return service
