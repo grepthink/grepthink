@@ -81,14 +81,30 @@
     $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
-          header: {
-            left: 'agendaDay,agendaWeek,month',
-            center: 'title',
-            right: 'today prev,next'
+          fixedWeekCount: false,
+          showNonCurrentDates: true,
 
+          // HEADER
+          header: {
+            left: 'today prev,next',
+            center: 'title',
+            right: 'agendaDay,agendaWeek,month'
           },
-          // Day of week shouldn't contain hard coded date.
-          columnFormat: 'dddd',
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
+
+          // FOOTER
+          // automatically set to default: false
+          
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
