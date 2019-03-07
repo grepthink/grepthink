@@ -32,7 +32,7 @@ from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjec
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
 from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView,ViewSchedule
-
+from teamwork.apps.profiles.views.EditScheduleView import import_schedule
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
 from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
@@ -176,6 +176,8 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/save_events/$', ViewSchedule.save_events, name='save_events'),
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
+        url(r'^user/(?P<username>[^/]+)/import_schedule$', EditScheduleView.import_schedule, name='import_schedule'),
+        url(r'^user/(?P<username>[^/]+)/export_schedule$', EditScheduleView.export_schedule, name='export_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
