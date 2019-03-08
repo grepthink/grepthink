@@ -181,6 +181,10 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
+        # For Refresh feature ( Refresh feature step 11 )
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/refresh_schedule/$', EditScheduleView.refresh_schedule, name='refresh_schedule'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/refresh_schedule/$', ViewSchedule.refresh_schedule, name='refresh_schedules'),
+
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', MatchesView.view_matches, name='view_matches'),
         # see why this user matches

@@ -8,7 +8,12 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 # Model Imports
 from teamwork.apps.profiles.models import Profile
+<<<<<<< HEAD
 from django.http import HttpResponseRedirect
+=======
+# For Refresh feature step 12
+from django.http import HttpResponse, JsonResponse
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events,Credentials
@@ -127,6 +132,7 @@ def save_event(request, username):
 
     return HttpResponse("Failure")
 
+<<<<<<< HEAD
 @login_required
 def import_schedule(request,username):
     service, credentials = get_credentials(username)    #otain credentials if it's non-existed
@@ -180,10 +186,22 @@ def export_schedule(request,username):
 
     profile = Profile.objects.get(user=request.user)
     readable=""
+=======
+# For Refresh feature step 13
+@csrf_exempt
+def refresh_schedule(request, username):
+
+    user = get_object_or_404(User, username=username)
+    profile = Profile.objects.get(user=user)
+
+    #gets current avaliability
+    readable = ""
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(profile.jsonavail)
 
+<<<<<<< HEAD
     #put data from profile.jsonavail into google calendar format and send
     EVENT={'summary':'','start':{'dateTime':''},'end':{'dateTime':''}}
     EVENT_all={'summary':'','start':{'date':''},'end':{'date':''}}
@@ -242,3 +260,8 @@ def get_credentials(username):
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
     return (service,credentials)
+=======
+    meetings = mark_safe(profile.jsonavail)
+
+    return JsonResponse(meetings,safe=False, json_dumps_params={'ensure_ascii': False})
+>>>>>>> e63de6a... refresh feature upload and bug fix 1

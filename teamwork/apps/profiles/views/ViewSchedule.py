@@ -1,4 +1,5 @@
-from django.http import HttpResponse
+# For Refresh feature step 14
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
@@ -99,3 +100,14 @@ def make_alert(request,username):
         url=reverse('edit_schedule',args=[username]),
         read=False,
     )
+
+# For Refresh feature step 15
+@csrf_exempt
+def refresh_schedule(request, username):
+
+    user = get_object_or_404(User, username=username)
+    profile = Profile.objects.get(user=user)
+
+    meetings = profile.jsonavail
+
+    return JsonResponse(meetings,safe=False, json_dumps_params={'ensure_ascii': False})

@@ -30,6 +30,10 @@
 
 <script>
   events = JSON.parse(JSON.stringify({{json_events}}))
+  
+  // For Refresh feature ( Refresh feature step 6)
+  var checkChange=true;
+  
   $(document).ready(function() {
 
       // Function triggered by submit button
@@ -47,6 +51,9 @@
             //alert("Did you forget to fill out your availability?")
           }
           else {
+		  // For Refresh feature ( Refresh feature step 7)
+		  checkChange=false;
+		  
             // Prepare to send event list to server.
             postEvents(eventsOnSubmit);
           }
@@ -57,22 +64,33 @@
           event.preventDefault();
           // Get map of all events added on client side so far.
           var eventsOnSubmit = $('#calendar').fullCalendar('removeEvents');
-
+			
+		 // For Refresh feature ( Refresh feature step 8)
+		  checkChange=false;
+		  
           postEvents(eventsOnSubmit);
 
+      });
+	  
+	  // Clear button feature step 1
+	 $("#savebtn").on("click",function(){
+            console.log("click");
+            $("#emptyAlert").hide();
+            postEvents([]);
       });
 
 
       // Ajax post call to server, converts circular data structure
       // to list then to JSON.
       function postEvents(cEvents) {
-          $.ajax({
-              url: 'ajax/save_event/',
-              type: 'POST',
-              data: {
-                // Need to stringfy cEvents (circular structure), but must first
-                // iterate through and create a simplier representation.
-                jsonEvents: JSON.stringify(cEvents.map(function (e)
+	  
+	 //Clear button feature step 2 (The sturcture has changed here, be careful)
+          var jsonEvents=null;
+          if(cEvents==undefined||cEvents.length==0){
+                cEvents=[];
+                jsonEvents="[]";
+          }else{
+            jsonEvents=JSON.stringify(cEvents.map(function (e)
                 {
                     return {
                         title: e.title,
@@ -80,10 +98,30 @@
                         end: e.end,
                     }
                 }))
+			}
+              $.ajax({
+              url: 'ajax/save_event/',
+              type: 'POST',
+              data: {
+                // Need to stringfy cEvents (circular structure), but must first
+                // iterate through and create a simplier representation.
+                jsonEvents:jsonEvents
               },
+			  
               success: function (response) {
                 // Get the response from server and process it
                 // In this case simply alert the user.
+				
+				// For Refresh feature (Refresh feature step 9)
+				events=cEvents.map(function(e){
+                    return {
+                      start:e.start,
+                        end:e.end,
+                       title:e.title
+                    }
+                });
+                 checkChange=true;
+				
                 alert(response);
               },
               error: function (xhr) {
@@ -115,6 +153,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             left: 'month,agendaWeek,agendaDay',
 =======
 
@@ -124,6 +163,9 @@
 =======
             left: 'today prev,next',
 >>>>>>> 3fe2cc7... Changes made to the calendar UI
+=======
+            left: 'today prev,next',
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
           },
@@ -142,6 +184,7 @@
           // FOOTER
           // automatically set to default: false 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
           // column format for day view
 <<<<<<< HEAD
@@ -262,6 +305,8 @@
 >>>>>>> 3fe2cc7... Changes made to the calendar UI
 =======
 >>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
+=======
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [0, 1, 2, 3, 4, 5, 6], // Monday - Friday
@@ -298,6 +343,7 @@
 >>>>>>> 1b6be70... add event modal, allow clicking on monthly view
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
           defaultView: 'month',
 
@@ -323,6 +369,12 @@
           // Here Sean -andgates
           allDaySlot: false,
 >>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
+=======
+          // Can click day/week names to navigate views
+          navLinks: true,
+          // Here Sean -andgates
+          allDaySlot: false,
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
           // Allow users to resize events.
           editable: true,
           // Allow "more" link when too many events.
@@ -348,10 +400,13 @@
             start: '00:01', 
             end: '23:59', 
           },
+<<<<<<< HEAD
 =======
 >>>>>>> 2da1dc2... Merge branch 'hiep-staging' into hiep-new
 =======
 >>>>>>> 92109ae... Merge pull request #8 from Hnguyen1997/hiep-new
+=======
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){
@@ -360,11 +415,14 @@
           
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e7450f7... added calendar feature
 =======
 >>>>>>> ec49c71... Merge pull request #6 from Hnguyen1997/anisha
 =======
 >>>>>>> 2da1dc2... Merge branch 'hiep-staging' into hiep-new
+=======
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
           //Double click event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function(){
@@ -417,7 +475,31 @@
 
       }) // End fullCalendar initialization.
 
+	 // Main code for the Refresh feature (Refresh feature step 10)
+	var confirmTag=false;
 
+      setInterval(function(){
+      	$.ajax({
+              url: 'ajax/refresh_schedule/',
+              type: 'POST',
+              success: function (response) {
+              	var resp=response.split(" ").join("");
+              	if(JSON.stringify(events)!=resp&&checkChange){
+              	    events=JSON.parse(resp);
+              		if(!confirmTag){
+              			confirmTag=true;
+              			var sure=confirm("New schedule is detected. Do you need refresh this schedule?");
+              			if(sure){
+              				window.location.reload();
+              			}
+              			confirmTag=false;
+              		}
+
+              	}
+              }
+          });
+      },1000)
+	  
   }); // End main function.
 </script>
 
@@ -455,7 +537,16 @@
 <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-      Did you forget to fill out your schedule?
+	
+      {# Clear button feature step 3 #}
+	  <div>Did you forget to fill out your schedule?</div>
+    <div style="overflow:hidden;">
+        <div style="float:right;">
+            <button class="btn" data-dismiss="alert" aria-hidden="true" style="background:#666666;">Cancel</button>
+            <button  class="btn" id="savebtn" style="background:#003a6c;">Save</button>
+        </div>
+    </div>
+	  
 </div>
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
     <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->

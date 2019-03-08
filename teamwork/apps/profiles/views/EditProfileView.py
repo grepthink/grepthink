@@ -197,7 +197,10 @@ def edit_profile_helper(request, username):
         #grab profile for the current user
 >>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 
+<<<<<<< HEAD
 >>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
+=======
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
@@ -214,6 +217,7 @@ def edit_profile_helper(request, username):
         if name:
             profile.name = name
         if email:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -239,6 +243,9 @@ def edit_profile_helper(request, username):
 =======
             profileUser.email = email
 >>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
+=======
+            profileUser.email = email
+>>>>>>> e63de6a... refresh feature upload and bug fix 1
         if bio:
             profile.bio = bio
         if institution:
