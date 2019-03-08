@@ -60,17 +60,17 @@ $(document).ready(function() {
         };
       },
        
-  // $(".s2_desired_techs").select2({
-  //   ajax: {
-  //     url: "ajax/add_desired_techs/",
-  //     dataType: 'json',
-  //     delay: 250,
-  //     data: function (params) {
-  //       return {
-  //         q: params.term, // search term
-  //         page: params.page
-  //       };
-  //     },
+  $(".s2_desired_techs").select2({
+    ajax: {
+      url: "ajax/add_desired_techs/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
       processResults: function (data, params) {
         // parse the results into the format expected by Select2
         // since we are using custom formatting functions we do not need to
@@ -156,7 +156,7 @@ $(document).ready(function() {
         <div class="form-group">
             {{ form.content.errors }}
             <label for="{{ form.content.id_for_label }}" class="control-label">
-            Project description <a href="https://daringfireball.net/projects/markdown/syntax">[Markdown supported]</a>:
+            Project description <a href="https://guides.github.com/features/mastering-markdown/">[Markdown supported]</a>:
             </label>
             {{ form.content }}
         </div>
@@ -227,7 +227,18 @@ $(document).ready(function() {
             </label>
             {{ form.slug }}
         </div>
+        
+        <div class="form-group">
+          {{ form.no_request.errors }}	
+            <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Check to block users from requesting to join your project.">	
+            <i class='glyphicon glyphicon-info-sign'></i></a>	
+            <label for="{{ form.no_request.id_for_label }}" class="control-label">	
+            Lock request to join:	
+            </label>	
+            {{ form.no_request }}	
+        </div>
 
+        
         <div class="form-group">
             {{ form.teamSize.errors }}
             <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Set the maximum amount of team members for this project.">

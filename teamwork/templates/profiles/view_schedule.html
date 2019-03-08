@@ -27,8 +27,19 @@
 <script src="{% static 'js/fullcalendar.min.js' %}"></script>
 
 <script>
-    events = JSON.parse(JSON.stringify({{json_events}}))
+	// Fix old appointment bug step 1
+    events = JSON.parse(JSON.stringify({{json_events}}));
+
     var current_user=JSON.parse(JSON.stringify('{{page_username}}'));
+    //Copy array
+    var newEvents=JSON.parse(JSON.stringify(events));
+    for(var i in newEvents){
+    //Editable by yourself
+       newEvents[i].editable=(current_user==newEvents[i].initiator)
+    }
+	
+	// Set up a value for Refresh feature (Refresh feature step 1).
+	 var checkChange=true;
     
     $(document).ready(function() {
     // Function triggered by submit button
@@ -39,6 +50,9 @@
         event.preventDefault();
         // Get map of all events added on client side so far.
         var eventsOnSubmit = $('#calendar').fullCalendar('clientEvents');
+		
+		//For refresh feature(Refresh feature step 2)
+		checkChange=false;
         
           // Prepare to send event list to server.
           postEvents(eventsOnSubmit);
@@ -65,6 +79,18 @@
                 // Get the response from server and process it
                 // In this case simply alert the user.
                 alert(response);
+				
+				//For Refresh feature (Refresh feature step 3)
+				events=cEvents.map(function(e){
+                    return {
+                      start:e.start,
+                        end:e.end,
+                       title:e.title,
+                        initiator:e.initiator
+                    }
+                });
+                 checkChange=true;
+				
                 // setTimeout(function() {
                 //   location.reload();  //Refresh page
                 // }, 300);
@@ -72,6 +98,10 @@
               error: function (xhr) {
                 // Open JS debugger if ya goofed. Alert with last object.
                 // This should really trigger a 500 server error.
+				
+				//For Refresh feature (Refresh feature step 4)
+				checkChange=true;
+				
                 debugger;
                 alert(xhr);
             }
@@ -81,14 +111,30 @@
     $('#calendar').fullCalendar({
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
-          header: {
-            left: 'agendaDay,agendaWeek,month',
-            center: 'title',
-            right: 'today prev,next'
+          fixedWeekCount: false,
+          showNonCurrentDates: true,
 
+          // HEADER
+          header: {
+            left: 'today prev,next',
+            center: 'title',
+            right: 'agendaDay,agendaWeek,month'
           },
-          // Day of week shouldn't contain hard coded date.
-          columnFormat: 'dddd',
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
+
+          // FOOTER
+          // automatically set to default: false
+          
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
@@ -109,7 +155,8 @@
         
           // Allow "more" link when too many events.
           eventLimit: true,
-          events:events,
+		  // Fix old appointment bug step 2
+          events:newEvents,
           eventOverlap:false,
           // Allow selection for select function.
           selectable: true,
@@ -118,6 +165,12 @@
             start: '00:01', 
             end: '23:59', 
           },
+
+           //Limit the user to set the appointment 
+          selectOverlap: function(event){
+            return event.rendering === 'background';
+          },
+          
           //Double click on event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {
@@ -174,6 +227,33 @@
           },
 
       })
+	  
+	  // Main code of the Refresh feature (For refresh feature step 5)
+	  var confirmTag=false;
+
+      setInterval(function(){
+      	$.ajax({
+              url: 'ajax/refresh_schedule/',
+              type: 'POST',
+              success: function (response) {
+                var resp=response.split(" ").join("");
+              	if(JSON.stringify(events)!=resp&&checkChange){
+              	    events=JSON.parse(resp);
+              		if(!confirmTag){
+              			confirmTag=true;
+              			var sure=confirm("New schedule is detected. Do you need refresh this schedule?");
+              			if(sure){
+              				window.location.reload();
+              			}
+              			confirmTag=false;
+              		}
+
+              	}
+              }
+          });
+		  // Refresh Check time
+      },1000)
+	  
      }) // End fullCalendar initialization.
      
 

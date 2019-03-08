@@ -112,10 +112,13 @@ def edit_project(request, slug):
 
         if added:
             messages.add_message(request, messages.SUCCESS, "Greppers have been invited to join your project!")
-        elif profAdded:
-            messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
+        elif this_course in mem_courses and mem_to_add not in [mem.user for mem in curr_members]:
+            messages.add_message(request, messages.SUCCESS, "Grepper(s) have been added to the project.")
         else:
-            messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.")
+            if (not course in mem_courses):
+                messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
+            else:
+                messages.add_message(request, messages.WARNING, "Student(s) is already added to the project.") 
 
         return redirect(view_one_project, project.slug)
 
@@ -294,6 +297,7 @@ def add_member(request, slug, uname):
     - Project grabbed using slug
     - User grabbed using username
     """
+
     project = get_object_or_404(Project, slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
@@ -443,5 +447,23 @@ def create_desired_techs(request):
         for s in results:
             data['items'].append({'id': s.tech, 'text': s.tech})
         return JsonResponse(data)
+
+def edit_techs(request, username):
+    if request.method == 'GET' and request.is_ajax():
+        # JSON prefers dictionaries over lists.
+        data = dict()
+        # A list in a dictionary, accessed in select2 ajax
+        data['items'] = []
+        q = request.GET.get('q')
+        if q is not None:
+            results = Techs.objects.filter(
+                Q( tech__contains = q ) ).order_by( 'tech' )
+        for s in results:
+            data['items'].append({'id': s.tech, 'text': s.tech})
+        return JsonResponse(data)
+
+
+    return HttpResponse("Failure")
+
 #--------------------------------------------------------------------------
     return HttpResponse("Failure")

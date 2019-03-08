@@ -30,6 +30,10 @@
 
 <script>
   events = JSON.parse(JSON.stringify({{json_events}}))
+  
+  // For Refresh feature ( Refresh feature step 6)
+  var checkChange=true;
+  
   $(document).ready(function() {
 
       // Function triggered by submit button
@@ -47,6 +51,9 @@
             //alert("Did you forget to fill out your availability?")
           }
           else {
+		  // For Refresh feature ( Refresh feature step 7)
+		  checkChange=false;
+		  
             // Prepare to send event list to server.
             postEvents(eventsOnSubmit);
           }
@@ -57,22 +64,33 @@
           event.preventDefault();
           // Get map of all events added on client side so far.
           var eventsOnSubmit = $('#calendar').fullCalendar('removeEvents');
-
+			
+		 // For Refresh feature ( Refresh feature step 8)
+		  checkChange=false;
+		  
           postEvents(eventsOnSubmit);
 
+      });
+	  
+	  // Clear button feature step 1
+	 $("#savebtn").on("click",function(){
+            console.log("click");
+            $("#emptyAlert").hide();
+            postEvents([]);
       });
 
 
       // Ajax post call to server, converts circular data structure
       // to list then to JSON.
       function postEvents(cEvents) {
-          $.ajax({
-              url: 'ajax/save_event/',
-              type: 'POST',
-              data: {
-                // Need to stringfy cEvents (circular structure), but must first
-                // iterate through and create a simplier representation.
-                jsonEvents: JSON.stringify(cEvents.map(function (e)
+	  
+	 //Clear button feature step 2 (The sturcture has changed here, be careful)
+          var jsonEvents=null;
+          if(cEvents==undefined||cEvents.length==0){
+                cEvents=[];
+                jsonEvents="[]";
+          }else{
+            jsonEvents=JSON.stringify(cEvents.map(function (e)
                 {
                     return {
                         start: e.start,
@@ -80,10 +98,30 @@
                         title: e.title,
                     }
                 }))
+			}
+              $.ajax({
+              url: 'ajax/save_event/',
+              type: 'POST',
+              data: {
+                // Need to stringfy cEvents (circular structure), but must first
+                // iterate through and create a simplier representation.
+                jsonEvents:jsonEvents
               },
+			  
               success: function (response) {
                 // Get the response from server and process it
                 // In this case simply alert the user.
+				
+				// For Refresh feature (Refresh feature step 9)
+				events=cEvents.map(function(e){
+                    return {
+                      start:e.start,
+                        end:e.end,
+                       title:e.title
+                    }
+                });
+                 checkChange=true;
+				
                 alert(response);
               },
               error: function (xhr) {
@@ -98,24 +136,31 @@
 
       // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
-          // Show agenda month for editing schedules
+          // Show montly, weekly and daily agenda for editing schedules.
           defaultView: 'month',
+          fixedWeekCount: false,
+          showNonCurrentDates: true,
 
           // HEADER
           header: {
-
-            left: 'agendaDay,agendaWeek,month',
+            left: 'today prev,next',
             center: 'title',
-            right: 'today prev,next'
+            right: 'agendaDay,agendaWeek,month'
           },
-          titleFormat: 'MMMM YYYY',
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
 
           // FOOTER
           // automatically set to default: false 
-
-          // column format for day view
-          columnFormat: 'dddd',
-
 
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
@@ -125,16 +170,12 @@
               end: '22:00', // an end time (6pm in this example)
           },
 
-
           // Can click day/week names to navigate views
           navLinks: true,
-
           // Here Sean -andgates
           allDaySlot: false,
-
           // Allow users to resize events.
           editable: true,
-
           // Allow "more" link when too many events.
           eventLimit: true,
           events:events,
@@ -146,6 +187,12 @@
             start: '00:01', 
             end: '23:59', 
           },
+
+           //Limit the user to set the appointment 
+          selectOverlap: function(event){
+            return event.rendering === 'background';
+          },
+          
           //Double click event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {
@@ -186,7 +233,31 @@
 
       }) // End fullCalendar initialization.
 
+	 // Main code for the Refresh feature (Refresh feature step 10)
+	var confirmTag=false;
 
+      setInterval(function(){
+      	$.ajax({
+              url: 'ajax/refresh_schedule/',
+              type: 'POST',
+              success: function (response) {
+              	var resp=response.split(" ").join("");
+              	if(JSON.stringify(events)!=resp&&checkChange){
+              	    events=JSON.parse(resp);
+              		if(!confirmTag){
+              			confirmTag=true;
+              			var sure=confirm("New schedule is detected. Do you need refresh this schedule?");
+              			if(sure){
+              				window.location.reload();
+              			}
+              			confirmTag=false;
+              		}
+
+              	}
+              }
+          });
+      },1000)
+	  
   }); // End main function.
 </script>
 
@@ -224,7 +295,16 @@
 <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-      Did you forget to fill out your schedule?
+	
+      {# Clear button feature step 3 #}
+	  <div>Did you forget to fill out your schedule?</div>
+    <div style="overflow:hidden;">
+        <div style="float:right;">
+            <button class="btn" data-dismiss="alert" aria-hidden="true" style="background:#666666;">Cancel</button>
+            <button  class="btn" id="savebtn" style="background:#003a6c;">Save</button>
+        </div>
+    </div>
+	  
 </div>
 
       <div class="row">
