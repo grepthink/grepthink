@@ -114,6 +114,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             left: 'month,agendaWeek,agendaDay',
 =======
 
@@ -212,17 +213,35 @@
 
             left: 'agendaDay,agendaWeek,month',
 >>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
+=======
+            left: 'today prev,next',
+>>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
             center: 'title',
-            right: 'today prev,next'
+            right: 'agendaDay,agendaWeek,month'
           },
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
+<<<<<<< HEAD
           titleFormat: 'MMMM YYYY',
 =======
           columnFormat: 'dddd M/D',
 >>>>>>> 92109ae... Merge pull request #8 from Hnguyen1997/hiep-new
+=======
+>>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
 
           // FOOTER
           // automatically set to default: false 
 
+<<<<<<< HEAD
           // column format for day view
           columnFormat: 'dddd M/D',
 <<<<<<< HEAD
@@ -241,6 +260,8 @@
 
 =======
 >>>>>>> 3fe2cc7... Changes made to the calendar UI
+=======
+>>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [0, 1, 2, 3, 4, 5, 6], // Monday - Friday
@@ -276,6 +297,7 @@
           defaultView: 'month',
 >>>>>>> 1b6be70... add event modal, allow clicking on monthly view
 
+<<<<<<< HEAD
 
           defaultView: 'month',
 
@@ -295,6 +317,12 @@
 =======
           allDaySlot: false,
 >>>>>>> b21ccf8... Merge pull request #9 from Hnguyen1997/nikki-2
+=======
+          // Can click day/week names to navigate views
+          navLinks: true,
+          // Here Sean -andgates
+          allDaySlot: false,
+>>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
           // Allow users to resize events.
           editable: true,
           // Allow "more" link when too many events.
