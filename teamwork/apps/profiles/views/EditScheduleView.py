@@ -48,7 +48,7 @@ def edit_schedule(request, username):
     page_description = "Edit %s's Schedule"%(user.username)
     title = "Edit Schedule"
     profile = Profile.objects.get(user=user)
-    
+    this_user=request.user.username
     #gets current avaliability
     readable = ""
     if profile.jsonavail:
@@ -57,7 +57,7 @@ def edit_schedule(request, username):
 
     meetings = mark_safe(profile.jsonavail)
 
-    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
+    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings,'this_user':this_user})
 
 @csrf_exempt
 def save_event(request, username):
@@ -83,6 +83,7 @@ def save_event(request, username):
         event_list = json.loads(jsonEvents)
 
         profile.jsonavail = json.dumps(event_list)
+        print("Edit schedule " +profile.jsonavail)
         profile.save()
 
         # If user already has a schedule, delete it
