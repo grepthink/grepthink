@@ -45,43 +45,43 @@ def save_events(request, username):
 
         # Load json event list into a python list of dicts
         event_list = json.loads(jsonEvents)
-     
+
         profile.jsonavail = json.dumps(event_list)
         profile.save()
 
         # For each event
-        for event in event_list:
-            # Create event object
-            busy = Events()
+        # for event in event_list:
+        #     # Create event object
+        #     busy = Events()
 
-            # Get data
-            #function assumes start day and end day are the same
-            day = event['start'][8] + event['start'][9]
-            day = int(day)
-            s_hour = event['start'][11] + event['start'][12]
-            s_minute = event['start'][14] + event['start'][15]
+        #     # Get data
+        #     #function assumes start day and end day are the same
+        #     day = event['start'][8] + event['start'][9]
+        #     day = int(day)
+        #     s_hour = event['start'][11] + event['start'][12]
+        #     s_minute = event['start'][14] + event['start'][15]
 
-            s_hour = int(s_hour)
-            s_minute = int(s_minute)
+        #     s_hour = int(s_hour)
+        #     s_minute = int(s_minute)
 
-            e_hour = event['end'][11] + event['end'][12]
-            e_minute = event['end'][14] + event['end'][15]
-            e_hour = int(e_hour)
-            e_minute = int(e_minute)
+        #     e_hour = event['end'][11] + event['end'][12]
+        #     e_minute = event['end'][14] + event['end'][15]
+        #     e_hour = int(e_hour)
+        #     e_minute = int(e_minute)
 
-            # Assign data
-            busy.day = dayofweek(day)
-            busy.start_time_hour = s_hour
-            busy.start_time_min = s_minute
-            busy.end_time_hour = e_hour
-            busy.end_time_min = e_minute
+        #     # Assign data
+        #     busy.day = dayofweek(day)
+        #     busy.start_time_hour = s_hour
+        #     busy.start_time_min = s_minute
+        #     busy.end_time_hour = e_hour
+        #     busy.end_time_min = e_minute
 
-            # Save event
-            busy.save()
+        #     # Save event
+        #     busy.save()
 
-            profile.avail.add(busy)
-            profile.save()
-            make_alert(request,username)
+        #     profile.avail.add(busy)
+        #     profile.save()
+        make_alert(request,username)
 
        
         return HttpResponse("Schedule Saved")

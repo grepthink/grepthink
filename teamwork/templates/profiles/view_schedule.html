@@ -29,7 +29,6 @@
 <script>
     events = JSON.parse(JSON.stringify({{json_events}}))
     var current_user=JSON.parse(JSON.stringify('{{page_username}}'));
-    
     $(document).ready(function() {
     // Function triggered by submit button
     // verfies events and then calls helper function
@@ -157,7 +156,7 @@
           //Double click on event to delete
           eventRender: function(event, element) {
             element.on('dblclick',event, function() {
-              console.log(event.title)
+       
               if(event.title !== 'Busy' && event.initiator == current_user){
                 event_start=moment(event.start).format('MMMM Do YYYY, h:mm:ss a')
                 event_end=moment(event.end).format('MMMM Do YYYY, h:mm:ss a ')
@@ -208,7 +207,7 @@
                 title: title,
                 start: start,
                 end: end,
-                // color:'#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6), add random_color to calendar
+                color:'#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6),  //add random_color to calendar
                 editable:true,
                 initiator:current_user
               };
