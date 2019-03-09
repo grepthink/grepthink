@@ -33,12 +33,16 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 74b7e37... clear button and refresh page solve conflict 1
+=======
+>>>>>>> f141234... add initiator fail, re-update the work one
   
   // For Refresh feature ( Refresh feature step 6)
   var checkChange=true;
   
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -50,6 +54,8 @@
   console.log(current_user)
 >>>>>>> 2c1e5b4... fix cannot delete appointment bug
 =======
+=======
+>>>>>>> f141234... add initiator fail, re-update the work one
   var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
   console.log(current_user)
 >>>>>>> 8ad8e45... Merge pull request #16 from Hnguyen1997/hiep-staging
@@ -117,10 +123,9 @@
             jsonEvents=JSON.stringify(cEvents.map(function (e)
                 {
                     return {
-                        title: e.title,
                         start: e.start,
                         end: e.end,
-                        initiator: e.initiator
+                        title: e.title,
                     }
                 }))
 			}
@@ -143,7 +148,6 @@
                       start:e.start,
                         end:e.end,
                        title:e.title
-					   initiator: e.initiator
                     }
                 });
 				
