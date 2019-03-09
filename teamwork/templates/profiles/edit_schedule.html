@@ -137,6 +137,15 @@
 
       // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
           // Show montly, weekly and daily agenda for editing schedules.
           defaultView: 'month',
           fixedWeekCount: false,
@@ -144,6 +153,7 @@
 
           // HEADER
           header: {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -264,6 +274,9 @@
 =======
             //left: 'addEventButton'
 >>>>>>> 8c5ba83... some more changes
+=======
+            left: 'today prev,next addEventBtn',
+>>>>>>> 6e8f08d... hopefully button to add events in monthly view
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
           },
@@ -277,6 +290,7 @@
             agenda: {
               columnFormat: 'ddd M/D'
             }
+<<<<<<< HEAD
           },
 <<<<<<< HEAD
           titleFormat: 'MMMM YYYY',
@@ -285,6 +299,9 @@
 >>>>>>> 92109ae... Merge pull request #8 from Hnguyen1997/hiep-new
 =======
 >>>>>>> c82aaa0... Merge pull request #10 from Hnguyen1997/anisha
+=======
+          }, 
+>>>>>>> 6e8f08d... hopefully button to add events in monthly view
 
           // FOOTER
           // automatically set to default: false 
@@ -404,6 +421,7 @@
           selectConstraint:{
             start: '00:01', 
             end: '23:59', 
+<<<<<<< HEAD
           },
 <<<<<<< HEAD
 =======
@@ -415,6 +433,9 @@
 
           // POPOVER FOR EVENTS 
 
+=======
+          }, 
+>>>>>>> 6e8f08d... hopefully button to add events in monthly view
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){
