@@ -98,6 +98,7 @@
 
       // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
+
           // Show montly, weekly and daily agenda for editing schedules.
           defaultView: 'month',
           fixedWeekCount: false,
@@ -110,6 +111,15 @@
             right: 'agendaDay,agendaWeek,month'
           },
 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -119,7 +129,7 @@
             agenda: {
               columnFormat: 'ddd M/D'
             }
-          },
+          }, 
 
           // FOOTER
           // automatically set to default: false 
@@ -148,7 +158,7 @@
           selectConstraint:{
             start: '00:01', 
             end: '23:59', 
-          },
+          }, 
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){

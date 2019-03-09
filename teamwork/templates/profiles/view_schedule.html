@@ -79,6 +79,7 @@
       }
 
     $('#calendar').fullCalendar({
+
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
           fixedWeekCount: false,
@@ -89,6 +90,15 @@
             left: 'today prev,next',
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
+          },
+
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
           },
 
           // COLUMN HEADER DATE FORMATS
@@ -104,6 +114,7 @@
 
           // FOOTER
           // automatically set to default: false
+          
           
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
