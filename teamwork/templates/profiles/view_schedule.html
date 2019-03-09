@@ -91,6 +91,27 @@
             right: 'agendaDay,agendaWeek,month'
           },
 
+          customButtons: {
+            addEventButton: {
+              text: 'add event...',
+              click: function(){
+                var dateStr = prompt('Enter a date in YYYY-MM-DD format');
+                var date = moment(dateStr);
+
+                if(date.isValide()){
+                  $('#calendar').fullCalendar('renderEvent', {
+                    title: 'created event',
+                    start: date,
+                    allDay: true
+                  });
+                  alert('Great! Now update event database...');
+                }else{
+                  alert('invalid date.');
+                }
+              }
+            }
+          },
+
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -104,6 +125,7 @@
 
           // FOOTER
           // automatically set to default: false
+          
           
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
