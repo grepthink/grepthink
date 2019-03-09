@@ -30,13 +30,10 @@
 
 <script>
   events = JSON.parse(JSON.stringify({{json_events}}))
-<<<<<<< HEAD
   
   // For Refresh feature ( Refresh feature step 6)
   var checkChange=true;
   
-=======
->>>>>>> 8ad8e4539ae5016ba9bdd6a151de46e2d912abde
   var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
   console.log(current_user)
   $(document).ready(function() {
@@ -99,10 +96,9 @@
             jsonEvents=JSON.stringify(cEvents.map(function (e)
                 {
                     return {
-                        title: e.title,
                         start: e.start,
                         end: e.end,
-                        initiator: e.initiator
+                        title: e.title,
                     }
                 }))
 			}
@@ -125,7 +121,6 @@
                       start:e.start,
                         end:e.end,
                        title:e.title
-					   initiator: e.initiator
                     }
                 });
 				
