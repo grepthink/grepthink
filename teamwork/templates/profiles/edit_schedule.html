@@ -98,14 +98,6 @@
 
       // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
-          customButtons: {
-            addEventBtn: {
-              text: 'add event',
-              click: function(){
-                alert('button clicked!');
-              }
-            }
-          },
 
           // Show montly, weekly and daily agenda for editing schedules.
           defaultView: 'month',
@@ -117,6 +109,15 @@
             left: 'today prev,next addEventBtn',
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
+          },
+
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
           },
 
           // COLUMN HEADER DATE FORMATS

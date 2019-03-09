@@ -79,14 +79,6 @@
       }
 
     $('#calendar').fullCalendar({
-          customButtons: {
-            addEventBtn: {
-              text: 'add event',
-              click: function(){
-                alert('button clicked!');
-              }
-            }
-          },
 
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
@@ -98,6 +90,15 @@
             left: 'today prev,next addEventBtn',
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
+          },
+
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
           },
 
           // COLUMN HEADER DATE FORMATS
