@@ -101,13 +101,12 @@ def make_alert(request,username):
         read=False,
     )
 
-# For Refresh feature step 15
+    # For Refresh feature step 15
 @csrf_exempt
 def refresh_schedule(request, username):
+        user = get_object_or_404(User, username=username)
+        profile = Profile.objects.get(user=user)
 
-    user = get_object_or_404(User, username=username)
-    profile = Profile.objects.get(user=user)
+        meetings = profile.jsonavail
 
-    meetings = profile.jsonavail
-
-    return JsonResponse(meetings,safe=False, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse(meetings, safe=False, json_dumps_params={'ensure_ascii': False})

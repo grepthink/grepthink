@@ -36,6 +36,7 @@
   // For Refresh feature ( Refresh feature step 6)
   var checkChange=true;
   
+<<<<<<< HEAD
 =======
   var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
   console.log(current_user)
@@ -44,6 +45,10 @@
   var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
   console.log(current_user)
 >>>>>>> 8ad8e45... Merge pull request #16 from Hnguyen1997/hiep-staging
+=======
+  var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
+  console.log(current_user)
+>>>>>>> 0625dda... clear button and refresh page for master brunch
   $(document).ready(function() {
 
       // Function triggered by submit button
@@ -61,25 +66,13 @@
             //alert("Did you forget to fill out your availability?")
           }
           else {
+		  
 		  // For Refresh feature ( Refresh feature step 7)
 		  checkChange=false;
 		  
             // Prepare to send event list to server.
             postEvents(eventsOnSubmit);
           }
-      });
-
-      $('#clear-events').on('submit', function(event){
-          // Prevent default behavior of submit form.
-          event.preventDefault();
-          // Get map of all events added on client side so far.
-          var eventsOnSubmit = $('#calendar').fullCalendar('removeEvents');
-			
-		 // For Refresh feature ( Refresh feature step 8)
-		  checkChange=false;
-		  
-          postEvents(eventsOnSubmit);
-
       });
 	  
 	  // Clear button feature step 1
@@ -89,12 +82,25 @@
             postEvents([]);
       });
 
+      $('#clear-events').on('submit', function(event){
+          // Prevent default behavior of submit form.
+          event.preventDefault();
+          // Get map of all events added on client side so far.
+          var eventsOnSubmit = $('#calendar').fullCalendar('removeEvents');
+		  
+		  // For Refresh feature ( Refresh feature step 8)
+		  checkChange=false;
+
+          postEvents(eventsOnSubmit);
+
+      });
+
 
       // Ajax post call to server, converts circular data structure
       // to list then to JSON.
       function postEvents(cEvents) {
 	  
-	 //Clear button feature step 2 (The sturcture has changed here, be careful)
+          //Clear button feature step 2 (The sturcture has changed here, be careful)
           var jsonEvents=null;
           if(cEvents==undefined||cEvents.length==0){
                 cEvents=[];
@@ -124,7 +130,6 @@
                 // In this case simply alert the user.
 				
 				// For Refresh feature (Refresh feature step 9)
-				// For Red Mark step 1
 				events=cEvents.map(function(e){
                     return {
                       start:e.start,
@@ -132,6 +137,8 @@
                        title:e.title
                     }
                 });
+				
+				// For Refresh feature (Refresh feature step 9.5)
                  checkChange=true;
 				
                 alert(response);
@@ -187,6 +194,16 @@
             right: 'agendaDay,agendaWeek,month'
           },
 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
+
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -196,8 +213,7 @@
             agenda: {
               columnFormat: 'ddd M/D'
             }
-          },
-
+          }, 
           // FOOTER
           // automatically set to default: false 
 
@@ -389,12 +405,15 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 =======
 >>>>>>> 662aaeb... Merge pull request #5 from Hnguyen1997/hiep-testing
 
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
+=======
+>>>>>>> 0625dda... clear button and refresh page for master brunch
 
               start: '8:00', // a start time (10am in this example)
               end: '22:00', // an end time (6pm in this example)
@@ -432,6 +451,7 @@
 =======
 >>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
 
+<<<<<<< HEAD
           defaultView: 'month',
           // Can click day/week names to navigate views
           navLinks: true,
@@ -472,6 +492,14 @@
           // Here Sean -andgates
           allDaySlot: true,
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
+=======
+
+          defaultView: 'month',
+          // Can click day/week names to navigate views
+          navLinks: true,
+          // Here Sean -andgates
+          allDaySlot: true,
+>>>>>>> 0625dda... clear button and refresh page for master brunch
           // Allow users to resize events.
           editable: true,
           // Allow "more" link when too many events.
@@ -486,6 +514,7 @@
           
           // Allow selection for select function.
           selectable: true,
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
           selectHelper: true,
@@ -531,6 +560,9 @@
 =======
           selectHelper: true, 
 >>>>>>> 7061fb9... Merge pull request #14 from Hnguyen1997/hiep-staging
+=======
+          selectHelper: true, 
+>>>>>>> 0625dda... clear button and refresh page for master brunch
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){
@@ -600,7 +632,7 @@
 
       }) // End fullCalendar initialization.
 
-	 // Main code for the Refresh feature (Refresh feature step 10)
+	   // Main code for the Refresh feature (Refresh feature step 10)
 	var confirmTag=false;
 
       setInterval(function(){
@@ -624,7 +656,7 @@
               }
           });
       },1000)
-	  
+
   }); // End main function.
 </script>
 
@@ -662,8 +694,8 @@
 <div class="alert alert-warning alert-dismissible" id="emptyAlert" style="display:none;">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-	
-      {# Clear button feature step 3 #}
+     
+	 {# Clear button feature step 3 #}
 	  <div>Did you forget to fill out your schedule?</div>
     <div style="overflow:hidden;">
         <div style="float:right;">
@@ -671,7 +703,7 @@
             <button  class="btn" id="savebtn" style="background:#003a6c;">Save</button>
         </div>
     </div>
-	  
+	 
 </div>
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
     <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->

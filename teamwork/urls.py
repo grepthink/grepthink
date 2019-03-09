@@ -185,6 +185,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/refresh_schedule/$', EditScheduleView.refresh_schedule, name='refresh_schedule'),
         url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/refresh_schedule/$', ViewSchedule.refresh_schedule, name='refresh_schedules'),
 
+
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', MatchesView.view_matches, name='view_matches'),
         # see why this user matches

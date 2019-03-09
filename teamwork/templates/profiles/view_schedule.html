@@ -27,10 +27,9 @@
 <script src="{% static 'js/fullcalendar.min.js' %}"></script>
 
 <script>
-	// Fix old appointment bug step 1
-    events = JSON.parse(JSON.stringify({{json_events}}));
-
+    events = JSON.parse(JSON.stringify({{json_events}}))
     var current_user=JSON.parse(JSON.stringify('{{page_username}}'));
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     //Copy array
@@ -47,6 +46,12 @@
 >>>>>>> a528f8d... fix cannot delete your own event when viewing other schedule
 =======
 >>>>>>> 21c14de... Merge pull request #15 from Hnguyen1997/hiep-staging
+=======
+	
+	// Set up a value for Refresh feature (Refresh feature step 1).
+	 var checkChange=true;
+	
+>>>>>>> 0625dda... clear button and refresh page for master brunch
     $(document).ready(function() {
     // Function triggered by submit button
     // verfies events and then calls helper function
@@ -323,9 +328,13 @@
           // Day of week shouldn't contain hard coded date.
 
 
+          // Day of week shouldn't contain hard coded date.
+
+
           // FOOTER
           // automatically set to default: false
           
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -348,6 +357,9 @@
 =======
           
 >>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
+=======
+          
+>>>>>>> 0625dda... clear button and refresh page for master brunch
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday
@@ -389,8 +401,11 @@
           // Here Sean -andgates
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
+=======
+>>>>>>> 0625dda... clear button and refresh page for master brunch
           allDaySlot: true,
 
 =======
@@ -400,8 +415,7 @@
           editable: false,
           // Allow "more" link when too many events.
           eventLimit: true,
-		  // Fix old appointment bug step 2
-          events:newEvents,
+          events:events,
           eventOverlap:false,
 
            //Limit the user to set the appointment 
