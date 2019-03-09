@@ -114,6 +114,7 @@
           defaultView: 'month',
           fixedWeekCount: false,
           showNonCurrentDates: true,
+<<<<<<< HEAD
 
           // HEADER
           header: {
@@ -188,11 +189,38 @@
 
             left: 'agendaDay,agendaWeek,month',
 >>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
-            center: 'title',
-            right: 'today prev,next'
+=======
 
+          // HEADER
+          header: {
+            left: 'today prev,next',
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
+            center: 'title',
+            right: 'agendaDay,agendaWeek,month'
           },
+
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
+
           // Day of week shouldn't contain hard coded date.
+<<<<<<< HEAD
           columnFormat: 'dddd M/D',
 <<<<<<< HEAD
 >>>>>>> 04fdb38... all day & multi-day event show up (fix strange submit bug after import)
@@ -282,10 +310,14 @@
             }
           },
 >>>>>>> e63de6a... refresh feature upload and bug fix 1
+=======
+
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
 
           // FOOTER
           // automatically set to default: false
           
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -304,6 +336,9 @@
 =======
           
 >>>>>>> 7878f90... Merge pull request #12 from Hnguyen1997/nikki-2
+=======
+          
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday

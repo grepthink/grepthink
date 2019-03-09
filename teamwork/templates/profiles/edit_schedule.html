@@ -159,6 +159,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             left: 'month,agendaWeek,agendaDay',
 =======
 
@@ -238,10 +239,23 @@
               columnFormat: 'ddd M/D'
             }
           }, 
+=======
+            left: 'today prev,next',
+            center: 'title',
+            right: 'agendaDay,agendaWeek,month'
+          },
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
 
-          // FOOTER
-          // automatically set to default: false 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
 
+<<<<<<< HEAD
 <<<<<<< HEAD
           // column format for day view
           columnFormat: 'dddd M/D',
@@ -299,6 +313,9 @@
             }
           },
 
+=======
+
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -308,6 +325,7 @@
             agenda: {
               columnFormat: 'ddd M/D'
             }
+<<<<<<< HEAD
 <<<<<<< HEAD
           },
 <<<<<<< HEAD
@@ -321,6 +339,9 @@
           }, 
 >>>>>>> 6e8f08d... hopefully button to add events in monthly view
 
+=======
+          }, 
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
           // FOOTER
           // automatically set to default: false 
 
@@ -385,17 +406,22 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 
+<<<<<<< HEAD
           defaultView: 'month',
 
 
           defaultView: 'month',
+=======
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
 
+          defaultView: 'month',
           // Can click day/week names to navigate views
           navLinks: true,
           // Here Sean -andgates
 <<<<<<< HEAD
 <<<<<<< HEAD
           allDaySlot: true,
+<<<<<<< HEAD
 
 =======
           allDaySlot: false,
@@ -417,6 +443,8 @@
           // Here Sean -andgates
           allDaySlot: false,
 >>>>>>> e63de6a... refresh feature upload and bug fix 1
+=======
+>>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
           // Allow users to resize events.
           editable: true,
           // Allow "more" link when too many events.
@@ -460,6 +488,11 @@
 =======
           }, 
 >>>>>>> 7878f90... Merge pull request #12 from Hnguyen1997/nikki-2
+
+          selectConstraint:{
+            start: '00:01', 
+            end: '23:59', 
+          }, 
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){
