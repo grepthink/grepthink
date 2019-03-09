@@ -11,18 +11,27 @@ from teamwork.apps.profiles.models import Profile
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from django.http import HttpResponseRedirect
 =======
 =======
+=======
+>>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 # Be careful for this one, it may effect the Refresh feature
 from django.http import HttpResponseRedirect
 >>>>>>> 0625dda... clear button and refresh page for master brunch
 # For Refresh feature step 12
 from django.http import HttpResponse, JsonResponse
+<<<<<<< HEAD
 >>>>>>> e63de6a... refresh feature upload and bug fix 1
 =======
 from django.http import HttpResponseRedirect
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
+=======
+=======
+from django.http import HttpResponseRedirect
+>>>>>>> 8ad8e4539ae5016ba9bdd6a151de46e2d912abde
+>>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events,Credentials
@@ -144,6 +153,7 @@ def save_event(request, username):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
 @login_required
@@ -201,6 +211,8 @@ def export_schedule(request,username):
     readable=""
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 # For Refresh feature step 13
 @csrf_exempt
 def refresh_schedule(request, username):
@@ -290,6 +302,8 @@ def get_credentials(username):
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
 =======
 
+=======
+>>>>>>> 8ad8e4539ae5016ba9bdd6a151de46e2d912abde
 @login_required
 def import_schedule(request,username):
     service, credentials = get_credentials(username)    #otain credentials if it's non-existed
