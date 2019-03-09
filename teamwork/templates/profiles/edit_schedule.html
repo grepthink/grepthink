@@ -218,6 +218,15 @@
             right: 'agendaDay,agendaWeek,month'
           },
 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -227,7 +236,7 @@
             agenda: {
               columnFormat: 'ddd M/D'
             }
-          },
+          }, 
 
           // FOOTER
           // automatically set to default: false 
@@ -427,6 +436,7 @@
             start: '00:01', 
             end: '23:59', 
 <<<<<<< HEAD
+<<<<<<< HEAD
           },
 <<<<<<< HEAD
 =======
@@ -441,6 +451,9 @@
 =======
           }, 
 >>>>>>> 6e8f08d... hopefully button to add events in monthly view
+=======
+          }, 
+>>>>>>> 7878f90... Merge pull request #12 from Hnguyen1997/nikki-2
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){
