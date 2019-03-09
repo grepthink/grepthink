@@ -79,18 +79,46 @@
       }
 
     $('#calendar').fullCalendar({
+
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
+          fixedWeekCount: false,
+          showNonCurrentDates: true,
+
+          // HEADER
           header: {
-
-            left: 'agendaDay,agendaWeek,month',
+            left: 'today prev,next',
             center: 'title',
-            right: 'today prev,next'
-
+            right: 'agendaDay,agendaWeek,month'
           },
-          // Day of week shouldn't contain hard coded date.
-          columnFormat: 'dddd M/D',
 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          },
+
+          // Day of week shouldn't contain hard coded date.
+
+
+          // FOOTER
+          // automatically set to default: false
+          
+          
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
               dow: [ 1, 2, 3, 4, 5], // Monday - Friday

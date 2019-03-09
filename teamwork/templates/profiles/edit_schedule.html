@@ -98,25 +98,41 @@
 
       // INITIALIZE CALENDAR. Options and callbacks set below. ----------------------------------------------------
       $('#calendar').fullCalendar({
-          // Show agenda month for editing schedules
+
+          // Show montly, weekly and daily agenda for editing schedules.
           defaultView: 'month',
+          fixedWeekCount: false,
+          showNonCurrentDates: true,
 
           // HEADER
           header: {
-
-
-            left: 'agendaDay,agendaWeek,month',
+            left: 'today prev,next',
             center: 'title',
-            right: 'today prev,next'
+            right: 'agendaDay,agendaWeek,month'
           },
-          titleFormat: 'MMMM YYYY',
 
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
+
+          // COLUMN HEADER DATE FORMATS
+          views: {
+            month: {
+              titleFormat: 'MMMM YYYY',
+              columnFormat: 'dddd'
+            },
+            agenda: {
+              columnFormat: 'ddd M/D'
+            }
+          }, 
           // FOOTER
           // automatically set to default: false 
-
-          // column format for day view
-          columnFormat: 'dddd M/D',
-
 
           businessHours: {
               // days of week. an array of zero-based day of week integers (0=Sunday)
@@ -127,19 +143,14 @@
               end: '22:00', // an end time (6pm in this example)
           },
 
+
           defaultView: 'month',
-
-
-
           // Can click day/week names to navigate views
           navLinks: true,
-
           // Here Sean -andgates
           allDaySlot: true,
-
           // Allow users to resize events.
           editable: true,
-
           // Allow "more" link when too many events.
           eventLimit: true,
           events:events,
@@ -147,6 +158,11 @@
           // Allow selection for select function.
           selectable: true,
           selectHelper: true,
+
+          selectConstraint:{
+            start: '00:01', 
+            end: '23:59', 
+          }, 
 
            //Limit the user to set the appointment 
           selectOverlap: function(event){

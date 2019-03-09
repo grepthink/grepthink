@@ -67,6 +67,7 @@ var complexOptions = [ // names of options that are objects whose properties sho
 	'buttonText',
 	'buttonIcons',
 	'themeButtonIcons'
+	'customButtons'
 ];
 
 
