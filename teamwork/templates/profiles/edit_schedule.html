@@ -30,10 +30,15 @@
 
 <script>
   events = JSON.parse(JSON.stringify({{json_events}}))
+<<<<<<< HEAD
   
   // For Refresh feature ( Refresh feature step 6)
   var checkChange=true;
   
+=======
+  var current_user=JSON.parse(JSON.stringify('{{this_user}}'));
+  console.log(current_user)
+>>>>>>> 2c1e5b4... fix cannot delete appointment bug
   $(document).ready(function() {
 
       // Function triggered by submit button
@@ -96,6 +101,7 @@
                         title: e.title,
                         start: e.start,
                         end: e.end,
+                        initiator: e.initiator
                     }
                 }))
 			}
@@ -574,7 +580,8 @@
               eventData = {
                 title: title,
                 start: start.format(),
-                end: end.format()
+                end: end.format(),
+                initiator: current_user
               };
               // Render the event object with 'stick' set to true
               // so events persist unless page refresh.

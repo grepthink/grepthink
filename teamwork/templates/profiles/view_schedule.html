@@ -74,10 +74,10 @@
                 jsonEvents: JSON.stringify(cEvents.map(function (e)
                 {
                     return {
+                        title: e.title,
                         start: e.start,
                         end: e.end,
-                        title: e.title,
-                        initiator:e.initiator,
+                        initiator: e.initiator,
                     }
                 }))
               },
