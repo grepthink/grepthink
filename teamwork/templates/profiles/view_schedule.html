@@ -79,6 +79,15 @@
       }
 
     $('#calendar').fullCalendar({
+          customButtons: {
+            addEventBtn: {
+              text: 'add event',
+              click: function(){
+                alert('button clicked!');
+              }
+            }
+          },
+
           // Only show agendaWeek view for edit_schedule
           defaultView: 'month',
           fixedWeekCount: false,
@@ -86,30 +95,9 @@
 
           // HEADER
           header: {
-            left: 'today prev,next',
+            left: 'today prev,next addEventBtn',
             center: 'title',
             right: 'agendaDay,agendaWeek,month'
-          },
-
-          customButtons: {
-            addEventButton: {
-              text: 'add event...',
-              click: function(){
-                var dateStr = prompt('Enter a date in YYYY-MM-DD format');
-                var date = moment(dateStr);
-
-                if(date.isValide()){
-                  $('#calendar').fullCalendar('renderEvent', {
-                    title: 'created event',
-                    start: date,
-                    allDay: true
-                  });
-                  alert('Great! Now update event database...');
-                }else{
-                  alert('invalid date.');
-                }
-              }
-            }
           },
 
           // COLUMN HEADER DATE FORMATS
