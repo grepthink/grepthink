@@ -679,8 +679,17 @@
               }
           });
       },1000)
-
+    
   }); // End main function.
+  function setTimeLimit(event){
+        var set_time=document.getElementById('time_limit')
+        if(event.target.value !== '0'){
+          set_time.style.visibility="visible"
+          set_time.value=event.target.value  
+        }else{
+          set_time.style.visibility="hidden"
+        }
+      }
 </script>
 
 
@@ -728,9 +737,36 @@
     </div>
 	 
 </div>
+
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
     <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->
     <a href="{% url 'export_schedule' user.username %}" class="btn btn-success" role="button">Export</a>
+    {% if is_Prof %}
+    <form class="form-inline" method="POST">
+      {% csrf_token %}
+      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Meeting Limit</label>
+      <select class="custom-select my-1 mr-sm-2" id="inlineFormTimeSelectPref" onchange="setTimeLimit(event)">
+        <option selected value="0">Pick time</option>
+        <option value="1">00:05</option>
+        <option value="2">00:10</option>
+        <option value="3">00:15</option>
+        <option value="4">00:20</option>
+        <option value="5">00:25</option>
+        <option value="6">00:30</option>
+        <option value="7">00:35</option>
+        <option value="8">00:40</option>
+        <option value="9">00:45</option>
+        <option value="10">00:50</option>
+        <option value="11">00:55</option>
+        <option value="12">00:60</option>
+        <option value="13">01:00</option>
+        <option value="14">01:30</option>
+        <option value="15">02:00</option>
+      </select>
+      <input style="visibility:hidden" type="submit" class="btn btn-primary my-1" id="time_limit" value="Submit"></input>
+    </form>
+    {% endif %}
+    
       <div class="row">
           <div class="box box-primary">
             <div class="box-body no-padding">
@@ -758,11 +794,10 @@
           </form>
         </div>
 
-
       </div>
       
-
       <!-- /.row -->
+      
       <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalEdit" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
