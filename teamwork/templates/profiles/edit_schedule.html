@@ -96,9 +96,11 @@
             jsonEvents=JSON.stringify(cEvents.map(function (e)
                 {
                     return {
-                        start: e.start,
-                        end: e.end,
-                        title: e.title,
+                      title: e.title,
+                      start: e.start,
+                      end: e.end,
+                      initiator: e.initiator
+                        
                     }
                 }))
 			}
@@ -118,9 +120,11 @@
 				// For Refresh feature (Refresh feature step 9)
 				events=cEvents.map(function(e){
                     return {
+                      title:e.title,
                       start:e.start,
-                        end:e.end,
-                       title:e.title
+                      end:e.end,
+                      initiator: e.initiator
+                       
                     }
                 });
 				
