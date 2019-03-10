@@ -189,7 +189,7 @@ $(".s2_desired_techs").select2({
             {{ form.accepting.errors }}
             <label for="{{ form.accepting.id_for_label }}" class="control-label">
               Is this project currently <b>accepting new members</b>?:
-            </label>
+            </label> 
             {{ form.accepting }}
           </div>
 
@@ -205,7 +205,7 @@ $(".s2_desired_techs").select2({
 
           {% endif %}
 
-
+          
         </div>
 
 
@@ -226,7 +226,7 @@ $(".s2_desired_techs").select2({
           </div>
         </div>
       </div>
-
+      
       <div class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">Add Desired Skills to {{project.title}}</h3>
@@ -278,10 +278,8 @@ $(".s2_desired_techs").select2({
         </div>
         <!-- </div> -->
       </div>
-	  
-	  <!-- From here, the location of element change 1"-->
-</div>
-    <div class="col-md-6">
+
+      <!-- <div class="col-md-6"> -->
       <div class="box box-info">
        <div class="box-header with-border">
          <h3 class="box-title">Project Members</h3>
@@ -359,6 +357,7 @@ $(".s2_desired_techs").select2({
 
                </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 <<<<<<< HEAD
@@ -373,20 +372,18 @@ $(".s2_desired_techs").select2({
 >>>>>>> e55881c... fixed ui change conflict
 =======
 >>>>>>> 9cdda9d... fixed ui change conflict
+=======
+               <!-- </div> -->
+
+
+
+               <!-- <div class="col-md-6"> -->
+>>>>>>> b126efa... trying to resolve merge conflict
                <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">Optional Settings</h3>
                 </div>
                 <div class="box-body">
-                  <div class="form-group">
-                    {{ form.no_request.errors }}
-                    <a class='team-size-tooltip' data-toogle='tooltip' data-placement="left" title="Check to block users from requesting to join your project.">
-                    <i class = 'glyphicon glyphicon-info-sign'></i></a>
-                    <label for="{{ form.no_request.id_for_label }}" class="control-label">
-                      Lock request to join:
-                    </label>
-                      {{ form.no_request }}
-                  </div>
                   <div class="form-group">
                     {{ form.teamSize.errors }}
                     <label for="{{ form.teamSize.id_for_label }}" class="control-label">
@@ -442,7 +439,7 @@ $(".s2_desired_techs").select2({
                 Weight of skills users want to learn
               </label>
               {{ form.weigh_learn }}
-
+            </div>
 
           </div> <!-- Box 3 Body -->
 
@@ -472,7 +469,7 @@ $(".s2_desired_techs").select2({
 
           </div>
         </div>
-         </div>
+        <!-- </div> -->
 
       </form>
 
