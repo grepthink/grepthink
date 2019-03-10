@@ -13,6 +13,7 @@ from teamwork.apps.profiles.models import Profile
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from django.http import HttpResponseRedirect
 =======
 =======
@@ -38,6 +39,12 @@ from django.http import HttpResponseRedirect
 >>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 =======
 >>>>>>> f141234... add initiator fail, re-update the work one
+=======
+# Be careful for this one, it may effect the Refresh feature
+from django.http import HttpResponseRedirect
+# For Refresh feature step 12
+from django.http import HttpResponse, JsonResponse
+>>>>>>> 9c9ba3f... Merge pull request #21 from Hnguyen1997/czhao
 
 # Model Imports
 from teamwork.apps.profiles.models import Profile, Events,Credentials
@@ -161,6 +168,7 @@ def save_event(request, username):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
 @login_required
@@ -222,6 +230,8 @@ def export_schedule(request,username):
 >>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 =======
 >>>>>>> f141234... add initiator fail, re-update the work one
+=======
+>>>>>>> 9c9ba3f... Merge pull request #21 from Hnguyen1997/czhao
 # For Refresh feature step 13
 @csrf_exempt
 def refresh_schedule(request, username):
@@ -231,13 +241,17 @@ def refresh_schedule(request, username):
 
     #gets current avaliability
     readable = ""
+<<<<<<< HEAD
 >>>>>>> e63de6a... refresh feature upload and bug fix 1
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
+=======
+>>>>>>> 9c9ba3f... Merge pull request #21 from Hnguyen1997/czhao
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(profile.jsonavail)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -310,6 +324,11 @@ def get_credentials(username):
 =======
 >>>>>>> ce379ee... Merge pull request #13 from Hnguyen1997/hiep-staging
 =======
+=======
+    meetings = mark_safe(profile.jsonavail)
+
+    return JsonResponse(meetings,safe=False, json_dumps_params={'ensure_ascii': False})
+>>>>>>> 9c9ba3f... Merge pull request #21 from Hnguyen1997/czhao
 
 @login_required
 def import_schedule(request,username):
