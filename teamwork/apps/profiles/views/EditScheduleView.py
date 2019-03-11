@@ -451,8 +451,11 @@ def get_credentials(username):
     service = build('calendar', 'v3', http=http)
     return (service,credentials)
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 0625dda... clear button and refresh page for master brunch
 =======
+=======
+>>>>>>> c8c75ec... Merge pull request #26 from Hnguyen1997/hiep-staging
 
 
 @csrf_exempt
@@ -470,4 +473,7 @@ def save_time_limit(request, username):
         return HttpResponse('Wrong user category')       
 
 
+<<<<<<< HEAD
 >>>>>>> ca71a57... enable proffessor to set meeting time limit
+=======
+>>>>>>> c8c75ec... Merge pull request #26 from Hnguyen1997/hiep-staging
