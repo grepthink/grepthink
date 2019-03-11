@@ -268,3 +268,20 @@ def get_credentials(username):
     http = credentials.authorize(httplib2.Http())
     service = build('calendar', 'v3', http=http)
     return (service,credentials)
+
+
+@csrf_exempt
+def save_time_limit(request, username):
+    #grab profile for the current user
+    profile = Profile.objects.get(user=request.user)
+    if(profile.isProf==True):
+        if(request.method == 'POST'):
+            time = request.POST.get('time')
+            time_limit=int(json.loads(time))
+            profile.meeting_limit=time_limit
+            profile.save()
+            return HttpResponse("Set Meeting Time Limit")
+    else:
+        return HttpResponse('Wrong user category')       
+
+
