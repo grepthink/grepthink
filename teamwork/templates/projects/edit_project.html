@@ -279,7 +279,9 @@ $(".s2_desired_techs").select2({
         <!-- </div> -->
       </div>
 
-      <!-- <div class="col-md-6"> -->
+    
+</div>
+    <div class="col-md-6">
       <div class="box box-info">
        <div class="box-header with-border">
          <h3 class="box-title">Project Members</h3>
@@ -360,20 +362,20 @@ $(".s2_desired_techs").select2({
 
 
 
-               <div class="col-md-6">
+               <!-- <div class="col-md-6"> -->
                <div class="box box-primary">
                 <div class="box-header with-border">
                   <h3 class="box-title">Optional Settings</h3>
                 </div>
                 <div class="box-body">
                   <div class="form-group">
-                    {{ form.no_request.errors }}
+                    {{form.no_request.errors }}
                     <a class='team-size-tooltip' data-toogle='tooltip' data-placement="left" title="Check to block users from requesting to join your project.">
-                    <i class = 'glyphicon glyphicon-info-sign'></i></a>
-                    <label for="{{ form.no_request.id_for_label }}" class="control-label">
-                      Lock request to join:
+                    <i class='glyphicon glyphicon-info-sign'></i></a>
+                    <label for="{{ form.no_request.id_for_label}}" class="control-label">
+                      Lock request ro join:
                     </label>
-                      {{ form.no_request }}
+                      {{form.no_request }}
                   </div>
                   <div class="form-group">
                     {{ form.teamSize.errors }}
@@ -430,7 +432,7 @@ $(".s2_desired_techs").select2({
                 Weight of skills users want to learn
               </label>
               {{ form.weigh_learn }}
-            </div>
+           <!--  </div> -->
 
           </div> <!-- Box 3 Body -->
 
@@ -460,7 +462,7 @@ $(".s2_desired_techs").select2({
 
           </div>
         </div>
-        <!-- </div> -->
+         </div>
 
       </form>
 
