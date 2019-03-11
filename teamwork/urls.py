@@ -179,6 +179,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/import_schedule$', EditScheduleView.import_schedule, name='import_schedule'),
         url(r'^user/(?P<username>[^/]+)/export_schedule$', EditScheduleView.export_schedule, name='export_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_time_limit/$', EditScheduleView.save_time_limit, name='save_time_limit'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
 
         # For Refresh feature ( Refresh feature step 11 )

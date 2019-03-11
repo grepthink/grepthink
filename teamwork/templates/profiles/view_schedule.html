@@ -30,6 +30,7 @@
 
 <script>
     events = JSON.parse(JSON.stringify({{json_events}}))
+<<<<<<< HEAD
     var current_user=JSON.parse(JSON.stringify('{{page_username}}'));
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -56,6 +57,10 @@
 >>>>>>> 74b7e37... clear button and refresh page solve conflict 1
 =======
 >>>>>>> f141234... add initiator fail, re-update the work one
+=======
+    var current_user = JSON.parse(JSON.stringify('{{page_username}}'));
+    var meeting_limt = parseInt(JSON.parse(JSON.stringify('{{meeting_limit}}')));
+>>>>>>> ca71a57... enable proffessor to set meeting time limit
 	
 	// Set up a value for Refresh feature (Refresh feature step 1).
 	 var checkChange=true;
@@ -453,9 +458,9 @@
             start: '00:01', 
             end: '23:59', 
           },
-          selectAllow: function(selectInfo) { 
-            var duration = moment.duration(selectInfo.end.diff(selectInfo.start));
-            return duration.asHours() <= 4;
+          selectAllow: function(selectEvent) { 
+            var duration = moment.duration(selectEvent.end.diff(selectEvent.start));
+            return duration.asMinutes() <= meeting_limt;
           },
 
            //Limit the user to set the appointment 

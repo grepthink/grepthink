@@ -21,18 +21,22 @@ def load_schedule(request,username):
     page_name="View Schedule"
     page_description= "Viewing %s's Schedule"%(username)
     title="View Schedule"
-    profile = Profile.objects.filter(user__username=username).first()
+    profile = Profile.objects.filter(user__username=username).first()   #get model object of the viewed person
     
-
     readable = ""
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
         readable = jsonDec.decode(profile.jsonavail)
+    
+    if (profile.isProf):
+        time_limit = profile.meeting_limit
+    else:
+        time_limit = None
 
     meetings = mark_safe(profile.jsonavail)
-    page_user= request.user.username
+    page_user= request.user.username                    #get username of currently logged in user
     
-    return render(request,'profiles/view_schedule.html',{'page_username':page_user,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
+    return render(request,'profiles/view_schedule.html',{'page_username':page_user,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings,'meeting_limit' : time_limit})
 
 @csrf_exempt
 def save_events(request, username):

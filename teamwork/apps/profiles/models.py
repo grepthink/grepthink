@@ -238,6 +238,7 @@ class Profile(models.Model):
 
     # don't believe this is used anywhere 9/24
     isTa = models.BooleanField(default=False)
+    meeting_limit = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         string = "%s (%s)"%(self.user.email, self.name)
