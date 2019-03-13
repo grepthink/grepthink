@@ -376,6 +376,7 @@
             right: 'today prev,next'
           },
 
+<<<<<<< HEAD
           customButtons: {
             addEventBtn: {
               text: 'add event',
@@ -388,6 +389,8 @@
 =======
 
 >>>>>>> 5223c9d... Merge branch 'master' into hiep-staging
+=======
+>>>>>>> 93a0f6e... editing event stuff
           // COLUMN HEADER DATE FORMATS
           views: {
             month: {
@@ -645,7 +648,31 @@
             });
           },
 
-        
+          /*
+          select: function(start, end) {
+            var title; 
+            var eventData; 
+
+            $('input#title').val("");
+            $('#newEvent').modal('show');
+            $('#submit').unbind();
+            $('#submit').on('click', function() {
+              title = $('input#title').val();
+              if (title) {
+                eventData = {
+                  title: title,
+                  start: start
+                };
+                $('#calendar').fullCalendar('renderEvent', eventData, true);
+                $('#newEvent').modal('hide');
+              }
+              else {
+                alert("Title can't be blank. Please try again.")
+              }
+            }); 
+          },
+          */
+
           // Function called on select event.
           // Adapted from https://fullcalendar.io/js/fullcalendar-3.4.0/demos/selectable.html
           select: function(start, end) {
@@ -673,6 +700,10 @@
             $('#calendar').fullCalendar('unselect');
           },
 
+          eventClick: function(event, jsonEvents, view) {
+            
+          }
+          
       }) // End fullCalendar initialization.
 
 	   // Main code for the Refresh feature (Refresh feature step 10)
