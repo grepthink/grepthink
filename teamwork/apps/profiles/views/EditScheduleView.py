@@ -473,12 +473,15 @@ def save_time_limit(request, username):
         return HttpResponse('Wrong user category')       
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 >>>>>>> ca71a57... enable proffessor to set meeting time limit
 =======
 >>>>>>> c8c75ec... Merge pull request #26 from Hnguyen1997/hiep-staging
 =======
+=======
+>>>>>>> 6afe28c... Merge pull request #27 from Hnguyen1997/hiep-staging
 @login_required
 def revoke_access(request,username):
     usr=User.objects.get(username=username)
@@ -489,4 +492,7 @@ def revoke_access(request,username):
     else:
         return HttpResponse("No user Google's credential found")
     
+<<<<<<< HEAD
 >>>>>>> e163cc9... allow user to revoke Google Calendar access
+=======
+>>>>>>> 6afe28c... Merge pull request #27 from Hnguyen1997/hiep-staging
