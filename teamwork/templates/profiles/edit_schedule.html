@@ -759,8 +759,8 @@
 </div>
 
     <a href="{% url 'import_schedule' user.username %}" class="btn btn-info" role="button">Import</a>
-    <!-- <a href="" class="btn btn-warning" role="button">Refresh</a> -->
     <a href="{% url 'export_schedule' user.username %}" class="btn btn-success" role="button">Export</a>
+    <a href="{% url 'revoke_access' user.username %}" class="btn btn-danger" role="button">Revoke</a>
     {% if is_Prof %}
     <form class="form-inline" method="POST">
       {% csrf_token %}
