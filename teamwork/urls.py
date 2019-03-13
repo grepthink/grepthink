@@ -177,6 +177,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
         url(r'^user/(?P<username>[^/]+)/import_schedule$', EditScheduleView.import_schedule, name='import_schedule'),
+        url(r'^user/(?P<username>[^/]+)/revoke_access$', EditScheduleView.revoke_access, name='revoke_access'),
         url(r'^user/(?P<username>[^/]+)/export_schedule$', EditScheduleView.export_schedule, name='export_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_time_limit/$', EditScheduleView.save_time_limit, name='save_time_limit'),

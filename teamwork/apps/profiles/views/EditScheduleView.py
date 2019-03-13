@@ -284,4 +284,13 @@ def save_time_limit(request, username):
     else:
         return HttpResponse('Wrong user category')       
 
-
+@login_required
+def revoke_access(request,username):
+    usr=User.objects.get(username=username)
+    credential=Credentials.objects.filter(user=usr).first()
+    if(credential):
+        credential.delete()
+        return HttpResponseRedirect("/")
+    else:
+        return HttpResponse("No user Google's credential found")
+    
