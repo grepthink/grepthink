@@ -481,7 +481,7 @@ class Project(models.Model):
     @staticmethod
     def get_my_active_projects(user):
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list of active projects. Returns list
         """
         # #Gets membership object of current user
         # myProjects = Membership.objects.filter(user=user)
@@ -501,7 +501,7 @@ class Project(models.Model):
     @staticmethod
     def get_my_disabled_projects(user):
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list disabled project objects. Returns list
         """
         # #Gets membership object of current user
         # myProjects = Membership.objects.filter(user=user)

@@ -100,6 +100,40 @@ class ViewProjectTestCase(TestCase):
         # self.assertEqual(response.status_code, 200)
         pass
 
+class ViewProjectsTestCase(TestCase):
+    def setUp(self):
+        # create needed objects
+        self.user1 = create_user("test1", "test1@test.com", "test1")
+        self.user2 = create_user("test2", "test2@test.com", "test2")
+        self.user3 = create_user("test3", "test3@test.com", "test3")
+        self.course1 = create_course("course1", "slug1", self.user1)
+        self.enrollment1 = create_course_enrollment(self.user1, self.course1, "student")
+        self.enrollment2 = create_course_enrollment(self.user2, self.course1, "student")
+        self.project1 = create_project(self.user1, self.user1, self.user1, self.course1, "slug1")
+        self.membership1 = create_project_membership(self.user1, self.project1, "invite reason")
+        self.client = Client()    
+    
+    # TODO:
+    def tearDown(self):
+        pass
+    
+    def test_view_projects(self):
+        self.client.login(username='test1', password='test1')
+        response = self.client.post('/project/all/')
+
+        # Assert redirect was returned
+        self.assertTrue(response.status_code == 200)
+
+    def test_get_active_projects(self):
+        active_projects = Project.get_my_active_projects(self.user1)
+
+        self.assertTrue(len(active_projects) is 1)
+
+    def test_get_inactive_projects(self):
+        disabled_projects = Project.get_my_disabled_projects(self.user1)        
+
+        self.assertTrue(len(disabled_projects) is 0)
+
 class EditProjectTestCase(TestCase):
     def setUp(self):
         # create needed objects

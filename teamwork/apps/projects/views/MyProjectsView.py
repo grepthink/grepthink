@@ -17,17 +17,11 @@ def view_projects(request):
 def _projects(request, active, inactive):
     """
     Private method that will be used for paginator once I figure out how to get it working.
-    """
-    page = request.GET.get('page')
-
-    # Populate with page name and title
+    """        
     page_name = "My Projects"
     page_description = "Projects created by " + request.user.username
     title = "My Projects"
 
     return render(request, 'projects/view_projects.html', {'page_name': page_name,
         'page_description': page_description, 'title' : title,
-        'active': active, 'inactive': inactive})
-
-def techs(request):
-    return render(request, 'projects/view_projects.html',{}) 
+        'active': active, 'inactive': inactive})        
