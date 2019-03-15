@@ -116,7 +116,7 @@ def create_project(request):
                     # Add the skill to the project (as a desired_skill)
                     project.desired_skills.add(desired_skill)
                     project.save()
-#------------------------------------------------------------------------
+
             if request.POST.get('desired_techs'):
                 techs = request.POST.getlist('desired_techs')
                 for s in techs:
@@ -133,8 +133,6 @@ def create_project(request):
                     # Add the skill to the project (as a desired_skill)
                     project.desired_techs.add(desired_tech)
                     project.save()
-#-----------------------------------------------------------------------------
-
 
             # Loop through the members in the object and make m2m rows for them
             for i in members:
