@@ -1,22 +1,5 @@
 {% load adminlte_helpers i18n %}
 {% load static %}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 9058397... Merge pull request #3 from Hnguyen1997/czhao
-=======
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
->>>>>>> 09299ee... Merge branch 'master' into shreya
-=======
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 <!-- add this style for Light/Dark theme -->
 <style>
     .navbar-nav > .user-menu > .dropdown-menu{
@@ -31,22 +14,6 @@
         text-align:center;
     }
 </style>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> b93c358... Light/Dark Theme redo for the new version of code with the way to do it
-=======
->>>>>>> 9058397... Merge pull request #3 from Hnguyen1997/czhao
-=======
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
->>>>>>> 09299ee... Merge branch 'master' into shreya
-=======
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 
 <header class="main-header">
     <!-- Logo -->
@@ -144,200 +111,32 @@
                          </ul>
                          {% endcomment %}
 
-                        <li class="user-footer">
+						<li class="user-footer">
                             <div class="btn-group">
-<<<<<<< HEAD
-<<<<<<< HEAD
-                              <a href="{% url 'profile' user.username %}">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);">
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-<<<<<<< HEAD
-<<<<<<< HEAD
-                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> b93c358... Light/Dark Theme redo for the new version of code with the way to do it
-=======
                               <a href="{% url 'profile' user.username %}">
 							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-flat" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> 9058397... Merge pull request #3 from Hnguyen1997/czhao
-=======
                                   <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> 286e456... ...
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> 09299ee... Merge branch 'master' into shreya
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
-							  <!-- need to add margin:2px 0 for Light/Dark theme -->
-                                  <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
-=======
-                                  <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);margin:2px 0">
->>>>>>> e63de6a... refresh feature upload and bug fix 1
                                       <font color="white">Profile</font>
                                   </button>
                               </a>
 							  <!-- need to add margin:2px 0 for Light/Dark theme -->
                               <a href="{% url 'edit_schedule' user.username %}">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);">
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
-<<<<<<< HEAD
-                              <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
-                                  <button type="button" class="btn btn-flat" style="background: rgba(255, 0, 0, 0.7);">
-=======
-							  <!-- main code of the Light/Dark theme switch -->
-							  <a href="javascript:switchSkin()">
-=======
-
-                                <!-- <button class="btn btn-block btn-default btn-lg"> -->
-                                <a href="{% url 'profile' user.username %}">
-                                    <button type="button" class="btn btn-default" style="background: rgba(243, 156, 18, 1);">
-                                        <font color="white">Profile</font>
-                                    </button>
-                                </a>
-                                <a href="{% url 'edit_schedule' user.username %}">
-                                    <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);">
-                                        <font color="white">Edit Schedule</font>
-                                    </button>
-                                </a>
-                                <!-- main code of the Light/Dark theme switch -->
-              							  <a href="javascript:switchSkin()">
->>>>>>> b468345... Merge branch 'staging' into czhao
-=======
-                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);margin:2px 0">
-=======
-                                  <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);margin:2px 0">
->>>>>>> 9184221... fix according to requested changes
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
-							  <!-- main code of the Light/Dark theme switch -->
-							  <a href="javascript:switchSkin()">
-<<<<<<< HEAD
->>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
-=======
-                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);margin:2px 0">
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
-							  <!-- main code of the Light/Dark theme switch -->
-							  <a href="javascript:switchSkin()">
->>>>>>> 9058397... Merge pull request #3 from Hnguyen1997/czhao
-=======
-                                  <button type="button" class="btn btn-flat" style="background: rgba(0, 150, 255, 1);margin:2px 0">
-=======
-                                  <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);margin:2px 0">
->>>>>>> e63de6a... refresh feature upload and bug fix 1
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
-							  <!-- main code of the Light/Dark theme switch -->
-							  <a href="javascript:switchSkin()">
-<<<<<<< HEAD
->>>>>>> e9cf835... delete edit techs from editprojectview
-                                  <button type="button" class="btn btn-flat  btn-info" style="margin:2px 0">
-=======
-                                  <button type="button" class="btn btn-default btn-info" style="margin:2px 0">
->>>>>>> 9184221... fix according to requested changes
-=======
-                                  <button type="button" class="btn btn-default btn-info" style="margin:2px 0">
->>>>>>> e63de6a... refresh feature upload and bug fix 1
-                                      <font color="white">Switch Theme</font>
-                                  </button>
-                              </a>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-							  <!-- add style="display:block;clear:both;" and margin:2px 0;width:100%; for Light/Dark theme -->
-                              <a href="{% block logout_url %}{% logout_url %}{% endblock %}"style="display:block;clear:both;">
-<<<<<<< HEAD
-                                  <button type="button" class="btn btn-flat" style="background: rgba(255, 0, 0, 0.7);margin:2px 0;width:100%;">
->>>>>>> b93c358... Light/Dark Theme redo for the new version of code with the way to do it
-                                      <font color="white">Sign Out</font>
-                                  </button>
-                              </a>
-=======
-                                <a href="{% block logout_url %}{% logout_url %}{% endblock %}">
-                                    <button type="button" class="btn btn-default" style="background: rgba(255, 0, 0, 0.7);">
-                                        <font color="white">Sign Out</font>
-                                    </button>
-                                </a>
-                              
->>>>>>> b468345... Merge branch 'staging' into czhao
-=======
-=======
->>>>>>> 9058397... Merge pull request #3 from Hnguyen1997/czhao
-=======
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
                                   <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);margin:2px 0">
                                       <font color="white">Edit Schedule</font>
                                   </button>
                               </a>
-=======
-                                  <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);margin:2px 0">
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
-                                  <button type="button" class="btn btn-default" style="background: rgba(0, 150, 255, 1);margin:2px 0">
-                                      <font color="white">Edit Schedule</font>
-                                  </button>
-                              </a>
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 							  <!-- main code of the Light/Dark theme switch -->
 							  <a href="javascript:switchSkin()">
                                   <button type="button" class="btn btn-default btn-info" style="margin:2px 0">
                                       <font color="white">Switch Theme</font>
                                   </button>
                               </a>
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 09299ee... Merge branch 'master' into shreya
-=======
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
 							  <!-- add style="display:block;clear:both;" and margin:2px 0;width:100%; for Light/Dark theme -->
                               <a href="{% block logout_url %}{% logout_url %}{% endblock %}"style="display:block;clear:both;">
-=======
->>>>>>> e63de6a... refresh feature upload and bug fix 1
                                   <button type="button" class="btn btn-default" style="background: rgba(255, 0, 0, 0.7);margin:2px 0;width:100%;">
                                       <font color="white">Sign Out</font>
                                   </button>
                               </a>
->>>>>>> 40e6bfb... light/dark theme fix test (don't merge)
                             </div>
                         </li>
 

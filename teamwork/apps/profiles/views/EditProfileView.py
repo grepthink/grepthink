@@ -140,7 +140,6 @@ def edit_profile(request, username):
 
         #redirects to view_profile when submit button is clicked
         return redirect(view_profile, username)
-
     else:
         #load form with prepopulated data
         form = ProfileForm(instance=profile)
@@ -162,45 +161,11 @@ def edit_profile_helper(request, username):
         tempProfile = User.objects.get(username=username)
         profile = Profile.objects.get(user=tempProfile)
     else:
-<<<<<<< HEAD
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
         profileUser = User.objects.get(username=profile.user)
         #grab profile for the current user
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-=======
-    profileUser = User.objects.get(username=profile.username)
-    profile = Profile.objects.get(user=profileUser)
->>>>>>> 43e8b3d... made changes to the files
-=======
-    tempProfile = User.objects.get(username=profile.username)
-    profile = Profile.objects.get(user=tempProfile)
->>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
-=======
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
->>>>>>> 09299ee... Merge branch 'master' into shreya
-
-=======
->>>>>>> b85c19e... merge with shreya changes
-=======
-=======
-        #grab profile for the current user
-        profile = Profile.objects.get(user=request.user)
-        profileUser = User.objects.get(username=profile.user)
-        #grab profile for the current user
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
-
-<<<<<<< HEAD
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
->>>>>>> e63de6a... refresh feature upload and bug fix 1
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
@@ -217,35 +182,8 @@ def edit_profile_helper(request, username):
         if name:
             profile.name = name
         if email:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            profileUser.email=email
-=======
+
             profileUser.email = email
->>>>>>> 65d3b74... some fixing
-=======
-            tempProfile.email=email
->>>>>>> 0542a81... removed edit_Techs from EditProfileView.py
-=======
-            profileUser.email = email
->>>>>>> e9cf835... delete edit techs from editprojectview
-=======
-            profileUser.email = email
->>>>>>> 09299ee... Merge branch 'master' into shreya
-=======
-            profileUser.email = email
->>>>>>> d4015bc... Merge branch 'shreya' of https://github.com/Hnguyen1997/grepthink into shreya
-=======
-            profileUser.email = email
->>>>>>> 7832d2a... Merge branch 'hiep-new' into hiep-testing
-=======
-            profileUser.email = email
->>>>>>> e63de6a... refresh feature upload and bug fix 1
         if bio:
             profile.bio = bio
         if institution:
