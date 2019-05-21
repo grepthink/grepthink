@@ -76,7 +76,7 @@ def view_one_course(request, slug):
             assignment.ass_name = assignmentForm.cleaned_data.get('ass_name')
             assignment.description = assignmentForm.cleaned_data.get('description')
             assignment.ass_number = assignmentForm.cleaned_data.get('ass_number')
-
+            assignment.course_Name = assignmentForm.cleaned_data.get('course_Name')
             assignment.save()
 
             course.assignments.add(assignment)

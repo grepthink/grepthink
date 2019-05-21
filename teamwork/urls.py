@@ -35,6 +35,7 @@ from teamwork.apps.profiles.views import AlertView, EditProfileView, EditSchedul
 from teamwork.apps.profiles.views.EditScheduleView import import_schedule
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
+from teamwork.apps.courses.views import CourseCalendar 
 from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
 
 # Core Imports
@@ -117,6 +118,7 @@ urlpatterns = [
         url(r'^assignment/(?P<slug>[^/]+)/edit/$', CourseView.edit_assignment, name='edit_assignment'),
 
         # View all courses
+        
         url(r'^course/$', CourseBaseView.view_courses, name='view_course'),
         # Join a course (valid for all courses)
         url(r'^course/join/$', CourseBaseView.join_course, name='join_course'),
@@ -164,6 +166,7 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/export_interest/$', InterestView.export_interest, name='export_interest'),
         # Claim Projects (TA)
         url(r'^course/(?P<slug>[^/]+)/claim/$', CourseView.claim_projects, name='claim_projects'),
+        url(r'^course/(?P<slug>[^/]+)/course_calendar/$',CourseCalendar.load_calendar , name='view_course_calendar'),
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),

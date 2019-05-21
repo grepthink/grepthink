@@ -34,6 +34,8 @@ def load_schedule(request,username):
         time_limit = None
 
     meetings = mark_safe(profile.jsonavail)
+    print(type(meetings))
+    print(meetings)
     page_user= request.user.username                    #get username of currently logged in user
     
     return render(request,'profiles/view_schedule.html',{'page_username':page_user,'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings,'meeting_limit' : time_limit})
