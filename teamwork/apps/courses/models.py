@@ -182,7 +182,9 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
-
+    receivers = models.TextField(
+        default='None'
+    )
     disable = models.BooleanField(
         default=False)
 

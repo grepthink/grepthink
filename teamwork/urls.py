@@ -135,8 +135,10 @@ urlpatterns = [
         # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', StatsView.view_stats, name='view_statistics'),
         # Email Roster link
+       
         url(r'^course/(?P<slug>[^/]+)/email_roster/$', EmailCourseView.email_roster, name='email_roster'),
         # Email w/ CSV
+        
         url(r'^course/(?P<slug>[^/]+)/email_csv/$', EmailCourseView.email_csv, name='email_csv'),
         # upload csv
         url(r'^course/(?P<slug>[^/]+)/upload_csv/$', CourseBaseView.upload_csv, name='upload_csv'),
@@ -185,7 +187,7 @@ urlpatterns = [
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_time_limit/$', EditScheduleView.save_time_limit, name='save_time_limit'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
-
+        url(r'^course/(?P<slug>[^/]+)/email_roster/ajax/select_recipents/$', EmailCourseView.select_recipents, name='select_recipents'),
         # For Refresh feature ( Refresh feature step 11 )
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/refresh_schedule/$', EditScheduleView.refresh_schedule, name='refresh_schedule'),
         url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/refresh_schedule/$', ViewSchedule.refresh_schedule, name='refresh_schedules'),

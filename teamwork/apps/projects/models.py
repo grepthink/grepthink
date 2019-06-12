@@ -359,6 +359,10 @@ class Project(models.Model):
             students.append(stud)
 
         return students
+    
+    def get_members2(self):
+        temp = self.members.all()
+        return temp
 
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
     def generate_avail(self):
