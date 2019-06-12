@@ -18,11 +18,12 @@
 <li><a href="">Email Roster</a></li>
 {% endblock crumb %} -->
 <script>
+    var receivers = [];
     $(document).ready(function(){
     //   $( "#target" ).click(function() {
     //     alert( "Handler for .click() called." );
     // });
-    var receivers = [];
+    
     $("input[class='checks']").change(function(){
       if($(this).is(':checked')){
         receivers.push($(this).val())
@@ -34,29 +35,7 @@
         }
       }  
     });
-    // $(".checkGroup").change(function(event) {
-    // // if(this.checked) {
-    // //   // Iterate each checkbox
-    // //   $(".checkGroup").children('input').each(function(){
-    // //       this.checked=true;
-    // //       console.log($(this).val())
-    // //   })
-    // // }else {
-    // //   $(".checkGroup").children('input').each(function() {
-    // //       this.checked = false;
-    // //       console.log($(this).val());
-    // //   });
-    // // }
-    // var parent = $(this);
-    // console.log(parent)
-    // // var input = document.getElementsByClassName('checks');
-    // // for (let i =0 ;i<input.length;i++){
-    // //     console.log(input[i].parentElement.parentElement.parentElement);
-      
-    // // };
     
-
-    // });
     $('#select_recipents').click(function(){
       var data= receivers;
       data=JSON.stringify(data)
@@ -76,6 +55,19 @@
       })
     });
     });
+    function toogle(source){ 
+      checkboxes = document.getElementsByName('MyChk');
+      for(var i=0;i<checkboxes.length;i++){
+        if(checkboxes[i].parentElement.parentElement.parentElement == source.parentElement){
+          checkboxes[i].checked=source.checked;
+          if(checkboxes[i].checked == true)
+            receivers.push(checkboxes[i].value)
+          else
+            receivers.pop(checkboxes[i].value)
+        }
+      }
+      console.log(receivers)
+    };
     
   
 </script>
@@ -124,16 +116,17 @@
               </ul>
               <ul style="list-style-type:none" >
                 {% for item in projects_list %}
-                  <li><input type="checkbox" class="checkGroup" value={{item.title}}>{{item.title}}</li>    
+                  <li><input type="checkbox" class="checkGroup" onClick="toogle(this)" value={{item.title}}>{{item.title}}    
                   <ul style="list-style-type:none">
                     {% for stud in item.members %}          
                     {% if stud == item.scrum_master%}
-                      <li><input type="checkbox" class="checks" value={{stud}}>Scrum Master: {{stud}} </li>
+                      <li><input type="checkbox" name="MyChk" class="checks" value={{stud}}>Scrum Master: {{stud}} </li>
                     {% else %}
-                      <li><input type="checkbox" class="checks" value={{stud}}>Member: {{stud}}</li>
+                      <li><input type="checkbox" name="MyChk" class="checks" value={{stud}}>Member: {{stud}}</li>
                     {% endif %} 
                     {% endfor %}
-                  </ul>   
+                  </ul> 
+                </li>  
                 {% endfor %}
                 <button class="btn btn-primary" type="submit" id="select_recipents" name="SUBMIT"></i> Save</button>
               </ul>

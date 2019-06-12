@@ -90,8 +90,8 @@ def email_roster(request, slug):
     return render(request, 'courses/email_roster.html', {
         'slug':slug, 'form':form, 'students':complete_members_list,
         'scrum_master':project_scrum_master,'ta_list':ta_list,'addcode':addcode, 'cur_course':cur_course,
-        'page_name':page_name, 'page_description':page_description,'projects_list':projects,'projec_list':all_projects,
-        'title':title
+        'page_name':page_name, 'page_description':page_description,'projects_list':projects,
+        'title':title, 'count':count
     })
 
 @login_required
