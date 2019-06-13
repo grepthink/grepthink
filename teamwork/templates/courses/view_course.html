@@ -68,6 +68,7 @@
     <!-- Select2 css -->
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 
+
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="{% static 'css/Scrollbar.css' %}">
@@ -129,6 +130,7 @@
                     <i class="fa fa-folder-open"></i>
                 </a>
             </li>
+
             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
             {% if course.disable %}
             <li class="disabled">
@@ -266,7 +268,9 @@
                                         <th>Due</th>
                                         <th>Type</th>
                                         <th>Name</th>
+                                        <th>Description</th>
                                         <th>Number</th>
+                                        <th>Course</th>
                                         <th></th>
                                     </tr>
                                     {% for asg in assignments %}
@@ -275,7 +279,9 @@
                                         <td>{{asg.due_date|date:'Y-m-d'}}{{asg.due_date|time:'g:i:s'}}</td>
                                         <td>{{asg.ass_type}}</td>
                                         <td>{{asg.ass_name}}</td>
+                                        <td>{{asg.description}}</td>
                                         <td>{{asg.ass_number}}</td>
+                                        <td>{{asg.course_Name}}</td>
                                         <td>
                                             {% if user == course.creator or user.profile.isGT or user_role == "ta" %}
                                             <a href="{% url 'edit_assignment' asg.slug %}">
@@ -303,9 +309,13 @@
 
                     </div>
                 </div>
+                <div class="row">
+                    <a href="{% url 'view_course_calendar' course.name %}">
+                        <button class="btn btn-primary btn-flat">Course Calendar</button>
+                    </a>
+                </div>
             </div>
             <!-- /.tab-pane End View Assignments -->
-
 
 
             <div class="tab-pane" id="description">

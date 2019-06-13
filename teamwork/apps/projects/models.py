@@ -98,6 +98,36 @@ class Tsr(models.Model):
 
         super(Tsr, self).save(*args, **kwargs)
 
+class Techs(models.Model):
+    """
+    Skills: A database model (object) for skills.
+    Fields:
+        skill: a field that contains the name of a skill
+    Methods:
+        __str__(self):                  Human readeable representation of the skill object.
+        save(self, *args, **kwargs):    Overides the default save operator...
+        """
+    # skill, a string
+    tech = models.CharField(max_length=255,default="")
+
+    def __str__(self):
+        return self.tech
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Tech"
+        # Multiple Skill objects are referred to as Projects.
+        verbose_name_plural = "Techs"
+        ordering = ('tech',)
+
+    def save(self, *args, **kwargs):
+        """
+        Overides the default save operator...
+        Bassically a way to check if the Project object exists in the database. Will be helpful later.
+        self.pk is the primary key of the Project object in the database!
+        I don't know what super does...
+        """
+        super(Techs, self).save(*args, **kwargs)
+
 class Project(models.Model):
     """
     Project: A database model (object) for projects.
@@ -206,7 +236,12 @@ class Project(models.Model):
         Skills,
         related_name="desired",
         default="")
-
+#---------------------------------------------------------------------------------
+    desired_techs = models.ManyToManyField(
+        Techs,
+        related_name="technologies",
+        default="")
+#----------------------------------------------------------------------------------
     # True when the proejct is accepting new members. False when project is full.
     avail_mem = models.BooleanField(
         default=True)
@@ -324,6 +359,10 @@ class Project(models.Model):
             students.append(stud)
 
         return students
+    
+    def get_members2(self):
+        temp = self.members.all()
+        return temp
 
     # Generates a list of possible avalibilities and stores in current project's avalibiltiy
     def generate_avail(self):
@@ -541,6 +580,9 @@ class Membership(models.Model):
 
     def __str__(self):
         return("%s: %s"%(self.user.username, self.project.title))
+#-----------------------------------------------------------------------
+
+
 
 class ProjectUpdate(models.Model):
     """

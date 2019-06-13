@@ -17,6 +17,29 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+
+import google.oauth2.credentials
+class Credentials(models.Model):
+    user=models.OneToOneField(User)
+    access_token=models.TextField(default="")
+    refresh_token=models.TextField(default="")
+    client_id=models.TextField(default="")
+    client_secret=models.TextField(default="")
+    scopes=models.TextField(default="")
+    invalid=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+    class Meta:
+        # Verbose name is the same as class name in this case.
+        verbose_name = "Credential"
+        # Multiple Skill objects are referred to as Projects.
+        verbose_name_plural = "Credentials"
+        ordering = ('user',)
+
+    def save(self, *args, **kwargs):   
+       super(Credentials, self).save(*args, **kwargs) # Call the real save() method
+
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.
@@ -49,6 +72,8 @@ class Skills(models.Model):
         I don't know what super does...
         """
         super(Skills, self).save(*args, **kwargs)
+
+
 
 # Converts a number into a weekday
 def dayofweek(number):
@@ -204,6 +229,8 @@ class Profile(models.Model):
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
 
+
+
     claimed_projects = models.ManyToManyField('projects.Project', related_name="claimed_projects", default="")
 
     isProf = models.BooleanField(default=False)
@@ -211,6 +238,7 @@ class Profile(models.Model):
 
     # don't believe this is used anywhere 9/24
     isTa = models.BooleanField(default=False)
+    meeting_limit = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         string = "%s (%s)"%(self.user.email, self.name)

@@ -13,9 +13,6 @@
 <script src="{% static 'js/select2.full.min.js' %}"></script>
 
 <script type="text/javascript">
-
-
-
 $(document).ready(function() {
   $(".select2").select2({
     ajax: {
@@ -34,10 +31,8 @@ $(document).ready(function() {
         // alter the remote JSON data, except to indicate that infinite
         // scrolling can be used
         params.page = params.page || 1;
-
         console.log(data);
         console.log(params);
-
         return {
           results: data.items,
           pagination: {
@@ -53,10 +48,21 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
-
   $(".s2_desired_skills").select2({
     ajax: {
       url: "ajax/add_desired_skills/",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          q: params.term, // search term
+          page: params.page
+        };
+      },
+       
+  $(".s2_desired_techs").select2({
+    ajax: {
+      url: "ajax/add_desired_techs/",
       dataType: 'json',
       delay: 250,
       data: function (params) {
@@ -88,9 +94,7 @@ $(document).ready(function() {
     //templateResult: formatRepo, // omitted for brevity, see the source of this page
     //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
   });
-
 });
-
 </script>
 
 {% endblock javascript %}
@@ -188,6 +192,15 @@ $(document).ready(function() {
           </select>
         </div>
 
+        
+        <div class="form-group">
+          <label>Search and Add Desired Techs</label>
+          <a class='desired-techs-tooltip' data-toggle="tooltip" data-placement="right" title="List the technologies that a potential team member should have. These will be used to recommend team members to you.">
+          <i class='glyphicon glyphicon-info-sign'></i></a>
+          <select class="form-control s2_desired_techs" id="desired_techs" name="desired_techs" multiple="multiple" style="width: 100%;">
+          </select>
+        </div>
+
       </div> <!-- Box 2 Body -->
 
       <div class="box-footer">
@@ -215,17 +228,18 @@ $(document).ready(function() {
             </label>
             {{ form.slug }}
         </div>
-
+        
         <div class="form-group">
-            {{ form.no_request.errors }}
-            <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Check to block users from requesting to join your project.">
-            <i class='glyphicon glyphicon-info-sign'></i></a>
-            <label for="{{ form.no_request.id_for_label }}" class="control-label">
-            Lock request to join:
-            </label>
-            {{ form.no_request }}
+          {{ form.no_request.errors }}	
+            <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Check to block users from requesting to join your project.">	
+            <i class='glyphicon glyphicon-info-sign'></i></a>	
+            <label for="{{ form.no_request.id_for_label }}" class="control-label">	
+            Lock request to join:	
+            </label>	
+            {{ form.no_request }}	
         </div>
 
+        
         <div class="form-group">
             {{ form.teamSize.errors }}
             <a class='team-size-tooltip' data-toggle="tooltip" data-placement="left" title="Set the maximum amount of team members for this project.">
@@ -245,6 +259,7 @@ $(document).ready(function() {
             </label>
             {{ form.sponsor }}
         </div>
+
         {% endif %}
 
         <div class="form-group">

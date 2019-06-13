@@ -3,22 +3,65 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-
+from django.views.decorators.csrf import csrf_exempt
 from teamwork.apps.courses.models import Course
 from teamwork.apps.courses.forms import EmailRosterForm
 from teamwork.apps.courses.views.CourseView import view_one_course
 from teamwork.apps.core.helpers import send_email
+from teamwork.apps.projects.models import Project
+import json
+from django.contrib.auth.models import User
+
+@csrf_exempt
+def select_recipents(request, slug):
+    if request.is_ajax():
+        if request.method=='POST':
+            data=request.POST.get('receivers')
+            recipents=json.loads(data)
+            cur_course = get_object_or_404(Course, slug=slug)
+            cur_course.receivers=json.dumps(recipents)
+            cur_course.save()
+            return HttpResponse("Save recipents" + data)
+        else:
+            return HttpResponse("Not save")
 
 @login_required
 def email_roster(request, slug):
+
     cur_course = get_object_or_404(Course, slug=slug)
     page_name = "Email Roster"
     page_description = "Emailing members of Course: %s"%(cur_course.name)
     title = "Email Student Roster"
-
     staff = cur_course.get_staff()
     staff_ids=[o.id for o in staff]
-    students_in_course = list(cur_course.students.exclude(id__in=staff_ids))
+    ta_list = cur_course.get_tas()
+    
+    all_projects=list(cur_course.projects.all())  
+    complete_members_list=[]
+    project_scrum_master=[]
+    projects_list=[]
+    
+
+    for pro in all_projects:
+        project_members=[]
+        project_obj=get_object_or_404(Project,title=pro)
+        pro = project_obj.get_members2()
+        for i in pro:
+            project_members.append(i.username)
+        
+        complete_members_list.append(project_members)
+        project_scrum_master.append(project_obj.scrum_master.username)
+        projects_list.append(project_obj.title)
+
+
+    combined = zip(projects_list,project_scrum_master,complete_members_list)
+    projects = [{"title": p[0], "members": p[2], "scrum_master": p[1]} for p in combined]
+    
+
+    students = cur_course.receivers
+    students_in = json.loads(students)
+    students_in_course= list(User.objects.filter(username__in=students_in))
+   
 
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
@@ -42,10 +85,10 @@ def email_roster(request, slug):
             return redirect('view_one_course', slug)        
 
     return render(request, 'courses/email_roster.html', {
-        'slug':slug, 'form':form, 'count':count, 'students':students_in_course,
-        'addcode':addcode, 'cur_course':cur_course,
-        'page_name':page_name, 'page_description':page_description,
-        'title':title
+        'slug':slug, 'form':form, 'students':complete_members_list,
+        'scrum_master':project_scrum_master,'ta_list':ta_list,'addcode':addcode, 'cur_course':cur_course,
+        'page_name':page_name, 'page_description':page_description,'projects_list':projects,
+        'title':title, 'count':count
     })
 
 @login_required

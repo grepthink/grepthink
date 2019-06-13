@@ -72,9 +72,9 @@ EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
 
 if DEBUG:
-    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_TEST_KEY')
+    EMAIL_SENDGRID_KEY = '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'
 else:
-    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_API_KEY')
+    EMAIL_SENDGRID_KEY = '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'
 
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'

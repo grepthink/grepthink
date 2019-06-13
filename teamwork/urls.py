@@ -31,10 +31,11 @@ from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjec
 
 # Profile Imports
 from teamwork.apps.profiles.views import BaseView as ProfileBaseView
-from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
-
+from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView,ViewSchedule
+from teamwork.apps.profiles.views.EditScheduleView import import_schedule
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
+from teamwork.apps.courses.views import CourseCalendar 
 from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
 
 # Core Imports
@@ -106,7 +107,9 @@ urlpatterns = [
         url(r'^project/create/ajax/select_members/$', core_helpers.select_members, name='select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_skills/$', EditProjectView.add_desired_skills, name='add_desired_skills'),
+        url(r'^project/(?P<slug>[^/]+)/edit/ajax/add_desired_techs/$', EditProjectView.add_desired_techs, name='add_desired_techs'),
         url(r'^project/create/ajax/add_desired_skills/$', EditProjectView.create_desired_skills, name='create_desired_skills'),
+        url(r'^project/create/ajax/add_desired_techs/$', EditProjectView.create_desired_techs, name='create_desired_techs'),
 
         # COURSE
         # Delete individual assignment (based on slug)
@@ -115,6 +118,7 @@ urlpatterns = [
         url(r'^assignment/(?P<slug>[^/]+)/edit/$', CourseView.edit_assignment, name='edit_assignment'),
 
         # View all courses
+        
         url(r'^course/$', CourseBaseView.view_courses, name='view_course'),
         # Join a course (valid for all courses)
         url(r'^course/join/$', CourseBaseView.join_course, name='join_course'),
@@ -131,8 +135,10 @@ urlpatterns = [
         # Stats page link
         url(r'^course/(?P<slug>[^/]+)/stats/$', StatsView.view_stats, name='view_statistics'),
         # Email Roster link
+       
         url(r'^course/(?P<slug>[^/]+)/email_roster/$', EmailCourseView.email_roster, name='email_roster'),
         # Email w/ CSV
+        
         url(r'^course/(?P<slug>[^/]+)/email_csv/$', EmailCourseView.email_csv, name='email_csv'),
         # upload csv
         url(r'^course/(?P<slug>[^/]+)/upload_csv/$', CourseBaseView.upload_csv, name='upload_csv'),
@@ -162,6 +168,7 @@ urlpatterns = [
         url(r'^course/(?P<slug>[^/]+)/export_interest/$', InterestView.export_interest, name='export_interest'),
         # Claim Projects (TA)
         url(r'^course/(?P<slug>[^/]+)/claim/$', CourseView.claim_projects, name='claim_projects'),
+        url(r'^course/(?P<slug>[^/]+)/course_calendar/$',CourseCalendar.load_calendar , name='view_course_calendar'),
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),
@@ -170,10 +177,21 @@ urlpatterns = [
 
         # PROFILE
         url(r'^user/(?P<username>[^/]+)/$', ProfileView.view_profile, name='profile'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/$',ViewSchedule.load_schedule, name='view_schedule'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/save_events/$', ViewSchedule.save_events, name='save_events'),
         url(r'^user/(?P<username>[^/]+)/edit/$', EditProfileView.edit_profile, name='edit_profile'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/$', EditScheduleView.edit_schedule, name='edit_schedule'),
+        url(r'^user/(?P<username>[^/]+)/import_schedule$', EditScheduleView.import_schedule, name='import_schedule'),
+        url(r'^user/(?P<username>[^/]+)/revoke_access$', EditScheduleView.revoke_access, name='revoke_access'),
+        url(r'^user/(?P<username>[^/]+)/export_schedule$', EditScheduleView.export_schedule, name='export_schedule'),
         url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_event/$', EditScheduleView.save_event, name='save_event'),
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/save_time_limit/$', EditScheduleView.save_time_limit, name='save_time_limit'),
         url(r'^user/(?P<username>[^/]+)/edit/ajax/edit_skills/$', EditProfileView.edit_skills, name='edit_skills'),
+        url(r'^course/(?P<slug>[^/]+)/email_roster/ajax/select_recipents/$', EmailCourseView.select_recipents, name='select_recipents'),
+        # For Refresh feature ( Refresh feature step 11 )
+        url(r'^user/(?P<username>[^/]+)/edit_schedule/ajax/refresh_schedule/$', EditScheduleView.refresh_schedule, name='refresh_schedule'),
+        url(r'^user/(?P<username>[^/]+)/view_schedule/ajax/refresh_schedule/$', ViewSchedule.refresh_schedule, name='refresh_schedules'),
+
 
         # MATCHES AND MATCHSTATS
         url(r'^matches/$', MatchesView.view_matches, name='view_matches'),

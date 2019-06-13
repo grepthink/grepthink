@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
 from django.contrib import messages
+
 import json
 
 def edit_skills(request, username):
@@ -163,6 +164,8 @@ def edit_profile_helper(request, username):
     else:
         #grab profile for the current user
         profile = Profile.objects.get(user=request.user)
+        profileUser = User.objects.get(username=profile.user)
+        #grab profile for the current user
 
     #request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
@@ -170,6 +173,7 @@ def edit_profile_helper(request, username):
 
         # grab each form element from the clean form
         bio = form.cleaned_data.get('bio')
+        email= form.cleaned_data.get('email')
         name = form.cleaned_data.get('name')
         institution = form.cleaned_data.get('institution')
         location = form.cleaned_data.get('location')
@@ -178,6 +182,8 @@ def edit_profile_helper(request, username):
         #if data is entered, save it to the profile for the following
         if name:
             profile.name = name
+        if email:
+            profileUser.email = email
         if bio:
             profile.bio = bio
         if institution:
@@ -188,3 +194,4 @@ def edit_profile_helper(request, username):
             profile.avatar = ava
 
         profile.save()
+        profileUser.save()

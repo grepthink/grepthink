@@ -5,14 +5,83 @@
 
 {% block head %}
 <script src="{% static 'js/course.js' %}"></script>
-{% endblock head %}
 
+{% endblock head %}
+{% block javascript %}
+
+<script src="{% static 'js/jquery-2.2.3.min.js' %}"></script>
+
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <!-- {% block crumb %}
 <li><a href="{% url 'view_course' %}">Courses</a></li>
 <li><a href="{% url 'view_one_course' slug %}">{{ cur_course.name }}</a></li>
 <li><a href="">Email Roster</a></li>
 {% endblock crumb %} -->
-
+<script>
+    var receivers = [];
+    $(document).ready(function(){
+    //   $( "#target" ).click(function() {
+    //     alert( "Handler for .click() called." );
+    // });
+    
+    //Checkboxes
+    $("input[class='checks']").change(function(){
+      if($(this).is(':checked')){
+        receivers.push($(this).val())
+        console.log(receivers);
+      }else{
+        if(receivers.includes($(this).val())){
+          receivers.pop($(this).val())
+          console.log(receivers);
+        }
+      }  
+    });
+    
+    $('#select_recipents').click(function(){
+      var data= receivers;
+      data=JSON.stringify(data)
+      $.ajax({
+              url: 'ajax/select_recipents/',
+              type: 'POST',
+              data: {
+                receivers:data
+              },
+        success: function (response) {
+          alert(response);
+        },
+        error:function(xhr){
+          debugger;
+          alert(xhr)
+        }
+      })
+    });
+    });
+    // Function to select-all checkboxes under a project
+    function toogle(source){ 
+      checkboxes = document.getElementsByName('MyChk');
+      for(var i=0;i<checkboxes.length;i++){
+        if(checkboxes[i].parentElement.parentElement.parentElement == source.parentElement){
+          checkboxes[i].checked=source.checked;
+          if(checkboxes[i].checked == true)
+            receivers.push(checkboxes[i].value)
+          else
+            receivers.pop(checkboxes[i].value)
+        }
+      }
+    };
+    //Function to clear all checkboxes
+    function cleared(source){
+      boxes=document.querySelectorAll('input[type=checkbox]');
+      for(let i =0 ; i< boxes.length;i++){
+        boxes[i].checked = false;    
+      }
+      receivers = [];
+      console.log(receivers);
+    }
+    
+  
+</script>
+{% endblock javascript %}
 {% block content %}
 
 <div class="col-md-3">
@@ -34,8 +103,8 @@
           </div>
           <div class="box box-solid">
             <div class="box-header with-border">
-              <h3 class="box-title">Recipients ( {{ count }} )</h3>
-
+              <h3 class="box-title">Recipients ( {{ count }})</h3>
+              
               <div class="box-tools">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
@@ -45,12 +114,36 @@
 
 
             <div class="box-body no-padding emailScroll">
-             <ul style="list-style-type:none" >
-                     {% for stud in students %}
-                        <li><a href="#"> {{ stud.email }} </a></li>
-                     {% endfor %}
-             </ul>
-           </div>
+              <form class="form-inline" method="POST">
+                  {% csrf_token %}
+              <ul style="list-style: none">
+                {% for ta in ta_list%}
+                
+                <li>
+                  <input type="checkbox" class="checks" value={{ta}}> TA: {{ta}}
+                </li>
+                {% endfor %}
+              </ul>
+              <ul style="list-style-type:none" >
+                {% for item in projects_list %}
+                  <li><input type="checkbox" class="checkGroup" onClick="toogle(this)" value={{item.title}}>{{item.title}}    
+                  <ul style="list-style-type:none">
+                    {% for stud in item.members %}          
+                    {% if stud == item.scrum_master%}
+                      <li><input type="checkbox" name="MyChk" class="checks" value={{stud}}>Scrum Master: {{stud}} </li>
+                    {% else %}
+                      <li><input type="checkbox" name="MyChk" class="checks" value={{stud}}>Member: {{stud}}</li>
+                    {% endif %} 
+                    {% endfor %}
+                  </ul> 
+                </li>  
+                {% endfor %}  
+              </ul>
+              <button class="btn btn-primary" type="submit" id="select_recipents" name="SUBMIT"></i> Save</button>
+             
+            </form>
+            <button style="margin-left:170px" class="btn btn-danger" type="button" onclick="cleared(this) ">Clear</button>
+            </div>
 
             <!-- /.box-body -->
           </div>
