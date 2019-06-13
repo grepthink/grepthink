@@ -171,14 +171,16 @@
             end: '23:59', 
           },
           selectAllow: function(selectEvent) { 
+            if(meeting_limt !=0){
             var duration = moment.duration(selectEvent.end.diff(selectEvent.start));
             return duration.asMinutes() <= meeting_limt;
+            }
           },
 
-           //Limit the user to set the appointment 
-          selectOverlap: function(event){
-            return event.rendering === 'background';
-          },
+          //  //Limit the user to set the appointment 
+          // selectOverlap: function(event){
+          //   return event.rendering === 'background';
+          // },
           
           //Double click on event to delete
           eventRender: function(event, element) {

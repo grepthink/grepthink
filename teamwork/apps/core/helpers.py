@@ -56,7 +56,7 @@ def send_email(recipients, gt_email, subject, content):
 
 
     # Handle email sending
-    sg = sendgrid.SendGridAPIClient(apikey=settings.EMAIL_SENDGRID_KEY)
+    sg = sendgrid.SendGridAPIClient('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')
 
     mail = Mail()
     mail.from_email = Email(gt_email)
@@ -74,10 +74,12 @@ def send_email(recipients, gt_email, subject, content):
     # Solution at: https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357
 
     # Send the Email
+    print(mail.get())
     response = sg.client.mail.send.post(request_body=mail.get())
-    # print(response.status_code)
-    # print(response.body)
-    # print(response.headers)
+    print('HTTP response status code ')
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
 
     return HttpResponse("Email Sent!")
 
