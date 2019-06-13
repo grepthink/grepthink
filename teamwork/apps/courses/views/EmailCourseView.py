@@ -48,7 +48,7 @@ def email_roster(request, slug):
         pro = project_obj.get_members2()
         for i in pro:
             project_members.append(i.username)
-            
+        
         complete_members_list.append(project_members)
         project_scrum_master.append(project_obj.scrum_master.username)
         projects_list.append(project_obj.title)
@@ -59,9 +59,9 @@ def email_roster(request, slug):
     
 
     students = cur_course.receivers
-    students_in=json.loads(students)
+    students_in = json.loads(students)
     students_in_course= list(User.objects.filter(username__in=students_in))
-
+   
 
     count = len(students_in_course) or 0
     addcode = cur_course.addCode
