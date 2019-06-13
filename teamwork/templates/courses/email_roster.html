@@ -71,12 +71,12 @@
     };
     //Function to clear all checkboxes
     function cleared(source){
-      boxes=document.getElementsByClassName('checks');
+      boxes=document.querySelectorAll('input[type=checkbox]');
       for(let i =0 ; i< boxes.length;i++){
-        boxes[i].checked = false;
-        receivers = [];
-        
+        boxes[i].checked = false;    
       }
+      receivers = [];
+      console.log(receivers);
     }
     
   
@@ -137,11 +137,12 @@
                     {% endfor %}
                   </ul> 
                 </li>  
-                {% endfor %}
-                <button class="btn btn-primary" type="submit" id="select_recipents" name="SUBMIT"></i> Save</button>
+                {% endfor %}  
               </ul>
+              <button class="btn btn-primary" type="submit" id="select_recipents" name="SUBMIT"></i> Save</button>
+              <button style="margin-left:140px" class="btn btn-danger" type="button" onclick="cleared(this) ">Clear</button>
             </form>
-            <button class="btn btn-primary" type="button" onclick="cleared(this)">Clear</button>
+            
             </div>
 
             <!-- /.box-body -->
