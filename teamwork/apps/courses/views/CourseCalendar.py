@@ -25,6 +25,7 @@ def load_calendar(request,slug):
         ass={
             'title':ass.ass_name + ': ' + ass.description,
             'start':ass.due_date.isoformat(),
+            'description':ass.description
         }
         assignments.append(ass)
     

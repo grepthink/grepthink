@@ -24,6 +24,7 @@
     //     alert( "Handler for .click() called." );
     // });
     
+    //Checkboxes
     $("input[class='checks']").change(function(){
       if($(this).is(':checked')){
         receivers.push($(this).val())
@@ -55,6 +56,7 @@
       })
     });
     });
+    // Function to select-all checkboxes under a project
     function toogle(source){ 
       checkboxes = document.getElementsByName('MyChk');
       for(var i=0;i<checkboxes.length;i++){
@@ -66,8 +68,16 @@
             receivers.pop(checkboxes[i].value)
         }
       }
-      console.log(receivers)
     };
+    //Function to clear all checkboxes
+    function cleared(source){
+      boxes=document.getElementsByClassName('checks');
+      for(let i =0 ; i< boxes.length;i++){
+        boxes[i].checked = false;
+        receivers = [];
+        
+      }
+    }
     
   
 </script>
@@ -131,6 +141,7 @@
                 <button class="btn btn-primary" type="submit" id="select_recipents" name="SUBMIT"></i> Save</button>
               </ul>
             </form>
+            <button class="btn btn-primary" type="button" onclick="cleared(this)">Clear</button>
             </div>
 
             <!-- /.box-body -->

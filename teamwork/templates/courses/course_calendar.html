@@ -45,24 +45,21 @@
           // Allow selection for select function.
           selectable: true,
           selectHelper: true,
-          // events: 
-          // [
-          //   {
-          //      title: 'Assignment 1',
-          //      start: '2019-05-15',
-          //      allday:true,
-          //      backgroundColor:'red'
-          //   },
-          //   {
-          //      title: 'Assignment 2',
-          //      start: '2019-05-25',
-          //      allday:true,
-          //      backgroundColor:'red'
-          //   }
-          // ],
           events:events,
+          eventRender: function(events, element) {
+              element.popover({
+                animation:true,
+                delay: 300,
+                content: events.title + "\n"  ,
+                trigger: 'hover'
+              });
+            
+          }
         })
-      })
+      });
+      
+          
+
 </script>
 {% endblock javascript %}
 {% block stylesheets %}
