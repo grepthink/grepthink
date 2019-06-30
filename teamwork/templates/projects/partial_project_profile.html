@@ -1,68 +1,158 @@
-
-
-
 {% for project in projects %}
-    {% if forloop.first %}<div class="row">{% endif %}
+{% if forloop.first %}
+<div class="row">{% endif %}
     <div class="col-md-4">
         <a href="{% url 'view_one_project' project.slug %}" style="none">
-        <div class="box box-widget widget-user-2">
+            <div class="box box-widget widget-user-2">
 
-          <!-- Add the bg color to the header using any of the bg-* classes -->
-          <div class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
-            <div class="widget-user-image">
-              <img class="img-circle" src={{project.project_image}} alt="Project Image">
-            </div>
-            <!-- /.widget-user-image -->
-            <h3 class="widget-user-username">{{project.title}}</h3>
-            <h5 class="widget-user-desc">{{project.tagline}}</h5>
-            {% if project.sponsor %}
-            <span class="tooltip2 pull-right"><i class='glyphicon glyphicon-info-sign'></i>
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div
+                    class="widget-user-header {% if project.sponsor %} bg-yellow {% elif project.avail_mem %} bg-primary {% else %} bg-gray {% endif %}">
+                    <div class="widget-user-image">
+                        <!--<img class="img-circle" src="{{project.project_image}}" alt="Project Image" />-->
+                    </div>
+                    <!-- /.widget-user-image -->
+                    <h3 class="widget-user-username">{{project.title}}</h3>
+                    <h5 class="widget-user-desc">{{project.tagline}}</h5>
+                    {% if project.sponsor %}
+                    <span class="tooltip2 pull-right"><i class='glyphicon glyphicon-info-sign'></i>
                  <span class="tooltiptext2">This is a sponsored project</span>
             </span>
-            {% endif %}
-          </div><!-- /.box-header -->
-          </a>
+                    {% endif %}
+                </div><!-- /.box-header -->
+        </a>
 
 
-          <div class="box-footer no-padding">
+        <div class="box-footer no-padding">
             <ul class="nav nav-stacked" style="overflow:hidden; white-space: nowrap;text-overflow:ellipsis">
-              <li>       
-                <a>Course:
-                  &nbsp;
-                  <span style="margin-right:3px" class="label label-warning">
+                <li>
+                    <a>Course:
+                        &nbsp;
+                        <span style="margin-right:3px" class="label label-warning">
                     {{project.course.first.name}}                
-                  </span>                       
-                </a>  
-              </li> 
-              <li><a href="#">Skills:
-                  {% if project.desired_skills != none %}
-                  {% for skill in project.desired_skills.all %}
-                  {% if forloop.counter < 5 %}
-                  &nbsp;
-                  <span class="label label-warning">
+                  </span>
+                    </a>
+                </li>
+                <li><a href="#">Skills:
+                    {% if project.desired_skills != none %}
+                    {% for skill in project.desired_skills.all %}
+                    {% if forloop.counter < 5 %}
+                    &nbsp;
+                    <span class="label label-warning">
                       {{ skill.skill }}
                   </span>
-                  {% if forloop.counter == 4 %}
-                     &nbsp;...
-                  {% endif %}
-                  {% endif %}
+                    {% if forloop.counter == 4 %}
+                    &nbsp;...
+                    {% endif %}
+                    {% endif %}
 
-                  {% endfor %}
-                  {% endif %}
-              </a></li>
+                    {% endfor %}
+                    {% endif %}
+                </a></li>
 
-            <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator }}</span></a></li>
-          </ul>
+                <li><a href="{% url 'profile' project.creator %}">Owner <span class="pull-right badge bg-blue">{{ project.creator }}</span></a>
+                </li>
+                <li>
+                    <div style="padding:8px;">
+                        <button type="button" class="btn  btn-primary" data-target="#myModal2" data-toggle="modal"
+                                onclick="loadChartData('{{project.id}}')">chart
+                        </button>
+                        <button type="button" class="btn  btn-primary" style="float:right;" data-toggle="modal"
+                                onclick="loadProjectPlan('{{project.id}}')"
+                                data-target="#myModal">plan
+                        </button>
+                    </div>
+                </li>
+            </ul>
         </div>
 
-      </div><!-- /.box -->
-      </a>
-    </div>
-    {% if forloop.counter|divisibleby:3 %}</div><div class="row"><div class="clearfix"></div>{% endif %}
-    {% if forloop.last %}</div><div class="clearfix"></div>{% endif %}
+    </div><!-- /.box -->
+    </a>
+</div>
+{% if forloop.counter|divisibleby:3 %}</div>
+<div class="row">
+    <div class="clearfix"></div>
+    {% endif %}
+    {% if forloop.last %}
+</div>
+<div class="clearfix"></div>{% endif %}
 {% empty %}
-  <div>
-  </h3>You are not in any projects</h3>
+<div>
+    </h3>You are not in any projects</h3>
 
-  </div>
+</div>
 {% endfor %}
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:960px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">My plan</h4>
+            </div>
+            <div class="modal-body">
+                <div class="head-tab">
+                    <div class="tab-list">
+                        <div class="tab-item active"><span onclick="switchPlanTab(this,0)">Sprint plan 1</span><a style="margin-left:20px;font-size:2rem;" onclick="removePlanTab(this,0)"><i class="fa fa-remove "></i></a></div>
+                    </div>
+                    <div class="tab-add" onclick="addSprintPlan()">
+                        <a><i class="glyphicon glyphicon-plus"></i></a>
+                    </div>
+                </div>
+                <ul class="list-group" id="stories">
+                    <!--<li class="story-item"><div class="story-container"><div style="height: 50px;line-height: 50px;padding:4px 0"><div class="col-sm-9"><input class="form-control story-title" placeholder="Please input your user story"></div>-->
+                                <!--<div class="col-sm-1 story-icon"><i class="iconfont icon-down-circle-o" onclick="toggleShow(this)" title="show tasks"></i></div><div class="col-sm-1  story-icon"><i class="iconfont icon-Add" onclick="addStory(this)" title="add story"></i></div><div class="col-sm-1  story-icon"><i class="iconfont icon-jian" onclick="deleteStory(this)" title="delete story"></i></div></div><div class="task-container"><ul class="list-group task-list">-->
+                                    <!--<li class="list-group-item task-item" style="padding:0"><div style="height:50px;"><div class="form-group task-line"><div class="task-before">☞</div><div style="flex:1"><input class="form-control plan-content" placeholder="please input your task"/></div><div class="duration-container"><input class="form-control duration" placeholder="duration" type="number"></div><div class="task-after"><span style="padding-left:4px;font-size: 2.2rem;">h</span><span title="switch task status"><i class="iconfont icon-weiwancheng" onclick="toggleStatus(this,0)"></i></span><span title="add task next"><i class="iconfont icon-Add" onclick="addLineNext(this)"></i></span><span title="remove task"><i class="iconfont icon-jian  text-danger" onclick="removeLine(this)"></i></span></div></div></div></li>-->
+                                <!--</ul></div></div></li>-->
+                </ul>
+
+
+            </div>
+            <div class="modal-footer" style="display: flex;">
+                <div style="flex: 1;">
+
+                    <div class="form-group">
+                        <label class="col-sm-2" style="line-height:36px;text-align: start">Plan period:</label>
+                        <div class="input-group  col-sm-4">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'"
+                                   data-mask="" id="plandate" >
+                        </div>
+
+                    </div>
+
+                </div>
+                <div>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="savePlans()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel2">Burn up chart</h4>
+            </div>
+            <div class="modal-body">
+                <div class="chart-tab">
+                </div>
+                <div style="margin-top: 20px;">
+                    <canvas id="myChart" width="740" height="400"></canvas>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+

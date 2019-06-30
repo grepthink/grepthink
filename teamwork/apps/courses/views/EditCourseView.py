@@ -76,8 +76,6 @@ def edit_course(request, slug):
         else:
             messages.add_message(request, messages.SUCCESS, "Student(s) already added to course.")
 
-        # return redirect(edit_course, slug)
-
     # Remove a user from the course
     if request.POST.get('remove_user'):
         members = request.POST.getlist('remove_user')
@@ -100,8 +98,6 @@ def edit_course(request, slug):
             messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
         else:
             messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
-
-        # return redirect(edit_course, slug)
 
     # Add a TA
     if request.POST.get('ta'):
@@ -131,8 +127,6 @@ def edit_course(request, slug):
                     )
 
         messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
-
-        # return redirect(edit_course, slug)
 
     # Remove a ta from the course
     if request.POST.get('remove_ta'):
