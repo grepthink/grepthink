@@ -283,6 +283,7 @@ def save_time_limit(request, username):
             return HttpResponse("Set Meeting Time Limit")
     else:
         return HttpResponse('Wrong user category')       
+        return HttpResponse('Wrong user category')
 
 @login_required
 def revoke_access(request,username):

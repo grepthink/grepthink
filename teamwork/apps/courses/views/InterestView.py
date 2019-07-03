@@ -73,11 +73,6 @@ def show_interest(request, slug):
                 user_interests = Interest.objects.filter(project_interest=project, user=request.user)
                 if user_interests is not None: user_interests.delete()
 
-            # all_interests = Interest.objects.filter(project_interest=projects)
-            # interests = all_interests.filter(user=user)
-            # interests = Interest.objects.filter(project_interest=projects, user=user)
-            # if interests is not None: interests.delete()
-
             projectCount = len(projects)
 
             if projectCount >= 1:

@@ -1,16 +1,30 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load static %} {% load i18n %} # Clear out javascript block at bottom of page so we can import specific js #} {% block javascript %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
 
-{% load static %}
-{% load i18n %}
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 
-{% block stylesheets %}
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button);
 
-  {{ block.super }}
 
-  <link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+</script>
 
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'js/app.min.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/daterangepicker.js' %}"></script>
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="{% static 'js/project.js' %}"></script>
+
+{% endblock javascript %} {% block stylesheets %} {{ block.super }}
+
+<link rel="stylesheet" href="{% static 'css/Tooltip.css' %}">
+<link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1210387_ltrsatgg44.css">
+<link rel="stylesheet" href="{% static 'css/project.css' %}">
 {% endblock stylesheets %}
-
 {% block content %}
 
 <!-- BREADCRUMB -->
@@ -32,7 +46,7 @@
         {% include "projects/partial_project_profile.html" with projects=active %}
     </div>
 
-  <!-- /.box-body -->
+    <!-- /.box-body -->
 </div>
 
 <div class="box sm-box-solid collapsed-box">
@@ -49,7 +63,7 @@
         {% include "projects/partial_project_profile.html" with projects=inactive %}
     </div>
 
-  <!-- /.box-body -->
+    <!-- /.box-body -->
 </div>
 
 {% endblock content %}

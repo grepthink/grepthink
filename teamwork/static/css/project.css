@@ -1,0 +1,117 @@
+
+.head-tab {
+  background: #EAEAEA;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+}
+
+.tab-item {
+  float: left;
+  padding: 0 8px;
+  cursor: pointer;
+  background: #EAEAEA;
+
+  border-right: 1px solid #B0B0B0;
+}
+
+.tab-item.active {
+  background: white;
+}
+
+.tab-add {
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+  position: relative;
+  top:2px;
+}
+
+#stories {
+  max-height: 700px;
+  overflow: auto;
+  clear: both;
+}
+
+.task-list{
+  margin-left: 10px;
+}
+
+.task-container{
+  clear: both;
+  display: none;
+}
+
+.story-icon{
+   position: relative;
+  top:-8px;
+  cursor: pointer;
+}
+
+.story-icon i{
+  font-size: 2rem;
+}
+
+.list-group-item{
+  border:none
+}
+
+.task-line{
+  display: flex;
+  padding-right: 36px;
+  padding-left: 10px;
+}
+
+.duration-container{
+   width:100px;
+   margin-left:40px;
+  overflow: hidden;
+}
+
+.task-after{
+  position: relative;
+  top:4px;
+}
+
+.task-after i{
+  margin-left: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.list-group{
+  margin-bottom: 0;
+}
+
+.form-group{
+  margin-bottom: 0;
+}
+
+.story-container{
+  border: 1px solid #666666;
+  padding-top: 10px;
+  padding-bottom: 4px;
+}
+
+.duration{
+  text-align: center;
+}
+
+.task-before{
+  padding-right: 10px;
+  height: 50px;
+  line-height: 40px;
+  font-size: 3rem;
+}
+
+.task-before i{
+   font-size: 2.4rem;
+}
+
+.chart-tab{
+  background: #EAEAEA;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+}
+

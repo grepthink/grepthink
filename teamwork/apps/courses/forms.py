@@ -462,7 +462,7 @@ class AssignmentForm(forms.ModelForm):
         assNum=len(course.assignments.all())
         print(assNum)
         self.fields['ass_number'].initial = assNum + 1
-    
+
     # date assignment will start
     ass_date = forms.DateField(
         widget = extras.SelectDateWidget,
@@ -505,18 +505,12 @@ class AssignmentForm(forms.ModelForm):
         required=True,
         decimal_places=0
         )
-    course_Name = forms.CharField(
-        label="course_Name",
-        required=True,
-        max_length=255,
-        )
-        
     class Meta:
         model= Assignment
         widgets = {
         }
 
-        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description','course_Name']
+        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
 
 #Edit assignment form
 class EditAssignmentForm(forms.ModelForm):

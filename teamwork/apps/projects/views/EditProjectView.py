@@ -464,6 +464,3 @@ def edit_techs(request, username):
 
 
     return HttpResponse("Failure")
-
-#--------------------------------------------------------------------------
-    return HttpResponse("Failure")

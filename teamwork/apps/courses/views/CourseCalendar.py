@@ -1,3 +1,4 @@
+# For Refresh feature step 14
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -9,14 +10,14 @@ from django.core.urlresolvers import reverse
 from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponse
 
- # Model Imports
+# Model Imports
 from teamwork.apps.profiles.models import Profile, Events,Alert
 from teamwork.apps.projects.models import dayofweek
 from teamwork.apps.courses.models import Assignment
 import json
 
 def load_calendar(request,slug):
-
+    
     user=request.user
     assigns = Assignment.objects.filter(course_Name=slug)
     assignments=[]
@@ -27,7 +28,7 @@ def load_calendar(request,slug):
             'description':ass.description
         }
         assignments.append(ass)
-
+    
     assignments=json.dumps(assignments)
     assignments=mark_safe(assignments)
     print(assignments)

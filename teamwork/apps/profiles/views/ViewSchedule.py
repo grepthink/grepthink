@@ -31,7 +31,7 @@ def load_schedule(request,username):
     if (profile.isProf):
         time_limit = profile.meeting_limit
     else:
-        time_limit = 0
+        time_limit = None
 
     meetings = mark_safe(profile.jsonavail)
     page_user= request.user.username                    #get username of currently logged in user

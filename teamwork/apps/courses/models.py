@@ -45,8 +45,6 @@ class Assignment(models.Model):
     description = models.CharField(max_length=255, default="")
     ass_number = models.IntegerField( default=1)
     closed = models.BooleanField(default=False)
-    course_Name = models.CharField(max_length=255,default="")
-
     subs = models.ManyToManyField(
         Tsr,
         default="",
@@ -182,9 +180,7 @@ class Course(models.Model):
         choices=Term_Choice,
         # defaulted to none
         default='None')
-    receivers = models.TextField(
-        default='None'
-    )
+
     disable = models.BooleanField(
         default=False)
 
