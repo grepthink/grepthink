@@ -265,7 +265,7 @@ class Course(models.Model):
 
     csv_file = models.FileField(
         upload_to='csv_files/',
-        default="")
+        null=True, blank=True)
 
     # The Meta class provides some extra information about the Project model.
     class Meta:
