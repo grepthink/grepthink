@@ -30,7 +30,7 @@ class Skills(models.Model):
 
         """
     # skill, a string
-    skill = models.CharField(max_length=255,default="")
+    skill = models.CharField(max_length=25,default="")
 
     def __str__(self):
         return self.skill

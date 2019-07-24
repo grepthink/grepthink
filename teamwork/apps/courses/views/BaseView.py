@@ -4,6 +4,7 @@ from teamwork.apps.courses.models import get_user_active_courses, get_user_disab
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from teamwork.apps.courses.forms import JoinCourseForm
 from teamwork.apps.courses.models import Course, Enrollment
@@ -205,10 +206,15 @@ def export_xls(request, slug):
     for proj in projects:
         row_num += 2
         members = proj.get_members()
+        print("members:", members)
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
-        ws.write(row_num, 1, "TA:", font_style)
-        ws.write(row_num, 2, proj.ta.email, font_style)
+        ws.write(row_num, 1, "TA:", font_style)        
+
+        if proj.ta is not None:
+            ws.write(row_num, 2, proj.ta.email, font_style)
+        else:
+            ws.write(row_num, 2, "NA", font_style)
         row_num += 1
         ws.write(row_num, 1, "TA Meeting:", font_style)
         ws.write(row_num, 2, proj.ta_time, font_style)
