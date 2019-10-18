@@ -79,14 +79,14 @@ else:
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'
 
-# isProd = config('PRODUCTION', default=False)
-#
-# if isProd:
-#     pass
-#     #For Testing, comment out for production
-#     #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# else:
-#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+isProd = config('PRODUCTION', default=False)
+
+if isProd:
+    pass
+    #For Testing, comment out for production
+    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
