@@ -1,7 +1,7 @@
 # Required headers for sendgrid: (sendgrid, os)
-import sendgrid
+from sendgrid import SendGridAPIClient
 import os
-from sendgrid.helpers.mail import *
+from sendgrid.helpers.mail import Mail, Email, Personalization, Content
 
 from django.http import JsonResponse
 from django.db.models import Q
@@ -54,9 +54,9 @@ def send_email(recipients, gt_email, subject, content):
     else:
         return HttpResponseBadRequest("Bad Request")
 
-
+    print("settings.EMAIL_SENDGRID_KEY:", settings.EMAIL_SENDGRID_KEY)
     # Handle email sending
-    sg = sendgrid.SendGridAPIClient(apikey=settings.EMAIL_SENDGRID_KEY)
+    sg = SendGridAPIClient(settings.EMAIL_SENDGRID_KEY)
 
     mail = Mail()
     mail.from_email = Email(gt_email)
