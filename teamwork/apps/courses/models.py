@@ -6,15 +6,14 @@ Database Models for the objects: Course, Enrollment
 #Build-in modules
 from __future__ import unicode_literals
 
-from datetime import date
 import datetime
 import random
 import string
-
 #Other imports
 import uuid
-import markdown
+from datetime import date
 
+import markdown
 # Django modules
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -25,6 +24,7 @@ from django.utils import timezone
 
 # import of project models
 from teamwork.apps.projects.models import Project, Tsr
+
 
 # Generates add code
 def rand_code(size):

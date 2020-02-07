@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.models import User
 
-from teamwork.apps.courses.models import Course, get_user_active_courses
-from teamwork.apps.projects.models import Project, Membership
-from teamwork.apps.profiles.models import Profile
 from teamwork.apps.core.models import auto_ros, po_match
+from teamwork.apps.courses.models import Course, get_user_active_courses
+from teamwork.apps.profiles.models import Profile
+from teamwork.apps.projects.models import Membership, Project
+
 
 @login_required
 def view_matches(request):

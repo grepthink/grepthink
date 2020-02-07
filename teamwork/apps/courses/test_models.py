@@ -13,6 +13,7 @@ from django.test import TestCase
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 
+
 def create_user(username, email, password):
     return User.objects.create_user(username, email, password)
 

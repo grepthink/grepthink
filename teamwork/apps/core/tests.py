@@ -1,16 +1,17 @@
-from django.core.urlresolvers import resolve
-from django.test import TestCase, Client
-
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.urlresolvers import resolve
+from django.test import Client, TestCase
 from django.urls import reverse
-from teamwork.apps.core.views import *
-from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
-from teamwork.apps.core.helpers import *
 
+from teamwork.apps.core.helpers import *
+from teamwork.apps.core.models import (EmailAddressAuthBackend, auto_ros,
+                                       by_schedule, po_match, sort)
+from teamwork.apps.core.views import *
+from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
-from teamwork.apps.courses.models import *
+
 
 def create_project(creator, scrum_master, ta, course, slug):
     project = Project.objects.create(creator=creator,

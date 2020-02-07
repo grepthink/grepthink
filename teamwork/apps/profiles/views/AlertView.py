@@ -1,13 +1,15 @@
 # Model Imports
-from teamwork.apps.profiles.models import Profile, Alert
-# Form Imports
-
-# View Imports
-
 # Other
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+
+from teamwork.apps.profiles.models import Alert, Profile
+
+# Form Imports
+
+# View Imports
+
 
 @login_required
 def view_alerts(request):

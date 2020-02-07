@@ -1,16 +1,12 @@
 #imports forms
+from datetime import datetime, timedelta
+
 from django import forms
-from django.forms import extras
+from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from datetime import datetime
-from django.contrib.admin.widgets import AdminDateWidget
-from django.shortcuts import get_object_or_404
-
-from datetime import datetime
-from datetime import timedelta
 from django.forms import extras
-from django.contrib.admin.widgets import AdminDateWidget
+from django.shortcuts import get_object_or_404
 
 from teamwork.apps.profiles.models import *
 

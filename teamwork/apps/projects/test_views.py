@@ -6,20 +6,17 @@ Unit tests for views.py in app projects.
 Usuage: Run as a part of all test with `python manage.py test`
 """
 
-from django.contrib.auth.models import UserManager
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import UserManager
 # Django Modules
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
+from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
-from teamwork.apps.courses.models import *
-
 from teamwork.apps.projects.views.EditProjectView import *
 from teamwork.apps.projects.views.EditTsrView import *
-
-from django.test import Client
 
 
 def create_project(creator, scrum_master, ta, course, slug):

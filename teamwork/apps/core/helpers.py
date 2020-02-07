@@ -1,25 +1,22 @@
 # Required headers for sendgrid: (sendgrid, os)
-from sendgrid import SendGridAPIClient
-import os
-from sendgrid.helpers.mail import Mail, Email, Personalization, Content
-
-from django.http import JsonResponse
-from django.db.models import Q
-from django.conf import settings
-
-# Django
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import (HttpResponse, HttpResponseBadRequest,
-                         HttpResponseRedirect)
-
+import codecs
 # csv
 import csv
-import codecs
+import os
 
-from teamwork.apps.projects.models import Project
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+# Django
+from django.contrib.auth.models import User
+from django.db.models import Q
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect, JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Content, Email, Mail, Personalization
+
 from teamwork.apps.courses.models import Course
+from teamwork.apps.projects.models import Project
 
 
 def send_email(recipients, gt_email, subject, content):

@@ -1,15 +1,16 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from teamwork.apps.courses.models import Course, Enrollment
-from teamwork.apps.courses.views.CourseView import view_one_course
+from django.contrib.auth.models import User
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-from django.contrib import messages
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from teamwork.apps.profiles.models import Alert
 from teamwork.apps.courses.forms import EditCourseForm
+from teamwork.apps.courses.models import Course, Enrollment
+from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.profiles.models import Alert
+
 
 @login_required
 def edit_course(request, slug):

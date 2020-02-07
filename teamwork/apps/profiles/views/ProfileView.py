@@ -1,15 +1,13 @@
 # Django Imports
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
 
+from teamwork.apps.courses.models import Course
+from teamwork.apps.profiles.forms import *
 # Model Imports
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.projects.models import Project
-from teamwork.apps.courses.models import Course
-
-# Form Imports
-from teamwork.apps.profiles.forms import *
 
 # View Imports
 

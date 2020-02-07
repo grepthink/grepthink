@@ -8,6 +8,7 @@ from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
 
 from .models import *
 
+
 def SignupDomainValidator(value):
     """
     public method that takes a value
