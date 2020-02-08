@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 import datetime
 import random
 import string
-# Other imports
 
 import markdown
 # Django modules
@@ -20,6 +19,8 @@ from django.template.defaultfilters import slugify
 
 # import of project models
 from teamwork.apps.projects.models import Project, Tsr
+
+# Other imports
 
 
 # Generates add code

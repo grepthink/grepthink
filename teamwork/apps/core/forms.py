@@ -1,7 +1,6 @@
 from django import forms
 
 
-
 """
 Upload a csv file form
 
