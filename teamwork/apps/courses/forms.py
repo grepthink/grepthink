@@ -2,9 +2,7 @@
 from datetime import datetime, timedelta
 
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.forms import extras
 from django.shortcuts import get_object_or_404
 

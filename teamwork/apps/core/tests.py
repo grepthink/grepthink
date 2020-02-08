@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import resolve
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -314,7 +313,6 @@ class ParseCsvTests(TestCase):
 
     def setUp(self):
         self.csv_path = settings.PROJECT_DIR
-        pass
 
     def tearDown(self):
         pass

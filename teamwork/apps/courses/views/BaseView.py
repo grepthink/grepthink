@@ -1,4 +1,3 @@
-import csv
 
 import xlwt
 from django.contrib import messages

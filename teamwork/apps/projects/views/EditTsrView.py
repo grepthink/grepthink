@@ -1,12 +1,10 @@
-from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
-from teamwork.apps.courses.models import Assignment, Course
+from teamwork.apps.courses.models import Assignment
 from teamwork.apps.projects.forms import TSR
-from teamwork.apps.projects.models import Project, Tsr
+from teamwork.apps.projects.models import Project
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
 

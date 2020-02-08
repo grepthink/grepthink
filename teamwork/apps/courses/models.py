@@ -10,17 +10,13 @@ import datetime
 import random
 import string
 # Other imports
-import uuid
-from datetime import date
 
 import markdown
 # Django modules
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.utils import timezone
 
 # import of project models
 from teamwork.apps.projects.models import Project, Tsr

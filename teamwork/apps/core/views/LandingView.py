@@ -1,5 +1,3 @@
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 
 from teamwork.apps.courses.models import (Course, get_user_active_courses,

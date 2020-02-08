@@ -6,11 +6,8 @@ Unit tests for views.py in app projects.
 Usuage: Run as a part of all test with `python manage.py test`
 """
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import UserManager
 # Django Modules
 from django.test import Client, TestCase, override_settings
-from django.urls import reverse
 
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
@@ -100,7 +97,6 @@ class ViewProjectTestCase(TestCase):
         #
         # # Confirm that view_one_project returned a response with status code 200 (page served successfully).
         # self.assertEqual(response.status_code, 200)
-        pass
 
 
 class EditProjectTestCase(TestCase):
@@ -130,7 +126,6 @@ class EditProjectTestCase(TestCase):
         # print("status code: ", response.status_code)
         # print("all projects", Project.objects.all())
         # self.assertTrue(response.status_code == '200')
-        pass
 
     def test_try_add_member_success(self):
         """

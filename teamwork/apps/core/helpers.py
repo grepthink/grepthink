@@ -1,8 +1,6 @@
 # Required headers for sendgrid: (sendgrid, os)
-import codecs
 # csv
 import csv
-import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -11,7 +9,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Content, Email, Mail, Personalization
 

@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.core.helpers import send_email
 from teamwork.apps.courses.forms import EmailRosterForm
 from teamwork.apps.courses.models import Course
-from teamwork.apps.courses.views.CourseView import view_one_course
 
 
 @login_required

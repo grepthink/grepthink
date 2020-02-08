@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from teamwork.apps.projects.forms import *
 from teamwork.apps.projects.models import Project
 
 

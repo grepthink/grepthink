@@ -16,11 +16,10 @@ Including another URLconf
     CAN OPTIONALLY INCLUDE A CONVERTER TYPE. I.e: <int: index>. Otherwise all <index> will be passed as string. -kp
 """
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
 from teamwork.apps.core import helpers as core_helpers

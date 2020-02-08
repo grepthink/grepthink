@@ -6,7 +6,6 @@ Unit tests for models.py: tests all created functions
 Usuage: Run a part of all test with `python manage.py test`
 """
 
-from django.contrib.auth.models import UserManager
 # Django Modules
 from django.test import TestCase
 
@@ -101,4 +100,3 @@ class CourseTestCase(TestCase):
         """
         TODO: once delete is moved to Course model
         """
-        pass
