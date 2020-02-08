@@ -36,7 +36,7 @@ def view_matches(request):
             project_match_list.extend([(project, p_match)])
 
     if request.POST.get('matchstats'):
-        matches = request.POST.get('matchstats')
+        request.POST.get('matchstats')
 
     return render(request, 'core/view_matches.html', {
         'project_match_list': project_match_list, 'course_set': course_set, 'page_name': page_name,
@@ -96,7 +96,7 @@ def matchstats(request, slug):
         else:
             skill_match[stud] = ["No similar skills"]
 
-    user = request.user
+    request.user
 
     return render(request, 'core/matchstats.html', {
         'page_name': page_name, 'page_description': page_description,
@@ -116,7 +116,6 @@ def auto_gen(request, slug):
     title = "Auto Generate Groups"
 
     course = get_object_or_404(Course, slug=slug)
-    project_match_list = []
 
     auto = auto_ros(course)
 

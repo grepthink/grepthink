@@ -72,7 +72,7 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     cur_proj = get_object_or_404(Project, slug=slug)
     course = cur_proj.course.first()
     asg = get_object_or_404(Assignment, slug=asg_slug)
-    today = datetime.now().date()
+    datetime.now().date()
     members = cur_proj.members.all()
     emails = [member.email for member in members]
 
@@ -143,7 +143,7 @@ def view_tsr(request, slug):
     title = "View TSR"
 
     project = get_object_or_404(Project, slug=slug)
-    tsrs = list(project.tsr.all())
+    list(project.tsr.all())
     members = project.members.all()
 
     # put emails into list

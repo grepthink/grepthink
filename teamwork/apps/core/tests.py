@@ -240,7 +240,7 @@ class AutoSetRosterTest(TestCase):
         del self.course
 
     def testInitialTesting(self):
-        auto = auto_ros(self.course)
+        auto_ros(self.course)
 
 # TODO: by_schedule tests
 

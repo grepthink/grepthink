@@ -120,7 +120,7 @@ def edit_profile(request, username):
 
         # handle deleting avatar
         if request.POST.get('delete_avatar'):
-            avatar = request.POST.get('delete_avatar')
+            request.POST.get('delete_avatar')
             profile.avatar.delete()
             form = ProfileForm(instance=profile)
 

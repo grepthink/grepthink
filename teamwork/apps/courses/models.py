@@ -296,7 +296,7 @@ class Course(models.Model):
             if self.addCode is None or len(self.addCode) == 0:
                 self.addCode = rand_code(10)
 
-        except IntegrityError as e:
+        except IntegrityError:
             # if we fail the unique property get a new addCode until one doesnt exist
             while Course.objects.filter(addCode=self.addCode).exists():
                 self.addCode = rand_code(10)

@@ -326,7 +326,6 @@ class Project(models.Model):
     def generate_avail(self):
         event_list = []     # list of all events for each user
         pos_event = []      # list of possible meeting times
-        temp = []
 
         sunday_list = []
 
@@ -690,7 +689,6 @@ def from_bits(bitstring):
     start_hour = 0
     start_min = 0
     end_hour = 0
-    end_minute = 0
 
     i = 0
     # For each index in bitstring

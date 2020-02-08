@@ -20,7 +20,7 @@ def _projects(request, active, inactive):
     """
     Private method that will be used for paginator once I figure out how to get it working.
     """
-    page = request.GET.get('page')
+    request.GET.get('page')
 
     # Populate with page name and title
     page_name = "My Projects"

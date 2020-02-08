@@ -23,7 +23,7 @@ def _courses(request, courses):
     """
     Private method that will be used for paginator once I figure out how to get it working.
     """
-    page = request.GET.get('page')
+    request.GET.get('page')
     page_name = "Courses"
     page_description = "Course List"
     title = "Courses"
@@ -81,7 +81,7 @@ def create_course(request):
 
             # creator is current user
             course.creator = request.user
-            students = data.get('students')
+            data.get('students')
             # save this object
             course.save()
 
@@ -179,9 +179,6 @@ def upload_csv(request, slug):
 
 @login_required
 def export_xls(request, slug):
-    page_name = "Export Course"
-    page_description = "Save the current course's projects and associated members in an excel spreadsheet"
-    title = "Export Course"
     course = get_object_or_404(Course, slug=slug)
 
     response = HttpResponse(content_type='application/ms-excel')

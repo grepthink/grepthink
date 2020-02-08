@@ -25,10 +25,9 @@ def view_meetings(request, slug):
 
     find_meeting(slug)
 
-    readable = ""
     if project.readable_meetings:
         jsonDec = json.decoder.JSONDecoder()
-        readable = jsonDec.decode(project.readable_meetings)
+        jsonDec.decode(project.readable_meetings)
 
     # Get the course given a project wow ethan great job keep it up.
     course = Course.objects.get(projects=project)

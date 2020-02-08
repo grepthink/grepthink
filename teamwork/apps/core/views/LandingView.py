@@ -46,7 +46,7 @@ def index(request):
 
         date_updates = []
         for course in all_courses:
-            course_updates = course.get_updates_by_date()
+            course.get_updates_by_date()
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {

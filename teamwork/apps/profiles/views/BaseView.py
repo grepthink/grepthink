@@ -33,7 +33,7 @@ def signup(request):
             split = email.split("@")
             username = split[0]
             password = form.cleaned_data.get('password')
-            prof = form.cleaned_data.get('prof')
+            form.cleaned_data.get('prof')
 
             if 'grepthink' in email:
                 GT = True

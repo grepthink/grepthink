@@ -99,7 +99,7 @@ def edit_assignment(request, slug):
     """
     Edit assignment method, creating generic form
     """
-    user = request.user
+    request.user
     ass = get_object_or_404(Assignment.objects.prefetch_related('course'), slug=slug)
     course = ass.course.first()
     page_name = "Edit Assignment"

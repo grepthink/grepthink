@@ -34,10 +34,9 @@ def edit_schedule(request, username):
     profile = Profile.objects.get(user=user)
 
     # gets current avaliability
-    readable = ""
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
-        readable = jsonDec.decode(profile.jsonavail)
+        jsonDec.decode(profile.jsonavail)
 
     meetings = mark_safe(profile.jsonavail)
 

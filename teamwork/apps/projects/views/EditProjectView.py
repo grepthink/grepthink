@@ -20,7 +20,7 @@ def edit_project(request, slug):
     """
     project = get_object_or_404(Project.objects.prefetch_related('members', 'course').select_related('creator'), slug=slug)
     course = project.course.first()
-    project_owner = project.creator.profile
+    project.creator.profile
     members = project.members.all()
 
     # Populate page info with edit project title/name
@@ -329,7 +329,7 @@ def leave_project(request, slug):
     """
     project = get_object_or_404(Project.objects.prefetch_related('members', 'pending_members').select_related('creator', 'scrum_master'), slug=slug)
     members = project.members.all()
-    pending_members = project.pending_members.all()
+    project.pending_members.all()
     f_user = request.user
     to_delete = Membership.objects.filter(user=f_user, project=project)
 
