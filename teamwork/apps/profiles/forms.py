@@ -136,7 +136,7 @@ class ProfileForm(forms.ModelForm):
 
     avatar = forms.ImageField(required=False)
 
-# past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),max_length=255,required=False)
+# past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255,required=False)
 
 
     class Meta:

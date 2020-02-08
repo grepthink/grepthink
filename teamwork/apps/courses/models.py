@@ -63,7 +63,7 @@ class Assignment(models.Model):
         """
         Human readeable representation of the Assignment object.
         """
-        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number, self.slug))
+        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date, self.ass_date, self.ass_type, self.ass_name, self.description, self.ass_number, self.slug))
 
     @property
     def is_past_due(self):
@@ -360,7 +360,7 @@ class Course(models.Model):
     Gets all students in a course excluding professors and returns a list
     """
     def get_students(self):
-        students = list(Enrollment.objects.filter(course=self,role="student"))
+        students = list(Enrollment.objects.filter(course=self, role="student"))
 
         return students
 
@@ -368,7 +368,7 @@ class Course(models.Model):
     Gets the tas for a course
     """
     def get_tas(self):
-        teacher_assistants = list(Enrollment.objects.filter(course=self,role="ta"))
+        teacher_assistants = list(Enrollment.objects.filter(course=self, role="ta"))
         assistants = [assistant.user for assistant in teacher_assistants]
 
         return assistants

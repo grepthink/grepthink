@@ -47,7 +47,7 @@ urlpatterns = [
         # CORE AND SIGNUP
         url(r'^$', LandingView.index, name='index'),
         # Button to Disable course
-        url(r'^(?P<slug>[^/]+)/disable/$',LandingView.disable , name='landing_disable'),
+        url(r'^(?P<slug>[^/]+)/disable/$', LandingView.disable, name='landing_disable'),
         # /about/
         url(r'^about/$', AboutView.about, name='about'),
         # /signup/
@@ -58,7 +58,7 @@ urlpatterns = [
         url(r'^search/$', core_helpers.search, name='search'),
         url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
         url(r'^password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
-        url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1, 13}-[0-9A-Za-z]{1, 20})/$',
             auth_views.password_reset_confirm, name='password_reset_confirm'),
         url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
 
@@ -76,13 +76,13 @@ urlpatterns = [
         # Edit existing update to project (based on slug and update id)
         url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', ProjectView.update_project_update, name='update_project_update'),
         # Delete existing update to project (based on slug and update id)
-        url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',ProjectView.delete_project_update, name='delete_project_update'),
+        url(r'^project/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$', ProjectView.delete_project_update, name='delete_project_update'),
         # Add new resource (based on slug)
         url(r'^project/(?P<slug>[^/]+)/resource/$', ProjectView.resource_update, name='resource_update'),
         # Edit existing resource to project (based on slug and resource id)
         url(r'^project/(?P<slug>[^/]+)/resource/(?P<id>[^/]+)/$', ProjectView.update_resource_update, name='update_resource_update'),
         # Delete existing resource to project (based on slug and resource id)
-        url(r'^project/(?P<slug>[^/]+)/resource/(?P<id>[^/]+)/delete$',ProjectView.delete_resource_update, name='delete_resource_update'),
+        url(r'^project/(?P<slug>[^/]+)/resource/(?P<id>[^/]+)/delete$', ProjectView.delete_resource_update, name='delete_resource_update'),
         # Create Scrum Master TSR
         url(r'^project/(?P<slug>[^/]+)/tsr/(?P<asg_slug>[^/]+)/smaster/$', TsrView.create_scrum_master_tsr, name='create_scrum_master_tsr'),
         # Update TSR information
@@ -142,19 +142,19 @@ urlpatterns = [
         # Auto Generation page link
         url(r'^course/(?P<slug>[^/]+)/auto_gen/$', MatchesView.auto_gen, name='auto_gen'),
         # Setup link to assign students
-        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$',MatchesView.assign_auto, name='assign_auto'),
+        url(r'^course/(?P<slug>[^/]+)/auto_gen/assign/$', MatchesView.assign_auto, name='assign_auto'),
         # Post update to course (based on slug)
         url(r'^course/(?P<slug>[^/]+)/update/$', CourseView.update_course, name='update_course'),
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/$', CourseView.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',CourseView.delete_course_update, name='delete_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$', CourseView.delete_course_update, name='delete_course_update'),
         # Button to lock interest
-        url(r'^course/(?P<slug>[^/]+)/lock/$',EditCourseView.lock_interest, name='lock_interest'),
+        url(r'^course/(?P<slug>[^/]+)/lock/$', EditCourseView.lock_interest, name='lock_interest'),
         # Button to Disable course
-        url(r'^course/(?P<slug>[^/]+)/disable/$',EditCourseView.disable , name='disable'),
+        url(r'^course/(?P<slug>[^/]+)/disable/$', EditCourseView.disable, name='disable'),
         # link to show interest page
-        url(r'^course/(?P<slug>[^/]+)/show_interest/$',InterestView.show_interest, name='show_interest'),
+        url(r'^course/(?P<slug>[^/]+)/show_interest/$', InterestView.show_interest, name='show_interest'),
         # select2 for course
         url(r'^course/(?P<slug>[^/]+)/edit/ajax/edit_select_members/$', core_helpers.edit_select_members, name='edit_select_members'),
         # select2 for course
@@ -184,7 +184,7 @@ urlpatterns = [
         url(r'^matchstats/(?P<slug>[^/]+)/$', MatchesView.matchstats, name='matchstats'),
 
         # favicon
-        url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico',permanent=True),name="favicon"),
+        url(r'^favicon.ico$', RedirectView.as_view(url='/static/images/favicon.ico', permanent=True), name="favicon"),
 
         # alerts
         url(r'^alerts/$', AlertView.view_alerts, name="view_alerts"),

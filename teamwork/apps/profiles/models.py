@@ -31,7 +31,7 @@ class Skills(models.Model):
 
         """
     # skill, a string
-    skill = models.CharField(max_length=25,default="")
+    skill = models.CharField(max_length=25, default="")
 
     def __str__(self):
         return self.skill
@@ -81,7 +81,7 @@ class Events(models.Model):
 
         """
     # Day (Is this a character?)
-    day = models.CharField(max_length=255,default="")
+    day = models.CharField(max_length=255, default="")
 
     # Times stored in 24h format
     # Start time (Hours)
@@ -135,7 +135,7 @@ class Alert(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     msg = models.CharField(max_length=500)
     read = models.BooleanField(default=False)
-    url = models.CharField(max_length=500,default="")
+    url = models.CharField(max_length=500, default="")
 
     # Slug is used to accept invitations
     slug = models.CharField(
@@ -232,9 +232,9 @@ class Profile(models.Model):
     def alerts(self):
         return Alert.objects.filter(to=self.user)
     def unread_alerts(self):
-        return Alert.objects.filter(to=self.user,read=False)
+        return Alert.objects.filter(to=self.user, read=False)
     def read_alerts(self):
-        return Alert.objects.filter(to=self.user,read=True)
+        return Alert.objects.filter(to=self.user, read=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

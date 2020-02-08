@@ -496,7 +496,7 @@ class AssignmentForm(forms.ModelForm):
 
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
-        widget=forms.NumberInput(),label='Assignment Number',
+        widget=forms.NumberInput(), label='Assignment Number',
         max_digits=2,
         required=True,
         decimal_places=0
@@ -554,7 +554,7 @@ class EditAssignmentForm(forms.ModelForm):
 
     # number of assignment, first starts at 1
     ass_number = forms.DecimalField(
-        widget=forms.NumberInput(),label='Assignment Number',
+        widget=forms.NumberInput(), label='Assignment Number',
         max_digits=2,
         required=True,
         decimal_places=0
