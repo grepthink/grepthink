@@ -53,11 +53,12 @@ def create_member_tsr(request, slug, asg_slug):
             # Add the TSR form to forms list
             forms.append(form_i)
 
-    return render(request, 'projects/tsr_member.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
-        'page_name' : page_name, 'page_description': page_description,
+    return render(request, 'projects/tsr_member.html', {
+        'forms': forms, 'cur_proj': cur_proj, 'ass': asg, 'course': course,
+        'page_name': page_name, 'page_description': page_description,
         'title': title
     })
+
 
 @login_required
 def create_scrum_master_tsr(request, slug, asg_slug):
@@ -93,11 +94,12 @@ def create_scrum_master_tsr(request, slug, asg_slug):
                          emails=emails, prefix=m, scrum_master=True)
             forms.append(form_i)
 
-    return render(request, 'projects/tsr_scrum_master.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
-        'page_name' : page_name, 'page_description': page_description,
+    return render(request, 'projects/tsr_scrum_master.html', {
+        'forms': forms, 'cur_proj': cur_proj, 'ass': asg, 'course': course,
+        'page_name': page_name, 'page_description': page_description,
         'title': title
     })
+
 
 def create_tsr_helper(request, members, email_list, assignment, project, scrum_master, late):
     """
@@ -118,7 +120,7 @@ def create_tsr_helper(request, members, email_list, assignment, project, scrum_m
             tsr.performance_assessment = form.cleaned_data.get('perf_assess')
             tsr.notes = form.cleaned_data.get('notes')
             tsr.evaluator = request.user
-            tsr.evaluatee =  User.objects.filter(email__iexact=email).first()
+            tsr.evaluatee = User.objects.filter(email__iexact=email).first()
             tsr.late = late
 
             tsr.save()
@@ -128,6 +130,7 @@ def create_tsr_helper(request, members, email_list, assignment, project, scrum_m
             project.save()
             assignment.subs.add(tsr)
             assignment.save()
+
 
 @login_required
 def view_tsr(request, slug):
@@ -143,33 +146,32 @@ def view_tsr(request, slug):
     tsrs = list(project.tsr.all())
     members = project.members.all()
 
-
     # put emails into list
-    emails=list()
+    emails = list()
     for member in members:
         emails.append(member.email)
 
     # for every sprint, get the tsr's and calculate the average % contribution
-    tsr_dicts=list()
+    tsr_dicts = list()
     tsr_dict = list()
-    sprint_numbers=Tsr.objects.values_list('ass_number',flat=True).distinct()
+    sprint_numbers = Tsr.objects.values_list('ass_number', flat=True).distinct()
     for i in sprint_numbers.all():
-        #averages=list()
-        tsr_dict=list()
+        # averages=list()
+        tsr_dict = list()
         for member in members:
-            tsr_single=list()
+            tsr_single = list()
             # for every member in project, filter query using member.id
             # and assignment number
             for member_ in members:
                 if member == member_:
                     continue
-                tsr_query_result=Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
+                tsr_query_result = Tsr.objects.filter(evaluatee_id=member.id).filter(evaluator_id=member_.id).filter(ass_number=i).all()
                 result_size = len(tsr_query_result)
                 if(result_size == 0):
                     continue
                 tsr_single.append(tsr_query_result[result_size - 1])
 
-            avg=0
+            avg = 0
 
             if tsr_single:
                 for tsr_obj in tsr_single:
@@ -177,19 +179,18 @@ def view_tsr(request, slug):
                     avg = avg + tsr_obj.percent_contribution
                 avg = avg / len(tsr_single)
 
-            tsr_dict.append({'email':member.email, 'tsr' :tsr_single,'avg' : avg})
-            averages.append({'email':member.email,'avg':avg})
+            tsr_dict.append({'email': member.email, 'tsr': tsr_single, 'avg': avg})
+            averages.append({'email': member.email, 'avg': avg})
 
-        tsr_dicts.append({'number': i , 'dict':tsr_dict,
-            'averages':averages})
+        tsr_dicts.append({'number': i, 'dict': tsr_dict,
+                          'averages': averages})
 
     med = 1
     if len(members):
-        med = int(100/len(members))
+        med = int(100 / len(members))
 
-    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
-
+    mid = {'low': int(med * 0.7), 'high': int(med * 1.4)}
 
     if request.method == 'POST':
         return redirect(view_projects)
-    return render(request, 'projects/view_tsr.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'tsrs' : tsr_dicts, 'contribute_levels' : mid, 'avg':averages})
+    return render(request, 'projects/view_tsr.html', {'page_name': page_name, 'page_description': page_description, 'title': title, 'tsrs': tsr_dicts, 'contribute_levels': mid, 'avg': averages})

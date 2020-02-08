@@ -26,15 +26,15 @@ def view_one_project(request, slug):
     Passing status check unit test in test_views.py.
     """
 
-    project=get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile',
-                                                                                                              'members',
-                                                                                                              'members__profile',
-                                                                                                              'desired_skills',
-                                                                                                              'course',
-                                                                                                              'course__assignments',
-                                                                                                              'pending_members',
-                                                                                                              'tsr'),
-                                                                                                              slug=slug)
+    project = get_object_or_404(Project.objects.select_related('scrum_master', 'creator', 'ta').prefetch_related('creator__profile',
+                                                                                                                 'members',
+                                                                                                                 'members__profile',
+                                                                                                                 'desired_skills',
+                                                                                                                 'course',
+                                                                                                                 'course__assignments',
+                                                                                                                 'pending_members',
+                                                                                                                 'tsr'),
+                                slug=slug)
     # Populate with project name and tagline
     page_name = project.title or "Project"
     page_description = project.tagline or "Tagline"
@@ -84,11 +84,11 @@ def view_one_project(request, slug):
         avgs.append((key, int(con_avg)))
 
     assigned_tsrs = sorted(course.assignments.filter(ass_type="tsr", closed=False), key=lambda s: s.ass_date)
-    tsr_tuple={}
+    tsr_tuple = {}
 
     user_role = get_user_role(request.user, course)
     fix = []
-    if request.user.profile.isGT or request.user.profile.isProf or user_role=="ta":
+    if request.user.profile.isGT or request.user.profile.isProf or user_role == "ta":
         fix = sorted(project.tsr.all().prefetch_related('evaluator', 'evaluatee', 'ass'), key=lambda x: (x.ass_number, x.evaluatee.username))
         # temp = ""
         #
@@ -104,20 +104,21 @@ def view_one_project(request, slug):
     med = 100
 
     if len(project.members.all()) > 0:
-        med = int(100/len(project.members.all()))
+        med = int(100 / len(project.members.all()))
 
-    mid = {'low' : int(med*0.7), 'high' : int(med*1.4)}
+    mid = {'low': int(med * 0.7), 'high': int(med * 1.4)}
     # ======================
     today = datetime.datetime.now().date()
 
     return render(request, 'projects/view_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'temp_tup':fix,
-        'pending_members': pending_members,
-        'requestButton':requestButton, 'avgs':avgs, 'assignments':asgs, 'asg_completed':asg_completed,'today':today,
-        'pending_count':pending_count,'staff':staff,
-        'updates': updates, 'course' : course,
-        'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels' : mid, 'assigned_tsrs': assigned_tsrs,
-        'project': project})
+                                                          'page_description': page_description, 'title': title, 'temp_tup': fix,
+                                                          'pending_members': pending_members,
+                                                          'requestButton': requestButton, 'avgs': avgs, 'assignments': asgs, 'asg_completed': asg_completed, 'today': today,
+                                                          'pending_count': pending_count, 'staff': staff,
+                                                          'updates': updates, 'course': course,
+                                                          'meetings': readable, 'resources': resources, 'json_events': project.meetings, 'contribute_levels': mid, 'assigned_tsrs': assigned_tsrs,
+                                                          'project': project})
+
 
 @login_required
 def request_join_project(request, slug):
@@ -165,10 +166,11 @@ def request_join_project(request, slug):
                 sender=request.user,
                 to=project.creator,
                 msg=request.user.username + " has revoked there request to join " + project.title,
-                url=reverse('view_one_project',args=[project.slug]),
-                )
+                url=reverse('view_one_project', args=[project.slug]),
+            )
 
     return view_one_project(request, slug)
+
 
 def reject_member(request, slug, uname):
     """
@@ -189,8 +191,8 @@ def reject_member(request, slug, uname):
             sender=request.user,
             to=mem_to_add,
             msg="Sorry, " + project.title + " has denied your request",
-            url=reverse('view_one_project',args=[project.slug]),
-            )
+            url=reverse('view_one_project', args=[project.slug]),
+        )
 
     # taken from alert code
     user = request.user
@@ -204,6 +206,7 @@ def reject_member(request, slug, uname):
                 return redirect(view_alerts)
 
     return redirect(view_one_project, slug)
+
 
 @login_required
 def post_update(request, slug):
@@ -220,7 +223,7 @@ def post_update(request, slug):
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
-        #redirect them with a message
+        # redirect them with a message
         messages.info(request, 'Only current members can post an update for a project!')
         return HttpResponseRedirect('/project/all')
 
@@ -239,6 +242,7 @@ def post_update(request, slug):
     return render(request, 'projects/post_update.html',
                   {'form': form, 'page_name': page_name, 'page_description': page_description,
                    'project': project, 'course': course})
+
 
 @login_required
 def update_project_update(request, slug, id):
@@ -272,9 +276,10 @@ def update_project_update(request, slug, id):
         form = UpdateForm(request.user.id, instance=update)
 
     return render(
-            request, 'projects/update_post_update.html',
-            {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'update': update}
-            )
+        request, 'projects/update_post_update.html',
+        {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'update': update}
+    )
+
 
 @login_required
 def delete_project_update(request, slug, id):
@@ -289,6 +294,7 @@ def delete_project_update(request, slug, id):
         update.delete()
 
     return redirect(view_one_project, project.slug)
+
 
 @login_required
 def resource_update(request, slug):
@@ -305,7 +311,7 @@ def resource_update(request, slug):
         pass
     elif not request.user == project.creator and request.user not in project.members.all(
     ):
-        #redirect them with a message
+        # redirect them with a message
         messages.info(request, 'Only current members can post a resource for a project!')
         return HttpResponseRedirect('/project/all')
 
@@ -323,7 +329,8 @@ def resource_update(request, slug):
         form = ResourceForm(request.user.id)
 
     return render(request, 'projects/add_resource.html',
-                {'form': form, 'page_name': page_name, 'page_description': page_description, 'course': course, 'project': project})
+                  {'form': form, 'page_name': page_name, 'page_description': page_description, 'course': course, 'project': project})
+
 
 @login_required
 def update_resource_update(request, slug, id):
@@ -356,9 +363,10 @@ def update_resource_update(request, slug, id):
         form = ResourceForm(request.user.id, instance=resource)
 
     return render(
-            request, 'projects/update_resource_update.html',
-            {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'resource': resource}
-            )
+        request, 'projects/update_resource_update.html',
+        {'form': form, 'page_name': page_name, 'page_description': page_description, 'project': project, 'course': course, 'resource': resource}
+    )
+
 
 @login_required
 def delete_resource_update(request, slug, id):

@@ -35,6 +35,7 @@ class Skills(models.Model):
 
     def __str__(self):
         return self.skill
+
     class Meta:
         # Verbose name is the same as class name in this case.
         verbose_name = "Skill"
@@ -52,6 +53,8 @@ class Skills(models.Model):
         super(Skills, self).save(*args, **kwargs)
 
 # Converts a number into a weekday
+
+
 def dayofweek(number):
     return {
         9: "Sunday",
@@ -62,6 +65,7 @@ def dayofweek(number):
         14: "Friday",
         15: "Saturday",
     }.get(number, "Day that doesnt exist")
+
 
 class Events(models.Model):
     """
@@ -92,8 +96,9 @@ class Events(models.Model):
     end_time_hour = models.SmallIntegerField()
     # End time (Minutes)
     end_time_min = models.SmallIntegerField()
+
     def __str__(self):
-        event_string = "%s -> %02d:%02d - %02d:%02d"%(self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
+        event_string = "%s -> %02d:%02d - %02d:%02d" % (self.day, self.start_time_hour, self.start_time_min, self.end_time_hour, self.end_time_min)
         #event_string = self.day + "-> " + self.start_time_hour + ":" + self.start_time_min + " - " + self.end_time_hour + ":" + self.end_time_min
         return event_string
 
@@ -162,10 +167,11 @@ class Alert(models.Model):
 def validate_image(fieldfile_obj):
     filesize = fieldfile_obj.file.size
     megabyte_limit = 5.0
-    if filesize > megabyte_limit*1024*1024:
+    if filesize > megabyte_limit * 1024 * 1024:
         raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
     else:
         print("file size okay")
+
 
 class Profile(models.Model):
     """
@@ -192,15 +198,15 @@ class Profile(models.Model):
     # Availability
     avail = models.ManyToManyField(Events)
     jsonavail = models.TextField(
-                default='[]')
+        default='[]')
 
     # Profile Image
     avatar = models.ImageField(
-                upload_to= 'avatars/%Y/%m/%d/',
-                validators=[validate_image],
-                default="",
-                null=True,
-                blank=True)
+        upload_to='avatars/%Y/%m/%d/',
+        validators=[validate_image],
+        default="",
+        null=True,
+        blank=True)
 
     known_skills = models.ManyToManyField(Skills, related_name="known", default="")
     learn_skills = models.ManyToManyField(Skills, related_name="learn", default="")
@@ -214,12 +220,15 @@ class Profile(models.Model):
     isTa = models.BooleanField(default=False)
 
     def __str__(self):
-        string = "%s (%s)"%(self.user.email, self.name)
+        string = "%s (%s)" % (self.user.email, self.name)
         return string
+
     def __hash__(self):
         return hash(self.user)
+
     def __eq__(self, other):
         return (self.user == other.user)
+
     def __ne__(self, other):
         # Not strictly necessary, but to avoid having both x==y and x!=y
         # True at the same time
@@ -231,19 +240,24 @@ class Profile(models.Model):
     # Alert functions, self explanitory
     def alerts(self):
         return Alert.objects.filter(to=self.user)
+
     def unread_alerts(self):
         return Alert.objects.filter(to=self.user, read=False)
+
     def read_alerts(self):
         return Alert.objects.filter(to=self.user, read=True)
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

@@ -77,8 +77,6 @@ def create_project(request):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.content = form.cleaned_data.get('content')
 
-
-
             # Course the project is in
             in_course = form.cleaned_data.get('course')
 
@@ -141,13 +139,14 @@ def create_project(request):
         # Send form for initial project creation
         form = CreateProjectForm(request.user.id)
     return render(request, 'projects/create_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'form': form})
+                                                            'page_description': page_description, 'title': title, 'form': form})
+
 
 @login_required
 def email_project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     page_name = "Email Project"
-    page_description = "Emailing members of Project: %s"%(project.title)
+    page_description = "Emailing members of Project: %s" % (project.title)
     title = "Email Project"
 
     students_in_project = project.get_members()
@@ -158,9 +157,9 @@ def email_project(request, slug):
     if request.method == 'POST':
         # send the current user.id to filter out
         form = EmailRosterForm(request.POST, request.FILES)
-        #if form is accepted
+        # if form is accepted
         if form.is_valid():
-            #the courseID will be gotten from the form
+            # the courseID will be gotten from the form
             data = form.cleaned_data
             subject = data.get('subject')
             content = data.get('content')
@@ -174,11 +173,12 @@ def email_project(request, slug):
             print("EmailRosterForm not valid")
 
     return render(request, 'projects/email_project.html', {
-        'slug':slug, 'form':form, 'count':count, 'students':students_in_project,
-        'project':project,
-        'page_name':page_name, 'page_description':page_description,
-        'title':title
+        'slug': slug, 'form': form, 'count': count, 'students': students_in_project,
+        'project': project,
+        'page_name': page_name, 'page_description': page_description,
+        'title': title
     })
+
 
 def get_user_role(user, course):
     """
@@ -191,7 +191,7 @@ def get_user_role(user, course):
             user_role = 'not enrolled'
         else:
             user_role = userEnrollment.role
-    else: #maybe don't need a GT user_role. profile.isGT is probably better -kp
+    else:  # maybe don't need a GT user_role. profile.isGT is probably better -kp
         user_role = 'GT'
 
     return user_role

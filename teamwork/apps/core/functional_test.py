@@ -18,7 +18,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_load_page(self):
         self.browser.get('http://localhost:8000')
         self.assertIn('Teamwork | Teamwork', self.browser.title)
-        
+
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')

@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django_adminlte',
     'django_adminlte_theme',
 
-    #'django_extensions',
+    # 'django_extensions',
 
     'django.contrib.admin',
 
@@ -73,7 +73,7 @@ EMAIL_HOST_USER = 'apikey'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'
 
-if DEBUG:    
+if DEBUG:
     EMAIL_SENDGRID_KEY = config('SENDGRID_TEST_KEY', default='Not Set')
 else:
     EMAIL_SENDGRID_KEY = config('SENDGRID_API_KEY', default='Not Set')
@@ -104,7 +104,7 @@ ROOT_URLCONF = 'teamwork.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ PROJECT_DIR.child('templates'), COURSE_DIR.child('templates') ],
+        'DIRS': [PROJECT_DIR.child('templates'), COURSE_DIR.child('templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,12 +128,12 @@ WSGI_APPLICATION = 'teamwork.wsgi.application'
 if 'TRAVIS' in os.environ:
     DATABASES = {
         'default': {
-            'ENGINE':   'django.db.backends.postgresql_psycopg2',
-            'NAME':     'travisdb',  # Must match travis.yml setting
-            'USER':     'postgres',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'travisdb',  # Must match travis.yml setting
+            'USER': 'postgres',
             'PASSWORD': '',
-            'HOST':     'localhost',
-            'PORT':     '',
+            'HOST': 'localhost',
+            'PORT': '',
         }
     }
 # Connect to postgres db described by POSTGRES_DATABASE_URL in .env file
@@ -190,7 +190,7 @@ DATE_FORMAT = '%Y%m%d'
 
 # Update database configuration with $DATABASE_URL.
 #db_from_env = dj_database_url.config(conn_max_age=500)
-#DATABASES['default'].update(db_from_env)
+# DATABASES['default'].update(db_from_env)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

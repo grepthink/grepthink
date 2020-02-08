@@ -20,7 +20,7 @@ def edit_course(request, slug):
     """
     course = get_object_or_404(Course.objects.prefetch_related('creator'), slug=slug)
     page_name = "Edit Course"
-    page_description = "Edit %s"%(course.name)
+    page_description = "Edit %s" % (course.name)
     title = "Edit Course"
 
     enrollments = Enrollment.objects.filter(user=request.user, course=course)
@@ -37,12 +37,12 @@ def edit_course(request, slug):
 
     if request.user.profile.isGT:
         pass
-    #if user is not a professor or they did not create course
+    # if user is not a professor or they did not create course
     elif not course.creator == request.user:
         # if user is not a TA
-        if not userRole=="ta":
-            #redirect them to the /course directory with message
-            messages.info(request,'Only Professor can edit course')
+        if not userRole == "ta":
+            # redirect them to the /course directory with message
+            messages.info(request, 'Only Professor can edit course')
             return HttpResponseRedirect('/course')
 
     # Add a member to the course
@@ -69,8 +69,8 @@ def edit_course(request, slug):
                         sender=request.user,
                         to=mem_to_add,
                         msg="You were added to: " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                        )
+                        url=reverse('view_one_course', args=[course.slug]),
+                    )
                     added = True
         if added:
             messages.add_message(request, messages.SUCCESS, "Successfully added member(s) to course.")
@@ -93,8 +93,8 @@ def edit_course(request, slug):
                     sender=request.user,
                     to=f_user,
                     msg="You were removed from: " + course.name,
-                    url=reverse('view_one_course',args=[course.slug]),
-                    )
+                    url=reverse('view_one_course', args=[course.slug]),
+                )
                 mem_obj.delete()
                 removed = True
         if removed:
@@ -128,8 +128,8 @@ def edit_course(request, slug):
                     sender=request.user,
                     to=mem_to_add,
                     msg="You were added to: " + course.name + " as a TA",
-                    url=reverse('view_one_course',args=[course.slug]),
-                    )
+                    url=reverse('view_one_course', args=[course.slug]),
+                )
 
         messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
 
@@ -146,8 +146,8 @@ def edit_course(request, slug):
                 sender=request.user,
                 to=f_user,
                 msg="You were removed as the TA from: " + course.name,
-                url=reverse('view_one_course',args=[course.slug]),
-                )
+                url=reverse('view_one_course', args=[course.slug]),
+            )
             mem_obj.delete()
 
         messages.add_message(request, messages.SUCCESS, "Removed TA from Course.")
@@ -175,12 +175,13 @@ def edit_course(request, slug):
 
         return redirect(view_one_course, course.slug)
     else:
-        form = EditCourseForm(request.user.id, slug,  instance=course)
+        form = EditCourseForm(request.user.id, slug, instance=course)
 
     return render(
-            request, 'courses/edit_course.html',
-            {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
-            )
+        request, 'courses/edit_course.html',
+        {'form': form, 'course': course, 'tas': tas, 'students': students, 'page_name': page_name, 'page_description': page_description, 'title': title}
+    )
+
 
 @login_required
 def delete_course(request, slug):
@@ -196,7 +197,7 @@ def delete_course(request, slug):
 
     if request.user.profile.isGT:
         pass
-    elif not request.user==course.creator:
+    elif not request.user == course.creator:
         messages.add_message(request, messages.ERROR, "Only Professors can delete a course. Shame on you")
         return redirect(view_one_course, course.slug)
 
@@ -220,10 +221,9 @@ def delete_course(request, slug):
     for ca in course_alerts:
         ca.delete()
 
-    #deletes course
+    # deletes course
     course.delete()
     return HttpResponseRedirect('/course/')
-
 
 
 def lock_interest(request, slug):
@@ -239,6 +239,7 @@ def lock_interest(request, slug):
     course.save()
     return redirect(view_one_course, course.slug)
 
+
 def disable(request, slug):
     """
     Lock the interest for a course
@@ -248,10 +249,10 @@ def disable(request, slug):
         if course.disable:
             course.disable = False
             course.save()
-            messages.add_message(request, messages.SUCCESS, course.name +  " has been re-enabled")
+            messages.add_message(request, messages.SUCCESS, course.name + " has been re-enabled")
             return redirect(view_one_course, course.slug)
         else:
             course.disable = True
             course.save()
-            messages.add_message(request, messages.SUCCESS, course.name +  " has been disabled")
+            messages.add_message(request, messages.SUCCESS, course.name + " has been disabled")
             return redirect('/course')

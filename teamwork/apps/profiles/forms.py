@@ -104,26 +104,27 @@ class SignUpForm(forms.ModelForm):
                 ['Passwords don\'t match'])
         return self.cleaned_data
 
+
 class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
 
     name = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=75, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=75, required=False)
 
     bio = forms.CharField(
-              widget=forms.Textarea(attrs={'class': 'form-control'}),
-              max_length=500, required=False)
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        max_length=500, required=False)
 
     institution = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=100, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100, required=False)
 
     location = forms.CharField(
-              widget=forms.TextInput(attrs={'class': 'form-control'}),
-              max_length=100, required=False)
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=100, required=False)
 
     # known_skill = forms.CharField(
     #           widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -137,7 +138,6 @@ class ProfileForm(forms.ModelForm):
     avatar = forms.ImageField(required=False)
 
 # past_class = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), max_length=255,required=False)
-
 
     class Meta:
       # was model=Skills not sure why or why it was working. This works also

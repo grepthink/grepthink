@@ -17,14 +17,18 @@ from teamwork.apps.profiles.models import *
 def create_user(username, email, password):
     return User.objects.create_user(username, email, password)
 
+
 def create_course(name, slug, creator):
     return Course.objects.create(name=name, slug=slug, creator=creator)
+
 
 def create_course_enrollment(user, course, role):
     return Enrollment.objects.create(user=user, course=course, role=role)
 
+
 def create_project_membership(user, project, invite_reason):
     return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
+
 
 class CourseTestCase(TestCase):
     """
@@ -32,6 +36,7 @@ class CourseTestCase(TestCase):
 
     Adapted from: https://docs.djangoproject.com/en/1.11/topics/testing/overview/
     """
+
     def setUp(self):
         """
         Initialize course, user, and enrollment objects for use in test methods.
@@ -45,8 +50,8 @@ class CourseTestCase(TestCase):
         self.course2 = create_course('Test Course 2', 'test2-slug', self.user1)
 
         # Create a membership object between user1 and project1
-        self.enrollment1 =  create_course_enrollment(self.user1, self.course1, 'professor')
-        self.enrollment2 =  create_course_enrollment(self.user1, self.course2, 'professor')
+        self.enrollment1 = create_course_enrollment(self.user1, self.course1, 'professor')
+        self.enrollment2 = create_course_enrollment(self.user1, self.course2, 'professor')
 
     # TODO:
     def tearDown(self):

@@ -78,6 +78,7 @@ def send_email(recipients, gt_email, subject, content):
 
     return HttpResponse("Email Sent!")
 
+
 def parse_csv(csv_file):
     """
     parse csv file
@@ -130,6 +131,7 @@ def parse_csv(csv_file):
 
     return data
 
+
 def select_members(request):
     if request.method == 'POST' and request.is_ajax():
         return HttpResponse("Form Submitted")
@@ -142,9 +144,9 @@ def select_members(request):
         q = request.GET.get('q')
         if q is not None:
             results = User.objects.filter(
-                Q( first_name__contains = q ) |
-                Q( last_name__contains = q ) |
-                Q( username__contains = q ) ).order_by( 'username' )
+                Q(first_name__contains=q) |
+                Q(last_name__contains=q) |
+                Q(username__contains=q)).order_by('username')
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
@@ -152,6 +154,8 @@ def select_members(request):
     return HttpResponse("Failure")
 
 # used for querying members in EditProject, EditCourse
+
+
 def edit_select_members(request, slug):
     if request.method == 'POST' and request.is_ajax():
         return HttpResponse("Form Submitted")
@@ -164,9 +168,9 @@ def edit_select_members(request, slug):
         q = request.GET.get('q')
         if q is not None:
             results = User.objects.filter(
-                Q( first_name__contains = q ) |
-                Q( last_name__contains = q ) |
-                Q( username__contains = q ) ).order_by( 'username' )
+                Q(first_name__contains=q) |
+                Q(last_name__contains=q) |
+                Q(username__contains=q)).order_by('username')
         for u in results:
             data['items'].append({'id': u.username, 'text': u.username})
         return JsonResponse(data)
@@ -189,7 +193,7 @@ def search(request):
     title = "Search Results"
 
     context = {'page_name': page_name,
-    'page_description': page_description, 'title' : title}
+               'page_description': page_description, 'title': title}
 
     if request.POST.get('q'):
         raw_keywords = request.POST.get('q')
@@ -202,16 +206,16 @@ def search(request):
                 keywords.append(raw_keywords)
             for q in keywords:
                 user_results = User.objects.filter(
-                    Q( first_name__contains = q ) |
-                    Q( last_name__contains = q ) |
-                    Q( username__contains = q ) ).order_by('username')
+                    Q(first_name__contains=q) |
+                    Q(last_name__contains=q) |
+                    Q(username__contains=q)).order_by('username')
                 project_results = Project.objects.filter(
-                    Q( title__contains = q ) |
-                    Q( content__contains = q ) |
-                    Q( tagline__contains = q ) ).order_by('title')
+                    Q(title__contains=q) |
+                    Q(content__contains=q) |
+                    Q(tagline__contains=q)).order_by('title')
                 course_results = Course.objects.filter(
-                    Q( name__contains = q ) |
-                    Q( info__contains = q ) ).order_by('name')
+                    Q(name__contains=q) |
+                    Q(info__contains=q)).order_by('name')
 
             if user_results:
                 context['user_results'] = user_results

@@ -18,7 +18,6 @@ def view_matches(request):
     project_match_list = []
     course_set = []
 
-
     page_name = "View Matches"
     page_description = "View Matching Students"
     title = "View Matches"
@@ -41,8 +40,9 @@ def view_matches(request):
         matches = request.POST.get('matchstats')
 
     return render(request, 'core/view_matches.html', {
-        'project_match_list' : project_match_list, 'course_set': course_set, 'page_name': page_name,
-            'page_description': page_description, 'title' : title})
+        'project_match_list': project_match_list, 'course_set': course_set, 'page_name': page_name,
+        'page_description': page_description, 'title': title})
+
 
 @login_required
 def matchstats(request, slug):
@@ -99,11 +99,12 @@ def matchstats(request, slug):
 
     user = request.user
 
-    return render(request, 'core/matchstats.html',{
-        'page_name':page_name,'page_description':page_description,
-        'title':title,'skill_match':skill_match, 'cur_project' : cur_project,
-        'interest_match':interest_match
-        })
+    return render(request, 'core/matchstats.html', {
+        'page_name': page_name, 'page_description': page_description,
+        'title': title, 'skill_match': skill_match, 'cur_project': cur_project,
+        'interest_match': interest_match
+    })
+
 
 @login_required
 def auto_gen(request, slug):
@@ -134,8 +135,8 @@ def auto_gen(request, slug):
     projects = [i[0] for i in auto]
 
     return render(request, 'core/auto_gen.html', {
-        'auto_gen' : auto, 'course': course, 'projects':projects, 'page_name': page_name,
-            'page_description': page_description, 'title' : title, 'flag': flag})
+        'auto_gen': auto, 'course': course, 'projects': projects, 'page_name': page_name,
+        'page_description': page_description, 'title': title, 'flag': flag})
 
 
 def assign_auto(request, slug):

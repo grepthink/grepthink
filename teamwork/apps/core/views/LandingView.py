@@ -18,13 +18,13 @@ def index(request):
     page_description = "Build Better Teams"
     title = "Welcome"
     date_updates = None
-    logged_in = request.user.is_authenticated();
+    logged_in = request.user.is_authenticated()
 
     if not logged_in:
         return render(request, 'core/landing.html', {
-                'page_name' : page_name,
-                'page_description' : page_description, 'title' : title
-                })
+            'page_name': page_name,
+            'page_description': page_description, 'title': title
+        })
 
     # If the user is a professor, return the dashboard html
     if logged_in and request.user.profile.isProf:
@@ -34,10 +34,10 @@ def index(request):
         active_courses = get_user_active_courses(request.user)
         disabled_courses = get_user_disabled_courses(request.user)
         return render(request, 'core/dashboard.html', {
-                'page_name' : page_name,
-                'page_description' : page_description, 'title' : title,
-                'active_courses' : active_courses, 'disabled_courses': disabled_courses
-                })
+            'page_name': page_name,
+            'page_description': page_description, 'title': title,
+            'active_courses': active_courses, 'disabled_courses': disabled_courses
+        })
 
     if logged_in:
         page_name = "Timeline"
@@ -52,10 +52,11 @@ def index(request):
             date_updates.extend(course.get_updates_by_date())
 
     return render(request, 'core/index.html', {
-            'page_name' : page_name,
-            'page_description' : page_description, 'title' : title,
-            'date_updates' : date_updates, 'logged_in' : logged_in
-            })
+        'page_name': page_name,
+        'page_description': page_description, 'title': title,
+        'date_updates': date_updates, 'logged_in': logged_in
+    })
+
 
 def disable(request, slug):
     """

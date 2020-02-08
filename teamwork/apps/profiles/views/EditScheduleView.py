@@ -29,11 +29,11 @@ def edit_schedule(request, username):
 
     user = get_object_or_404(User, username=username)
     page_name = "Edit Schedule"
-    page_description = "Edit %s's Schedule"%(user.username)
+    page_description = "Edit %s's Schedule" % (user.username)
     title = "Edit Schedule"
     profile = Profile.objects.get(user=user)
 
-    #gets current avaliability
+    # gets current avaliability
     readable = ""
     if profile.jsonavail:
         jsonDec = json.decoder.JSONDecoder()
@@ -41,11 +41,12 @@ def edit_schedule(request, username):
 
     meetings = mark_safe(profile.jsonavail)
 
-    return render(request, 'profiles/edit_schedule.html', {'page_name' : page_name, 'page_description': page_description, 'title': title, 'json_events' : meetings})
+    return render(request, 'profiles/edit_schedule.html', {'page_name': page_name, 'page_description': page_description, 'title': title, 'json_events': meetings})
+
 
 @csrf_exempt
 def save_event(request, username):
-    #grab profile for the current user
+    # grab profile for the current user
     profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST':
@@ -78,7 +79,7 @@ def save_event(request, username):
             busy = Events()
 
             # Get data
-            #function assumes start day and end day are the same
+            # function assumes start day and end day are the same
             day = event['start'][8] + event['start'][9]
             day = int(day)
             s_hour = event['start'][11] + event['start'][12]
@@ -105,8 +106,7 @@ def save_event(request, username):
             profile.avail.add(busy)
             profile.save()
 
-
         return HttpResponse("Schedule Saved")
-        #return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
+        # return HttpResponse(json.dumps({'eventData' : eventData}), content_type="application/json")
 
     return HttpResponse("Failure")

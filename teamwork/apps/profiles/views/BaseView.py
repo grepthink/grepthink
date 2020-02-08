@@ -10,7 +10,6 @@ from teamwork.apps.profiles.views.EditProfileView import edit_profile
 # Model Imports
 
 
-
 def signup(request):
     """
     public method that generates a form a user uses to sign up for an account (push test)
@@ -20,7 +19,7 @@ def signup(request):
     page_description = "Sign up for Grepthink!"
     title = "Signup"
 
-    GT =  False
+    GT = False
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -69,8 +68,9 @@ def signup(request):
 
     else:
         return render(request, 'profiles/signup.html',
-                      {'form': SignUpForm(), 'page_name' : page_name,
-                      'page_description': page_description, 'title': title})
+                      {'form': SignUpForm(), 'page_name': page_name,
+                       'page_description': page_description, 'title': title})
+
 
 def profSignup(request):
     """
@@ -81,7 +81,7 @@ def profSignup(request):
     page_description = "Sign up for Grepthink!"
     title = "Professor Signup"
 
-    GT =  False
+    GT = False
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -129,17 +129,21 @@ def profSignup(request):
 
     else:
         return render(request, 'profiles/professorSignup.html',
-                      {'form': SignUpForm(), 'page_name' : page_name,
-                      'page_description': page_description, 'title': title})
+                      {'form': SignUpForm(), 'page_name': page_name,
+                       'page_description': page_description, 'title': title})
+
 
 def password_reset(request):
     return
 
+
 def password_reset_done(request):
     return
 
+
 def password_reset_confirm(request):
     return
+
 
 def password_reset_complete(request):
     return

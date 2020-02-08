@@ -15,31 +15,37 @@ from teamwork.apps.projects.models import *
 
 def create_project(creator, scrum_master, ta, course, slug):
     project = Project.objects.create(creator=creator,
-                                  scrum_master=scrum_master,
-                                  ta=ta,
-                                  slug=slug)
+                                     scrum_master=scrum_master,
+                                     ta=ta,
+                                     slug=slug)
     course.projects.add(project)
     course.save()
     return project
+
 
 def create_user(username, email, password):
     # Create a test user as an attribute of ProjectTestCase, for future use
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
 
+
 def create_course(name, slug, creator):
     return Course.objects.create(name=name, slug=slug, creator=creator)
+
 
 def create_course_enrollment(user, course, role):
     return Enrollment.objects.create(user=user, course=course, role=role)
 
+
 def create_project_membership(user, project, invite_reason):
     return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
+
 
 class AuthenticateWithEmailTest(TestCase):
     """
     Creates a user and asserts return values are correct from authenticate method
     """
+
     def setUp(self):
         """
         Init any variables that are needed for testing
@@ -66,10 +72,12 @@ class AuthenticateWithEmailTest(TestCase):
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='incorrect')
         self.assertIsNone(user)
 
+
 class FindProjectMatchesTest(TestCase):
     """
     Tests for the po_match method
     """
+
     def setUp(self):
         """
         Init any variables that are needed for testing
@@ -80,7 +88,7 @@ class FindProjectMatchesTest(TestCase):
         self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
 
         # create course
-        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+        self.course = Course.objects.create(name='TestCourse', slug='Test1', creator=self.user1)
 
         # create enrollment objects
         # user1 is the professor, user2 and user3 are students
@@ -167,17 +175,20 @@ class FindProjectMatchesTest(TestCase):
         # Remove the project desired_skill we added
         self.project.desired_skills.remove(self.skill2)
 
-
     # TODO:
+
     def testMatchWithScheduleBonus(self):
         """
         Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
         """
 
 # TODO: sort
+
+
 class SortMatchListTest(TestCase):
     """
     """
+
     def setUp(self):
         """
         Init any variables that are needed for testing
@@ -188,7 +199,7 @@ class SortMatchListTest(TestCase):
         self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
 
         # create course
-        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+        self.course = Course.objects.create(name='TestCourse', slug='Test1', creator=self.user1)
 
     def tearDown(self):
         """
@@ -201,9 +212,12 @@ class SortMatchListTest(TestCase):
         del self.course
 
 # TODO: auto_ros tests
+
+
 class AutoSetRosterTest(TestCase):
     """
     """
+
     def setUp(self):
         """
         Init any variables that are needed for testing
@@ -214,7 +228,7 @@ class AutoSetRosterTest(TestCase):
         self.user3 = User.objects.create_user('user3', 'user3@test.com', 'testing')
 
         # create course
-        self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
+        self.course = Course.objects.create(name='TestCourse', slug='Test1', creator=self.user1)
 
     def tearDown(self):
         """
@@ -230,6 +244,8 @@ class AutoSetRosterTest(TestCase):
         auto = auto_ros(self.course)
 
 # TODO: by_schedule tests
+
+
 class GetAvailabilityScoreTest(TestCase):
     """
         Summary: Takes in a user and a project, compares users availability
@@ -238,6 +254,7 @@ class GetAvailabilityScoreTest(TestCase):
                 Project - Project object
         Returns: An integer that is floor(# meeting hours/ # pos meetings)
     """
+
     def setUp(self):
         """
         Init any variables that are needed for testing
@@ -249,6 +266,8 @@ class GetAvailabilityScoreTest(TestCase):
         """
 
 # TODO: adjust send_email to be more testable
+
+
 class EmailTests(TestCase):
     def setUp(self):
         self.user1 = create_user("test1", "test1@test.com", "test1")
@@ -289,6 +308,8 @@ class EmailTests(TestCase):
         self.assertTrue(response.content.decode("utf-8") == 'Bad Request')
 
 # TODO: parse csv tests
+
+
 class ParseCsvTests(TestCase):
 
     def setUp(self):
@@ -299,12 +320,15 @@ class ParseCsvTests(TestCase):
         pass
 
 # TODO: search tests
+
+
 class SearchTests(TestCase):
     def setUp(self):
         pass
 
     def tearDown(self):
         pass
+
 
 class CoreViewsTests(TestCase):
     def setUp(self):
@@ -332,5 +356,5 @@ class CoreViewsTests(TestCase):
 
     def test_view_login_auth(self):
         self.client.login(username='test1', password='test1')
-        response = self.client.post('/login')        
+        response = self.client.post('/login')
         self.assertTrue(response.status_code == 200)

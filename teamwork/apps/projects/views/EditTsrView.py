@@ -24,7 +24,6 @@ def tsr_edit(request, slug, asg_slug):
     TODO: get scrum_master bool another way, not through url
     """
 
-
     # Current Project
     cur_proj = get_object_or_404(Project, slug=slug)
     course = cur_proj.course.first()
@@ -47,9 +46,9 @@ def tsr_edit(request, slug, asg_slug):
     scrum_master = is_scrum_master(request)
 
     if (scrum_master):
-        page_name="Scrum Master TSR Edit"
+        page_name = "Scrum Master TSR Edit"
     else:
-        page_name="Member TSR Edit"
+        page_name = "Member TSR Edit"
 
     if request.method == 'POST':
         # For each Tsr displayed, update the values and save the Tsr
@@ -76,23 +75,24 @@ def tsr_edit(request, slug, asg_slug):
 
         # Display each TSR Form with their fields pre-populated by 'initial_dict'
         for tsr in tsr_list:
-            initial_dict = {'perc_contribution':tsr.percent_contribution,
-                            'pos_fb':tsr.positive_feedback,
-                            'neg_fb':tsr.negative_feedback,
-                            'tasks_comp':tsr.tasks_completed,
-                            'perf_assess':tsr.performance_assessment,
-                            'notes':tsr.notes}
+            initial_dict = {'perc_contribution': tsr.percent_contribution,
+                            'pos_fb': tsr.positive_feedback,
+                            'neg_fb': tsr.negative_feedback,
+                            'tasks_comp': tsr.tasks_completed,
+                            'perf_assess': tsr.performance_assessment,
+                            'notes': tsr.notes}
             form_i = TSR(initial=initial_dict, members=members,
                          emails=emails, prefix=tsr.evaluatee.email, scrum_master=scrum_master)
 
             # Add the TSR Form to forms list
             forms.append(form_i)
 
-    return render(request, 'projects/tsr_edit.html',{
-        'forms':forms,'cur_proj': cur_proj, 'ass':asg, 'course':course,
-        'page_name' : page_name, 'page_description': page_description,
+    return render(request, 'projects/tsr_edit.html', {
+        'forms': forms, 'cur_proj': cur_proj, 'ass': asg, 'course': course,
+        'page_name': page_name, 'page_description': page_description,
         'title': title
     })
+
 
 def is_scrum_master(request):
     """

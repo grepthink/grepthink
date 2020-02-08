@@ -18,7 +18,7 @@ def view_meetings(request, slug):
     Passing status check unit test in test_views.py.
     """
     project = get_object_or_404(Project, slug=slug)
-    
+
     # Populate with project name and tagline
     page_name = project.title or "Project"
     page_description = project.tagline or "Meeting Times"
@@ -38,8 +38,9 @@ def view_meetings(request, slug):
     meetings = mark_safe(project.meetings)
 
     return render(request, 'projects/meeting_times.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'project': project, 'course' : course, 'json_events': meetings})
+                                                           'page_description': page_description, 'title': title,
+                                                           'project': project, 'course': course, 'json_events': meetings})
+
 
 def find_meeting(slug):
     """
@@ -55,7 +56,7 @@ def find_meeting(slug):
     if project.meetings is not None:
         project.meetings = ''
     if project.readable_meetings is not None:
-         project.readable_meetings = ''
+        project.readable_meetings = ''
 
     # Stores avaliablity in list
     # event_list = project.generate_avail(low, high)
@@ -78,7 +79,7 @@ def find_meeting(slug):
         e_hour = int(e_hour)
         e_minute = int(e_minute)
 
-        event_string = "%s -> %02d:%02d - %02d:%02d"%(day, s_hour, s_minute, e_hour, e_minute)
+        event_string = "%s -> %02d:%02d - %02d:%02d" % (day, s_hour, s_minute, e_hour, e_minute)
         readable_list.append(event_string)
 
     # Adds meeting to model

@@ -33,8 +33,8 @@ def edit_project(request, slug):
     # if user is not project owner or they arent in the member list
     if request.user.profile.isGT or request.user == course.creator or user_role == "ta":
         pass
-    elif not request.user  in project.members.all():
-        #redirect them with a message
+    elif not request.user in project.members.all():
+        # redirect them with a message
         messages.warning(request, 'Only the Project Owner can make changes to this project!')
         return redirect(view_one_project, project.slug)
 
@@ -44,7 +44,7 @@ def edit_project(request, slug):
         if request.user == project.creator or request.user == course.creator or request.user.profile.isGT or user_role == "ta":
             project.delete()
         else:
-            messages.warning(request,'Only project owner can delete project.')
+            messages.warning(request, 'Only project owner can delete project.')
 
         return HttpResponseRedirect('/project/all')
 
@@ -93,10 +93,10 @@ def edit_project(request, slug):
                         sender=request.user,
                         to=mem_to_add,
                         msg="You have been invited to join the Project: " + project.title,
-                        url=reverse('view_one_project',args=[project.slug]),
+                        url=reverse('view_one_project', args=[project.slug]),
                         alertType="invitation",
                         slug=project.slug
-                        )
+                    )
 
                     # send user an email
                     subject = "GrepThink Project Invitation: " + project.title
@@ -125,7 +125,7 @@ def edit_project(request, slug):
         # check if they were the only member of the project
         if len(members) == 1:
             messages.warning(request,
-             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+                             "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
         else:
             # check if user that is being removed was Project Owner
             if f_user == project.creator:
@@ -143,7 +143,6 @@ def edit_project(request, slug):
 
         return redirect(view_one_project, project.slug)
 
-
     # Transfer ownership of a project - TODO: needs to be removed, but add messages to new implementation
     if request.POST.get('promote_user'):
         f_username = request.POST.get('promote_user')
@@ -154,7 +153,7 @@ def edit_project(request, slug):
             project.save()
             messages.info(request, "{0} is now the Project Owner".format(f_username))
         else:
-            messages.warning(request,'Only the current Project Owner can give away Project Ownership.')
+            messages.warning(request, 'Only the current Project Owner can give away Project Ownership.')
 
         return redirect(edit_project, slug)
 
@@ -236,8 +235,9 @@ def edit_project(request, slug):
         #     form.fields['scrum_master'].required = True
 
     return render(request, 'projects/edit_project.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title, 'members':members,
-        'form': form, 'project': project, 'user':request.user})
+                                                          'page_description': page_description, 'title': title, 'members': members,
+                                                          'form': form, 'project': project, 'user': request.user})
+
 
 def try_add_member(request, slug, uname):
     """
@@ -259,6 +259,7 @@ def try_add_member(request, slug, uname):
 
     return redirect(view_one_project, slug)
 
+
 def add_member(request, slug, uname):
     """
     Add a member to a project.
@@ -274,10 +275,11 @@ def add_member(request, slug, uname):
         sender=request.user,
         to=mem_to_add,
         msg="You were added to " + project.title,
-        url=reverse('view_one_project',args=[project.slug]),
-        )
+        url=reverse('view_one_project', args=[project.slug]),
+    )
 
     adjust_pendinglist(request, project, mem_to_add)
+
 
 def adjust_pendinglist(request, project, mem_to_add):
     """
@@ -288,7 +290,7 @@ def adjust_pendinglist(request, project, mem_to_add):
     # remove member from pending list if he/she was on it
     pending_members = project.pending_members.all()
     if mem_to_add in pending_members:
-        for mem in pending_members: #TODO: probably a better more python way to remove this item from list
+        for mem in pending_members:  # TODO: probably a better more python way to remove this item from list
             if mem == mem_to_add:
                 project.pending_members.remove(mem)
                 project.save()
@@ -302,6 +304,7 @@ def adjust_pendinglist(request, project, mem_to_add):
             if alert.to.id is user.id:
                 alert.read = True
                 alert.save()
+
 
 def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
 
@@ -319,6 +322,7 @@ def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_me
 
     return True
 
+
 def leave_project(request, slug):
     """
     Called only diretly from template. EditProjectForm has 'Leave Project' option for yourself.
@@ -331,14 +335,13 @@ def leave_project(request, slug):
 
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
 
-
     if (f_user not in members):
         messages.warning(request, "You cannot leave a project you are not a member of!")
         HttpResponseRedirect('project/all')
     # check if they were the only member of the project
     elif len(members) == 1:
         messages.warning(request,
-         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+                         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
     else:
         # check if user that is being removed was Project Owner
         if f_user == project.creator:
@@ -356,6 +359,7 @@ def leave_project(request, slug):
 
     return redirect(view_projects)
 
+
 def add_desired_skills(request, slug):
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -365,13 +369,13 @@ def add_desired_skills(request, slug):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
+
 
 def create_desired_skills(request):
     if request.method == 'GET' and request.is_ajax():
@@ -382,10 +386,9 @@ def create_desired_skills(request):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
-
 
     return HttpResponse("Failure")

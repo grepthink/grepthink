@@ -24,13 +24,13 @@ def edit_skills(request, username):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
 
-
     return HttpResponse("Failure")
+
 
 @login_required
 def edit_profile(request, username):
@@ -43,7 +43,7 @@ def edit_profile(request, username):
     if not request.user.is_authenticated:
         return redirect('profiles/profile.html')
     else:
-        #grab profile for the current user
+        # grab profile for the current user
         profile = Profile.objects.prefetch_related('user').get(user=request.user)
 
     if request.user.username != username:
@@ -51,10 +51,10 @@ def edit_profile(request, username):
         return redirect(view_profile, request.user.username)
 
     page_name = "Edit Profile"
-    page_description = "Edit %s's Profile"%(profile.user.username)
+    page_description = "Edit %s's Profile" % (profile.user.username)
     title = "Edit Profile"
 
-    #original form
+    # original form
     if request.method == 'POST':
         # Add skills to the project learn_skills
         if request.POST.get('known_skills') or request.POST.get('learn_skills'):
@@ -119,13 +119,13 @@ def edit_profile(request, username):
             # stay on edit_profile page
             return redirect(edit_profile, username)
 
-        #handle deleting avatar
+        # handle deleting avatar
         if request.POST.get('delete_avatar'):
             avatar = request.POST.get('delete_avatar')
             profile.avatar.delete()
             form = ProfileForm(instance=profile)
 
-        #handle deleting profile
+        # handle deleting profile
         if request.POST.get('delete_profile'):
             page_user = get_object_or_404(User, username=username)
 
@@ -139,20 +139,21 @@ def edit_profile(request, username):
         # handles saving bio info if none of the cases were taken
         edit_profile_helper(request, username)
 
-        #redirects to view_profile when submit button is clicked
+        # redirects to view_profile when submit button is clicked
         return redirect(view_profile, username)
 
     else:
-        #load form with prepopulated data
+        # load form with prepopulated data
         form = ProfileForm(instance=profile)
 
     known_skills_list = profile.known_skills.all()
     learn_skills_list = profile.learn_skills.all()
 
     return render(request, 'profiles/edit_profile.html', {
-        'form':form, 'profile':profile,
-        'known_skills_list':known_skills_list,
-        'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
+        'form': form, 'profile': profile,
+        'known_skills_list': known_skills_list,
+        'learn_skills_list': learn_skills_list, 'page_name': page_name, 'page_description': page_description, 'title': title})
+
 
 def edit_profile_helper(request, username):
     """
@@ -163,10 +164,10 @@ def edit_profile_helper(request, username):
         tempProfile = User.objects.get(username=username)
         profile = Profile.objects.get(user=tempProfile)
     else:
-        #grab profile for the current user
+        # grab profile for the current user
         profile = Profile.objects.get(user=request.user)
 
-    #request.FILES is passed for File storing
+    # request.FILES is passed for File storing
     form = ProfileForm(request.POST, request.FILES)
     if form.is_valid():
 
@@ -177,7 +178,7 @@ def edit_profile_helper(request, username):
         location = form.cleaned_data.get('location')
         ava = form.cleaned_data.get('avatar')
 
-        #if data is entered, save it to the profile for the following
+        # if data is entered, save it to the profile for the following
         if name:
             profile.name = name
         if bio:

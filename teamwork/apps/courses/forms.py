@@ -1,4 +1,4 @@
-#imports forms
+# imports forms
 from datetime import datetime, timedelta
 
 from django import forms
@@ -12,18 +12,19 @@ from teamwork.apps.profiles.models import *
 
 from .models import *
 
-#Choices for term
+# Choices for term
 Term_Choice = (('Winter', 'Winter'), ('Spring', 'Spring'), ('Summer', 'Summer'),
                ('Fall', 'Fall'), )
 
 Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
-                   (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
-                   (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
-                   (24, '12:00'), )
+                         (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                         (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                         (24, '12:00'), )
 
 Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
-                   (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
-                   (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+                         (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                         (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+
 
 def ForbiddenNamesValidator(value):
     forbidden_names = ['new', 'join', 'delete', 'create']
@@ -31,7 +32,9 @@ def ForbiddenNamesValidator(value):
     if value.lower() in forbidden_names:
         raise ValidationError('This is a reserved word.')
 
-#Creates the course form
+# Creates the course form
+
+
 class CreateCourseForm(forms.ModelForm):
     """
     Form used for a user to create a course
@@ -47,11 +50,11 @@ class CreateCourseForm(forms.ModelForm):
         __init__ :  Initializes form, filtering querysets for fields
     """
 
-    #Filters queryset based on conditions
+    # Filters queryset based on conditions
     def __init__(self, uid, *args, **kwargs):
         super(CreateCourseForm, self).__init__(*args, **kwargs)
 
-        #Renders slug as HiddenInput
+        # Renders slug as HiddenInput
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
             self.fields['term'].widget = forms.HiddenInput()
@@ -61,56 +64,56 @@ class CreateCourseForm(forms.ModelForm):
 
         self.fields['name'].validators.append(ForbiddenNamesValidator)
 
-    #course name field
+    # course name field
     name = forms.CharField(
-        #Text input
+        # Text input
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With length 255
+        # With length 255
         max_length=255,
-        #Field required
+        # Field required
         required=True)
 
-    #course info field
+    # course info field
     info = forms.CharField(
-        #Text input
+        # Text input
         widget=forms.Textarea(attrs={'class': 'form-control'}),
-        #With length 400
+        # With length 400
         max_length=400,
-        #Field Required
+        # Field Required
         required=True)
 
-    #Term field
+    # Term field
     term = forms.ChoiceField(
-        #Choices from Term_Choice
+        # Choices from Term_Choice
         choices=Term_Choice,
-        #Field Required
+        # Field Required
         required=True)
 
-    #Slug Field
+    # Slug Field
     slug = forms.CharField(
-        #Text Input
+        # Text Input
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With Length 20
+        # With Length 20
         max_length=20,
-        #Field NOT Required
+        # Field NOT Required
         required=False)
 
-    #Students field
+    # Students field
     students = forms.ModelMultipleChoiceField(
-        #Multiple Choice Selection
+        # Multiple Choice Selection
         widget=forms.CheckboxSelectMultiple,
-        #From all user objects
+        # From all user objects
         queryset=User.objects.all(),
-        #Field NOT Required
+        # Field NOT Required
         required=False)
 
-    #Field for only professor creating courses
+    # Field for only professor creating courses
     limit_creation = forms.BooleanField(
-        #Initially field is false
+        # Initially field is false
         initial=False,
-        #Labeled as "Only professor can create projects?"
+        # Labeled as "Only professor can create projects?"
         label='Only Professor can create projects?',
-        #Field NOT Required
+        # Field NOT Required
         required=False)
 
     limit_weights = forms.BooleanField(
@@ -133,14 +136,14 @@ class CreateCourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
-    #META CLASS
+    # META CLASS
     class Meta:
         model = Course
         fields = ['name', 'info', 'term', 'students', 'slug', 'limit_creation',
-                'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
+                  'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
 
 
-#Edit the course form
+# Edit the course form
 class EditCourseForm(forms.ModelForm):
     """
     Form used for a user to create a course
@@ -156,14 +159,14 @@ class EditCourseForm(forms.ModelForm):
         __init__ :  Initializes form, filtering querysets for fields
     """
 
-    #Filters queryset based on conditions
+    # Filters queryset based on conditions
     def __init__(self, uid, slug, *args, **kwargs):
         super(EditCourseForm, self).__init__(*args, **kwargs)
 
         curr_course = Course.objects.filter(slug=slug)
         students_in_course = Enrollment.objects.filter(course=curr_course)
 
-        #Renders slug as HiddenInput
+        # Renders slug as HiddenInput
         if 'instance' in kwargs:
             self.fields['slug'].widget = forms.HiddenInput()
             self.fields['term'].widget = forms.HiddenInput()
@@ -174,47 +177,47 @@ class EditCourseForm(forms.ModelForm):
         superuser = User.objects.filter(is_superuser=True)
         self.fields['name'].validators.append(ForbiddenNamesValidator)
 
-    #course name field
+    # course name field
     name = forms.CharField(
-        #Text input
+        # Text input
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With length 255
+        # With length 255
         max_length=255,
-        #Field required
+        # Field required
         required=True)
 
-    #course info field
+    # course info field
     info = forms.CharField(
-        #Text input
+        # Text input
         widget=forms.Textarea(attrs={'class': 'form-control'}),
-        #With length 400
+        # With length 400
         max_length=400,
-        #Field Required
+        # Field Required
         required=True)
 
-    #Term field
+    # Term field
     term = forms.ChoiceField(
-        #Choices from Term_Choice
+        # Choices from Term_Choice
         choices=Term_Choice,
-        #Field Required
+        # Field Required
         required=False)
 
-    #Slug Field
+    # Slug Field
     slug = forms.CharField(
-        #Text Input
+        # Text Input
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With Length 20
+        # With Length 20
         max_length=20,
-        #Field NOT Required
+        # Field NOT Required
         required=False)
 
-    #Field for only professor creating courses
+    # Field for only professor creating courses
     limit_creation = forms.BooleanField(
-        #Initially field is false
+        # Initially field is false
         initial=False,
-        #Labeled as "Only professor can create projects?"
+        # Labeled as "Only professor can create projects?"
         label='Only Professor can create projects?',
-        #Field NOT Required
+        # Field NOT Required
         required=False)
 
     limit_weights = forms.BooleanField(
@@ -237,14 +240,14 @@ class EditCourseForm(forms.ModelForm):
         label="Disable ability for students to show interest in projects",
         required=False)
 
-    #META CLASS
+    # META CLASS
     class Meta:
         model = Course
         fields = ['name', 'info', 'term', 'slug', 'limit_creation',
-                'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
+                  'weigh_interest', 'weigh_know', 'weigh_learn', 'limit_weights']
 
 
-#Creates join course form
+# Creates join course form
 class JoinCourseForm(forms.ModelForm):
     """
     Form used for a user to join a course
@@ -256,18 +259,18 @@ class JoinCourseForm(forms.ModelForm):
         __init__ :  Initializes form
     """
 
-    #Initializes form
+    # Initializes form
     def __init__(self, uid, *args, **kwargs):
         super(JoinCourseForm, self).__init__(*args, **kwargs)
 
-    #Add code field
+    # Add code field
     code = forms.CharField(
-        #Text input
+        # Text input
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        #With max length 255
+        # With max length 255
         max_length=255)
 
-    #META CLASS
+    # META CLASS
     class Meta:
         model = Course
         fields = ['code']
@@ -292,7 +295,7 @@ class ShowInterestForm(forms.ModelForm):
         clean:      custom clean method for form validation
     """
 
-    #Initializes form
+    # Initializes form
     def __init__(self, uid, *args, **kwargs):
         slug = kwargs.pop('slug')
         super(ShowInterestForm, self).__init__(*args, **kwargs)
@@ -301,8 +304,8 @@ class ShowInterestForm(forms.ModelForm):
         cur_course = Course.objects.prefetch_related('projects').get(slug=slug)
 
         # Gets all projects in that course
-        projects = cur_course.projects.all().extra(\
-        select={'lower_title':'lower(title)'}).order_by('lower_title')
+        projects = cur_course.projects.all().extra(
+            select={'lower_title': 'lower(title)'}).order_by('lower_title')
 
         self.fields['projects'].queryset = projects
         self.fields['projects2'].queryset = projects
@@ -327,7 +330,7 @@ class ShowInterestForm(forms.ModelForm):
                             self.fields['projects'].widget = forms.HiddenInput()
                             self.fields['p1r'].widget = forms.HiddenInput()
 
-    #Project Choice Field
+    # Project Choice Field
     projects = forms.ModelChoiceField(
         queryset=None, empty_label=None, label='First Choice', required=False)
     p1r = forms.CharField(
@@ -400,10 +403,13 @@ class ShowInterestForm(forms.ModelForm):
 
         return data
 
+
 """
 Form used to simulate sending an email
 
 """
+
+
 class EmailRosterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(EmailRosterForm, self).__init__(*args, **kwargs)
@@ -447,29 +453,31 @@ class CourseUpdateForm(forms.ModelForm):
         model = CourseUpdate
         fields = ['title', 'content']
 
+
 class AssignmentForm(forms.ModelForm):
     """
     Form used for making a new assignment
     """
+
     def __init__(self, uid, slug, *args, **kwargs):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
-        course= get_object_or_404(Course, slug=slug)
-        assNum=len(course.assignments.all())
+        course = get_object_or_404(Course, slug=slug)
+        assNum = len(course.assignments.all())
         print(assNum)
         self.fields['ass_number'].initial = assNum + 1
 
     # date assignment will start
     ass_date = forms.DateField(
-        widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d'],
+        widget=extras.SelectDateWidget,
+        input_formats=['%Y-%m-%d'],
         label="Open Date",
         initial=datetime.date.today()
     )
     # date assignment will end (users can no longer submit)
     due_date = forms.DateField(
-        widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d'],
+        widget=extras.SelectDateWidget,
+        input_formats=['%Y-%m-%d'],
         initial=datetime.date.today() + timedelta(days=7)
     )
 
@@ -500,34 +508,38 @@ class AssignmentForm(forms.ModelForm):
         max_digits=2,
         required=True,
         decimal_places=0
-        )
+    )
+
     class Meta:
-        model= Assignment
+        model = Assignment
         widgets = {
         }
 
-        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
+        fields = ['ass_date', 'due_date', 'ass_number', 'ass_type', 'ass_name', 'description']
 
-#Edit assignment form
+# Edit assignment form
+
+
 class EditAssignmentForm(forms.ModelForm):
     """
     form to edit ass
     """
+
     def __init__(self, uid, slug, *args, **kwargs):
         super(EditAssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
 
     # date assignment will start
     ass_date = forms.DateField(
-        widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d'],
+        widget=extras.SelectDateWidget,
+        input_formats=['%Y-%m-%d'],
         label="Open Date",
         initial=datetime.date.today()
     )
     # date assignment will end (users can no longer submit)
     due_date = forms.DateField(
-        widget = extras.SelectDateWidget,
-        input_formats = ['%Y-%m-%d'],
+        widget=extras.SelectDateWidget,
+        input_formats=['%Y-%m-%d'],
         initial=datetime.date.today() + timedelta(days=7)
     )
 
@@ -558,13 +570,14 @@ class EditAssignmentForm(forms.ModelForm):
         max_digits=2,
         required=True,
         decimal_places=0
-        )
+    )
+
     class Meta:
-        model= Assignment
+        model = Assignment
         widgets = {
         }
 
-        fields = ['ass_date', 'due_date','ass_number','ass_type', 'ass_name','description']
+        fields = ['ass_date', 'due_date', 'ass_number', 'ass_type', 'ass_name', 'description']
 
 
 class ClaimProjectsForm(forms.Form):
@@ -582,13 +595,13 @@ class ClaimProjectsForm(forms.Form):
             self.fields['all_projects'].widget = forms.SelectMultiple
 
     all_projects = forms.ChoiceField(
-            label="All Projects",
-            required=False
+        label="All Projects",
+        required=False
     )
 
     claimed_projects = forms.ChoiceField(
-            label="Claimed Projects",
-            required=False
+        label="Claimed Projects",
+        required=False
     )
 
     class Meta:

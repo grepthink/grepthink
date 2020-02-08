@@ -21,6 +21,7 @@ class EmailAddressAuthBackend(ModelBackend):
         - None if Email doesn't exist or password doesn't match Email
         - UserModel object if email and password match
     """
+
     def authenticate(self, username=None, password=None, **kwargs):
         UserModel = get_user_model()
 
@@ -33,12 +34,15 @@ class EmailAddressAuthBackend(ModelBackend):
                 return user
         return None
 
+
 """
     Summary: this function is called to sort the  list of matches by score
     Params:
        match: the list of matched students
     returns: a sorted list of students from best score to worst
 """
+
+
 def sort(matchList):
     matches = []
     tagged = []
@@ -46,7 +50,7 @@ def sort(matchList):
     for j in reversed(topScores):
         for u, i in matchList.items():
             if j == i and u not in tagged:
-                matches.append((u,i))
+                matches.append((u, i))
                 tagged.append(u)
     return matches
 
@@ -61,6 +65,8 @@ def sort(matchList):
     returns: a list of the top users that match with a project, based on there cumulative score
         collected after each pass
 """
+
+
 def po_match(project):
     initial = {}
     backup = {}
@@ -150,6 +156,7 @@ def po_match(project):
     return sort(initial)
     # past classes match
 
+
 def auto_ros(course):
     match_list = []
     all_projects = course.projects.all()
@@ -200,7 +207,7 @@ def auto_ros(course):
         while(len(fives) > 0):
             pick = random.choice(fives)
             temp_user = pick[0]
-            interest =x.interest.filter(user=temp_user).first()
+            interest = x.interest.filter(user=temp_user).first()
             pick2 = [pick[0], pick[1], interest]
 
             # exit loop if the team is full
@@ -219,7 +226,7 @@ def auto_ros(course):
             while(len(fours) > 0):
                 pick = random.choice(fours)
                 temp_user = pick[0]
-                interest =x.interest.filter(user=temp_user).first()
+                interest = x.interest.filter(user=temp_user).first()
                 pick2 = [pick[0], pick[1], interest]
 
                 # exit loop if the team is full
@@ -233,7 +240,7 @@ def auto_ros(course):
                     temp_team.append(pick2)
                     assigned.append(temp_user)
 
-        #if the team still needs more add 3s
+        # if the team still needs more add 3s
         if len(temp_team) + len(x.members.all()) < x.teamSize:
             threes = [s for s in y if s[1][1] == 3]
             while(len(threes) > 0):
@@ -262,9 +269,8 @@ def auto_ros(course):
     #         Membership.objects.create(user=mem, project=p[0], invite_reason='')
     # print("roster:", roster)
 
-
-
     return sorted(roster, key=lambda x: x[0].title.lower())
+
 
 def by_schedule(user, project):
     """
@@ -287,7 +293,6 @@ def by_schedule(user, project):
     saturday_list = []
     total_hours = 0
     total_meetings = 0
-
 
     # Loops through each member
     for mem in project.members.all():
@@ -367,7 +372,7 @@ def by_schedule(user, project):
 
     if total_meetings == 0:
         return 1
-    return floor(total_hours/total_meetings)
+    return floor(total_hours / total_meetings)
 
 
 # def by_schedule(user, project):

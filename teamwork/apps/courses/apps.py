@@ -1,4 +1,4 @@
-#auto generated when creating
+# auto generated when creating
 from django.apps import AppConfig
 
 

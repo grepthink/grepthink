@@ -11,6 +11,7 @@ from teamwork.apps.projects.models import Project
 
 # View Imports
 
+
 @login_required
 def view_profile(request, username):
     """
@@ -25,7 +26,7 @@ def view_profile(request, username):
     profile = Profile.objects.get(user=user)
     courses = Course.get_my_courses(page_user)
     page_name = "Profile"
-    page_description = "%s's Profile"%(page_user.username)
+    page_description = "%s's Profile" % (page_user.username)
     title = "View Profile"
 
     # # gets all interest objects of the current user
@@ -34,5 +35,5 @@ def view_profile(request, username):
     # my_projects = Project.objects.filter(interest__in=my_interests)
 
     return render(request, 'profiles/profile.html', {
-        'page_user': page_user, 'profile':profile, 'page_name' : page_name, 'page_description': page_description, 'title': title,
+        'page_user': page_user, 'profile': profile, 'page_name': page_name, 'page_description': page_description, 'title': title,
         'projects': projects, 'courses': courses})

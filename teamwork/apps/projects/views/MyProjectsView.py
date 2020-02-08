@@ -14,7 +14,8 @@ def view_projects(request):
     active_projects = Project.get_my_active_projects(request.user)
     inactive_projects = Project.get_my_disabled_projects(request.user)
 
-    return _projects(request, active_projects, inactive_projects )
+    return _projects(request, active_projects, inactive_projects)
+
 
 def _projects(request, active, inactive):
     """
@@ -28,5 +29,5 @@ def _projects(request, active, inactive):
     title = "My Projects"
 
     return render(request, 'projects/view_projects.html', {'page_name': page_name,
-        'page_description': page_description, 'title' : title,
-        'active': active, 'inactive': inactive})
+                                                           'page_description': page_description, 'title': title,
+                                                           'active': active, 'inactive': inactive})

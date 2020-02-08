@@ -29,7 +29,8 @@ def view_alerts(request):
         'archive': archive,
         'page_name': page_name,
         'page_description': page_description
-        })
+    })
+
 
 @login_required
 def read_alert(request, ident):
@@ -42,6 +43,7 @@ def read_alert(request, ident):
         # print("Attempt to read alert caught by internet police: " + str(alert.id))
     return redirect(view_alerts)
 
+
 @login_required
 def unread_alert(request, ident):
     user = request.user
@@ -50,6 +52,7 @@ def unread_alert(request, ident):
         alert.read = False
         alert.save()
     return redirect(view_alerts)
+
 
 @login_required
 def archive_alerts(request):
@@ -63,6 +66,7 @@ def archive_alerts(request):
             alert.save()
 
     return redirect(view_alerts)
+
 
 @login_required
 def delete_alert(request, ident):

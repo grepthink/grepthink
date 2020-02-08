@@ -21,23 +21,27 @@ from teamwork.apps.projects.views.EditTsrView import *
 
 def create_project(creator, scrum_master, ta, course, slug):
     project = Project.objects.create(creator=creator,
-                                  scrum_master=scrum_master,
-                                  ta=ta,
-                                  slug=slug)
+                                     scrum_master=scrum_master,
+                                     ta=ta,
+                                     slug=slug)
     course.projects.add(project)
     course.save()
     return project
+
 
 def create_user(username, email, password):
     # Create a test user as an attribute of ProjectTestCase, for future use
     #   (we're not testing user or profile methods here)
     return User.objects.create_user(username, email, password)
 
+
 def create_course(name, slug, creator):
     return Course.objects.create(name=name, slug=slug, creator=creator)
 
+
 def create_course_enrollment(user, course, role):
     return Enrollment.objects.create(user=user, course=course, role=role)
+
 
 def create_project_membership(user, project, invite_reason):
     return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
@@ -53,6 +57,7 @@ class ViewProjectTestCase(TestCase):
     https://docs.djangoproject.com/en/1.11/topics/testing/tools/#django.test.override_settings
     https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.core.urlresolvers.reverse
     """
+
     def setUp(self):
         """
         Initialize project, user, and membership objects for use in test methods.
@@ -62,7 +67,7 @@ class ViewProjectTestCase(TestCase):
         # Membership.objects.create(user=user1, project=project1, invite_reason='')
         """
 
-    @override_settings(STATICFILES_STORAGE = None)
+    @override_settings(STATICFILES_STORAGE=None)
     def test_view_one_project(self):
         """
         Confirms that view_one_project sucesfully returns a 200 response when given the
@@ -96,6 +101,7 @@ class ViewProjectTestCase(TestCase):
         # # Confirm that view_one_project returned a response with status code 200 (page served successfully).
         # self.assertEqual(response.status_code, 200)
         pass
+
 
 class EditProjectTestCase(TestCase):
     def setUp(self):
@@ -159,6 +165,7 @@ class EditProjectTestCase(TestCase):
 
         response = self.client.post('/project/slug1/tryadd/test2')
         self.assertTrue(self.user2 not in self.project1.members.all())
+
 
 class TestEditTsrView(TestCase):
     requestScrum = "WSGIRequest: GET '/project/project-one/tsr/testing123/edit/?scrum_master=scrum_master'"

@@ -3,13 +3,13 @@ Teamwork: courses
 
 Database Models for the objects: Course, Enrollment
 """
-#Build-in modules
+# Build-in modules
 from __future__ import unicode_literals
 
 import datetime
 import random
 import string
-#Other imports
+# Other imports
 import uuid
 from datetime import date
 
@@ -33,9 +33,11 @@ def rand_code(size):
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
 
+
 def get_all_courses(self):
-    return Course.objects.all().extra(\
-    select={'lower_name':'lower(name)'}).order_by('lower_name')
+    return Course.objects.all().extra(
+        select={'lower_name': 'lower(name)'}).order_by('lower_name')
+
 
 class Assignment(models.Model):
     due_date = models.DateField()
@@ -43,7 +45,7 @@ class Assignment(models.Model):
     ass_type = models.CharField(max_length=255)
     ass_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default="")
-    ass_number = models.IntegerField( default=1)
+    ass_number = models.IntegerField(default=1)
     closed = models.BooleanField(default=False)
     subs = models.ManyToManyField(
         Tsr,
@@ -51,7 +53,7 @@ class Assignment(models.Model):
         # Tsr can access course through this relation
         # Tsr.ass.first()
         related_name='ass',
-        )
+    )
 
     # Unique URL slug for assignment
     slug = models.CharField(
@@ -63,7 +65,7 @@ class Assignment(models.Model):
         """
         Human readeable representation of the Assignment object.
         """
-        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date, self.ass_date, self.ass_type, self.ass_name, self.description, self.ass_number, self.slug))
+        return ("%s, %s, %s, %s, %s, %d, %s" % (self.due_date, self.ass_date, self.ass_type, self.ass_name, self.description, self.ass_number, self.slug))
 
     @property
     def is_past_due(self):
@@ -85,6 +87,7 @@ class Assignment(models.Model):
 
         super(Assignment, self).save(*args, **kwargs)
 
+
 def get_user_active_courses(self):
     """
     Added to auth so that a user object can easily retrieve enrolled courses
@@ -92,14 +95,15 @@ def get_user_active_courses(self):
     """
     # Get all courses for a GT Admin
     if self.profile.isGT:
-        my_courses = Course.objects.all().extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
+        my_courses = Course.objects.all().extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name')
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
-        my_courses = self.enrollment.filter(disable=False).extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
+        my_courses = self.enrollment.filter(disable=False).extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name')
 
     return my_courses
+
 
 def get_user_disabled_courses(self):
     """
@@ -108,18 +112,20 @@ def get_user_disabled_courses(self):
     """
     # Get all courses for a GT Admin
     if self.profile.isGT:
-        my_courses = Course.objects.all().extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
+        my_courses = Course.objects.all().extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name')
     else:
         # #Gets current user's enrollments, by looking for user in  Enrollment table
-        my_courses = self.enrollment.filter(disable=True).extra(\
-        select={'lower_name':'lower(name)'}).order_by('lower_name')
+        my_courses = self.enrollment.filter(disable=True).extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name')
 
     return my_courses
+
 
 # Add method to function that returns a list of users enrolled courses
 auth.models.User.add_to_class('get_user_active_courses', get_user_active_courses)
 auth.models.User.add_to_class('get_user_disabled_courses', get_user_disabled_courses)
+
 
 class Course(models.Model):
     """
@@ -156,13 +162,13 @@ class Course(models.Model):
                    ('Summer', 'Summer'), ('Fall', 'Fall'), )
 
     Lower_Boundary_Choice = ((0, 'No Preference'), (2, '01:00'), (4, '02:00'), (6, '03:00'),
-                       (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
-                       (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
-                       (24, '12:00'), )
+                             (8, '04:00'), (10, '05:00'), (12, '06:00'), (14, '07:00'),
+                             (16, '08:00'), (18, '09:00'), (20, '10:00'), (22, '11:00'),
+                             (24, '12:00'), )
 
     Upper_Boundary_Choice = ((48, 'No Preference'), (26, '13:00'), (28, '14:00'), (30, '15:00'),
-                       (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
-                       (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
+                             (32, '16:00'), (34, '17:00'), (36, '18:00'), (38, '19:00'),
+                             (40, '20:00'), (42, '21:00'), (44, '22:00'), (46, '23:00'), )
 
     # The title of the course. Should not be null, but default is provided.
     name = models.CharField(max_length=255, default="No Course Title Provided")
@@ -210,7 +216,7 @@ class Course(models.Model):
         related_name='course')
 
     # assignments in course, manytomany
-    assignments=models.ManyToManyField(
+    assignments = models.ManyToManyField(
         # to Assignment model
         Assignment,
         related_name='course')
@@ -243,12 +249,12 @@ class Course(models.Model):
 
     # limit creation, boolean
     limit_creation = models.BooleanField(
-        #defaulted to False
+        # defaulted to False
         default=False)
 
     # limits student from showing interest
     limit_interest = models.BooleanField(
-        #defaulted to false
+        # defaulted to false
         default=False)
 
     limit_weights = models.BooleanField(
@@ -326,7 +332,7 @@ class Course(models.Model):
         """
         Gets a list ofcourse objects the current user has created
         """
-        #filters through courses the user has created
+        # filters through courses the user has created
         created_courses = user.course_creator.all()
         # created_courses = Course.objects.filter(creator=user)
 
@@ -359,6 +365,7 @@ class Course(models.Model):
     """
     Gets all students in a course excluding professors and returns a list
     """
+
     def get_students(self):
         students = list(Enrollment.objects.filter(course=self, role="student"))
 
@@ -367,6 +374,7 @@ class Course(models.Model):
     """
     Gets the tas for a course
     """
+
     def get_tas(self):
         teacher_assistants = list(Enrollment.objects.filter(course=self, role="ta"))
         assistants = [assistant.user for assistant in teacher_assistants]
@@ -376,8 +384,9 @@ class Course(models.Model):
     """
     Gets ALL of the teaching staff
     """
+
     def get_staff(self):
-        staff=[]
+        staff = []
         staff = self.get_tas()
         staff.append(self.creator)
 
@@ -389,7 +398,7 @@ class Course(models.Model):
 
 # Enrollment class that manytomanys between User and Course
 class Enrollment(models.Model):
-    #User, which is a foriegn key to
+    # User, which is a foriegn key to
     user = models.ForeignKey(
         # the User model
         User,
@@ -417,7 +426,8 @@ class Enrollment(models.Model):
         Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
         Maybe something like,  return u'%s %s' % (self.course, self.title)
         """
-        return ("%s"%(self.user.username))
+        return ("%s" % (self.user.username))
+
 
 class CourseUpdate(models.Model):
     """
