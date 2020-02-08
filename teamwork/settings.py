@@ -68,23 +68,21 @@ ADMINS = config('ADMINS', default=[('Grepthink Team', 'grepthink@gmail.com')])
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME')
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD')
-
-if DEBUG:
-    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_TEST_KEY')
-else:
-    EMAIL_SENDGRID_KEY = os.environ.get('SENDGRID_API_KEY')
-
+EMAIL_HOST_USER = 'apikey'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Grepthink Team <info@grepthink.com>'
 
-isProd = config('PRODUCTION', default=False)
+if DEBUG:    
+    EMAIL_SENDGRID_KEY = config('SENDGRID_TEST_KEY', default='Not Set')
+else:
+    EMAIL_SENDGRID_KEY = config('SENDGRID_API_KEY', default='Not Set')
 
-if isProd:
+EMAIL_HOST_PASSWORD = EMAIL_SENDGRID_KEY
+
+IS_PRODUCTION = config('PRODUCTION', default=False)
+
+if IS_PRODUCTION:
     pass
-    #For Testing, comment out for production
-    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
