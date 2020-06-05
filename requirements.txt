@@ -12,5 +12,5 @@ django-chartjs
 sendgrid
 django-gravatar2
 xlwt
-Django==1.11.18 
+Django==1.11.29 
 tox
