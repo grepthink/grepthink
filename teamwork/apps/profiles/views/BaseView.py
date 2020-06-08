@@ -9,39 +9,6 @@ from teamwork.apps.profiles.forms import SignUpForm
 # View Imports
 from teamwork.apps.profiles.views.EditProfileView import edit_profile
 
-def find_available_username(username):
-    """
-    checks if the passed username is available to be used.
-    If not, then return the 'username + #' available
-    """
-
-    # Find users with that username in descending order
-    existing_users = User.objects.filter(username__istartswith=username).order_by('-username')
-
-    # if we found users, parse out value from the highest username
-    if existing_users:
-        # since we are in desc order, this is always the first user
-        user = existing_users[0]
-
-        # parse out the int value applied to the end of username
-        value = parse_username_num(user, username)
-        if value is None:
-            value = 0
-
-        # add 1 to the found value and append it to the username        
-        return "{}{}".format(username, value + 1)
-
-    return username
-
-def parse_username_num(user, username_to_parse):
-    """
-    Parses out the number at the end of a user's username given the base username w/o the number
-    """
-    try:
-        return int(user.username[len(username_to_parse):])
-    except ValueError:
-        return None
-
 def signup(request):
     """
     public method that generates a form a user uses to sign up for an account (push test)
@@ -133,6 +100,52 @@ def profSignup(request):
         return render(request, 'profiles/professorSignup.html',
                       {'form': SignUpForm(), 'page_name' : page_name,
                       'page_description': page_description, 'title': title})
+
+def find_available_username(username):
+    """
+    Finds the next available username.
+
+    Args:
+        username (str): The desired username
+
+    Returns:
+        str: The desired username w/ the next available number appended to the end.
+    """
+
+    # Find users with that username in descending order
+    existing_users = User.objects.filter(username__istartswith=username).order_by('-username')
+
+    # if we found users, parse out value from the highest username
+    if existing_users:
+        # since we are in desc order, this is always the first user
+        user = existing_users[0]
+
+        # parse out the int value applied to the end of username
+        value = parse_username_num(user, username)
+        if value is None:
+            value = 0
+
+        # add 1 to the found value and append it to the username        
+        return "{}{}".format(username, value + 1)
+
+    return username
+
+def parse_username_num(user, username_to_parse):
+    """
+    Parses out the number at the end of a user's username given the base username w/o the number
+
+    Args:
+        user (User): The User object which we are parsing the number from.
+        username_to_parse (str): The core of the username, before any numbers appended to the end.
+
+    Returns:
+        int: On Success, the value parsed.
+        None: On Fail or when a number doesn't exist. I.e this is the 2nd user to want this username.
+    """
+    try:
+        return int(user.username[len(username_to_parse):])
+    except ValueError:
+        return None
 
 def password_reset(request):
     return
