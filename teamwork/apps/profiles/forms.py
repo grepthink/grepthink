@@ -29,7 +29,7 @@ def SignupDomainValidator(value):
 
 
 def ForbiddenUsernamesValidator(value):
-    forbidden_usernames = ['admin', 'settings', 'news', 'about', 'help',
+    forbidden_usernames = ['admin', 'accounting', 'settings', 'news', 'about', 'help',
                            'signin', 'signup', 'signout', 'terms', 'privacy',
                            'cookie', 'new', 'login', 'logout', 'administrator',
                            'join', 'account', 'username', 'root', 'blog',
@@ -45,7 +45,7 @@ def ForbiddenUsernamesValidator(value):
                            'media', 'setting', 'css', 'js', 'follow',
                            'activity', 'questions', 'articles', 'network',
                            'grepthink', 'gt', 'groupthink', 'alphanumeric'
-                           'teamwork']
+                           'teamwork', 'support']
 
     if value.lower() in forbidden_usernames:
         raise ValidationError('This is a reserved word.')
