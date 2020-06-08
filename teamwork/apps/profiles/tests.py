@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from teamwork.apps.profiles.views.BaseView import find_available_username
+from teamwork.apps.profiles.forms import SignUpForm
 
 # Create your tests here.
 class DuplicateSignUpTest(TestCase):
@@ -38,3 +39,25 @@ class DuplicateSignUpTest(TestCase):
         
         # assert it is test2
         self.assertTrue(next_username == "test2")
+
+class SignupValidationTest(TestCase):
+    """
+    Test Signup Validation
+    """
+    def test_reserved_word_raises_error(self):
+        """
+        Assure that using a reserved word raises ValidationError
+        """
+        entered_email = "admin@testing.com"
+        pw = "passwordtest"
+        sign_up_form = SignUpForm(data={'email': entered_email, 'password':pw, 'confirm_password': pw})        
+        self.assertFalse(sign_up_form.is_valid())
+
+    def test_successful_entry(self):
+        """
+        Assure that using a valid email address doesn't raise ValidationError
+        """
+        entered_email = "kp123@testing.com"
+        pw = "passwordtest"        
+        sign_up_form = SignUpForm(data={'email': entered_email, 'password': pw, 'confirm_password': pw})
+        self.assertTrue(sign_up_form.is_valid())

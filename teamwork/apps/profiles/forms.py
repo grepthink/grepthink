@@ -28,7 +28,13 @@ def SignupDomainValidator(value):
             raise ValidationError('Invalid domain. Allowed domains on this network: {0}'.format(','.join(ALLOWED_SIGNUP_DOMAINS)))  # noqa: E501
 
 
-def ForbiddenUsernamesValidator(value):
+def ForbiddenEmailValidator(value):
+    """
+    Splits an email address by @, and determines if the first portion is a forbidden username
+
+    Args:
+        value: (str) The email address to be parsed
+    """
     forbidden_usernames = ['admin', 'accounting', 'settings', 'news', 'about', 'help',
                            'signin', 'signup', 'signout', 'terms', 'privacy',
                            'cookie', 'new', 'login', 'logout', 'administrator',
@@ -47,8 +53,12 @@ def ForbiddenUsernamesValidator(value):
                            'grepthink', 'gt', 'groupthink', 'alphanumeric'
                            'teamwork', 'support']
 
-    if value.lower() in forbidden_usernames:
-        raise ValidationError('This is a reserved word.')
+    split = value.split("@")
+    username = split[0]
+
+    if username:
+        if username.lower() in forbidden_usernames:
+            raise ValidationError('Email address contains a reserved word.')    
 
 
 def InvalidUsernameValidator(value):
@@ -93,6 +103,7 @@ class SignUpForm(forms.ModelForm):
         super(SignUpForm, self).__init__(*args, **kwargs)
         self.fields['email'].validators.append(UniqueEmailValidator)
         self.fields['email'].validators.append(SignupDomainValidator)
+        self.fields['email'].validators.append(ForbiddenEmailValidator)
 
     def clean(self):
         super(SignUpForm, self).clean()
