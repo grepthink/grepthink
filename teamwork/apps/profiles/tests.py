@@ -24,9 +24,17 @@ class DuplicateSignUpTest(TestCase):
         """
         Attempt to authenticate user w/ correct email address and pw and assert user object is returned
         """
+        # Find the next available username
         next_username = find_available_username("test")
+
+        # assert it is test1
         self.assertTrue(next_username == "test1")
 
+        # create that user w/ username test1
         self.user2 = User.objects.create_user('test1', 'test@another.com', 'pw')
+
+        # next iteration should find that the next avail username is test2
         next_username = find_available_username("test")
+        
+        # assert it is test2
         self.assertTrue(next_username == "test2")
