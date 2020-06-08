@@ -74,7 +74,7 @@ def profSignup(request):
         else:
             email = form.cleaned_data.get('email')
             split = email.split("@")
-            username = split[0]            
+            username = find_available_username(split[0])
             password = form.cleaned_data.get('password')
             
             user1 = User.objects.create_user(
