@@ -29,6 +29,12 @@ def SignupDomainValidator(value):
 
 
 def ForbiddenEmailValidator(value):
+    """
+    Splits an email address by @, and determines if the first portion is a forbidden username
+
+    Args:
+        value: (str) The email address to be parsed
+    """
     forbidden_usernames = ['admin', 'accounting', 'settings', 'news', 'about', 'help',
                            'signin', 'signup', 'signout', 'terms', 'privacy',
                            'cookie', 'new', 'login', 'logout', 'administrator',
