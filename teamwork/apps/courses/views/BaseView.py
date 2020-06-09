@@ -37,7 +37,7 @@ def _courses(request, courses):
 @login_required
 def view_courses(request):
     """
-    Public method that takes a request, retrieves all course objects associated with request.user    
+    Public method that takes a request, retrieves all course objects associated with request.user
     """
 
     return _courses(request, get_user_active_courses(request.user))
@@ -88,9 +88,15 @@ def create_course(request):
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course, role="professor")
 
+            # alert the gt team
+            subject = "NEW COURSE CREATED"
+            content = course.creator.username + " has created " + course.name
+            send_email('grepthink@gmail.com', 'grepthink@gmail.com', subject, content)
+
             return redirect(upload_csv, course.slug)
     else:
         form = CreateCourseForm(request.user.id)
+
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
