@@ -91,7 +91,7 @@ def edit_project(request, slug):
             project.weigh_learn = form.cleaned_data.get('weigh_learn') or 0
             project.project_image = form.cleaned_data.get('project_image')
             project.ta_time = form.cleaned_data.get('ta_time')
-            project.ta_location = form.cleaned_data.get('ta_location')            
+            project.ta_location = form.cleaned_data.get('ta_location')
 
             # roles
             if form.cleaned_data.get('project_owner'):
@@ -364,19 +364,20 @@ def leave_project(request, slug):
     """
     Called only diretly from template. EditProjectForm has 'Leave Project' option for yourself.
     """
-    project = get_object_or_404(Project.objects.prefetch_related('members', 'pending_members').select_related('creator', 'scrum_master'), slug=slug)
+    project = get_object_or_404(Project.objects.prefetch_related('members', 'pending_members')
+                                .select_related('creator', 'scrum_master'), slug=slug)
     members = project.members.all()
     f_user = request.user
     to_delete = Membership.objects.filter(user=f_user, project=project)
     remaining = Membership.objects.filter(project=project).exclude(user=f_user)
 
-    if (f_user not in members):
+    if f_user not in members:
         messages.warning(request, "You cannot leave a project you are not a member of!")
         HttpResponseRedirect('project/all')
     # check if they were the only member of the project
     elif not remaining:
         messages.warning(request,
-         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
+                         "As the only member of the project, you must invite another to be the Project Owner, or delete the project via Edit Project!")
     else:
         # check if user that is being removed was Project Owner
         if f_user == project.creator:
