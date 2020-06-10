@@ -9,7 +9,7 @@
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=etc, docs
+ignore=etc, docs, migrations
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
@@ -57,6 +57,10 @@ confidence=
 # --disable=W"
 # TODO: ADD DISABLE RULES
 disable=
+    unused-wildcard-import,
+    wildcard-import,
+    unused-import,
+
 
 [REPORTS]
 
@@ -110,11 +114,14 @@ function-rgx=[a-z_][a-z0-9_]{2,30}$
 # Naming hint for function names
 function-name-hint=[a-z_][a-z0-9_]{2,30}$
 
+# Variable naming style, snake_case is predefined for us
+variable-naming-style=snake_case
+
 # Regular expression matching correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+#variable-rgx=
 
 # Naming hint for variable names
-variable-name-hint=[a-z_][a-z0-9_]{2,30}$
+variable-name-hint=Variables should conform to snake_case
 
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
