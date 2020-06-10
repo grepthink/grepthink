@@ -13,6 +13,41 @@ All templates extend `base.html` which provides some commonly used "blocks".
 The page tilte and description can be set dynamically in *views.py* like so:
 
 ```python
+def index(request):
+    """
+    The main index of Teamwork, reffered to as "Home" in the sidebar. 
+    Accessible to public and logged in users.
+    """
+
+    # Populate with defaults for not logged in user
+    page_name = "Explore"
+    page_description = "Public Projects and Courses"
+    # Set the title of the tab
+    title = "Explore"
+
+    if request.user.is_authenticated():
+        # Set the logged in page name and description
+        page_name = "Timeline"
+        page_description = "Recent Updates from Courses and Projects"
+        title = "Timeline"
+
+    return render(request, 'core/index.html', {'page_name' : page_name,
+         'page_description' : page_description, 'title' : title})
+```
+*Taken from* `core/views.py : index`
+
+
+Any that serves a page should first return page_name, page_description, and title.
+
+See project views for examples of properly formated page info, specifically view_one_project.
+
+**Please note that you may have to remove a hard coded title in the html.**
+
+## Styling Python Code
+
+You should follow the [Google Style Guide](https://google.github.io/styleguide/pyguide.html) for python code.
+
+```python
 def module_level_function(param1, param2=None, *args, **kwargs):
     """This is an example of a module level function.
 
@@ -68,20 +103,9 @@ def module_level_function(param1, param2=None, *args, **kwargs):
 ```
 *Taken from* [example_google.py](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html)
 
-
-Any that serves a page should first return page_name, page_description, and title.
-
-See project views for examples of properly formated page info, specifically view_one_project.
-
-## Styling Python Code
-
-You should follow the [Google Style Guide](https://google.github.io/styleguide/pyguide.html) for python code.
-
 **Variables** should be in ```snake_case```
-**Global Variables** should be UPPERCASE
 
-
-**Please note that you may have to remove a hard coded title in the html.**
+**Global Variables** should be in ```UPPERCASE_SNAKE_CASE```
 
 ## Adding breadcrumbs to an HTML template.
 
