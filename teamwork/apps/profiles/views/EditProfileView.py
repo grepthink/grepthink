@@ -1,5 +1,4 @@
 # Model Imports
-import json
 
 from django.contrib import messages
 # Other
@@ -9,7 +8,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 # Form Imports
-from teamwork.apps.profiles.forms import *
+from teamwork.apps.profiles.forms import ProfileForm, Skills, User
 from teamwork.apps.profiles.models import Profile
 # View Imports
 from teamwork.apps.profiles.views.ProfileView import view_profile

@@ -1,8 +1,6 @@
 # Required headers for sendgrid: (sendgrid, os)
-import codecs
 # csv
 import csv
-import os
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required

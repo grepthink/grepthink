@@ -107,6 +107,8 @@ def module_level_function(param1, param2=None, *args, **kwargs):
 
 **Global Variables** should be in ```UPPERCASE_SNAKE_CASE```
 
+The only exception to this is Django's built in `TestCase` Class, which has functions `setUp` and `tearDown`.
+
 ## Adding breadcrumbs to an HTML template.
 
 Take a look at base.hmtl to see where the breadcrumb block is defined:

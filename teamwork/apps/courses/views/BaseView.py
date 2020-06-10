@@ -1,4 +1,3 @@
-import csv
 
 import xlwt
 from django.contrib import messages
@@ -8,7 +7,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.core.forms import UploadCSVForm
-from teamwork.apps.core.helpers import *
+from teamwork.apps.core.helpers import parse_csv
 from teamwork.apps.courses.forms import CreateCourseForm, JoinCourseForm
 from teamwork.apps.courses.models import (Course, Enrollment,
                                           get_user_active_courses,

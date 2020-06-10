@@ -10,8 +10,6 @@ import datetime
 import random
 import string
 #Other imports
-import uuid
-from datetime import date
 
 import markdown
 # Django modules

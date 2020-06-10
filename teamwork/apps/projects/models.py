@@ -10,8 +10,6 @@ from __future__ import unicode_literals
 import datetime
 import random
 import string
-from datetime import date
-from decimal import Decimal
 from math import floor
 
 # Third-party Modules

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 # Used in forms
 from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
 
-from .models import *
+from .models import Profile
 
 
 def SignupDomainValidator(value):
