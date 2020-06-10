@@ -1,13 +1,12 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-
 import json
 
-from teamwork.apps.projects.models import Project
-from teamwork.apps.courses.models import Course
-from teamwork.apps.projects.models import dayofweek
-from teamwork.apps.projects.forms import *
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
+from teamwork.apps.courses.models import Course
+from teamwork.apps.projects.forms import *
+from teamwork.apps.projects.models import Project, dayofweek
+
 
 @login_required
 def view_meetings(request, slug):

@@ -17,6 +17,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
+
 class Skills(models.Model):
     """
     Skills: A database model (object) for skills.

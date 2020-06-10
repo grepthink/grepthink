@@ -2,20 +2,17 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
+from teamwork.apps.core.helpers import *
 # Models
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
-
 # form
 from teamwork.apps.projects.forms import *
-
+# Helpers
+from teamwork.apps.projects.views.BaseView import *
 # redirect views
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
-# Helpers
-from teamwork.apps.projects.views.BaseView import *
-from teamwork.apps.core.helpers import *
 
 @login_required
 def edit_project(request, slug):

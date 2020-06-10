@@ -1,13 +1,14 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
-# Model Imports
-
+from django.shortcuts import get_object_or_404, redirect, render
 # Form Imports
 from teamwork.apps.profiles.forms import SignUpForm
-
 # View Imports
 from teamwork.apps.profiles.views.EditProfileView import edit_profile
+
+# Model Imports
+
+
 
 def signup(request):
     """

@@ -1,23 +1,20 @@
 # Django
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.core.urlresolvers import reverse
-
 import json
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.core.helpers import *
 # Imported Methods/Classes
 from teamwork.apps.core.models import *
-from teamwork.apps.projects.models import ResourceUpdate, Project
+from teamwork.apps.courses.views.CourseView import view_one_course
 from teamwork.apps.profiles.models import Alert
-from teamwork.apps.projects.forms import UpdateForm, ResourceForm
-
+from teamwork.apps.projects.forms import *
+from teamwork.apps.projects.models import Project, ResourceUpdate
 from teamwork.apps.projects.views.BaseView import get_user_role
 from teamwork.apps.projects.views.MyProjectsView import *
-from teamwork.apps.courses.views.CourseView import view_one_course
 
-from teamwork.apps.projects.forms import *
-from teamwork.apps.core.helpers import *
 
 @login_required
 def view_one_project(request, slug):

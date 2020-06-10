@@ -1,7 +1,8 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from teamwork.apps.projects.models import Project
+from django.shortcuts import render
 from teamwork.apps.projects.forms import *
+from teamwork.apps.projects.models import Project
+
 
 @login_required
 def view_projects(request):

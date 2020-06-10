@@ -1,24 +1,23 @@
+import csv
+
+import xlwt
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from teamwork.apps.courses.models import get_user_active_courses, get_user_disabled_courses
+from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-from django.core.urlresolvers import reverse
-from django.contrib import messages
-
-from teamwork.apps.courses.forms import JoinCourseForm
-from teamwork.apps.courses.models import Course, Enrollment
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.core.forms import UploadCSVForm
+from teamwork.apps.core.helpers import *
+from teamwork.apps.courses.forms import CreateCourseForm, JoinCourseForm
+from teamwork.apps.courses.models import (Course, Enrollment,
+                                          get_user_active_courses,
+                                          get_user_disabled_courses)
+from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.courses.views.EmailCourseView import email_csv
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.projects.models import Project
 
-from teamwork.apps.courses.views.CourseView import view_one_course
-from teamwork.apps.courses.forms import CreateCourseForm, JoinCourseForm
-from teamwork.apps.core.forms import UploadCSVForm
-from teamwork.apps.core.helpers import *
-from teamwork.apps.courses.views.EmailCourseView import email_csv
-
-import csv
-import xlwt
 
 def _courses(request, courses):
     """

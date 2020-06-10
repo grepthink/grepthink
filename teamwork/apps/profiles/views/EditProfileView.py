@@ -1,17 +1,19 @@
 # Model Imports
-from teamwork.apps.profiles.models import Profile
-# Form Imports
-from teamwork.apps.profiles.forms import *
-# View Imports
-from teamwork.apps.profiles.views.ProfileView import view_profile
+import json
+
+from django.contrib import messages
 # Other
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
-from django.contrib import messages
-import json
+from django.shortcuts import get_object_or_404, redirect, render
+# Form Imports
+from teamwork.apps.profiles.forms import *
+from teamwork.apps.profiles.models import Profile
+# View Imports
+from teamwork.apps.profiles.views.ProfileView import view_profile
+
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():

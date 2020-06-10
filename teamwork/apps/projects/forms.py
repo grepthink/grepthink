@@ -6,13 +6,12 @@ Used when creating/editing/deleting projects, adding project updates, and showin
 
 # Django modules
 from django import forms
-from django.db.models import *
+from django.core.exceptions import ValidationError
 from django.core.validators import *
-
+from django.db.models import *
+from django.forms import URLField
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
-from django.core.exceptions import ValidationError
-from django.forms import URLField
 
 from .models import *
 

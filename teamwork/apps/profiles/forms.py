@@ -2,11 +2,11 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
 # Used in forms
 from teamwork.settings import ALLOWED_SIGNUP_DOMAINS
 
 from .models import *
+
 
 def SignupDomainValidator(value):
     """

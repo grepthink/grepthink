@@ -7,29 +7,27 @@ Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 # Built-in modules
 from __future__ import unicode_literals
 
-import random
-from datetime import date
 import datetime
+import random
 import string
-from math import floor
+from datetime import date
 from decimal import Decimal
+from math import floor
 
 # Third-party Modules
 import markdown
 # Django modules
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.validators import URLValidator
 from django.db import models
 # Not used currently
 from django.db.models import Q
 from django.template.defaultfilters import slugify
-
-from django.core.validators import URLValidator
-
 from django.utils import timezone
-
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
+
 
 # Generates add code
 def rand_code(size):

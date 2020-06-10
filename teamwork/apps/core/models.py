@@ -1,18 +1,16 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth import get_user_model
+# Used for Email Address authentication method
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-
-# Used for Email Address authentication method
-from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth import get_user_model
-
 from teamwork.apps.courses.models import *
 from teamwork.apps.projects.models import *
-from teamwork.apps.projects.models import to_bits, from_bits
+
 
 class EmailAddressAuthBackend(ModelBackend):
     """

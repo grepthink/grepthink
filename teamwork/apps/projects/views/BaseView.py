@@ -1,18 +1,17 @@
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
-
-from teamwork.apps.courses.models import *
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from teamwork.apps.core.helpers import send_email
 from teamwork.apps.courses.forms import *
-from teamwork.apps.projects.models import *
+from teamwork.apps.courses.models import *
 from teamwork.apps.projects.forms import *
+from teamwork.apps.projects.models import *
 from teamwork.apps.projects.views.MyProjectsView import *
 
-from teamwork.apps.core.helpers import send_email
 
 @login_required
 def create_project(request):

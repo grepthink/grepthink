@@ -1,19 +1,17 @@
-from django.contrib.auth.decorators import login_required
+import csv
+
+import xlwt
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-
-from teamwork.apps.profiles.models import Profile
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.courses.forms import ShowInterestForm
 from teamwork.apps.courses.models import Course
+from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.profiles.models import Profile
 from teamwork.apps.projects.models import Interest, Project
 
-from teamwork.apps.courses.views.CourseView import view_one_course
-
-from teamwork.apps.courses.forms import ShowInterestForm
-
-import csv
-import xlwt
 
 @login_required
 def show_interest(request, slug):

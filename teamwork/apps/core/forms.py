@@ -2,6 +2,7 @@ from django import forms
 
 from .models import *
 
+
 """
 Upload a csv file form
 

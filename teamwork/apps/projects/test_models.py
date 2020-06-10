@@ -9,7 +9,6 @@ Usuage: Run a part of all test with `python manage.py test`
 from django.contrib.auth.models import UserManager
 # Django Modules
 from django.test import TestCase
-
 from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
 

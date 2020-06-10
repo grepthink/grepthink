@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+
 def about(request):
     page_name = "Frequently Asked Questions"
     page_description = "GrepThink"

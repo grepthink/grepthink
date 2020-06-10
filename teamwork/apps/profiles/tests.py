@@ -1,8 +1,8 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
-
-from teamwork.apps.profiles.views.BaseView import find_available_username
+from django.test import TestCase
 from teamwork.apps.profiles.forms import SignUpForm
+from teamwork.apps.profiles.views.BaseView import find_available_username
+
 
 # Create your tests here.
 class DuplicateSignUpTest(TestCase):
