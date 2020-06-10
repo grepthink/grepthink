@@ -21,31 +21,6 @@ from teamwork.apps.projects.views.EditTsrView import *
 
 from django.test import Client
 
-
-def create_project(creator, scrum_master, ta, course, slug):
-    project = Project.objects.create(creator=creator,
-                                  scrum_master=scrum_master,
-                                  ta=ta,
-                                  slug=slug)
-    course.projects.add(project)
-    course.save()
-    return project
-
-def create_user(username, email, password):
-    # Create a test user as an attribute of ProjectTestCase, for future use
-    #   (we're not testing user or profile methods here)
-    return User.objects.create_user(username, email, password)
-
-def create_course(name, slug, creator):
-    return Course.objects.create(name=name, slug=slug, creator=creator)
-
-def create_course_enrollment(user, course, role):
-    return Enrollment.objects.create(user=user, course=course, role=role)
-
-def create_project_membership(user, project, invite_reason):
-    return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
-
-
 class ViewProjectTestCase(TestCase):
     """
     Tests the view_one_project method in projects/views.py
@@ -172,3 +147,66 @@ class TestEditTsrView(TestCase):
 
     def test_isnt_scrum_master(self):
         self.assertEqual(is_scrum_master(self.requestMember), False)
+
+def create_project(creator, scrum_master, ta, course, slug):
+    """
+    Create a Project helper - Creates a project and adds it to a course
+
+    Args:
+        creator: (User) Course Creator
+        scrum_master: (User) Project's Scrum Master
+        ta: (User) Project's Teacher Assistant
+        course: (Course) The Course which the Project will be added to
+        slug: (str) The project's slug
+    """
+    project = Project.objects.create(creator=creator,
+                                     scrum_master=scrum_master,
+                                     ta=ta,
+                                     slug=slug)
+    course.projects.add(project)
+    course.save()
+    return project
+
+def create_user(username, email, password):
+    """
+    Create a User helper
+
+    Args:
+        username: (str) Username of the new user
+        email: (str) Email of the new user
+        password: (str) Password of the new user
+    """    
+    return User.objects.create_user(username, email, password)
+
+def create_course(name, slug, creator):
+    """
+    Create Course helper
+
+    Args:
+        name: (str) Course Name
+        slug: (str) Course Slug
+        creator: (User) Creator of the course
+    """
+    return Course.objects.create(name=name, slug=slug, creator=creator)
+
+def create_course_enrollment(user, course, role):
+    """
+    Create Course Enrollment helper
+
+    Args:
+        user: (User) User which is being enrolled in the course
+        course: (Course) Course which the user is being enrolled in
+        role: (str) Expects 'professor' or 'student' or 'ta'
+    """
+    return Enrollment.objects.create(user=user, course=course, role=role)
+
+def create_project_membership(user, project, invite_reason):
+    """
+    Create Project Membership helper
+
+    Args:
+        user: (User) User which is being enrolled in the project
+        project: (Project) Project which the user is becoming a member of
+        invite_reason: (str) invite reason ???
+    """
+    return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)

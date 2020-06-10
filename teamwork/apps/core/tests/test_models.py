@@ -1,39 +1,13 @@
-from django.core.urlresolvers import resolve
-from django.test import TestCase, Client
+"""
+Core App Model Tests
+"""
 
 from django.contrib.auth.models import User
-from django.conf import settings
-from django.urls import reverse
-from teamwork.apps.core.views import *
+from django.test import TestCase
 from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
-from teamwork.apps.core.helpers import *
-
-from teamwork.apps.profiles.models import *
-from teamwork.apps.projects.models import *
-from teamwork.apps.courses.models import *
-
-def create_project(creator, scrum_master, ta, course, slug):
-    project = Project.objects.create(creator=creator,
-                                  scrum_master=scrum_master,
-                                  ta=ta,
-                                  slug=slug)
-    course.projects.add(project)
-    course.save()
-    return project
-
-def create_user(username, email, password):
-    # Create a test user as an attribute of ProjectTestCase, for future use
-    #   (we're not testing user or profile methods here)
-    return User.objects.create_user(username, email, password)
-
-def create_course(name, slug, creator):
-    return Course.objects.create(name=name, slug=slug, creator=creator)
-
-def create_course_enrollment(user, course, role):
-    return Enrollment.objects.create(user=user, course=course, role=role)
-
-def create_project_membership(user, project, invite_reason):
-    return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
+from teamwork.apps.courses.models import Course, Enrollment
+from teamwork.apps.projects.models import Interest, Project
+from teamwork.apps.profiles.models import Skills
 
 class AuthenticateWithEmailTest(TestCase):
     """
@@ -51,14 +25,14 @@ class AuthenticateWithEmailTest(TestCase):
         """
         del self.user1
 
-    def testAuthenticateSuccess(self):
+    def test_authenticate_success(self):
         """
         Attempt to authenticate user w/ correct email address and pw and assert user object is returned
         """
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='groupthink')
-        self.assertTrue(type(user) is User)
+        self.assertTrue(isinstance(user, User))
 
-    def testAuthenticateFail(self):
+    def test_authenticate_fail(self):
         """
         Attempt to authenticate user w/ incorrect password and assert user object is None
         """
@@ -136,7 +110,7 @@ class FindProjectMatchesTest(TestCase):
         del self.interest1
         del self.interest2
 
-    def testMatchWithoutScheduleBonus(self):
+    def test_match_without_schedule_bonus(self):
         """
         Runs po_match, with User2 showing interest 5, and User3 showing interest 4. Users schedules are NOT set.
         """
@@ -151,7 +125,7 @@ class FindProjectMatchesTest(TestCase):
         # Assert User2's score is greater than User3's
         self.assertTrue(matchesList[0][1][0] > matchesList[1][1][0])
 
-    def testMatchWithProjectDesiringSkills(self):
+    def test_match_with_project_desiring_skills(self):
         """
         Runs po_match, with the project desiring the skill User3 knows. Users schedules are NOT set.
         """
@@ -166,16 +140,17 @@ class FindProjectMatchesTest(TestCase):
         # Remove the project desired_skill we added
         self.project.desired_skills.remove(self.skill2)
 
-
-    # TODO:
-    def testMatchWithScheduleBonus(self):
+    
+    def test_match_with_schedule_bonus(self):
         """
         Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
+
+        TODO
         """
 
-# TODO: sort
 class SortMatchListTest(TestCase):
     """
+    TODO: Create this test
     """
     def setUp(self):
         """
@@ -199,9 +174,9 @@ class SortMatchListTest(TestCase):
 
         del self.course
 
-# TODO: auto_ros tests
 class AutoSetRosterTest(TestCase):
     """
+    TODO: Create this test
     """
     def setUp(self):
         """
@@ -225,17 +200,15 @@ class AutoSetRosterTest(TestCase):
 
         del self.course
 
-    def testInitialTesting(self):
-        auto = auto_ros(self.course)
+    def test_auto_ros(self):
+      """ TODO """
+      auto = auto_ros(self.course)
 
-# TODO: by_schedule tests
 class GetAvailabilityScoreTest(TestCase):
     """
-        Summary: Takes in a user and a project, compares users availability
-            to the avalibility of other users in a specific project.
-        Params: User - user object
-                Project - Project object
-        Returns: An integer that is floor(# meeting hours/ # pos meetings)
+        Tests models.by_schedule()
+
+        TODO: Create this test
     """
     def setUp(self):
         """
@@ -246,90 +219,3 @@ class GetAvailabilityScoreTest(TestCase):
         """
         Delete any variables that were created for testing
         """
-
-# TODO: adjust send_email to be more testable
-class EmailTests(TestCase):
-    def setUp(self):
-        self.user1 = create_user("test1", "test1@test.com", "test1")
-        self.recipient1 = create_user("recipient1", "recipient1@test.com", "recipient1")
-        self.recipient2 = create_user("recipient2", "recipient2@test.com", "recipient2")
-
-    def tearDown(self):
-        del self.user1
-        del self.recipient1
-        del self.recipient2
-
-    # TODO: adjust send_email to be more testable
-    def test_norecipients_found(self):
-        empty_list = []
-        response = send_email(empty_list, "gtemail@test.com", "test_norecipients_found", "email content")
-        self.assertTrue(response.content.decode("utf-8") == 'No recipients were found.')
-
-    def test_single_recipient(self):
-        response = send_email(self.recipient1, "gtemail@test.com", "test_single_recipient", "email content")
-        self.assertTrue(response.content.decode("utf-8") == 'Email Sent!')
-
-    def test_successful_recipientlist(self):
-        recipient_list = []
-        recipient_list.append(self.recipient1)
-        recipient_list.append(self.recipient2)
-        response = send_email(recipient_list, "gtemail@test.com", "test_single_recipient", "email content")
-        self.assertTrue(response.content.decode("utf-8") == 'Email Sent!')
-
-    def test_successful_emaillist(self):
-        recipient_list = []
-        recipient_list.append(self.recipient1.email)
-        recipient_list.append(self.recipient2.email)
-        response = send_email(recipient_list, "gtemail@test.com", "test_single_recipient", "email content")
-        self.assertTrue(response.content.decode("utf-8") == 'Email Sent!')
-
-    def test_bad_request(self):
-        response = send_email(724, "gtemail@test.com", "test_bad_request", "email content")
-        self.assertTrue(response.content.decode("utf-8") == 'Bad Request')
-
-# TODO: parse csv tests
-class ParseCsvTests(TestCase):
-
-    def setUp(self):
-        self.csv_path = settings.PROJECT_DIR
-        pass
-
-    def tearDown(self):
-        pass
-
-# TODO: search tests
-class SearchTests(TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-class CoreViewsTests(TestCase):
-    def setUp(self):
-        self.user1 = create_user("test1", "test1@test.com", "test1")
-        self.client = Client()
-
-    def tearDown(self):
-        del self.client
-
-    def test_view_about(self):
-        response = self.client.get(reverse('about'))
-        self.assertTrue(response.status_code == 200)
-
-    def test_view_contact(self):
-        response = self.client.get(reverse('contact'))
-        self.assertTrue(response.status_code == 200)
-
-    def test_view_landing(self):
-        response = self.client.post('/')
-        self.assertTrue(response.status_code == 200)
-
-    def test_view_login_unauth(self):
-        response = self.client.post('/login')
-        self.assertTrue(response.status_code == 200)
-
-    def test_view_login_auth(self):
-        self.client.login(username='test1', password='test1')
-        response = self.client.post('/login')        
-        self.assertTrue(response.status_code == 200)

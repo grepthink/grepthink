@@ -165,7 +165,7 @@ urlpatterns = [
 
         # ADMIN AND AUTH
         url(r'^admin/', admin.site.urls),
-        url(r'^login', auth_views.login, {'template_name': 'core/login.html'}, name='login'),
+        url(r'^login', LoginView.login, name='login'),
         url(r'^logout', auth_views.logout, {'next_page': 'login'}, name='logout'),
 
         # PROFILE
