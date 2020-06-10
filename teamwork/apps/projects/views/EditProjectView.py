@@ -22,6 +22,9 @@ def edit_project(request, slug):
     """
     Public method that serves the form allowing a user to edit a project
     Based off courses/views.py/edit_course
+
+    Args:
+        slug: (str) Project slug for the project which we are editing
     """
     project = get_object_or_404(Project.objects.prefetch_related('members', 'course').select_related('creator'), slug=slug)
     course = project.course.first()    
@@ -118,7 +121,12 @@ def edit_project(request, slug):
 
 def add_member_to_project(request, project):
     """
-    Add member(s) to a project via request.POST.getlist('members')
+    Add member helper. Handles request to add members to the project. 
+    If the course creator is adding users, just adds the member to the project.
+    Otherwise, adds the member to the pending_invitations list and notifies the user via Alert and Email.
+
+    Args:
+        project: (Project) The project which users will be added to
     """
     # Get the course that this project is in
     this_course = project.course.first()
@@ -180,13 +188,14 @@ def add_member_to_project(request, project):
     elif prof_added:
         messages.add_message(request, messages.SUCCESS, "Greppers have been added to the project.")
     else:
-        messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")
-
-    # return redirect(view_one_project, project.slug)
+        messages.add_message(request, messages.WARNING, "Failed to invite member(s) to project. Make sure they are enrolled in this course.")    
 
 def remove_user_from_project(request, project):
     """
-    Remove a specific user specified by request.POST.get('remove_user'). Fails to remove user if they are the only member
+    Remove a specific user specified by request.POST.get('remove_user'). Fails to remove user if they are the only member.
+
+    Args:
+        project: (Project) The project which the user is being removed from
     """
     f_username = request.POST.get('remove_user')
     f_user = User.objects.get(username=f_username)
@@ -210,13 +219,14 @@ def remove_user_from_project(request, project):
 
         # delete membership
         for mem_obj in to_delete:
-            mem_obj.delete()
-
-    # return redirect(view_one_project, project.slug)
+            mem_obj.delete()    
 
 def make_project_owner(request, project):
     """
     Promote specific user specified at request.POST.get('promote_user'). Can only promote if request.user is the current project.creator
+
+    Args:
+        project: (Project) The project which the user is becoming the creator
     """
     f_username = request.POST.get('promote_user')
     f_user = User.objects.get(username=f_username)
@@ -226,25 +236,27 @@ def make_project_owner(request, project):
         project.save()
         messages.info(request, "{0} is now the Project Owner".format(f_username))
     else:
-        messages.warning(request, 'Only the current Project Owner can give away Project Ownership.')
-
-    # return redirect(edit_project, slug)
+        messages.warning(request, 'Only the current Project Owner can give away Project Ownership.')    
 
 def make_scrum(request, project):
     """
     Promote user to specified at request.POST.get('make_scrum') to scrum master.
+
+    Args:
+        project: (Project) The project which the user is becoming the scrum master
     """
     f_username = request.POST.get('make_scrum')
     f_user = User.objects.get(username=f_username)
     project.scrum_master = f_user
     project.save()
-    messages.info(request, "{0} is now the Scrum Master".format(f_username))
-    
-    # return redirect(edit_project, slug)
+    messages.info(request, "{0} is now the Scrum Master".format(f_username))    
 
 def add_project_desired_skills(request, project):
     """
-    Add a list of desired skills via request.POST.getlist('desired_skills') to a project
+    Add a list of desired skills via request.POST.getlist('desired_skills') to a project.
+
+    Args:
+        project: (Project) The project which desired_skills are being added to
     """
     skills_list = request.POST.getlist('desired_skills')    
 
@@ -261,13 +273,14 @@ def add_project_desired_skills(request, project):
             desired_skill.save()
         # Add the skill to the project (as a desired_skill)
         project.desired_skills.add(desired_skill)
-        project.save()
-    
-    # return redirect(view_one_project, project.slug)
+        project.save()    
 
 def remove_desired_skills(request, project):
     """
     Remove specific desired skill specified at request.POST.get('remove_desired_skill')
+
+    Args:
+        project: (Project) The project which the desired skill is being removed from
     """
     skillname = request.POST.get('remove_desired_skill')
     to_delete = Skills.objects.get(skill=skillname)
@@ -279,6 +292,10 @@ def try_add_member(request, slug, uname):
         - They aren't a member already
         - They are a member of the course
         - The project is still accepting members
+
+    Args:
+        slug: (str) Slug/Unique id of Project
+        uname: (str) Username of the member being added
     """
     project = get_object_or_404(Project.objects.prefetch_related('course', 'members', 'pending_members'), slug=slug)
     course = project.course.first()
@@ -295,9 +312,11 @@ def try_add_member(request, slug, uname):
 
 def add_member(request, slug, uname):
     """
-    Add a member to a project.
-    - Project grabbed using slug
-    - User grabbed using username
+    Add a member to a project.    
+
+    Args:
+        slug: (str) Slug/Unique id of Project
+        uname: (str) Username of the member being added
     """
     project = get_object_or_404(Project, slug=slug)
     mem_to_add = User.objects.get(username=uname)
@@ -319,6 +338,10 @@ def adjust_pendinglist(request, project, mem_to_add):
     """
     Removes mem_to_add from the projects pending_members list if they are on there.
     Creates an alert to notify the user that they were added to a project.
+
+    Args:
+        project: (Project) The project which we are adjusting the pendinglist.
+        mem_to_add: (User) User which is being added to the project
     """
     # remove member from pending list if he/she was on it
     pending_members = project.pending_members.all()
@@ -341,10 +364,17 @@ def adjust_pendinglist(request, project, mem_to_add):
 def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
     """
     Determines whether a user can be invited to join a project.
-    Preqrequisites:
-    - Must be enrolled in the course that the project is in.
-    - Must not already be a member of the project.
-    - Project must be accepting members.
+    Returns True if:
+    - User is enrolled in the course that the project is in.
+    - User is not already a member of the project.
+    - Project is accepting members.    
+
+    Args:
+        project: (Project) The project which we are adjusting the pendinglist.
+        course: (Course) The course which the project belongs to.        
+        mem_to_add: (User) User which is being added to the project
+        mem_courses: (List<Course>) List of the user's courses
+        curr_members: (List<User>) Project's current members. TODO: can get this from project param
     """
     if not course in mem_courses:
         messages.warning(request, "User failed to be added to the project. " + mem_to_add.username + " is not enrolled in the course")
@@ -363,6 +393,9 @@ def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_me
 def leave_project(request, slug):
     """
     Called only diretly from template. EditProjectForm has 'Leave Project' option for yourself.
+
+    Args:
+        slug: (str) Project slug
     """
     project = get_object_or_404(Project.objects.prefetch_related('members', 'pending_members')
                                 .select_related('creator', 'scrum_master'), slug=slug)
@@ -398,6 +431,9 @@ def leave_project(request, slug):
 def add_desired_skills(request, slug):
     """
     Builds json response of skills
+
+    TODO: Remove unused slug param
+    TODO: this function is the same as create_desired_skills(request) seen below, why?
     """
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -407,7 +443,7 @@ def add_desired_skills(request, slug):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
@@ -417,6 +453,8 @@ def add_desired_skills(request, slug):
 def create_desired_skills(request):
     """
     Builds json response of skills
+
+    TODO: this function is the same as add_desired_skills(request) seen above, why?
     """
     if request.method == 'GET' and request.is_ajax():
         # JSON prefers dictionaries over lists.
@@ -426,7 +464,7 @@ def create_desired_skills(request):
         q = request.GET.get('q')
         if q is not None:
             results = Skills.objects.filter(
-                Q( skill__contains = q ) ).order_by( 'skill' )
+                Q(skill__contains=q)).order_by('skill')
         for s in results:
             data['items'].append({'id': s.skill, 'text': s.skill})
         return JsonResponse(data)
