@@ -9,9 +9,7 @@ from .models import *
 
 
 def SignupDomainValidator(value):
-    """
-    public method that takes a value
-    """
+    """public method that takes a value."""
 
     # Block any email containing grepthink
     if 'grepthink' in value:
@@ -30,7 +28,7 @@ def SignupDomainValidator(value):
 
 def ForbiddenEmailValidator(value):
     """
-    Splits an email address by @, and determines if the first portion is a forbidden username
+    Splits an email address by @, and determines if the first portion is a forbidden username.
 
     Args:
         value: (str) The email address to be parsed

@@ -22,8 +22,9 @@ from teamwork.apps.projects.models import dayofweek
 def edit_schedule(request, username):
     """
     Public method that takes a request and a username.
-    Gets a list of 'events' from a calendar and stores the event as an array of tuples
-    Redners profiles/edit_calendar.html
+
+    Gets a list of 'events' from a calendar and stores the event as an array of tuples Redners
+    profiles/edit_calendar.html
     """
 
     user = get_object_or_404(User, username=username)

@@ -15,10 +15,8 @@ from teamwork.apps.projects.models import Interest, Project
 
 @login_required
 def show_interest(request, slug):
-    """
-    public method that takes in a slug and generates a form for the user
-    to show interest in all projects in a given course
-    """
+    """public method that takes in a slug and generates a form for the user to show interest in all
+    projects in a given course."""
     profile = Profile.objects.prefetch_related('user__enrollment').filter(user=request.user).first()
     # current course
     cur_course = get_object_or_404(Course.objects.prefetch_related('projects', 'creator'), slug=slug)
@@ -127,9 +125,7 @@ def show_interest(request, slug):
 
 @login_required
 def export_interest(request, slug):
-    """
-    Exports the interest for each project to a csv
-    """
+    """Exports the interest for each project to a csv."""
     page_name = "Export Course Interest"
     page_description = "Save the current course's projects and associated Interests in an excel spreadsheet"
     title = "Export Course"

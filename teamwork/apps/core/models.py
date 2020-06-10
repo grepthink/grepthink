@@ -14,10 +14,10 @@ from teamwork.apps.projects.models import *
 
 class EmailAddressAuthBackend(ModelBackend):
     """
-    Authentication backend used to determine if a users email & password are valid.
-    Returns:
-        - None if Email doesn't exist or password doesn't match Email
-        - UserModel object if email and password match
+    Authentication backend used to determine if a users email & password are valid. Returns:
+
+    - None if Email doesn't exist or password doesn't match Email
+    - UserModel object if email and password match
     """
     def authenticate(self, username=None, password=None, **kwargs):
         UserModel = get_user_model()

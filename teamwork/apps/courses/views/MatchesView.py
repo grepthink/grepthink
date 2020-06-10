@@ -10,10 +10,8 @@ from teamwork.apps.projects.models import Membership, Project
 
 @login_required
 def view_matches(request):
-    """
-    Generic view for serving a list of projects and potential teammate matches for
-        each project.
-    """
+    """Generic view for serving a list of projects and potential teammate matches for each
+    project."""
     project_match_list = []
     course_set = []
 
@@ -46,16 +44,16 @@ def view_matches(request):
 @login_required
 def matchstats(request, slug):
     """
-        Displays why a user was matched with said project.
-        Returns two dicts:
-            -- skill_match:
-                stores a user's skills that are similar with said projects'
-                desired skills with their username as the key
-            -- interest_match:
-                Stores a users interest value and their reasoning for said project
-                as a tuple with their username as the key
+    Displays why a user was matched with said project. Returns two dicts:
 
-        TODO: could combine the two dicts if wanted.
+        -- skill_match:
+            stores a user's skills that are similar with said projects'
+            desired skills with their username as the key
+        -- interest_match:
+            Stores a users interest value and their reasoning for said project
+            as a tuple with their username as the key
+
+    TODO: could combine the two dicts if wanted.
     """
 
     # Page Information
@@ -106,10 +104,8 @@ def matchstats(request, slug):
 
 @login_required
 def auto_gen(request, slug):
-    """
-    Generic view for serving a list of projects and potential teammate matches for
-        each project.
-    """
+    """Generic view for serving a list of projects and potential teammate matches for each
+    project."""
     page_name = "Potential Roster"
     page_description = "Auto Generate Groups"
     title = "Auto Generate Groups"
@@ -138,9 +134,7 @@ def auto_gen(request, slug):
 
 
 def assign_auto(request, slug):
-    """
-    Assign the students to auto-gen teams
-    """
+    """Assign the students to auto-gen teams."""
     course = get_object_or_404(Course, slug=slug)
     auto = auto_ros(course)
 

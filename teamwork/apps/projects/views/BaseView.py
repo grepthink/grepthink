@@ -15,9 +15,7 @@ from teamwork.apps.projects.views.MyProjectsView import *
 
 @login_required
 def create_project(request):
-    """
-    Public method that creates a form and renders the request to create_project.html
-    """
+    """Public method that creates a form and renders the request to create_project.html."""
     # Populate page info with new project headers/title
     page_name = "Create Project"
     page_description = "Post a new project"
@@ -180,9 +178,7 @@ def email_project(request, slug):
     })
 
 def get_user_role(user, course):
-    """
-    returns the role of the user in the course
-    """
+    """returns the role of the user in the course."""
     if not user.profile.isGT:
         userEnrollment = Enrollment.objects.filter(user=user, course=course).first()
         if userEnrollment is None:

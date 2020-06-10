@@ -12,7 +12,7 @@ from teamwork.apps.projects.views.ProjectView import view_one_project
 @login_required
 def tsr_edit(request, slug, asg_slug):
     """
-    Tsr Edit View
+    Tsr Edit View.
 
     - Queries for Tsr belonging to the Assignment(asg_slug) by the Evaluator(request.user)
     - Edits those Tsr's if the due date has not passed
@@ -94,9 +94,7 @@ def tsr_edit(request, slug, asg_slug):
     })
 
 def is_scrum_master(request):
-    """
-    Simple method that checks the request for 'scrum_master'
-    """
+    """Simple method that checks the request for 'scrum_master'."""
     scrum_master = False
     if "scrum_master" in str(request):
         scrum_master = True

@@ -14,9 +14,10 @@ from teamwork.apps.projects.models import Project
 @login_required
 def view_profile(request, username):
     """
-    Public method that takes a request and a username.  Gets an entered 'skill' from the form
-    and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
+    Public method that takes a request and a username.
 
+    Gets an entered 'skill' from the form and stores it in lowercase if it doesn't exist already.
+    Renders profiles/profile.html.
     """
 
     page_user = get_object_or_404(User.objects.prefetch_related('profile'), username=username)

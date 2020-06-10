@@ -36,43 +36,30 @@ def create_project_membership(user, project, invite_reason):
     return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
 
 class AuthenticateWithEmailTest(TestCase):
-    """
-    Creates a user and asserts return values are correct from authenticate method
-    """
+    """Creates a user and asserts return values are correct from authenticate method."""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         self.user1 = User.objects.create_user('user_test1', 'test1@test.com', 'groupthink')
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
 
     def testAuthenticateSuccess(self):
-        """
-        Attempt to authenticate user w/ correct email address and pw and assert user object is returned
-        """
+        """Attempt to authenticate user w/ correct email address and pw and assert user object is
+        returned."""
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='groupthink')
         self.assertTrue(type(user) is User)
 
     def testAuthenticateFail(self):
-        """
-        Attempt to authenticate user w/ incorrect password and assert user object is None
-        """
+        """Attempt to authenticate user w/ incorrect password and assert user object is None."""
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='incorrect')
         self.assertIsNone(user)
 
 class FindProjectMatchesTest(TestCase):
-    """
-    Tests for the po_match method
-    """
+    """Tests for the po_match method."""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -114,9 +101,7 @@ class FindProjectMatchesTest(TestCase):
         self.project.interest.add(self.interest2)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         # delete users
         del self.user1
         del self.user2
@@ -138,7 +123,9 @@ class FindProjectMatchesTest(TestCase):
 
     def testMatchWithoutScheduleBonus(self):
         """
-        Runs po_match, with User2 showing interest 5, and User3 showing interest 4. Users schedules are NOT set.
+        Runs po_match, with User2 showing interest 5, and User3 showing interest 4.
+
+        Users schedules are NOT set.
         """
         matchesList = po_match(self.project)
 
@@ -153,7 +140,9 @@ class FindProjectMatchesTest(TestCase):
 
     def testMatchWithProjectDesiringSkills(self):
         """
-        Runs po_match, with the project desiring the skill User3 knows. Users schedules are NOT set.
+        Runs po_match, with the project desiring the skill User3 knows.
+
+        Users schedules are NOT set.
         """
         # Add user3's skill as a desired skill
         self.project.desired_skills.add(self.skill2)
@@ -169,18 +158,14 @@ class FindProjectMatchesTest(TestCase):
 
     # TODO:
     def testMatchWithScheduleBonus(self):
-        """
-        Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
-        """
+        """Runs po_match, with user2's scheduling fitting into the existing member's schedule, and
+        user3's not ligning up."""
 
 # TODO: sort
 class SortMatchListTest(TestCase):
-    """
-    """
+    """"""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -190,9 +175,7 @@ class SortMatchListTest(TestCase):
         self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
         del self.user2
         del self.user3
@@ -201,12 +184,9 @@ class SortMatchListTest(TestCase):
 
 # TODO: auto_ros tests
 class AutoSetRosterTest(TestCase):
-    """
-    """
+    """"""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -216,9 +196,7 @@ class AutoSetRosterTest(TestCase):
         self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
         del self.user2
         del self.user3
@@ -238,14 +216,10 @@ class GetAvailabilityScoreTest(TestCase):
         Returns: An integer that is floor(# meeting hours/ # pos meetings)
     """
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
 
 # TODO: adjust send_email to be more testable
 class EmailTests(TestCase):

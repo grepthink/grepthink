@@ -82,7 +82,7 @@ def send_email(recipients, gt_email, subject, content):
 
 def parse_csv(csv_file):
     """
-    parse csv file
+    parse csv file.
 
     Expects csv file to contain headers containing: first name, last name, email
 

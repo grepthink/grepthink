@@ -44,7 +44,7 @@ def create_project_membership(user, project, invite_reason):
 
 class ViewProjectTestCase(TestCase):
     """
-    Tests the view_one_project method in projects/views.py
+    Tests the view_one_project method in projects/views.py.
 
     References:
     https://docs.djangoproject.com/en/1.11/topics/testing/overview/
@@ -64,8 +64,8 @@ class ViewProjectTestCase(TestCase):
     @override_settings(STATICFILES_STORAGE = None)
     def test_view_one_project(self):
         """
-        Confirms that view_one_project sucesfully returns a 200 response when given the
-        slug of an existing project.
+        Confirms that view_one_project sucesfully returns a 200 response when given the slug of an
+        existing project.
 
         Decorator override_settings to avoid errors with whitenoise when using client().
         """

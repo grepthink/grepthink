@@ -11,9 +11,7 @@ from teamwork.apps.projects.views.ProjectView import view_one_project
 
 @login_required
 def create_member_tsr(request, slug, asg_slug):
-    """
-    Method fires when the Scrum Master begins their Tsr Assignment
-    """
+    """Method fires when the Scrum Master begins their Tsr Assignment."""
     page_name = "Member TSR"
 
     title = "Member TSR"
@@ -60,9 +58,7 @@ def create_member_tsr(request, slug, asg_slug):
 
 @login_required
 def create_scrum_master_tsr(request, slug, asg_slug):
-    """
-    Method fires when the Scrum Master begins their Tsr Assignment
-    """
+    """Method fires when the Scrum Master begins their Tsr Assignment."""
     page_name = "Scrum Master TSR"
 
     title = "Scrum Master TSR"
@@ -99,9 +95,7 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     })
 
 def create_tsr_helper(request, members, email_list, assignment, project, scrum_master, late):
-    """
-    Creates a Tsr object, and fills its data with the form values
-    """
+    """Creates a Tsr object, and fills its data with the form values."""
     # For each email/member, create a Tsr
     for email in email_list:
         # grab form
@@ -130,10 +124,7 @@ def create_tsr_helper(request, members, email_list, assignment, project, scrum_m
 
 @login_required
 def view_tsr(request, slug):
-    """
-    public method that takes in a slug and generates a view for
-    submitted TSRs
-    """
+    """public method that takes in a slug and generates a view for submitted TSRs."""
     page_name = "View TSR"
     page_description = "Submissions"
     title = "View TSR"

@@ -11,9 +11,7 @@ from teamwork.apps.profiles.views.EditProfileView import edit_profile
 
 
 def signup(request):
-    """
-    public method that generates a form a user uses to sign up for an account (push test)
-    """
+    """public method that generates a form a user uses to sign up for an account (push test)"""
 
     page_name = "Signup"
     page_description = "Sign up for Grepthink!"
@@ -57,9 +55,7 @@ def signup(request):
                       'page_description': page_description, 'title': title})
 
 def profSignup(request):
-    """
-    public method that generates a form a user uses to sign up for an account (push test)
-    """
+    """public method that generates a form a user uses to sign up for an account (push test)"""
 
     page_name = "Signup"
     page_description = "Sign up for Grepthink!"
@@ -133,7 +129,7 @@ def find_available_username(username):
 
 def parse_username_num(user, username_to_parse):
     """
-    Parses out the number at the end of a user's username given the base username w/o the number
+    Parses out the number at the end of a user's username given the base username w/o the number.
 
     Args:
         user (User): The User object which we are parsing the number from.

@@ -20,9 +20,7 @@ from teamwork.apps.projects.models import Project
 
 
 def _courses(request, courses):
-    """
-    Private method that will be used for paginator once I figure out how to get it working.
-    """
+    """Private method that will be used for paginator once I figure out how to get it working."""
     page = request.GET.get('page')
     page_name = "Courses"
     page_description = "Course List"
@@ -35,17 +33,14 @@ def _courses(request, courses):
 
 @login_required
 def view_courses(request):
-    """
-    Public method that takes a request, retrieves all course objects associated with request.user    
-    """
+    """Public method that takes a request, retrieves all course objects associated with
+    request.user."""
 
     return _courses(request, get_user_active_courses(request.user))
 
 @login_required
 def create_course(request):
-    """
-    Public method that creates a form and renders the request to create_course.html
-    """
+    """Public method that creates a form and renders the request to create_course.html."""
 
     page_name = "Create Course"
     page_description = "Create a Course!"
@@ -94,10 +89,8 @@ def create_course(request):
 
 @login_required
 def join_course(request):
-    """
-    Public method that takes a request, renders form that enables a user
-    to add a course, renders in join_course.html
-    """
+    """Public method that takes a request, renders form that enables a user to add a course, renders
+    in join_course.html."""
 
     page_name = "Join Course"
     page_description = "Join a Course!"
@@ -251,10 +244,8 @@ def export_xls(request, slug):
     return response
 
 def projects_in_course(slug):
-    """
-    Public method that takes a coursename, retreives the course object, returns
-    a list of project objects
-    """
+    """Public method that takes a coursename, retreives the course object, returns a list of project
+    objects."""
     # Gets current course
     cur_course = Course.objects.get(slug=slug)
 

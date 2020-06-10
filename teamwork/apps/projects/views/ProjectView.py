@@ -19,8 +19,8 @@ from teamwork.apps.projects.views.MyProjectsView import *
 @login_required
 def view_one_project(request, slug):
     """
-    Public method that takes a request and a slug, retrieves the Project object
-    from the model with given project slug.  Renders projects/view_project.html
+    Public method that takes a request and a slug, retrieves the Project object from the model with
+    given project slug.  Renders projects/view_project.html.
 
     Passing status check unit test in test_views.py.
     """
@@ -170,9 +170,7 @@ def request_join_project(request, slug):
     return view_one_project(request, slug)
 
 def reject_member(request, slug, uname):
-    """
-    Reject Membership
-    """
+    """Reject Membership."""
     project = get_object_or_404(Project.objects.prefetch_related('pending_members'), slug=slug)
     mem_to_add = User.objects.get(username=uname)
 
@@ -206,9 +204,7 @@ def reject_member(request, slug, uname):
 
 @login_required
 def post_update(request, slug):
-    """
-    Post an update for a given project
-    """
+    """Post an update for a given project."""
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
     course = project.course.first()
 
@@ -241,9 +237,7 @@ def post_update(request, slug):
 
 @login_required
 def update_project_update(request, slug, id):
-    """
-    Edit an update for a given project
-    """
+    """Edit an update for a given project."""
     project = get_object_or_404(Project, slug=slug)
     update = get_object_or_404(ProjectUpdate, id=id)
     course = project.course.first()
@@ -277,9 +271,7 @@ def update_project_update(request, slug, id):
 
 @login_required
 def delete_project_update(request, slug, id):
-    """
-    Delete an update for a given project
-    """
+    """Delete an update for a given project."""
     project = get_object_or_404(Project, slug=slug)
     update = get_object_or_404(ProjectUpdate, id=id)
 
@@ -291,9 +283,7 @@ def delete_project_update(request, slug, id):
 
 @login_required
 def resource_update(request, slug):
-    """
-    Post a Resource to the project given the slug
-    """
+    """Post a Resource to the project given the slug."""
     project = get_object_or_404(Project.objects.select_related('creator').prefetch_related('members'), slug=slug)
     course = project.course.first()
 
@@ -326,9 +316,7 @@ def resource_update(request, slug):
 
 @login_required
 def update_resource_update(request, slug, id):
-    """
-    Edit a resource for a given project
-    """
+    """Edit a resource for a given project."""
     project = get_object_or_404(Project, slug=slug)
     resource = get_object_or_404(ResourceUpdate, id=id)
     course = project.course.first()
@@ -361,9 +349,7 @@ def update_resource_update(request, slug, id):
 
 @login_required
 def delete_resource_update(request, slug, id):
-    """
-    Delete an resource for a given project
-    """
+    """Delete an resource for a given project."""
     project = get_object_or_404(Project, slug=slug)
     resource = get_object_or_404(ResourceUpdate, id=id)
 

@@ -11,8 +11,8 @@ from teamwork.apps.projects.models import Project, dayofweek
 @login_required
 def view_meetings(request, slug):
     """
-    Public method that takes a request and a slug, retrieves the Project object
-    from the model with given project slug.  Renders projects/view_project.html
+    Public method that takes a request and a slug, retrieves the Project object from the model with
+    given project slug.  Renders projects/view_project.html.
 
     Passing status check unit test in test_views.py.
     """
@@ -41,9 +41,7 @@ def view_meetings(request, slug):
         'project': project, 'course' : course, 'json_events': meetings})
 
 def find_meeting(slug):
-    """
-    Find and store possible meeting time for a given project
-    """
+    """Find and store possible meeting time for a given project."""
     # Gets current project
     project = get_object_or_404(Project, slug=slug)
     # course = Course.objects.get(projects=project)

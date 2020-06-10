@@ -45,9 +45,10 @@ class Skills(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
+
+        Bassically a way to check if the Project object exists in the database. Will be helpful
+        later. self.pk is the primary key of the Project object in the database! I don't know what
+        super does...
         """
         super(Skills, self).save(*args, **kwargs)
 
@@ -107,9 +108,10 @@ class Events(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
-        I don't know what super does...
+
+        Bassically a way to check if the Project object exists in the database. Will be helpful
+        later. self.pk is the primary key of the Project object in the database! I don't know what
+        super does...
         """
         super(Events, self).save(*args, **kwargs)
 

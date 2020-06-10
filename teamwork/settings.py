@@ -1,5 +1,7 @@
 """
-Django settings for teamwork project on Heroku. For more info, see:
+Django settings for teamwork project on Heroku.
+
+For more info, see:
 https://github.com/heroku/heroku-django-template
 For more information on this file, see
 https://docs.djangoproject.com/en/1.9/topics/settings/

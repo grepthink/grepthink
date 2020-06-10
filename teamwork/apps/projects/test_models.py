@@ -15,14 +15,12 @@ from teamwork.apps.projects.models import *
 
 class ProjectTestCase(TestCase):
     """
-    Tests various methods included in projects/models.py
+    Tests various methods included in projects/models.py.
 
     Adapted from: https://docs.djangoproject.com/en/1.11/topics/testing/overview/
     """
     def setUp(self):
-        """
-        Initialize project, user, and membership objects for use in test methods.
-        """
+        """Initialize project, user, and membership objects for use in test methods."""
         # Create a test user as an attribute of ProjectTestCase, for future use
         #   (we're not testing user or profile methods here)
         self.user1 = User.objects.create_user(
@@ -52,14 +50,14 @@ class ProjectTestCase(TestCase):
         Membership.objects.create(user=self.user1, project=project1, invite_reason='')
 
     def test_get_my_projects(self):
-        """All projects associated with a user are returned"""
+        """All projects associated with a user are returned."""
         my_projects = Project.get_my_projects(self.user1)
         for proj in my_projects:
             # Test fails if any unexpected project slug is returned.
             self.assertEqual(proj.slug, 'test1-slug')
 
     def test_get_all_projects(self):
-        """All projects in the database"""
+        """All projects in the database."""
         all_projects = Project.get_all_projects()
         # Test fails if there is not 1 projects in the test DB
         self.assertEqual(len(all_projects), 1)

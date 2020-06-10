@@ -6,19 +6,15 @@ from teamwork.apps.projects.models import Project
 
 @login_required
 def view_projects(request):
-    """
-    Public method that takes a request, retrieves all Project objects from the model,
-    then calls _projects to render the request to template view_projects.html
-    """
+    """Public method that takes a request, retrieves all Project objects from the model, then calls
+    _projects to render the request to template view_projects.html."""
     active_projects = Project.get_my_active_projects(request.user)
     inactive_projects = Project.get_my_disabled_projects(request.user)
 
     return _projects(request, active_projects, inactive_projects )
 
 def _projects(request, active, inactive):
-    """
-    Private method that will be used for paginator once I figure out how to get it working.
-    """
+    """Private method that will be used for paginator once I figure out how to get it working."""
     page = request.GET.get('page')
 
     # Populate with page name and title

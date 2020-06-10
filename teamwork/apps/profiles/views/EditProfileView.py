@@ -35,8 +35,8 @@ def edit_skills(request, username):
 @login_required
 def edit_profile(request, username):
     """
-    Public method that takes a request and a username.  Gets an entered 'skill' from the form
-    and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
+    Public method that takes a request and a username.  Gets an entered 'skill' from the form and
+    stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
 
     GT OVERRRIDE DOES NOT EDIT OTHER PROFILES BUT IT NO LONGER CRASHES
     """
@@ -155,9 +155,7 @@ def edit_profile(request, username):
         'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 def edit_profile_helper(request, username):
-    """
-        Helper function that saves profile information from the ProfileForm
-    """
+    """Helper function that saves profile information from the ProfileForm."""
 
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)
