@@ -1,3 +1,4 @@
+"""Render 'Landing View' Page."""
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -6,11 +7,15 @@ from teamwork.apps.courses.models import (Course, get_user_active_courses,
 
 
 def index(request):
-    """
-    The main index of grepthink, referred to as "Home" in the sidebar. Accessible to public and
+    """The main index of grepthink, referred to as "Home" in the sidebar. Accessible to public and
     logged in users.
 
     TODO: get feed of project updates (or public projects) to display on login
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
     """
     # Render landing page for not logged in user
     logged_in = request.user.is_authenticated()
@@ -25,7 +30,14 @@ def index(request):
     return render_timeline(request)
 
 def render_landing(request):
-    """Renders Landing Page."""
+    """Render Landing Page.
+
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
+    """
     page_name = "Grepthink"
     page_description = "Build Better Teams"
     title = "Welcome"
@@ -36,7 +48,14 @@ def render_landing(request):
                 })
 
 def render_dashboard(request):
-    """Renders Professor Dashboard."""
+    """Render Professor Dashboard.
+
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
+    """
     page_name = "Dashboard"
     page_description = "Instructor Control Panel"
     title = "Dashboard"
@@ -50,7 +69,14 @@ def render_dashboard(request):
         })
 
 def render_timeline(request):
-    """Render the Student Timeline."""
+    """Render student timeline.
+
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
+    """
     page_name = "Timeline"
     page_description = "Recent Updates from Courses and Projects"
     title = "Timeline"
@@ -68,7 +94,15 @@ def render_timeline(request):
         })
 
 def disable(request, slug):
-    """Lock the interest for a course."""
+    """[summary]
+
+    Args:
+        request (requests.request): Page request.
+        slug (str): A short label for something, containing only letters, numbers, underscores or hyphens.
+
+    Returns:
+        django.shortcuts.redirect: A page redirect.
+    """
     course = get_object_or_404(Course, slug=slug)
     if request.user == course.creator or request.user.profile.isGT:
         course.disable = not course.disable
