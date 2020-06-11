@@ -1,15 +1,11 @@
 """
-Teamwork: test_models.py
+test_models.py
 
 Unit tests for models.py: tests all created functions
-
-Usuage: Run a part of all test with `python manage.py test`
 """
 
 from django.contrib.auth.models import UserManager
-# Django Modules
 from django.test import TestCase
-
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 
@@ -82,8 +78,7 @@ class CourseTestCase(TestCase):
     def test_delete_course(self):
         """
         TODO: once delete is moved to Course model
-        """
-        pass
+        """        
 
 def create_project(creator, scrum_master, ta, course, slug):
     """

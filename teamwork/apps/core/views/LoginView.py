@@ -3,6 +3,8 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.core.views import LandingView
 
+from django.contrib.auth import views as auth_views
+
 def login(request):
     """ Core Login View """
     page_name = "Login"
@@ -18,6 +20,10 @@ def login(request):
         # Otherwise render timeline
         return LandingView.render_timeline(request)
     
+    # if post attempt to authenticate the user
+    if request.method == 'POST':
+        return auth_views.login(request)
+
     # Redirect user to login instead of public index (for ease of use)
     return render(request, 'core/login.html', {
             'page_name': page_name,

@@ -50,20 +50,20 @@ def create_course(request):
 
     page_name = "Create Course"
     page_description = "Create a Course!"
-    title = "Create Course"
+    title = "Create Course"    
 
     if request.user.profile.isGT:
         pass
     elif not request.user.profile.isProf:
         #redirect them to the /course directory
-        messages.info(request,'Only Professor can create course!')
+        messages.info(request, 'Only Professor can create course!')
         return HttpResponseRedirect('/course')
 
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CreateCourseForm(request.user.id,request.POST, request.FILES)
-        if form.is_valid():
+        form = CreateCourseForm(request.user.id, request.POST, request.FILES)        
+        if form.is_valid():            
             # create an object for the input
             course = Course()
             # gets data from form
@@ -80,17 +80,21 @@ def create_course(request):
 
             # creator is current user
             course.creator = request.user
-            students = data.get('students')
+            
             # save this object
-            course.save()
+            course.save()            
 
             # add enrollment object for professor
             if request.user.profile.isProf:
                 Enrollment.objects.create(user=request.user, course=course, role="professor")
 
             return redirect(upload_csv, course.slug)
+        
+        # Print any Form Errors to Console
+        print("CreateCourseForm Errors:", form.errors)
     else:
         form = CreateCourseForm(request.user.id)
+        
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
@@ -130,7 +134,7 @@ def join_course(request):
                                 sender=request.user,
                                 to=i.creator,
                                 msg=request.user.username + " used the addcode to enroll in " + i.name,
-                                url=reverse('profile',args=[request.user.username]),
+                                url=reverse('profile', args=[request.user.username]),
                                 )
                     return redirect(view_one_course, i.slug)
 
@@ -255,6 +259,8 @@ def projects_in_course(slug):
     """
     Public method that takes a coursename, retreives the course object, returns
     a list of project objects
+
+    TODO: move to Course/models.py
     """
     # Gets current course
     cur_course = Course.objects.get(slug=slug)

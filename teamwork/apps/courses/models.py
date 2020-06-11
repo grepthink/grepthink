@@ -210,7 +210,7 @@ class Course(models.Model):
         related_name='course')
 
     # assignments in course, manytomany
-    assignments=models.ManyToManyField(
+    assignments = models.ManyToManyField(
         # to Assignment model
         Assignment,
         related_name='course')

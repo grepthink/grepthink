@@ -55,7 +55,7 @@ class CoreViewsTests(TestCase):
 
     def test_view_login_unauth(self):
         """ Test Login View as Unauthorized User """
-        response = self.client.post('/login')
+        response = self.client.get('/login')
         self.assertTrue(response.status_code == 200)
         self.assertTemplateUsed(response, 'core/login.html')
         self.assertContains(response, 'Login');
@@ -75,17 +75,6 @@ class CoreViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'core/dashboard.html')
         self.assertContains(response, 'Instructor Control Panel')
-
-def create_user(username, email, password):
-    """
-    Create a User helper
-
-    Args:
-        username: (str) Username of the new user
-        email: (str) Email of the new user
-        password: (str) Password of the new user
-    """    
-    return User.objects.create_user(username, email, password)
 
 class EmailTests(TestCase):
     """
@@ -138,3 +127,14 @@ class ParseCsvTests(TestCase):
 
     def tearDown(self):
         pass
+
+def create_user(username, email, password):
+    """
+    Create a User helper
+
+    Args:
+        username: (str) Username of the new user
+        email: (str) Email of the new user
+        password: (str) Password of the new user
+    """    
+    return User.objects.create_user(username, email, password)
