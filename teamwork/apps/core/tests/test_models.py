@@ -1,52 +1,40 @@
 """
 Core App Model Tests
 """
-
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.conf import settings
+from django.test import Client, TestCase
+from django.urls import reverse
 from teamwork.apps.core.models import EmailAddressAuthBackend, po_match, sort, auto_ros, by_schedule
+from teamwork.apps.core.helpers import send_email
 from teamwork.apps.courses.models import Course, Enrollment
 from teamwork.apps.projects.models import Interest, Project
 from teamwork.apps.profiles.models import Skills
 
 class AuthenticateWithEmailTest(TestCase):
-    """
-    Creates a user and asserts return values are correct from authenticate method
-    """
+    """Creates a user and asserts return values are correct from authenticate method."""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         self.user1 = User.objects.create_user('user_test1', 'test1@test.com', 'groupthink')
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
 
     def test_authenticate_success(self):
-        """
-        Attempt to authenticate user w/ correct email address and pw and assert user object is returned
-        """
+        """ Attempt to authenticate user w/ correct email address and pw and assert user object is returned """
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='groupthink')
         self.assertTrue(isinstance(user, User))
 
     def test_authenticate_fail(self):
-        """
-        Attempt to authenticate user w/ incorrect password and assert user object is None
-        """
+        """Attempt to authenticate user w/ incorrect password and assert user object is None."""
         user = EmailAddressAuthBackend.authenticate(self, username='test1@test.com', password='incorrect')
         self.assertIsNone(user)
 
 class FindProjectMatchesTest(TestCase):
-    """
-    Tests for the po_match method
-    """
+    """Tests for the po_match method."""
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -88,9 +76,7 @@ class FindProjectMatchesTest(TestCase):
         self.project.interest.add(self.interest2)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         # delete users
         del self.user1
         del self.user2
@@ -112,7 +98,9 @@ class FindProjectMatchesTest(TestCase):
 
     def test_match_without_schedule_bonus(self):
         """
-        Runs po_match, with User2 showing interest 5, and User3 showing interest 4. Users schedules are NOT set.
+        Runs po_match, with User2 showing interest 5, and User3 showing interest 4.
+
+        Users schedules are NOT set.
         """
         matchesList = po_match(self.project)
 
@@ -127,7 +115,9 @@ class FindProjectMatchesTest(TestCase):
 
     def test_match_with_project_desiring_skills(self):
         """
-        Runs po_match, with the project desiring the skill User3 knows. Users schedules are NOT set.
+        Runs po_match, with the project desiring the skill User3 knows.
+
+        Users schedules are NOT set.
         """
         # Add user3's skill as a desired skill
         self.project.desired_skills.add(self.skill2)
@@ -139,23 +129,19 @@ class FindProjectMatchesTest(TestCase):
 
         # Remove the project desired_skill we added
         self.project.desired_skills.remove(self.skill2)
-
     
     def test_match_with_schedule_bonus(self):
-        """
-        Runs po_match, with user2's scheduling fitting into the existing member's schedule, and user3's not ligning up
+        """Runs po_match, with user2's scheduling fitting into the existing member's schedule, and
+        user3's not ligning up. TODO"""
 
-        TODO
-        """
+    def testMatchWithScheduleBonus(self):
+        """ TODO """        
 
 class SortMatchListTest(TestCase):
-    """
-    TODO: Create this test
-    """
+    """ TODO: Create this test """
+
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -165,9 +151,7 @@ class SortMatchListTest(TestCase):
         self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
         del self.user2
         del self.user3
@@ -175,13 +159,10 @@ class SortMatchListTest(TestCase):
         del self.course
 
 class AutoSetRosterTest(TestCase):
-    """
-    TODO: Create this test
-    """
+    """ TODO: Create this test """
+
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
         # create users
         self.user1 = User.objects.create_user('user1', 'user1@test.com', 'testing')
         self.user2 = User.objects.create_user('user2', 'user2@test.com', 'testing')
@@ -191,9 +172,7 @@ class AutoSetRosterTest(TestCase):
         self.course = Course.objects.create(name='TestCourse',slug='Test1', creator=self.user1)
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
         del self.user1
         del self.user2
         del self.user3
@@ -211,11 +190,36 @@ class GetAvailabilityScoreTest(TestCase):
         TODO: Create this test
     """
     def setUp(self):
-        """
-        Init any variables that are needed for testing
-        """
+        """Init any variables that are needed for testing."""
 
     def tearDown(self):
-        """
-        Delete any variables that were created for testing
-        """
+        """Delete any variables that were created for testing."""
+
+# TODO: parse csv tests
+class ParseCsvTests(TestCase):
+
+    def setUp(self):
+        self.csv_path = settings.PROJECT_DIR
+        pass
+
+    def tearDown(self):
+        pass
+
+# TODO: search tests
+class SearchTests(TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+def create_user(username, email, password):
+    """
+    Create a User helper
+
+    Args:
+        username: (str) Username of the new user
+        email: (str) Email of the new user
+        password: (str) Password of the new user
+    """    
+    return User.objects.create_user(username, email, password)

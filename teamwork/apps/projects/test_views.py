@@ -1,36 +1,22 @@
 """
-Teamwork: test_views.py
+test_views.py
 
-Unit tests for views.py in app projects.
+Project app's View Tests
 
-Usuage: Run as a part of all test with `python manage.py test`
 """
 
-from django.contrib.auth.models import UserManager
 from django.contrib.auth import authenticate, login
-# Django Modules
-from django.test import TestCase, override_settings
+from django.contrib.auth.models import UserManager
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-
+from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
 from teamwork.apps.projects.models import *
-from teamwork.apps.courses.models import *
-
 from teamwork.apps.projects.views.EditProjectView import *
 from teamwork.apps.projects.views.EditTsrView import *
 
-from django.test import Client
-
 class ViewProjectTestCase(TestCase):
-    """
-    Tests the view_one_project method in projects/views.py
-
-    References:
-    https://docs.djangoproject.com/en/1.11/topics/testing/overview/
-    https://docs.djangoproject.com/en/1.11/intro/tutorial05/#testing-our-new-view
-    https://docs.djangoproject.com/en/1.11/topics/testing/tools/#django.test.override_settings
-    https://docs.djangoproject.com/en/1.11/ref/urlresolvers/#django.core.urlresolvers.reverse
-    """
+    """ Tests the view_one_project method in projects/views.py. """
     def setUp(self):
         """
         Initialize project, user, and membership objects for use in test methods.
@@ -40,11 +26,11 @@ class ViewProjectTestCase(TestCase):
         # Membership.objects.create(user=user1, project=project1, invite_reason='')
         """
 
-    @override_settings(STATICFILES_STORAGE = None)
+    @override_settings(STATICFILES_STORAGE=None)
     def test_view_one_project(self):
         """
-        Confirms that view_one_project sucesfully returns a 200 response when given the
-        slug of an existing project.
+        Confirms that view_one_project sucesfully returns a 200 response when given the slug of an
+        existing project.
 
         Decorator override_settings to avoid errors with whitenoise when using client().
         """

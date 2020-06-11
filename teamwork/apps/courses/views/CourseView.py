@@ -1,20 +1,24 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-
-from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
-from teamwork.apps.projects.models import Membership, Project, Interest
-from teamwork.apps.profiles.models import Profile
-from teamwork.apps.courses.forms import AssignmentForm, EditAssignmentForm, CourseUpdateForm
+from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.core.helpers import send_email
+from teamwork.apps.courses.forms import (AssignmentForm, CourseUpdateForm,
+                                         EditAssignmentForm)
+from teamwork.apps.courses.models import (Assignment, Course, CourseUpdate,
+                                          Enrollment)
+from teamwork.apps.profiles.models import Profile
+from teamwork.apps.projects.models import Interest, Membership, Project
+
 
 @login_required
 def view_one_course(request, slug):
     """
     Public method that takes a request and a coursename, retrieves the Course object from the model
-    with given coursename.  Renders courses/view_course.html
+    with given coursename.
+
+    Renders courses/view_course.html
     """
     course = get_object_or_404(Course.objects.prefetch_related('creator', 'students', 'projects'), slug=slug)
     page_name = "%s"%(course.name)
@@ -92,9 +96,7 @@ def view_one_course(request, slug):
 
 @login_required
 def edit_assignment(request, slug):
-    """
-    Edit assignment method, creating generic form
-    """
+    """Edit assignment method, creating generic form."""
     user = request.user
     ass = get_object_or_404(Assignment.objects.prefetch_related('course'), slug=slug)
     course = ass.course.first()
@@ -150,9 +152,7 @@ def edit_assignment(request, slug):
 
 @login_required
 def delete_assignment(request, slug):
-    """
-    Delete assignment method
-    """
+    """Delete assignment method."""
     ass = get_object_or_404(Assignment, slug=slug)
     course = ass.course.first()
 
@@ -179,9 +179,7 @@ def delete_assignment(request, slug):
 
 @login_required
 def update_course(request, slug):
-    """
-    Post an update for a given course
-    """
+    """Post an update for a given course."""
     course = get_object_or_404(Course.objects.prefetch_related('creator'), slug=slug)
     page_name = "Update Course"
     page_description = "Update %s"%(course.name) or "Post a new update"
@@ -227,9 +225,7 @@ def update_course(request, slug):
 
 @login_required
 def update_course_update(request, slug, id):
-    """
-    Edit an update for a given course
-    """
+    """Edit an update for a given course."""
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 
@@ -258,9 +254,7 @@ def update_course_update(request, slug, id):
 
 @login_required
 def delete_course_update(request, slug, id):
-    """
-    Delete an update for a given course
-    """
+    """Delete an update for a given course."""
     course = get_object_or_404(Course, slug=slug)
     update = get_object_or_404(CourseUpdate, id=id)
 

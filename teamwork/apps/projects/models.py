@@ -7,29 +7,25 @@ Database Models for the objects: Project, Membership, Interest, ProjectUpdate
 # Built-in modules
 from __future__ import unicode_literals
 
-import random
-from datetime import date
 import datetime
+import random
 import string
 from math import floor
-from decimal import Decimal
 
 # Third-party Modules
 import markdown
 # Django modules
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.validators import URLValidator
 from django.db import models
 # Not used currently
 from django.db.models import Q
 from django.template.defaultfilters import slugify
-
-from django.core.validators import URLValidator
-
 from django.utils import timezone
-
 from teamwork.apps.core.models import *
 from teamwork.apps.profiles.models import *
+
 
 # Generates add code
 def rand_code(size):
@@ -41,9 +37,7 @@ def rand_code(size):
 # Model definitions for the core app.
 # As we move forward, the core app will likely disapear. It's mainly for testing everything out right now.
 class Interest(models.Model):
-    """
-    Interest object relates a user to a interest (may be changed in the future)
-    """
+    """Interest object relates a user to a interest (may be changed in the future)"""
     # can access interest from the user through user.interest.all()
     user = models.ForeignKey(User, related_name='interest', on_delete=models.CASCADE)
     interest = models.PositiveIntegerField()
@@ -53,9 +47,7 @@ class Interest(models.Model):
         return("%d - %s: %s"%(self.interest, self.user.username, self.interest_reason))
 
 class Tsr(models.Model):
-    """
-    TSR objects relate a user and tsr fields, along with assignment information
-    """
+    """TSR objects relate a user and tsr fields, along with assignment information."""
     # number of the TSR assignment form was submitted for
     ass_number = models.DecimalField(max_digits=2, decimal_places=0, default=1)
     # person who is evaluating
@@ -278,8 +270,10 @@ class Project(models.Model):
 
     def __str__(self):
         """
-        Human readeable representation of the Project object. Might need to update when we add more attributes.
-        Maybe something like, return u'%s %s' % (self.course, self.title)
+        Human readeable representation of the Project object.
+
+        Might need to update when we add more attributes. Maybe something like, return u'%s %s' %
+        (self.course, self.title)
         """
         # mem = ""
         # for m in self.members.all():
@@ -291,8 +285,9 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Project object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Project object in the database!
+
+        Bassically a way to check if the Project object exists in the database. Will be helpful
+        later. self.pk is the primary key of the Project object in the database!
         """
         #if not self.pk:
         #    super(Project, self).save(*args, **kwargs)
@@ -426,7 +421,9 @@ class Project(models.Model):
     @staticmethod
     def get_my_projects(user):
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list of project objects.
+
+        Used in views then passed to the template.
         """
         # #Gets membership object of current user
         # myProjects = Membership.objects.filter(user=user)
@@ -446,7 +443,9 @@ class Project(models.Model):
     @staticmethod
     def get_my_active_projects(user):
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list of project objects.
+
+        Used in views then passed to the template.
         """
         # #Gets membership object of current user
         # myProjects = Membership.objects.filter(user=user)
@@ -466,7 +465,9 @@ class Project(models.Model):
     @staticmethod
     def get_my_disabled_projects(user):
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list of project objects.
+
+        Used in views then passed to the template.
         """
         # #Gets membership object of current user
         # myProjects = Membership.objects.filter(user=user)
@@ -486,7 +487,9 @@ class Project(models.Model):
     @staticmethod
     def get_all_projects():
         """
-        Gets a list of project objects. Used in views then passed to the template.
+        Gets a list of project objects.
+
+        Used in views then passed to the template.
         """
         projects = Project.objects.all()
         return projects
@@ -494,7 +497,9 @@ class Project(models.Model):
     @staticmethod
     def get_created_projects(user):
         """
-        Gets a list of porject objects that the user created. Used in views then passed to the template
+        Gets a list of porject objects that the user created.
+
+        Used in views then passed to the template
         """
         # proj = Project.objects.filter(creator=user.username)
 
@@ -524,9 +529,7 @@ class Project(models.Model):
     """
 
 class Membership(models.Model):
-    """
-    Membership objects relate a user and a project.
-    """
+    """Membership objects relate a user and a project."""
     user = models.ForeignKey(
         User,
         related_name='membershipUser',
@@ -544,7 +547,7 @@ class Membership(models.Model):
 
 class ProjectUpdate(models.Model):
     """
-    ProjectUpdate objects are updates associated with a project
+    ProjectUpdate objects are updates associated with a project.
 
     Attributes:
         project: ForeignKey to the project, found by project slug
@@ -552,7 +555,6 @@ class ProjectUpdate(models.Model):
         update: The content of the project update
         date: Date that the project update was posted
         user: The currently logged in user (associated with the project update)
-
     """
     project = models.ForeignKey(Project)
     update_title = models.CharField(
@@ -570,9 +572,7 @@ class ProjectUpdate(models.Model):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
     def save(self, *args, **kwargs):
-        """
-        Overrides default save
-        """
+        """Overrides default save."""
         self.date = datetime.datetime.now()
 
         super(ProjectUpdate, self).save(*args, **kwargs)
@@ -594,9 +594,7 @@ class ResourceUpdate(models.Model):
         return '{0} - {1}'.format(self.user.username, self.project.title)
 
     def save(self, *args, **kwargs):
-        """
-        Overrides default save
-        """
+        """Overrides default save."""
         self.date = datetime.datetime.now()
 
         super(ResourceUpdate, self).save(*args, **kwargs)

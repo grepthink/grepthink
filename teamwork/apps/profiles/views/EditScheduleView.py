@@ -1,31 +1,30 @@
 # Django Imports
+# Other Imports
+import json
+
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
-from django.utils.safestring import mark_safe
-
-# Model Imports
-from teamwork.apps.profiles.models import Profile
 from django.http import HttpResponse
-
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_exempt
 # Model Imports
-from teamwork.apps.profiles.models import Profile, Events
+# Model Imports
+from teamwork.apps.profiles.models import Events, Profile
 from teamwork.apps.projects.models import dayofweek
 
 # Form Imports
 
 # View Imports
 
-# Other Imports
-import json
 
 @login_required
 def edit_schedule(request, username):
     """
     Public method that takes a request and a username.
-    Gets a list of 'events' from a calendar and stores the event as an array of tuples
-    Redners profiles/edit_calendar.html
+
+    Gets a list of 'events' from a calendar and stores the event as an array of tuples Redners
+    profiles/edit_calendar.html
     """
 
     user = get_object_or_404(User, username=username)

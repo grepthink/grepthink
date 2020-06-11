@@ -6,13 +6,12 @@ Used when creating/editing/deleting projects, adding project updates, and showin
 
 # Django modules
 from django import forms
-from django.db.models import *
+from django.core.exceptions import ValidationError
 from django.core.validators import *
-
+from django.db.models import *
+from django.forms import URLField
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
-from django.core.exceptions import ValidationError
-from django.forms import URLField
 
 from .models import *
 
@@ -33,7 +32,7 @@ def ForbiddenNamesValidator(value):
 
 class CreateProjectForm(forms.ModelForm):
     """
-    ModelForm instance used to create/edit/delete a project
+    ModelForm instance used to create/edit/delete a project.
 
     Attributes (Fields):
         title:   [CharField] Name of project
@@ -177,7 +176,7 @@ class CreateProjectForm(forms.ModelForm):
 
 class EditProjectForm(forms.ModelForm):
     """
-    ModelForm instance used to create/edit/delete a project
+    ModelForm instance used to create/edit/delete a project.
 
     Attributes (Fields):
         title:   [CharField] Name of project
@@ -311,17 +310,15 @@ class EditProjectForm(forms.ModelForm):
 
 class UpdateForm(forms.ModelForm):
     """
-    Form used for submitting project updates
-
+    Form used for submitting project updates.
 
     Attributes (Fields):
         update_title: [CharField] Name of project update
         update:       [CharField] Project update content
-        user:		  [User] 	  User object associated with form submitter
+        user:             [User]          User object associated with form submitter
 
     Methods:
-        __init__ :	gets the current user when initiating the form
-
+        __init__ :      gets the current user when initiating the form
     """
 
     # used for filtering the queryset

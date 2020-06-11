@@ -1,18 +1,17 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from teamwork.apps.projects.forms import TSR
-from teamwork.apps.courses.models import Course, Assignment
-from teamwork.apps.projects.models import Project, Tsr
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.courses.models import Assignment, Course
+from teamwork.apps.projects.forms import TSR
+from teamwork.apps.projects.models import Project, Tsr
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
-from datetime import datetime
 
 @login_required
 def create_member_tsr(request, slug, asg_slug):
-    """
-    Method fires when the Scrum Master begins their Tsr Assignment
-    """
+    """Method fires when the Scrum Master begins their Tsr Assignment."""
     page_name = "Member TSR"
 
     title = "Member TSR"
@@ -59,9 +58,7 @@ def create_member_tsr(request, slug, asg_slug):
 
 @login_required
 def create_scrum_master_tsr(request, slug, asg_slug):
-    """
-    Method fires when the Scrum Master begins their Tsr Assignment
-    """
+    """Method fires when the Scrum Master begins their Tsr Assignment."""
     page_name = "Scrum Master TSR"
 
     title = "Scrum Master TSR"
@@ -98,9 +95,7 @@ def create_scrum_master_tsr(request, slug, asg_slug):
     })
 
 def create_tsr_helper(request, members, email_list, assignment, project, scrum_master, late):
-    """
-    Creates a Tsr object, and fills its data with the form values
-    """
+    """Creates a Tsr object, and fills its data with the form values."""
     # For each email/member, create a Tsr
     for email in email_list:
         # grab form
@@ -129,10 +124,7 @@ def create_tsr_helper(request, members, email_list, assignment, project, scrum_m
 
 @login_required
 def view_tsr(request, slug):
-    """
-    public method that takes in a slug and generates a view for
-    submitted TSRs
-    """
+    """public method that takes in a slug and generates a view for submitted TSRs."""
     page_name = "View TSR"
     page_description = "Submissions"
     title = "View TSR"

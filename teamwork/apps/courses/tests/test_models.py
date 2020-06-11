@@ -8,17 +8,16 @@ from django.contrib.auth.models import UserManager
 from django.test import TestCase
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
+from teamwork.apps.projects.models import Membership
 
 class CourseTestCase(TestCase):
     """
-    Tests various methods included in courses/models.py
+    Tests various methods included in courses/models.py.
 
     Adapted from: https://docs.djangoproject.com/en/1.11/topics/testing/overview/
     """
     def setUp(self):
-        """
-        Initialize course, user, and enrollment objects for use in test methods.
-        """
+        """Initialize course, user, and enrollment objects for use in test methods."""
         # Create a test user as an attribute of ProjectTestCase, for future use
         #   (we're not testing user or profile methods here)
         self.user1 = create_user('user_test1', 'test1@test.com', 'groupthink')
@@ -30,19 +29,19 @@ class CourseTestCase(TestCase):
         # Create a membership object between user1 and project1
         self.enrollment1 =  create_course_enrollment(self.user1, self.course1, 'professor')
         self.enrollment2 =  create_course_enrollment(self.user1, self.course2, 'professor')
-
-    # TODO:
+    
     def tearDown(self):
+        """ TODO """
         pass
 
     def test_get_user_courses(self):
-        """All courses associated with a user are returned"""
+        """All courses associated with a user are returned."""
         my_courses = Course.get_my_courses(self.user1)
         self.assertTrue(self.course1 in my_courses)
         self.assertTrue(self.course2 in my_courses)
 
     def test_get_my_created_courses(self):
-        """All created courses associated with a user are returned"""
+        """All created courses associated with a user are returned."""
         my_created_courses = Course.get_my_created_courses(self.user1)
         self.assertTrue(self.course1 in my_created_courses)
         self.assertTrue(self.course2 in my_created_courses)
@@ -78,7 +77,7 @@ class CourseTestCase(TestCase):
     def test_delete_course(self):
         """
         TODO: once delete is moved to Course model
-        """        
+        """
 
 def create_project(creator, scrum_master, ta, course, slug):
     """

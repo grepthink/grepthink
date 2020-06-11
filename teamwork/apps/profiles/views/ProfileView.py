@@ -1,24 +1,23 @@
 # Django Imports
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
-
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.courses.models import Course
+# Form Imports
+from teamwork.apps.profiles.forms import *
 # Model Imports
 from teamwork.apps.profiles.models import Profile
 from teamwork.apps.projects.models import Project
-from teamwork.apps.courses.models import Course
-
-# Form Imports
-from teamwork.apps.profiles.forms import *
 
 # View Imports
 
 @login_required
 def view_profile(request, username):
     """
-    Public method that takes a request and a username.  Gets an entered 'skill' from the form
-    and stores it in lowercase if it doesn't exist already. Renders profiles/profile.html.
+    Public method that takes a request and a username.
 
+    Gets an entered 'skill' from the form and stores it in lowercase if it doesn't exist already.
+    Renders profiles/profile.html.
     """
 
     page_user = get_object_or_404(User.objects.prefetch_related('profile'), username=username)

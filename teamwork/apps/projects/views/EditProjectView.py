@@ -2,26 +2,23 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
+from teamwork.apps.core.helpers import *
 # Models
 from teamwork.apps.core.models import *
 from teamwork.apps.courses.models import *
-
 # form
 from teamwork.apps.projects.forms import *
-
+# Helpers
+from teamwork.apps.projects.views.BaseView import *
 # redirect views
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
-# Helpers
-from teamwork.apps.projects.views.BaseView import *
-from teamwork.apps.core.helpers import *
 
 @login_required
 def edit_project(request, slug):
     """
-    Public method that serves the form allowing a user to edit a project
-    Based off courses/views.py/edit_course
+    Public method that serves the form allowing a user to edit a project Based off
+    courses/views.py/edit_course.
 
     Args:
         slug: (str) Project slug for the project which we are editing
@@ -121,9 +118,9 @@ def edit_project(request, slug):
 
 def add_member_to_project(request, project):
     """
-    Add member helper. Handles request to add members to the project. 
-    If the course creator is adding users, just adds the member to the project.
-    Otherwise, adds the member to the pending_invitations list and notifies the user via Alert and Email.
+    Add member helper. Handles request to add members to the project. If the course creator is
+    adding users, just adds the member to the project. Otherwise, adds the member to the
+    pending_invitations list and notifies the user via Alert and Email.
 
     Args:
         project: (Project) The project which users will be added to
@@ -192,7 +189,8 @@ def add_member_to_project(request, project):
 
 def remove_user_from_project(request, project):
     """
-    Remove a specific user specified by request.POST.get('remove_user'). Fails to remove user if they are the only member.
+    Remove a specific user specified by request.POST.get('remove_user'). Fails to remove user if
+    they are the only member.
 
     Args:
         project: (Project) The project which the user is being removed from
@@ -223,7 +221,8 @@ def remove_user_from_project(request, project):
 
 def make_project_owner(request, project):
     """
-    Promote specific user specified at request.POST.get('promote_user'). Can only promote if request.user is the current project.creator
+    Promote specific user specified at request.POST.get('promote_user'). Can only promote if
+    request.user is the current project.creator.
 
     Args:
         project: (Project) The project which the user is becoming the creator
@@ -289,6 +288,7 @@ def remove_desired_skills(request, project):
 def try_add_member(request, slug, uname):
     """
     Add member to project if:
+
         - They aren't a member already
         - They are a member of the course
         - The project is still accepting members
@@ -312,7 +312,7 @@ def try_add_member(request, slug, uname):
 
 def add_member(request, slug, uname):
     """
-    Add a member to a project.    
+    Add a member to a project.
 
     Args:
         slug: (str) Slug/Unique id of Project
@@ -336,8 +336,8 @@ def add_member(request, slug, uname):
 
 def adjust_pendinglist(request, project, mem_to_add):
     """
-    Removes mem_to_add from the projects pending_members list if they are on there.
-    Creates an alert to notify the user that they were added to a project.
+    Removes mem_to_add from the projects pending_members list if they are on there. Creates an alert
+    to notify the user that they were added to a project.
 
     Args:
         project: (Project) The project which we are adjusting the pendinglist.
@@ -363,15 +363,15 @@ def adjust_pendinglist(request, project, mem_to_add):
 
 def user_can_be_added(request, project, course, mem_to_add, mem_courses, curr_members):
     """
-    Determines whether a user can be invited to join a project.
-    Returns True if:
+    Determines whether a user can be invited to join a project. Returns True if:
+
     - User is enrolled in the course that the project is in.
     - User is not already a member of the project.
-    - Project is accepting members.    
+    - Project is accepting members.
 
     Args:
         project: (Project) The project which we are adjusting the pendinglist.
-        course: (Course) The course which the project belongs to.        
+        course: (Course) The course which the project belongs to.
         mem_to_add: (User) User which is being added to the project
         mem_courses: (List<Course>) List of the user's courses
         curr_members: (List<User>) Project's current members. TODO: can get this from project param
@@ -430,7 +430,7 @@ def leave_project(request, slug):
 
 def add_desired_skills(request, slug):
     """
-    Builds json response of skills
+    Builds json response of skills.
 
     TODO: Remove unused slug param
     TODO: this function is the same as create_desired_skills(request) seen below, why?
@@ -452,7 +452,7 @@ def add_desired_skills(request, slug):
 
 def create_desired_skills(request):
     """
-    Builds json response of skills
+    Builds json response of skills.
 
     TODO: this function is the same as add_desired_skills(request) seen above, why?
     """

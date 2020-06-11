@@ -1,3 +1,4 @@
+"""View for login page."""
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -6,7 +7,15 @@ from teamwork.apps.core.views import LandingView
 from django.contrib.auth import views as auth_views
 
 def login(request):
-    """ Core Login View """
+    """
+    View for login page.
+
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
+    """
     page_name = "Login"
     page_description = ""
     title = "Login"

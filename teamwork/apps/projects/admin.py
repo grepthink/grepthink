@@ -2,7 +2,8 @@
 from django.contrib import admin
 
 # Local Modules
-from .models import Interest, Membership, Project, ProjectUpdate, ResourceUpdate, ProjectChat, Tsr
+from .models import (Interest, Membership, Project, ProjectChat, ProjectUpdate,
+                     ResourceUpdate, Tsr)
 
 # Register the following models for the admin site
 admin.site.register(Project)

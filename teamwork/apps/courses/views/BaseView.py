@@ -1,29 +1,25 @@
+
+import xlwt
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from teamwork.apps.courses.models import get_user_active_courses, get_user_disabled_courses
+from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-from django.core.urlresolvers import reverse
-from django.contrib import messages
-
-from teamwork.apps.courses.forms import JoinCourseForm
-from teamwork.apps.courses.models import Course, Enrollment
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.core.forms import UploadCSVForm
+from teamwork.apps.core.helpers import parse_csv
+from teamwork.apps.courses.forms import CreateCourseForm, JoinCourseForm
+from teamwork.apps.courses.models import (Course, Enrollment,
+                                          get_user_active_courses,
+                                          get_user_disabled_courses)
+from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.courses.views.EmailCourseView import email_csv
 from teamwork.apps.profiles.models import Alert
 from teamwork.apps.projects.models import Project
 
-from teamwork.apps.courses.views.CourseView import view_one_course
-from teamwork.apps.courses.forms import CreateCourseForm, JoinCourseForm
-from teamwork.apps.core.forms import UploadCSVForm
-from teamwork.apps.core.helpers import *
-from teamwork.apps.courses.views.EmailCourseView import email_csv
-
-import csv
-import xlwt
 
 def _courses(request, courses):
-    """
-    Private method that will be used for paginator once I figure out how to get it working.
-    """
+    """Private method that will be used for paginator once I figure out how to get it working."""
     page = request.GET.get('page')
     page_name = "Courses"
     page_description = "Course List"
@@ -36,17 +32,14 @@ def _courses(request, courses):
 
 @login_required
 def view_courses(request):
-    """
-    Public method that takes a request, retrieves all course objects associated with request.user    
-    """
+    """Public method that takes a request, retrieves all course objects associated with
+    request.user."""
 
     return _courses(request, get_user_active_courses(request.user))
 
 @login_required
 def create_course(request):
-    """
-    Public method that creates a form and renders the request to create_course.html
-    """
+    """Public method that creates a form and renders the request to create_course.html."""
 
     page_name = "Create Course"
     page_description = "Create a Course!"
@@ -89,7 +82,7 @@ def create_course(request):
                 Enrollment.objects.create(user=request.user, course=course, role="professor")
 
             return redirect(upload_csv, course.slug)
-        
+
         # Print any Form Errors to Console
         print("CreateCourseForm Errors:", form.errors)
     else:
@@ -99,10 +92,8 @@ def create_course(request):
 
 @login_required
 def join_course(request):
-    """
-    Public method that takes a request, renders form that enables a user
-    to add a course, renders in join_course.html
-    """
+    """Public method that takes a request, renders form that enables a user to add a course, renders
+    in join_course.html."""
 
     page_name = "Join Course"
     page_description = "Join a Course!"
@@ -256,12 +247,8 @@ def export_xls(request, slug):
     return response
 
 def projects_in_course(slug):
-    """
-    Public method that takes a coursename, retreives the course object, returns
-    a list of project objects
-
-    TODO: move to Course/models.py
-    """
+    """Public method that takes a coursename, retrieves the course object, returns a list of project
+    objects. TODO move to Course/models.py """
     # Gets current course
     cur_course = Course.objects.get(slug=slug)
 
