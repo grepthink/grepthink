@@ -1,12 +1,15 @@
+"""Core forms."""
 from django import forms
 
 from .models import *
 
-"""
-Upload a csv file form
 
-"""
 class UploadCSVForm(forms.Form):
+    """Upload a csv file form.
+
+    Args:
+        forms (forms.Form): a CSVForm
+    """
     def __init__(self, *args, **kwargs):
         super(UploadCSVForm, self).__init__(*args, **kwargs)
 

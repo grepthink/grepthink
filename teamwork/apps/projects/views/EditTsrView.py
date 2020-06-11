@@ -1,17 +1,17 @@
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from teamwork.apps.projects.forms import TSR
-from teamwork.apps.courses.models import Course, Assignment
-from teamwork.apps.projects.models import Project, Tsr
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.courses.models import Assignment, Course
+from teamwork.apps.projects.forms import TSR
+from teamwork.apps.projects.models import Project, Tsr
 from teamwork.apps.projects.views.ProjectView import view_one_project
 
-from datetime import datetime
 
 @login_required
 def tsr_edit(request, slug, asg_slug):
     """
-    Tsr Edit View
+    Tsr Edit View.
 
     - Queries for Tsr belonging to the Assignment(asg_slug) by the Evaluator(request.user)
     - Edits those Tsr's if the due date has not passed
@@ -93,9 +93,7 @@ def tsr_edit(request, slug, asg_slug):
     })
 
 def is_scrum_master(request):
-    """
-    Simple method that checks the request for 'scrum_master'
-    """
+    """Simple method that checks the request for 'scrum_master'."""
     scrum_master = False
     if "scrum_master" in str(request):
         scrum_master = True

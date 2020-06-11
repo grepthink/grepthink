@@ -1,13 +1,13 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-
-from teamwork.apps.courses.models import Course
-from teamwork.apps.courses.forms import EmailRosterForm
-from teamwork.apps.courses.views.CourseView import view_one_course
+from django.shortcuts import get_object_or_404, redirect, render
 from teamwork.apps.core.helpers import send_email
+from teamwork.apps.courses.forms import EmailRosterForm
+from teamwork.apps.courses.models import Course
+from teamwork.apps.courses.views.CourseView import view_one_course
+
 
 @login_required
 def email_roster(request, slug):

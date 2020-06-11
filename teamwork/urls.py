@@ -1,7 +1,9 @@
-"""teamwork URL Configuration
+"""
+teamwork URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.10/topics/http/urls/
+
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -22,23 +24,25 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
-
 from teamwork.apps.core import helpers as core_helpers
-
-# Project Imports
-from teamwork.apps.projects.views import BaseView as ProjectBaseView
-from teamwork.apps.projects.views import ProjectView, MyProjectsView, EditProjectView, TsrView, MeetingsView, EditTsrView
-
-# Profile Imports
-from teamwork.apps.profiles.views import BaseView as ProfileBaseView
-from teamwork.apps.profiles.views import AlertView, EditProfileView, EditScheduleView, ProfileView
-
+# Core Imports
+from teamwork.apps.core.views import (AboutView, ContactView, LandingView,
+                                      LoginView)
 # Course Imports
 from teamwork.apps.courses.views import BaseView as CourseBaseView
-from teamwork.apps.courses.views import CourseView, EditCourseView, EmailCourseView, InterestView, MyCoursesView, StatsView, MatchesView
-
-# Core Imports
-from teamwork.apps.core.views import AboutView, ContactView, LandingView, LoginView
+from teamwork.apps.courses.views import (CourseView, EditCourseView,
+                                         EmailCourseView, InterestView,
+                                         MatchesView, MyCoursesView, StatsView)
+# Profile Imports
+from teamwork.apps.profiles.views import AlertView
+from teamwork.apps.profiles.views import BaseView as ProfileBaseView
+from teamwork.apps.profiles.views import (EditProfileView, EditScheduleView,
+                                          ProfileView)
+# Project Imports
+from teamwork.apps.projects.views import BaseView as ProjectBaseView
+from teamwork.apps.projects.views import (EditProjectView, EditTsrView,
+                                          MeetingsView, MyProjectsView,
+                                          ProjectView, TsrView)
 
 urlpatterns = [
         # CORE AND SIGNUP

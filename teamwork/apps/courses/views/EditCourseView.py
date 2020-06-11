@@ -1,22 +1,20 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from teamwork.apps.courses.models import Course, Enrollment
-from teamwork.apps.courses.views.CourseView import view_one_course
+from django.contrib.auth.models import User
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
-from django.contrib import messages
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-
-from teamwork.apps.profiles.models import Alert
 from teamwork.apps.courses.forms import EditCourseForm
+from teamwork.apps.courses.models import Course, Enrollment
+from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.profiles.models import Alert
+
 
 @login_required
 def edit_course(request, slug):
-    """
-    Edit course method, creating generic form
-    https://docs.djangoproject.com/en/1.10/ref/class-based-views/generic-editing/
-    """
+    """Edit course method, creating generic form https://docs.djangoproject.com/en/1.10/ref/class-
+    based-views/generic-editing/"""
     course = get_object_or_404(Course.objects.prefetch_related('creator'), slug=slug)
     page_name = "Edit Course"
     page_description = "Edit %s"%(course.name)
@@ -226,9 +224,7 @@ def delete_course(request, slug):
 
 
 def lock_interest(request, slug):
-    """
-    Lock the interest for a course
-    """
+    """Lock the interest for a course."""
     course = get_object_or_404(Course, slug=slug)
     if course.limit_interest:
         course.limit_interest = False
@@ -239,9 +235,7 @@ def lock_interest(request, slug):
     return redirect(view_one_course, course.slug)
 
 def disable(request, slug):
-    """
-    Lock the interest for a course
-    """
+    """Lock the interest for a course."""
     course = get_object_or_404(Course, slug=slug)
     if request.user == course.creator or request.user.profile.isGT:
         if course.disable:

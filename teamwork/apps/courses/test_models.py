@@ -9,9 +9,9 @@ Usuage: Run a part of all test with `python manage.py test`
 from django.contrib.auth.models import UserManager
 # Django Modules
 from django.test import TestCase
-
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
+
 
 def create_user(username, email, password):
     return User.objects.create_user(username, email, password)
@@ -27,14 +27,12 @@ def create_project_membership(user, project, invite_reason):
 
 class CourseTestCase(TestCase):
     """
-    Tests various methods included in courses/models.py
+    Tests various methods included in courses/models.py.
 
     Adapted from: https://docs.djangoproject.com/en/1.11/topics/testing/overview/
     """
     def setUp(self):
-        """
-        Initialize course, user, and enrollment objects for use in test methods.
-        """
+        """Initialize course, user, and enrollment objects for use in test methods."""
         # Create a test user as an attribute of ProjectTestCase, for future use
         #   (we're not testing user or profile methods here)
         self.user1 = create_user('user_test1', 'test1@test.com', 'groupthink')
@@ -52,13 +50,13 @@ class CourseTestCase(TestCase):
         pass
 
     def test_get_user_courses(self):
-        """All courses associated with a user are returned"""
+        """All courses associated with a user are returned."""
         my_courses = Course.get_my_courses(self.user1)
         self.assertTrue(self.course1 in my_courses)
         self.assertTrue(self.course2 in my_courses)
 
     def test_get_my_created_courses(self):
-        """All created courses associated with a user are returned"""
+        """All created courses associated with a user are returned."""
         my_created_courses = Course.get_my_created_courses(self.user1)
         self.assertTrue(self.course1 in my_created_courses)
         self.assertTrue(self.course2 in my_created_courses)

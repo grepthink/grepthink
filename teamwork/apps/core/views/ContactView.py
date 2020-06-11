@@ -1,7 +1,14 @@
-from django.shortcuts import get_object_or_404, redirect, render
+"""Render 'Contact Us' Page."""
+from django.shortcuts import render
+
 
 def contact(request):
-    """
-    Renders the ContactUs page
+    """Render Contact Us page.
+
+    Args:
+        request (requests.request): Page request.
+
+    Returns:
+        django.shortcuts.render: Page render.
     """
     return render(request, 'core/contact.html')

@@ -1,17 +1,18 @@
 # Model Imports
-from teamwork.apps.profiles.models import Profile
-# Form Imports
-from teamwork.apps.profiles.forms import *
-# View Imports
-from teamwork.apps.profiles.views.ProfileView import view_profile
+
+from django.contrib import messages
 # Other
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
-from django.contrib import messages
-import json
+from django.shortcuts import get_object_or_404, redirect, render
+# Form Imports
+from teamwork.apps.profiles.forms import ProfileForm, Skills, User
+from teamwork.apps.profiles.models import Profile
+# View Imports
+from teamwork.apps.profiles.views.ProfileView import view_profile
+
 
 def edit_skills(request, username):
     if request.method == 'GET' and request.is_ajax():
@@ -33,8 +34,8 @@ def edit_skills(request, username):
 @login_required
 def edit_profile(request, username):
     """
-    Public method that takes a request and a username.  Gets an entered 'skill' from the form
-    and stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
+    Public method that takes a request and a username.  Gets an entered 'skill' from the form and
+    stores it in lowercase if it doesn't exist already. Renders profiles/edit_profile.html.
 
     GT OVERRRIDE DOES NOT EDIT OTHER PROFILES BUT IT NO LONGER CRASHES
     """
@@ -153,9 +154,7 @@ def edit_profile(request, username):
         'learn_skills_list':learn_skills_list, 'page_name' : page_name, 'page_description': page_description, 'title': title })
 
 def edit_profile_helper(request, username):
-    """
-        Helper function that saves profile information from the ProfileForm
-    """
+    """Helper function that saves profile information from the ProfileForm."""
 
     if request.user.profile.isGT:
         tempProfile = User.objects.get(username=username)

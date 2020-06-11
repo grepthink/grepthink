@@ -6,15 +6,12 @@ Database Models for the objects: Course, Enrollment
 #Build-in modules
 from __future__ import unicode_literals
 
-from datetime import date
 import datetime
 import random
 import string
-
 #Other imports
-import uuid
-import markdown
 
+import markdown
 # Django modules
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -22,9 +19,9 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-
 # import of project models
 from teamwork.apps.projects.models import Project, Tsr
+
 
 # Generates add code
 def rand_code(size):
@@ -60,9 +57,7 @@ class Assignment(models.Model):
         unique=True)
 
     def __str__(self):
-        """
-        Human readeable representation of the Assignment object.
-        """
+        """Human readeable representation of the Assignment object."""
         return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number, self.slug))
 
     @property
@@ -72,8 +67,9 @@ class Assignment(models.Model):
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Assignment object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Course object in the database!
+
+        Bassically a way to check if the Assignment object exists in the database. Will be helpful
+        later. self.pk is the primary key of the Course object in the database!
         """
 
         # Generate URL slug if not specified
@@ -86,10 +82,8 @@ class Assignment(models.Model):
         super(Assignment, self).save(*args, **kwargs)
 
 def get_user_active_courses(self):
-    """
-    Added to auth so that a user object can easily retrieve enrolled courses
-    Gets a list of course objects that the user is in
-    """
+    """Added to auth so that a user object can easily retrieve enrolled courses Gets a list of
+    course objects that the user is in."""
     # Get all courses for a GT Admin
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
@@ -102,10 +96,8 @@ def get_user_active_courses(self):
     return my_courses
 
 def get_user_disabled_courses(self):
-    """
-    Added to auth so that a user object can easily retrieve enrolled courses
-    Gets a list of course objects that the user is in
-    """
+    """Added to auth so that a user object can easily retrieve enrolled courses Gets a list of
+    course objects that the user is in."""
     # Get all courses for a GT Admin
     if self.profile.isGT:
         my_courses = Course.objects.all().extra(\
@@ -276,16 +268,19 @@ class Course(models.Model):
 
     def __str__(self):
         """
-        Human readeable representation of the Course object. Might need to update when we add more attributes.
-        Maybe something like, return u'%s %s' % (self.course, self.title)
+        Human readeable representation of the Course object.
+
+        Might need to update when we add more attributes. Maybe something like, return u'%s %s' %
+        (self.course, self.title)
         """
         return self.name + "(slug: " + self.slug + ") " + self.creator.username
 
     def save(self, *args, **kwargs):
         """
         Overides the default save operator...
-        Bassically a way to check if the Course object exists in the database. Will be helpful later.
-        self.pk is the primary key of the Course object in the database!
+
+        Bassically a way to check if the Course object exists in the database. Will be helpful
+        later. self.pk is the primary key of the Course object in the database!
         """
 
         # try catch to ensure the unique property is met
@@ -314,18 +309,14 @@ class Course(models.Model):
 
     @staticmethod
     def get_my_courses(user):
-        """
-        Gets a list of course objects that the user is in
-        """
+        """Gets a list of course objects that the user is in."""
         my_courses = user.enrollment.all()
 
         return my_courses
 
     @staticmethod
     def get_my_created_courses(user):
-        """
-        Gets a list ofcourse objects the current user has created
-        """
+        """Gets a list ofcourse objects the current user has created."""
         #filters through courses the user has created
         created_courses = user.course_creator.all()
         # created_courses = Course.objects.filter(creator=user)
@@ -333,17 +324,12 @@ class Course(models.Model):
         return created_courses
 
     def get_updates(self):
-        """
-        Gets list of updates for course
-        """
+        """Gets list of updates for course."""
         return CourseUpdate.objects.filter(course=self)
 
     def get_updates_by_date(self):
-        """
-        Gets list of dicts, where each dict has keys 'date' and 'updates'
-        Updates is a list of updates for the specific day
-        Useful for timeline HTML view
-        """
+        """Gets list of dicts, where each dict has keys 'date' and 'updates' Updates is a list of
+        updates for the specific day Useful for timeline HTML view."""
         updates = self.get_updates()
         unique_dates = sorted(
             set(update.date_post.date() for update in updates), reverse=True)
@@ -414,14 +400,16 @@ class Enrollment(models.Model):
 
     def __str__(self):
         """
-        Human readeable representation of the Enrollment object. Might need to update when we add more attributes.
-        Maybe something like,  return u'%s %s' % (self.course, self.title)
+        Human readeable representation of the Enrollment object.
+
+        Might need to update when we add more attributes. Maybe something like,  return u'%s %s' %
+        (self.course, self.title)
         """
         return ("%s"%(self.user.username))
 
 class CourseUpdate(models.Model):
     """
-    CourseUpdate objects are announcement postings for a course
+    CourseUpdate objects are announcement postings for a course.
 
     Attributes:
         course:     ForeignKey to course
@@ -430,7 +418,6 @@ class CourseUpdate(models.Model):
         date_post:  Date published, can be future date (only shows past dates)
         date_edit:  Date last edited
         creator:    ForeignKey to user who wrote post
-
     """
     course = models.ForeignKey(Course)
     title = models.CharField(max_length=255, default="No Title Provided")
@@ -448,9 +435,7 @@ class CourseUpdate(models.Model):
         return '{0} - {1}'.format(self.creator.username, self.title)
 
     def save(self, *args, **kwargs):
-        """
-        Overrides default save
-        """
+        """Overrides default save."""
 
         if self.date_post is None:
             self.date_post = datetime.datetime.now()

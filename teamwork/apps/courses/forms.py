@@ -1,17 +1,12 @@
 #imports forms
+from datetime import datetime, timedelta
+
 from django import forms
-from django.forms import extras
+from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from datetime import datetime
-from django.contrib.admin.widgets import AdminDateWidget
-from django.shortcuts import get_object_or_404
-
-from datetime import datetime
-from datetime import timedelta
 from django.forms import extras
-from django.contrib.admin.widgets import AdminDateWidget
-
+from django.shortcuts import get_object_or_404
 from teamwork.apps.profiles.models import *
 
 from .models import *
@@ -38,7 +33,7 @@ def ForbiddenNamesValidator(value):
 #Creates the course form
 class CreateCourseForm(forms.ModelForm):
     """
-    Form used for a user to create a course
+    Form used for a user to create a course.
 
     Attributes (Fields):
         name: [CharField] Course name field
@@ -147,7 +142,7 @@ class CreateCourseForm(forms.ModelForm):
 #Edit the course form
 class EditCourseForm(forms.ModelForm):
     """
-    Form used for a user to create a course
+    Form used for a user to create a course.
 
     Attributes (Fields):
         name: [CharField] Course name field
@@ -251,7 +246,7 @@ class EditCourseForm(forms.ModelForm):
 #Creates join course form
 class JoinCourseForm(forms.ModelForm):
     """
-    Form used for a user to join a course
+    Form used for a user to join a course.
 
     Attributes (Fields):
         code: [CharField] field for user to enter addcode
@@ -285,7 +280,7 @@ def UniqueProjectValidator(value):
 # Show Interest Form
 class ShowInterestForm(forms.ModelForm):
     """
-    Form used for showing interest in sepcific projects
+    Form used for showing interest in sepcific projects.
 
     Attributes (Fields):
         projects-5: [ModelChoiceField] Project model
@@ -423,7 +418,7 @@ class EmailRosterForm(forms.Form):
 
 class CourseUpdateForm(forms.ModelForm):
     """
-    Form used for submitting project updates
+    Form used for submitting project updates.
 
     Attributes (Fields):
         update_title: [CharField] Name of project update
@@ -452,9 +447,7 @@ class CourseUpdateForm(forms.ModelForm):
         fields = ['title', 'content']
 
 class AssignmentForm(forms.ModelForm):
-    """
-    Form used for making a new assignment
-    """
+    """Form used for making a new assignment."""
     def __init__(self, uid, slug, *args, **kwargs):
         super(AssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
@@ -514,9 +507,7 @@ class AssignmentForm(forms.ModelForm):
 
 #Edit assignment form
 class EditAssignmentForm(forms.ModelForm):
-    """
-    form to edit ass
-    """
+    """form to edit ass."""
     def __init__(self, uid, slug, *args, **kwargs):
         super(EditAssignmentForm, self).__init__(*args, **kwargs)
         creator = User.objects.get(id=uid)
@@ -572,9 +563,7 @@ class EditAssignmentForm(forms.ModelForm):
 
 
 class ClaimProjectsForm(forms.Form):
-    """
-    Form used for TA's to select their projects
-    """
+    """Form used for TA's to select their projects."""
 
     def __init__(self, slug, *args, **kwargs):
         super(ClaimProjectsForm, self).__init__(*args, **kwargs)

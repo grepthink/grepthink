@@ -1,9 +1,10 @@
 # StatsView
 from django.contrib.auth.decorators import login_required
-from teamwork.apps.courses.models import Course, Enrollment
-from teamwork.apps.projects.models import Membership
 from django.shortcuts import get_object_or_404, redirect, render
+from teamwork.apps.courses.models import Course, Enrollment
 from teamwork.apps.courses.views.CourseView import view_one_course
+from teamwork.apps.projects.models import Membership
+
 
 @login_required
 def view_stats(request, slug):

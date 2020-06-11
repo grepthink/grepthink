@@ -2,10 +2,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-
 from teamwork.apps.profiles.models import Profile
 
-from .models import *
+from .models import Alert, Skills
 
 
 # Define an inline admin descriptor for Profile model
