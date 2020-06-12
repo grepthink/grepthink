@@ -106,16 +106,17 @@ def join_course(request):
 
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = JoinCourseForm(request.user.id,request.POST)
+        form = JoinCourseForm(request.user.id, request.POST)        
         #if form is accepted
-        if form.is_valid():
+        if form.is_valid():            
             #the courseID will be gotten from the form
             data = form.cleaned_data
-            course_code = data.get('code')
+            course_code = data.get('code')        
             all_courses = Course.objects.all()
-            #loops through the courses to find the course with corresponding course_code
-            # O(n) time
-            for i in all_courses:
+            
+            # loops through the courses to find the course with corresponding course_code
+            # O(n) time TODO: FIX THIS SHIT
+            for i in all_courses:                
                 if course_code == i.addCode:
                     #checks to see if an enrollment already exists
                     if not Enrollment.objects.filter(user=request.user, course=i, role=role).exists():
@@ -131,6 +132,7 @@ def join_course(request):
 
             #returns to view courses
             return redirect(view_courses)
+        print("JoinCourseForm Errors:", form.errors)
     else:
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
