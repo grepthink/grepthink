@@ -453,7 +453,6 @@ class AssignmentForm(forms.ModelForm):
         creator = User.objects.get(id=uid)
         course= get_object_or_404(Course, slug=slug)
         assNum=len(course.assignments.all())
-        print(assNum)
         self.fields['ass_number'].initial = assNum + 1
 
     # date assignment will start

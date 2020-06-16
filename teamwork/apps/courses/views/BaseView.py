@@ -43,7 +43,7 @@ def create_course(request):
 
     page_name = "Create Course"
     page_description = "Create a Course!"
-    title = "Create Course"    
+    title = "Create Course"
 
     if request.user.profile.isGT:
         pass
@@ -55,8 +55,8 @@ def create_course(request):
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CreateCourseForm(request.user.id, request.POST, request.FILES)        
-        if form.is_valid():            
+        form = CreateCourseForm(request.user.id, request.POST, request.FILES)
+        if form.is_valid():
             # create an object for the input
             course = Course()
             # gets data from form
@@ -73,9 +73,9 @@ def create_course(request):
 
             # creator is current user
             course.creator = request.user
-            
+
             # save this object
-            course.save()            
+            course.save()
 
             # add enrollment object for professor
             if request.user.profile.isProf:
@@ -87,7 +87,7 @@ def create_course(request):
         print("CreateCourseForm Errors:", form.errors)
     else:
         form = CreateCourseForm(request.user.id)
-        
+
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
@@ -106,17 +106,17 @@ def join_course(request):
 
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = JoinCourseForm(request.user.id, request.POST)        
+        form = JoinCourseForm(request.user.id, request.POST)
         #if form is accepted
-        if form.is_valid():            
+        if form.is_valid():
             #the courseID will be gotten from the form
             data = form.cleaned_data
-            course_code = data.get('code')        
+            course_code = data.get('code')
             all_courses = Course.objects.all()
-            
+
             # loops through the courses to find the course with corresponding course_code
             # O(n) time TODO: FIX THIS SHIT
-            for i in all_courses:                
+            for i in all_courses:
                 if course_code == i.addCode:
                     #checks to see if an enrollment already exists
                     if not Enrollment.objects.filter(user=request.user, course=i, role=role).exists():
@@ -139,11 +139,16 @@ def join_course(request):
 
 @login_required
 def upload_csv(request, slug):
+    """
+    Upload CSV View
+
+    Args:
+        slug: (str) Course slug
+    """
     page_name = "Upload CSV File"
     page_description = "CSV Upload"
     title = "Upload CSV"
     course = get_object_or_404(Course, slug=slug)
-
     recipients = []
 
     form = UploadCSVForm()
@@ -162,12 +167,10 @@ def upload_csv(request, slug):
             request.session['recipients'] = recipients
 
             return redirect(email_csv, slug)
-        else:
-            print("form is invalid")
 
     return render(request, 'core/upload_csv.html', {
         'slug':slug, 'form':form, 'course':course,
-        'page_name':page_name, 'page_description':page_description,'title':title
+        'page_name':page_name, 'page_description':page_description, 'title':title
     })
 
 @login_required
@@ -206,7 +209,7 @@ def export_xls(request, slug):
         print("members:", members)
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
-        ws.write(row_num, 1, "TA:", font_style)        
+        ws.write(row_num, 1, "TA:", font_style)
 
         if proj.ta is not None:
             ws.write(row_num, 2, proj.ta.email, font_style)

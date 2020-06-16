@@ -28,7 +28,7 @@ def view_one_course(request, slug):
     # Get the user_role
     if not request.user.profile.isGT:
         # check if current user is enrolled in the course
-        if request.user in course.students.all() or (request.user==course.creator):
+        if request.user in course.students.all() or (request.user == course.creator):
             try:
                 user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
             except:
@@ -46,7 +46,6 @@ def view_one_course(request, slug):
     date_updates = course.get_updates_by_date()
 
     # all_interests = Interest.objects.filter(project_interest=temp_projects,user=request.user)
-
     has_shown_interest = False
     for project in temp_projects:
         user_interests = Interest.objects.filter(project_interest=project, user=request.user)
@@ -60,39 +59,44 @@ def view_one_course(request, slug):
     prof = course.creator
 
     # Grab Students in the course
-    staff_ids=[o.id for o in staff]
-    students =list(course.students.exclude(id__in=staff_ids))
+    staff_ids = [o.id for o in staff]
+    students = list(course.students.exclude(id__in=staff_ids))
     asgs = sorted(course.assignments.all(), key=lambda s: s.ass_date)
 
     # Prepare a list of students not in a project for count and color coding
-    available=[]
-    taken_ids=list(Membership.objects.prefetch_related('user').values_list('user', flat=True).filter(project__in=course.projects.all()))
-    available=list(course.students.exclude(id__in=taken_ids+staff_ids))
+    available = []
+    taken_ids = list(Membership.objects.prefetch_related('user').values_list('user', flat=True).filter(project__in=course.projects.all()))
+    available = list(course.students.exclude(id__in=taken_ids+staff_ids))
 
-    assignmentForm = AssignmentForm(request.user.id, slug)
+    assignment_form = AssignmentForm(request.user.id, slug)
     if(request.method == 'POST'):
-        assignmentForm = AssignmentForm(request.user.id, slug, request.POST)
-        if assignmentForm.is_valid():
+        print('here 1')
+
+        # TODO: only allow professors to create? why initialize assignment_form again?
+        assignment_form = AssignmentForm(request.user.id, slug, request.POST)
+        if assignment_form.is_valid():
+            print('here')
             assignment = Assignment()
-            assignment.due_date = assignmentForm.cleaned_data.get('due_date')
-            assignment.ass_date = assignmentForm.cleaned_data.get('ass_date')
-            assignment.ass_type =assignmentForm.cleaned_data.get('ass_type').lower()
-            assignment.ass_name = assignmentForm.cleaned_data.get('ass_name')
-            assignment.description = assignmentForm.cleaned_data.get('description')
-            assignment.ass_number = assignmentForm.cleaned_data.get('ass_number')
+            assignment.due_date = assignment_form.cleaned_data.get('due_date')
+            assignment.ass_date = assignment_form.cleaned_data.get('ass_date')
+            assignment.ass_type =assignment_form.cleaned_data.get('ass_type').lower()
+            assignment.ass_name = assignment_form.cleaned_data.get('ass_name')
+            assignment.description = assignment_form.cleaned_data.get('description')
+            assignment.ass_number = assignment_form.cleaned_data.get('ass_number')
 
             assignment.save()
 
             course.assignments.add(assignment)
             course.save()
-
+        else:
+            print(assignment_form.errors)
         messages.info(request, 'You have successfully created an assignment')
-        return redirect(view_one_course,course.slug)
+        return redirect(view_one_course, course.slug)
 
-    return render(request, 'courses/view_course.html', {'assignmentForm':assignmentForm,
-        'course': course , 'projects': projects, 'date_updates': date_updates, 'students':students,
-        'user_role':user_role, 'available':available, 'assignments':asgs, 'has_shown_interest':has_shown_interest,
-        'page_name' : page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
+    return render(request, 'courses/view_course.html', {'assignmentForm':assignment_form,
+        'course': course, 'projects': projects, 'date_updates': date_updates, 'students':students,
+        'user_role': user_role, 'available':available, 'assignments':asgs, 'has_shown_interest':has_shown_interest,
+        'page_name': page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
 
 @login_required
 def edit_assignment(request, slug):
