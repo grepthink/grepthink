@@ -69,13 +69,10 @@ def view_one_course(request, slug):
     available = list(course.students.exclude(id__in=taken_ids+staff_ids))
 
     assignment_form = AssignmentForm(request.user.id, slug)
-    if(request.method == 'POST'):
-        print('here 1')
-
+    if request.method == 'POST':
         # TODO: only allow professors to create? why initialize assignment_form again?
         assignment_form = AssignmentForm(request.user.id, slug, request.POST)
         if assignment_form.is_valid():
-            print('here')
             assignment = Assignment()
             assignment.due_date = assignment_form.cleaned_data.get('due_date')
             assignment.ass_date = assignment_form.cleaned_data.get('ass_date')
@@ -88,28 +85,36 @@ def view_one_course(request, slug):
 
             course.assignments.add(assignment)
             course.save()
-        else:
-            print(assignment_form.errors)
+
         messages.info(request, 'You have successfully created an assignment')
         return redirect(view_one_course, course.slug)
 
-    return render(request, 'courses/view_course.html', {'assignmentForm':assignment_form,
-        'course': course, 'projects': projects, 'date_updates': date_updates, 'students':students,
-        'user_role': user_role, 'available':available, 'assignments':asgs, 'has_shown_interest':has_shown_interest,
-        'page_name': page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
+    return render(
+        request, 'courses/view_course.html',
+        {'assignmentForm':assignment_form,
+         'course': course, 'projects': projects, 'date_updates': date_updates, 'students':students,
+         'user_role': user_role, 'available':available, 'assignments':asgs, 'has_shown_interest':has_shown_interest,
+         'page_name': page_name, 'page_description': page_description, 'title': title, 'prof': prof, 'tas': tas})
 
 @login_required
 def edit_assignment(request, slug):
     """Edit assignment method, creating generic form."""
-    user = request.user
-    ass = get_object_or_404(Assignment.objects.prefetch_related('course'), slug=slug)
-    course = ass.course.first()
+    assignment = get_object_or_404(Assignment.objects.prefetch_related('course'), slug=slug)
+    course = assignment.course.first()
     page_name = "Edit Assignment"
-    page_description = "Edit %s"%(ass.ass_name)
+    page_description = "Edit %s"%(assignment.ass_name)
     title = "Edit Assignment"
 
     if not request.user.profile.isGT:
-        user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
+        enrollment = Enrollment.objects.filter(user=request.user, course=course)
+        if enrollment.exists():
+            user_role = enrollment.first().role
+        else:
+            # User isn't enrolled in the course
+            messages.info(request, 'You must be enrolled in the course to Edit Assignments')
+
+            # Using HttpResponseRedirect due to cyclical imports if we import view_courses
+            return HttpResponseRedirect('/course/')
     else:
         user_role = 'GT'
 
@@ -117,15 +122,17 @@ def edit_assignment(request, slug):
         pass
     #if user is not a professor or they did not create course
     elif not course.creator == request.user:
-        if not user_role=="ta":
+        if user_role != "ta":
             #redirect them to the /course directory with message
-            messages.info(request,'Only a Professor or TA can Edit an Assignment')
-            return HttpResponseRedirect('/course')
+            messages.info(request, 'Only a Professor or TA can Edit an Assignment')
 
-    if(request.method == 'POST'):
-        assignmentForm = EditAssignmentForm(request.user.id, slug, request.POST)
-        if assignmentForm.is_valid():
-            data = assignmentForm.cleaned_data
+            # Using HttpResponseRedirect due to cyclical imports if we import view_courses
+            return HttpResponseRedirect('/course/')
+
+    if request.method == 'POST':
+        assignment_form = EditAssignmentForm(request.user.id, slug, request.POST)
+        if assignment_form.is_valid():
+            data = assignment_form.cleaned_data
             due_date = data.get('due_date')
             ass_date = data.get('ass_date')
             ass_type = data.get('ass_type').lower()
@@ -134,51 +141,50 @@ def edit_assignment(request, slug):
             ass_number = data.get('ass_number')
 
             # edit the current assignment's properties w/ the new values
-            ass.due_date = due_date
-            ass.ass_date = ass_date
-            ass.ass_type = ass_type
-            ass.ass_name = ass_name
-            ass.description = description
-            ass.ass_number = ass_number
-            ass.save()
-        else:
-            print("FORM ERRORS: ", assignmentForm.errors)
+            assignment.due_date = due_date
+            assignment.ass_date = ass_date
+            assignment.ass_type = ass_type
+            assignment.ass_name = ass_name
+            assignment.description = description
+            assignment.ass_number = ass_number
+            assignment.save()
 
-        return redirect(view_one_course,course.slug)
+        return redirect(view_one_course, course.slug)
 
-    else:
-        form = EditAssignmentForm(request.user.id, slug, instance=ass)
+    form = EditAssignmentForm(request.user.id, slug, instance=assignment)
 
     return render(
-            request, 'courses/edit_assignment.html',
-            {'assignmentForm': form,'course': course, 'ass':ass, 'page_name' : page_name, 'page_description': page_description, 'title': title}
-            )
+        request, 'courses/edit_assignment.html',
+        {'assignmentForm': form, 'course': course, 'ass':assignment,
+         'page_name' : page_name, 'page_description': page_description, 'title': title}
+        )
 
 @login_required
 def delete_assignment(request, slug):
     """Delete assignment method."""
-    ass = get_object_or_404(Assignment, slug=slug)
-    course = ass.course.first()
+    assignment = get_object_or_404(Assignment, slug=slug)
+    course = assignment.course.first()
 
     if not request.user.profile.isGT:
         user_role = Enrollment.objects.filter(user=request.user, course=course).first().role
     else:
         user_role = 'GT'
 
-    print("user_role",user_role)
-
     if request.user.profile.isGT:
         pass
-    elif not request.user==course.creator:
-        if not user_role == "ta":
+    # If request.user is NOT the course creator and NOT a TA, then redirect them
+    elif not request.user == course.creator:
+        if user_role != "ta":
             return redirect(view_one_course, course.slug)
 
-    #Runs through each project and deletes them
-    for a in ass.subs.all():
-        a.delete()
+    # Runs through each assignment submission and deletes them
+    for submission in assignment.subs.all():
+        submission.delete()
 
-    #deletes course
-    ass.delete()
+    #deletes the assignment
+    assignment.delete()
+
+    # Redirect to view_one_course
     return redirect(view_one_course, course.slug)
 
 @login_required
@@ -196,26 +202,28 @@ def update_course(request, slug):
 
     if user_role == "student":
         #redirect them to the /course directory with message
-        messages.info(request,'Only Professor can post a course update')
+        messages.info(request, 'Only Professor can post a course update')
         return HttpResponseRedirect('/course')
 
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
             new_update = CourseUpdate(course=course)
-            new_update.course = course;
+            new_update.course = course
             new_update.title = form.cleaned_data.get('title')
             new_update.content = form.cleaned_data.get('content')
             new_update.creator = request.user
             new_update.save()
 
-        # Next 4 lines handle sending an email to class roster
             # grab list of students in the course
             students_in_course = course.students.all().filter()
-            # TODO: course variables contains (slug: blah blah)
-            subject = "{0} has posted an update to {1}".format(request.user, course)
+
+            # Send Email notification to Students in Course
+            subject = "{0} has posted an update to {1}".format(request.user, course.name)
             content = "{0}\n\n www.grepthink.com".format(new_update.content)
             send_email(students_in_course, "noreply@grepthink.com", subject, content)
+
+            # Notify the User of success
             messages.add_message(request, messages.SUCCESS, "Posted and Email Sent!")
 
             return redirect(view_one_course, course.slug)
@@ -223,15 +231,15 @@ def update_course(request, slug):
         form = CourseUpdateForm(request.user.id)
 
     return render(
-            request, 'courses/update_course.html',
-            {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title }
-            )
+        request, 'courses/update_course.html',
+        {'form': form, 'course': course, 'page_name' : page_name, 'page_description': page_description, 'title': title }
+        )
 
 @login_required
-def update_course_update(request, slug, id):
+def update_course_update(request, slug, course_update_id):
     """Edit an update for a given course."""
     course = get_object_or_404(Course, slug=slug)
-    update = get_object_or_404(CourseUpdate, id=id)
+    update = get_object_or_404(CourseUpdate, id=course_update_id)
 
     if request.user.profile.isGT:
         pass
@@ -241,7 +249,7 @@ def update_course_update(request, slug, id):
     if request.method == 'POST':
         form = CourseUpdateForm(request.user.id, request.POST)
         if form.is_valid():
-            update.course = course;
+            update.course = course
             update.title = form.cleaned_data.get('title')
             update.content = form.cleaned_data.get('content')
             if not request.user.profile.isGT:
@@ -252,9 +260,9 @@ def update_course_update(request, slug, id):
         form = CourseUpdateForm(request.user.id, instance=update)
 
     return render(
-            request, 'courses/update_course_update.html',
-            {'form': form, 'course': course, 'update': update}
-            )
+        request, 'courses/update_course_update.html',
+        {'form': form, 'course': course, 'update': update}
+        )
 
 @login_required
 def delete_course_update(request, slug, id):

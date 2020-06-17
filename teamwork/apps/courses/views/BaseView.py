@@ -27,7 +27,7 @@ def _courses(request, courses):
 
     return render(request,
             'courses/view_courses.html',
-            {'courses': courses,'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'courses': courses, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 @login_required

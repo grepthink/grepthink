@@ -6,7 +6,7 @@ Courses App View Tests
 from datetime import datetime, date, timedelta
 from django.test import Client, TestCase
 from django.contrib.auth.models import User
-from teamwork.apps.courses.models import Course, Enrollment, Assignment
+from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
 from teamwork.apps.profiles.models import Alert
 
 class BaseViewTest(TestCase):
@@ -211,6 +211,156 @@ class ViewCourseTest(TestCase):
         # Assert a new Assignment object was created
         is_created = Assignment.objects.filter(ass_name='Test Assignment 1').exists()
         self.assertTrue(is_created)
+
+class EditAssignmentTest(TestCase):
+    """ Edit Assignment Test """
+    def setUp(self):
+        # Create Test Prof
+        self.prof1 = create_user("prof1", "prof1@test.com", "prof1")
+        self.prof1.profile.isProf = True
+        self.prof1.save()
+
+        self.course = create_course("test course", "slugx", self.prof1)
+        self.course.save()
+
+        # Create an Assignment that we will edit
+        self.assignment = Assignment()
+        self.assignment.ass_date = date.today()
+        self.assignment.due_date = date.today() + timedelta(days=7)
+        self.assignment.description = 'initial description'
+        self.assignment.ass_type = 'Quiz'
+        self.assignment.ass_name = 'Weekly Test Quiz'
+        self.assignment.ass_number = 1
+        self.assignment.save()
+
+        # Add it to the Course's Assignments
+        self.course.assignments.add(self.assignment)
+        self.course.save()
+
+        # Init Client
+        self.client = Client()
+
+        # Authenticate Professor
+        self.client.login(username='prof1', password='prof1')
+
+    def tearDown(self):
+        del self.prof1
+        del self.course
+        del self.client
+
+    def test_edit_assignment_not_enrolled(self):
+        """ Tests rendering of edit_assignment view when not enrolled """
+        # del self.enrollment
+        response = self.client.get('/assignment/' + self.assignment.slug + '/edit/')
+
+        # Assert view was rendered w/ edit_assignment template
+        self.assertEqual(response.status_code, 302)
+        # self.assertContains(response, 'You must be enrolled in the course to Edit Assignments', 302)
+
+    def test_get_edit_assignment(self):
+        """ Tests rendering of edit_assignment view """
+        enrollment = create_course_enrollment(self.prof1, self.course, 'professor')
+        enrollment.save()
+
+        response = self.client.get('/assignment/' + self.assignment.slug + '/edit/')
+
+        # Assert view was rendered w/ edit_assignment template
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/edit_assignment.html')
+
+
+    def test_edit_assignment(self):
+        """ Tests Editing of edit_assignment view """
+        enrollment = create_course_enrollment(self.prof1, self.course, 'professor')
+        enrollment.save()
+
+        data = {'due_date': date.today() + timedelta(days=7), 'ass_date': date.today(),
+                'ass_type': self.assignment.ass_type, 'ass_name': self.assignment.ass_name,
+                'description': 'after editing description', 'ass_number': self.assignment.ass_number}
+        response = self.client.post('/assignment/' + self.assignment.slug + '/edit/', data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Assignment.objects.filter(description='after editing description').exists())
+
+    def test_delete_assignment(self):
+        """ Tests delete_assignment view method """
+        enrollment = create_course_enrollment(self.prof1, self.course, 'professor')
+        enrollment.save()
+
+        slug = self.assignment.slug
+
+        response = self.client.post('/assignment/' + slug + '/delete/')
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(not Assignment.objects.filter(slug=slug).exists())
+
+class CourseUpdateTest(TestCase):
+    """ Tests regarding posting/deleting/editing Course Updates """
+    def setUp(self):
+        # Create Test Prof
+        self.prof1 = create_user("prof1", "prof1@test.com", "prof1")
+        self.prof1.profile.isProf = True
+        self.prof1.save()
+
+        # Create Course
+        self.course = create_course("test course", "slugx", self.prof1)
+        self.course.save()
+
+        # Enroll Prof
+        self.enrollment = create_course_enrollment(self.prof1, self.course, 'professor')
+        self.enrollment.save()
+
+        # Init Client
+        self.client = Client()
+
+        # Authenticate Professor
+        self.client.login(username='prof1', password='prof1')
+
+    def tearDown(self):
+        del self.prof1
+        del self.course
+        del self.client
+
+    def test_get_update_course(self):
+        """ GET - /course/slug/update """
+        response = self.client.get('/course/' + self.course.slug + '/update/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/update_course.html')
+
+    def test_update_course(self):
+        """ POST course update """
+        data = {'title': 'Course Update Title', 'content':'This is a Course Update Test'}
+        response = self.client.post('/course/' + self.course.slug + '/update/', data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(CourseUpdate.objects.filter(title=data['title']).exists())
+
+    def test_get_edit_update(self):
+        """ Tests GET to update_course_update """
+        # Create Test Course Update
+        data = {'title': 'Course Update Title', 'content':'This is a Course Update Test'}
+        self.client.post('/course/' + self.course.slug + '/update/', data)
+        created_update = CourseUpdate.objects.filter(title=data['title']).first()
+
+        request_url = '/course/' + self.course.slug + '/update/' + str(created_update.id) + '/'
+        response = self.client.get(request_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/update_course_update.html')
+
+    def test_edit_course_update(self):
+        """ Tests POST to update_course_update """
+        # Create Test Course Update
+        data = {'title': 'Course Update Title', 'content':'This is a Course Update Test'}
+        self.client.post('/course/' + self.course.slug + '/update/', data)
+        created_update = CourseUpdate.objects.filter(title=data['title']).first()
+
+        data = {'title': created_update.title, 'content': 'Content Updated'}
+        request_url = '/course/' + self.course.slug + '/update/' + str(created_update.id) + '/'
+        response = self.client.post(request_url, data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(CourseUpdate.objects.filter(content='Content Updated').exists())
 
 # Helper Functions
 def create_user(username, email, password):
