@@ -265,18 +265,19 @@ def update_course_update(request, slug, course_update_id):
         )
 
 @login_required
-def delete_course_update(request, slug, id):
+def delete_course_update(request, slug, course_update_id):
     """Delete an update for a given course."""
     course = get_object_or_404(Course, slug=slug)
-    update = get_object_or_404(CourseUpdate, id=id)
+    update = get_object_or_404(CourseUpdate, id=course_update_id)
 
-    if update.creator == request.user or request.user.prfile.isGT:
+    if update.creator == request.user or request.user.profile.isGT:
         update.delete()
 
     return redirect(view_one_course, course.slug)
 
 @login_required
 def claim_projects(request, slug):
+    """ View to Claim Projects to be TA for """
     page_name = "Claim Projects"
     page_description = "Select the projects that you are assigned to"
     title = "Claim Projects"
@@ -287,6 +288,7 @@ def claim_projects(request, slug):
     claimed_projects = profile.claimed_projects.all()
     filtered = profile.claimed_projects.filter(course=course)
 
+    # Build List of Projects that are available to be claimed
     available = []
     for proj in projects:
         found = False
@@ -297,7 +299,6 @@ def claim_projects(request, slug):
             available.append(proj)
 
     if request.method == 'POST':
-
         if request.POST.get('remove_claim'):
             proj_name = request.POST.get('remove_claim')
             to_delete = get_object_or_404(Project, title=proj_name)

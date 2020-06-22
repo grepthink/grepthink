@@ -149,11 +149,11 @@ urlpatterns = [
         # Edit existing update to course (based on slug and update id)
         url(r'^course/(?P<slug>[^/]+)/update/(?P<course_update_id>[^/]+)/$', CourseView.update_course_update, name='update_course_update'),
         # Edit existing update to course (based on slug and update id)
-        url(r'^course/(?P<slug>[^/]+)/update/(?P<id>[^/]+)/delete$',CourseView.delete_course_update, name='delete_course_update'),
+        url(r'^course/(?P<slug>[^/]+)/update/(?P<course_update_id>[^/]+)/delete$', CourseView.delete_course_update, name='delete_course_update'),
         # Button to lock interest
-        url(r'^course/(?P<slug>[^/]+)/lock/$',EditCourseView.lock_interest, name='lock_interest'),
+        url(r'^course/(?P<slug>[^/]+)/lock/$', EditCourseView.lock_interest, name='lock_interest'),
         # Button to Disable course
-        url(r'^course/(?P<slug>[^/]+)/disable/$',EditCourseView.disable , name='disable'),
+        url(r'^course/(?P<slug>[^/]+)/disable/$', EditCourseView.disable, name='disable'),
         # link to show interest page
         url(r'^course/(?P<slug>[^/]+)/show_interest/$',InterestView.show_interest, name='show_interest'),
         # select2 for course

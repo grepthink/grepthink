@@ -362,6 +362,26 @@ class CourseUpdateTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(CourseUpdate.objects.filter(content='Content Updated').exists())
 
+    def test_delete_course_update(self):
+        """ Tests delete_course_update """
+        # Create Test Course Update
+        data = {'title': 'Course Update Title', 'content':'This is a Course Update Test'}
+        self.client.post('/course/' + self.course.slug + '/update/', data)
+        created_update = CourseUpdate.objects.filter(title=data['title']).first()
+
+        request_url = '/course/' + self.course.slug + '/update/' + str(created_update.id) + '/delete'
+        response = self.client.post(request_url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(not CourseUpdate.objects.filter(title='Course Update Title').exists())
+
+class ClaimProjectsTest(TestCase):
+    """ Tests Claim Project View """
+    def test_get_claim_projects_view(self):
+        """ GET - to claim_projects """
+
+    def test_claim_projects(self):
+        """ POST - to claim_projects. Claiming Projects as a TA """
 # Helper Functions
 def create_user(username, email, password):
     """
