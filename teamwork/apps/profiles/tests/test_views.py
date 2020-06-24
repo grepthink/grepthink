@@ -65,6 +65,32 @@ class AlertViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(not Alert.objects.filter(id=self.alert1.id).exists())
 
+class SignupTests(TestCase):
+    """SignUp Tests"""
+
+    def setUp(self):
+        """Set Up"""
+        self.client = Client()
+
+    def tearDown(self):
+        """ Tear Down """
+        del self.client
+
+    def test_signup_post(self):
+        """ Test signup post"""
+        data = {'email': 'test1@test1.com', 'password': 'test1', 'confirm_password': 'test1'}
+        response = self.client.post(reverse('signup'), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(email=data['email']).exists())
+        user = User.objects.get(email=data['email'])
+        self.assertTrue(Profile.objects.filter(user=user).exists())
+
+    def test_signup_get(self):
+        """ Test signup get"""
+        response = self.client.get(reverse('signup'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profiles/signup.html')
+
 def create_user(username, email, password):
     """
     Create a User helper
