@@ -6,8 +6,12 @@ Courses App View Tests
 from datetime import datetime, date, timedelta
 from django.test import Client, TestCase
 from django.contrib.auth.models import User
+from django.urls import reverse
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
+from teamwork.apps.projects.models import Project
 from teamwork.apps.profiles.models import Alert
+
+from teamwork.apps.courses.views.CourseView import get_available_projects
 
 class BaseViewTest(TestCase):
     """
@@ -377,11 +381,82 @@ class CourseUpdateTest(TestCase):
 
 class ClaimProjectsTest(TestCase):
     """ Tests Claim Project View """
+    def setUp(self):
+        """ Set Up """
+        self.client = Client()
+
+        # create prof
+        self.professor = create_user("prof", "prof@testing.com", "password")
+
+        # create course
+        self.course = create_course("test course", "abcd", self.professor)
+
+        # enroll professor in course
+        create_course_enrollment(self.professor, self.course, "professor")
+
+        # create projects
+        self.project1 = Project.objects.create(title='project one', creator=self.professor)
+        self.course.projects.add(self.project1)
+        self.project2 = Project.objects.create(title='project two', creator=self.professor)
+        self.course.projects.add(self.project2)
+        self.project3 = Project.objects.create(title='project three', creator=self.professor)
+        self.course.projects.add(self.project3)
+
+        # auth prof
+        self.client.login(username='prof', password='password')
+
+    def tearDown(self):
+        """ Tear Down """
+        del self.client
+
     def test_get_claim_projects_view(self):
         """ GET - to claim_projects """
+        response = self.client.get(reverse('claim_projects', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/claim_projects.html')
+
+    def test_available_projects(self):
+        """ GET - tests the list of available projects """
+        available_projects = get_available_projects(self.professor, self.course)
+        self.assertEqual(len(available_projects), 3)
+
+        # claim 1 proj
+        self.project1.ta = self.professor
+        self.professor.profile.claimed_projects.add(self.project1)
+
+        # assert available projects decreased by 1
+        available_projects = get_available_projects(self.professor, self.course)
+        self.assertEqual(len(available_projects), 2)
 
     def test_claim_projects(self):
         """ POST - to claim_projects. Claiming Projects as a TA """
+        data = {'select_projects': ['project one', 'project two']}
+        response = self.client.post(reverse('claim_projects', kwargs={'slug': self.course.slug}), data)
+
+        available_projects = get_available_projects(self.professor, self.course)
+        self.assertEqual(len(available_projects), 1)
+        self.assertEqual(len(self.professor.profile.claimed_projects.all()), 2)
+        self.assertEqual(response.status_code, 302)
+
+
+    def test_remove_claim(self):
+        """ POST - tests removing a claim from a project """
+        # claim 1 proj
+        self.project1.ta = self.professor
+        self.professor.profile.claimed_projects.add(self.project1)
+
+        available_projects = get_available_projects(self.professor, self.course)
+        self.assertEqual(len(available_projects), 2)
+        self.assertEqual(len(self.professor.profile.claimed_projects.all()), 1)
+
+        data = {'remove_claim': 'project one'}
+        response = self.client.post(reverse('claim_projects', kwargs={'slug': self.course.slug}), data)
+
+        available_projects = get_available_projects(self.professor, self.course)
+        self.assertEqual(len(available_projects), 3)
+        self.assertEqual(len(self.professor.profile.claimed_projects.all()), 0)
+        self.assertEqual(response.status_code, 302)
+
 # Helper Functions
 def create_user(username, email, password):
     """

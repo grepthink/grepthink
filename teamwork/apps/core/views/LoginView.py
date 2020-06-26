@@ -28,13 +28,13 @@ def login(request):
 
         # Otherwise render timeline
         return LandingView.render_timeline(request)
-    
+
     # if post attempt to authenticate the user
     if request.method == 'POST':
         return auth_views.login(request)
 
     # Redirect user to login instead of public index (for ease of use)
     return render(request, 'core/login.html', {
-            'page_name': page_name,
-            'page_description': page_description, 'title' : title
-            })
+        'page_name': page_name,
+        'page_description': page_description, 'title' : title
+        })

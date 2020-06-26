@@ -281,22 +281,12 @@ def claim_projects(request, slug):
     page_name = "Claim Projects"
     page_description = "Select the projects that you are assigned to"
     title = "Claim Projects"
-    course = get_object_or_404(Course.objects.prefetch_related('projects'), slug=slug)
-    user = request.user
-    profile = Profile.objects.prefetch_related('claimed_projects').get(user=user)
-    projects = course.projects.all()
-    claimed_projects = profile.claimed_projects.all()
-    filtered = profile.claimed_projects.filter(course=course)
 
-    # Build List of Projects that are available to be claimed
-    available = []
-    for proj in projects:
-        found = False
-        for p in filtered:
-            if (proj == p):
-                found = True
-        if not found:
-            available.append(proj)
+    course = get_object_or_404(Course.objects.prefetch_related('projects'), slug=slug)
+    projects = course.projects.all()
+    profile = Profile.objects.prefetch_related('claimed_projects').get(user=request.user)
+    claimed_projects = profile.claimed_projects.all()
+    available = get_available_projects(request.user, course)
 
     if request.method == 'POST':
         if request.POST.get('remove_claim'):
@@ -314,6 +304,7 @@ def claim_projects(request, slug):
             to_claim = request.POST.getlist('select_projects')
 
             # manally search for project object with the same title
+            # todo: this needs to be reworked
             to_claim_projects = []
             for proj in projects:
                 for title in to_claim:
@@ -326,10 +317,32 @@ def claim_projects(request, slug):
                 p.save()
                 profile.claimed_projects.add(p)
                 profile.save()
+
             messages.add_message(request, messages.SUCCESS, "Project's TA Fields updated.")
             return redirect(view_one_course, course.slug)
 
     return render(request, 'courses/claim_projects.html',
-            {'course': course, 'available':available, 'claimed_projects':claimed_projects,
-            'page_name' : page_name, 'page_description': page_description, 'title': title
-            })
+                  {'course': course, 'available':available, 'claimed_projects':claimed_projects,
+                   'page_name' : page_name, 'page_description': page_description, 'title': title
+                  })
+
+def get_available_projects(user, course):
+    """ Gets all unclaimed projects in a course that are still available for a TA to claim """
+
+    profile = Profile.objects.prefetch_related('claimed_projects').get(user=user)
+
+    # Grab list of already claimed projects by the current user/profile
+    filtered = profile.claimed_projects.filter(course=course)
+
+    # todo: this needs to be reworked
+    # Build List of Projects that are available to be claimed
+    available = []
+    for proj in course.projects.all():
+        found = False
+        for p in filtered:
+            if proj == p:
+                found = True
+        if not found:
+            available.append(proj)
+
+    return available
