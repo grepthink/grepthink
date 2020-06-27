@@ -91,6 +91,32 @@ class SignupTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/signup.html')
 
+class ProfSignupTests(TestCase):
+    """ProfSignUp Tests"""
+
+    def setUp(self):
+        """Set Up"""
+        self.client = Client()
+
+    def tearDown(self):
+        """ Tear Down """
+        del self.client
+
+    def test_profsignup_post(self):
+        """ Test profsignup post"""
+        data = {'email': 'test1@test1.com', 'password': 'test1', 'confirm_password': 'test1'}
+        response = self.client.post(reverse('profSignup'), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(email=data['email']).exists())
+        user = User.objects.get(email=data['email'])
+        self.assertTrue(Profile.objects.filter(user=user).exists())
+
+    def test_profsignup_get(self):
+        """ Test signup get"""
+        response = self.client.get(reverse('profSignup'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profiles/professorSignup.html')
+
 def create_user(username, email, password):
     """
     Create a User helper
