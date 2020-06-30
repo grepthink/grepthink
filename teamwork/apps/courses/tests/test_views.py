@@ -216,6 +216,107 @@ class ViewCourseTest(TestCase):
         is_created = Assignment.objects.filter(ass_name='Test Assignment 1').exists()
         self.assertTrue(is_created)
 
+class EditCourseTest(TestCase):
+    """ Edit Course View Tests """
+    def setUp(self):
+        """ Set Up """
+        self.client = Client()
+
+        # create prof
+        self.professor = create_user("prof", "prof@testing.com", "password")
+        self.other_prof = create_user("other", "other@testing.com", "password")
+
+        # create dummy test users
+        self.stud1 = create_user("stud1", "stud1@testing.com", "password")
+        self.stud2 = create_user("stud2", "stud2@testing.com", "password")
+        self.stud3 = create_user("stud3", "stud3@testing.com", "password")
+
+        # create course
+        self.course = create_course("test course", "abcd", self.professor)
+
+        # enroll professor in course
+        create_course_enrollment(self.professor, self.course, "professor")
+
+    def tearDown(self):
+        """ Tear Down """
+        del self.client
+        del self.professor
+        del self.other_prof
+        del self.course
+
+    def test_get_unauth_edit_course(self):
+        """ Test GET to edit_course view as Unauthorized """
+        self.client.login(username='other', password='password')
+        response = self.client.get(reverse('edit_course', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_edit_course(self):
+        """ Test GET to edit_course view as Authorized Course Creator """
+        self.client.login(username='prof', password='password')
+        response = self.client.get(reverse('edit_course', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/edit_course.html')
+
+    def test_edit_as_invalid(self):
+        """ Test attempting to Edit Course when not the course creator """
+        self.client.login(username='other', password='password')
+        response = self.client.get(reverse('edit_course', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 302)
+
+    def test_add_member(self):
+        """ Tests Edit Course view when adding a member to the course """
+        self.client.login(username='prof', password='password')
+        data = {'members': ['stud1', 'stud2', 'stud3'], 'name':'test course', 'info':'test course info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+
+        # assert the course now has 3 students enrolled
+        self.assertEqual(self.course.students.all().count(), 4)
+
+    def test_remove_member(self):
+        """ Tests Edit Course view when removing a member from a course """
+        self.client.login(username='prof', password='password')
+        data = {'members': ['stud1', 'stud2', 'stud3'], 'name':'test course', 'info':'test course info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+
+        # assert the course now has 3 students enrolled
+        self.assertEqual(self.course.students.all().count(), 4)
+
+        data = {'remove_user':['stud1', 'stud2'], 'name':'test course', 'info':'test info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+
+        # assert the course now has 3 students enrolled
+        self.assertEqual(self.course.students.all().count(), 2)
+
+    def test_add_ta(self):
+        """ Tests Edit Course view when adding a TA to a course """
+        self.client.login(username='prof', password='password')
+        data = {'ta':['stud1'], 'name':'test course', 'info':'test info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+
+        self.assertTrue(Enrollment.objects.filter(user=self.stud1, role='ta').exists())
+
+    def test_remove_ta(self):
+        """ Tests Edit Course view when removing a TA from a course """
+        self.client.login(username='prof', password='password')
+
+        # add a TA
+        data = {'ta':['stud1'], 'name':'test course', 'info':'test info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+        self.assertTrue(Enrollment.objects.filter(user=self.stud1, role='ta').exists())
+
+        # remove TA
+        data = {'remove_ta':['stud1'], 'name':'test course', 'info':'test info'}
+        self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+        self.assertTrue(not Enrollment.objects.filter(user=self.stud1, role='ta').exists())
+
+    def test_post_edit_success(self):
+        """ Tests editing general fields """
+        self.client.login(username='prof', password='password')
+        data = {'name':'test course 123', 'info':'test info'}
+        response = self.client.post(reverse('edit_course', kwargs={'slug': self.course.slug}), data)
+        self.assertTrue(Course.objects.filter(name='test course 123').exists())
+        self.assertEqual(response.status_code, 302)
+
 class EditAssignmentTest(TestCase):
     """ Edit Assignment Test """
     def setUp(self):

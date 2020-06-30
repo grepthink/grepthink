@@ -352,14 +352,14 @@ class Course(models.Model):
 
     def get_students(self):
         """ Gets all students in a course excluding professors and returns a list """
-        students = list(Enrollment.objects.filter(course=self,role="student"))
+        students = list(Enrollment.objects.filter(course=self, role="student"))
 
         return students
 
 
     def get_tas(self):
         """ Gets the tas for a course """
-        teacher_assistants = list(Enrollment.objects.filter(course=self,role="ta"))
+        teacher_assistants = list(Enrollment.objects.filter(course=self, role="ta"))
         assistants = [assistant.user for assistant in teacher_assistants]
 
         return assistants

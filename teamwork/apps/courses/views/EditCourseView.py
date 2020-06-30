@@ -9,7 +9,105 @@ from teamwork.apps.courses.forms import EditCourseForm
 from teamwork.apps.courses.models import Course, Enrollment
 from teamwork.apps.courses.views.CourseView import view_one_course
 from teamwork.apps.profiles.models import Alert
+from teamwork.apps.projects.views.BaseView import get_user_role
 
+def add_member_to_course(request, course):
+    """ View Helper - Handles adding members to a course """
+    # Get the members to add, as a list
+    members = request.POST.getlist('members')
+    students = course.students.all()
+    added = False
+
+    # Create membership objects for the newly added members
+    for uname in members:
+        mem_to_add = User.objects.get(username=uname)
+        mem_courses = Course.get_my_courses(mem_to_add)
+
+        # Don't add a member if they already have membership in course
+        # Confirm that the member is a part of the course
+        # List comprehenshion: loops through this courses memberships in order
+        #   to check if mem_to_add is in the user field of a current membership.
+        if not course in mem_courses:
+            if not mem_to_add in students:
+                Enrollment.objects.create(user=mem_to_add, course=course, role="student")
+                Alert.objects.create(
+                    sender=request.user,
+                    to=mem_to_add,
+                    msg="You were added to: " + course.name,
+                    url=reverse('view_one_course',args=[course.slug]),
+                    )
+                added = True
+    if added:
+        messages.add_message(request, messages.SUCCESS, "Successfully added member(s) to course.")
+    else:
+        messages.add_message(request, messages.SUCCESS, "Failed to successfully add member(s) to course.")
+
+def remove_member_from_course(request, course):
+    """ Remove Members from Course Helper """
+    members = request.POST.getlist('remove_user')
+    removed = False
+
+    for mem in members:
+        f_user = User.objects.get(username=mem)
+        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
+
+        for mem_obj in to_delete:
+            Alert.objects.create(
+                sender=request.user,
+                to=f_user,
+                msg="You were removed from: " + course.name,
+                url=reverse('view_one_course',args=[course.slug]),
+                )
+            mem_obj.delete()
+            removed = True
+    if removed:
+        messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
+    else:
+        messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
+
+def add_ta_to_course(request, course):
+    """ Add a TA to the Course """
+    # Get the members to add, as a list
+    members = request.POST.getlist('ta')
+    students = course.students.all()
+
+    # Create membership objects for the newly added members
+    for uname in members:
+        mem_to_add = User.objects.get(username=uname)
+
+        # Don't add a member if they already have membership in course
+        # Confirm that the member is a part of the course
+        # List comprehenshion: loops through this courses memberships in order
+        #   to check if mem_to_add is in the user field of a current membership.
+        if mem_to_add in students:
+            Enrollment.objects.filter(user=mem_to_add).update(role="ta")
+        else:
+            Enrollment.objects.create(user=mem_to_add, course=course, role="ta")
+            Alert.objects.create(
+                sender=request.user,
+                to=mem_to_add,
+                msg="You were added to: " + course.name + " as a TA",
+                url=reverse('view_one_course', args=[course.slug]),
+                )
+
+    messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
+
+def remove_ta_from_course(request, course):
+    """ Remove a TA from a course """
+    f_username = request.POST.get('remove_ta')
+    f_user = User.objects.get(username=f_username)
+    to_delete = Enrollment.objects.filter(user=f_user, course=course, role="ta")
+
+    for mem_obj in to_delete:
+        Alert.objects.create(
+            sender=request.user,
+            to=f_user,
+            msg="You were removed as the TA from: " + course.name,
+            url=reverse('view_one_course',args=[course.slug]),
+            )
+        mem_obj.delete()
+
+    messages.add_message(request, messages.SUCCESS, "Removed TA from Course.")
 
 @login_required
 def edit_course(request, slug):
@@ -20,136 +118,35 @@ def edit_course(request, slug):
     page_description = "Edit %s"%(course.name)
     title = "Edit Course"
 
-    enrollments = Enrollment.objects.filter(user=request.user, course=course)
     tas = Enrollment.objects.filter(course=course, role="ta")
     students = Enrollment.objects.filter(course=course, role="student")
-
-    if request.user.profile.isGT:
-        userRole = 'GT'
-    else:
-        if enrollments.count():
-            userRole = enrollments.first().role
-        else:
-            userRole = "not enrolled"
+    user_role = get_user_role(request.user, course)
 
     if request.user.profile.isGT:
         pass
     #if user is not a professor or they did not create course
     elif not course.creator == request.user:
         # if user is not a TA
-        if not userRole=="ta":
+        if not user_role == "ta":
             #redirect them to the /course directory with message
-            messages.info(request,'Only Professor can edit course')
+            messages.info(request, 'Only Professor can edit course')
             return HttpResponseRedirect('/course')
 
     # Add a member to the course
     if request.POST.get('members'):
-        # Get the members to add, as a list
-        members = request.POST.getlist('members')
-        enrollments = Enrollment.objects.filter(course=course)
-        students = course.students.all()
-        added = False
-
-        # Create membership objects for the newly added members
-        for uname in members:
-            mem_to_add = User.objects.get(username=uname)
-            mem_courses = Course.get_my_courses(mem_to_add)
-
-            # Don't add a member if they already have membership in course
-            # Confirm that the member is a part of the course
-            # List comprehenshion: loops through this courses memberships in order
-            #   to check if mem_to_add is in the user field of a current membership.
-            if not course in mem_courses:
-                if not mem_to_add in students:
-                    Enrollment.objects.create(user=mem_to_add, course=course, role="student")
-                    Alert.objects.create(
-                        sender=request.user,
-                        to=mem_to_add,
-                        msg="You were added to: " + course.name,
-                        url=reverse('view_one_course',args=[course.slug]),
-                        )
-                    added = True
-        if added:
-            messages.add_message(request, messages.SUCCESS, "Successfully added member(s) to course.")
-        else:
-            messages.add_message(request, messages.SUCCESS, "Failed to successfully add member(s) to course.")
-
-        # return redirect(edit_course, slug)
+        add_member_to_course(request, course)
 
     # Remove a user from the course
     if request.POST.get('remove_user'):
-        members = request.POST.getlist('remove_user')
-        removed = False
-
-        for mem in members:
-            f_user = User.objects.get(username=mem)
-            to_delete = Enrollment.objects.filter(user=f_user, course=course, role="student")
-
-            for mem_obj in to_delete:
-                Alert.objects.create(
-                    sender=request.user,
-                    to=f_user,
-                    msg="You were removed from: " + course.name,
-                    url=reverse('view_one_course',args=[course.slug]),
-                    )
-                mem_obj.delete()
-                removed = True
-        if removed:
-            messages.add_message(request, messages.SUCCESS, "Member(s) successfully removed from the course.")
-        else:
-            messages.add_message(request, messages.SUCCESS, "Failed to succesfully remove member(s) from the course.")
-
-        # return redirect(edit_course, slug)
+        remove_member_from_course(request, course)
 
     # Add a TA
     if request.POST.get('ta'):
-        # Get the members to add, as a list
-        members = request.POST.getlist('ta')
-        enrollments = Enrollment.objects.filter(course=course)
-        students = course.students.all()
-
-        # Create membership objects for the newly added members
-        for uname in members:
-            mem_to_add = User.objects.get(username=uname)
-            mem_courses = Course.get_my_courses(mem_to_add)
-
-            # Don't add a member if they already have membership in course
-            # Confirm that the member is a part of the course
-            # List comprehenshion: loops through this courses memberships in order
-            #   to check if mem_to_add is in the user field of a current membership.
-            if mem_to_add in students:
-                Enrollment.objects.filter(user=mem_to_add).update(role="ta")
-            else:
-                Enrollment.objects.create(user=mem_to_add, course=course, role="ta")
-                Alert.objects.create(
-                    sender=request.user,
-                    to=mem_to_add,
-                    msg="You were added to: " + course.name + " as a TA",
-                    url=reverse('view_one_course',args=[course.slug]),
-                    )
-
-        messages.add_message(request, messages.SUCCESS, "Successfully added TA to the course.")
-
-        # return redirect(edit_course, slug)
+        add_ta_to_course(request, course)
 
     # Remove a ta from the course
     if request.POST.get('remove_ta'):
-        f_username = request.POST.get('remove_ta')
-        f_user = User.objects.get(username=f_username)
-        to_delete = Enrollment.objects.filter(user=f_user, course=course, role="ta")
-
-        for mem_obj in to_delete:
-            Alert.objects.create(
-                sender=request.user,
-                to=f_user,
-                msg="You were removed as the TA from: " + course.name,
-                url=reverse('view_one_course',args=[course.slug]),
-                )
-            mem_obj.delete()
-
-        messages.add_message(request, messages.SUCCESS, "Removed TA from Course.")
-
-        # return redirect(edit_course, slug)
+        remove_ta_from_course(request, course)
 
     if request.method == 'POST':
         # send the current user.id to filter out
@@ -172,12 +169,13 @@ def edit_course(request, slug):
 
         return redirect(view_one_course, course.slug)
     else:
-        form = EditCourseForm(request.user.id, slug,  instance=course)
+        form = EditCourseForm(request.user.id, slug, instance=course)
 
     return render(
-            request, 'courses/edit_course.html',
-            {'form': form,'course': course, 'tas':tas, 'students':students, 'page_name' : page_name, 'page_description': page_description, 'title': title}
-            )
+        request, 'courses/edit_course.html',
+        {'form': form, 'course': course, 'tas':tas, 'students':students,
+         'page_name' : page_name, 'page_description': page_description, 'title': title}
+        )
 
 @login_required
 def delete_course(request, slug):
