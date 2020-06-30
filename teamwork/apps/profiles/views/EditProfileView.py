@@ -5,8 +5,12 @@ from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
+
+# Form Imports
 from teamwork.apps.profiles.forms import ProfileForm
 from teamwork.apps.profiles.models import Profile, Skills, User
+
+# View Imports
 from teamwork.apps.profiles.views.ProfileView import view_profile
 
 def edit_skills(request, username):
