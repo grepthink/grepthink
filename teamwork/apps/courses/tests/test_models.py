@@ -1,29 +1,14 @@
 """
-Teamwork: test_models.py
+test_models.py
 
 Unit tests for models.py: tests all created functions
-
-Usuage: Run a part of all test with `python manage.py test`
 """
 
 from django.contrib.auth.models import UserManager
-# Django Modules
 from django.test import TestCase
 from teamwork.apps.courses.models import *
 from teamwork.apps.profiles.models import *
-
-
-def create_user(username, email, password):
-    return User.objects.create_user(username, email, password)
-
-def create_course(name, slug, creator):
-    return Course.objects.create(name=name, slug=slug, creator=creator)
-
-def create_course_enrollment(user, course, role):
-    return Enrollment.objects.create(user=user, course=course, role=role)
-
-def create_project_membership(user, project, invite_reason):
-    return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)
+from teamwork.apps.projects.models import Membership
 
 class CourseTestCase(TestCase):
     """
@@ -44,9 +29,9 @@ class CourseTestCase(TestCase):
         # Create a membership object between user1 and project1
         self.enrollment1 =  create_course_enrollment(self.user1, self.course1, 'professor')
         self.enrollment2 =  create_course_enrollment(self.user1, self.course2, 'professor')
-
-    # TODO:
+    
     def tearDown(self):
+        """ TODO """
         pass
 
     def test_get_user_courses(self):
@@ -93,4 +78,66 @@ class CourseTestCase(TestCase):
         """
         TODO: once delete is moved to Course model
         """
-        pass
+
+def create_project(creator, scrum_master, ta, course, slug):
+    """
+    Create a Project helper - Creates a project and adds it to a course
+
+    Args:
+        creator: (User) Course Creator
+        scrum_master: (User) Project's Scrum Master
+        ta: (User) Project's Teacher Assistant
+        course: (Course) The Course which the Project will be added to
+        slug: (str) The project's slug
+    """
+    project = Project.objects.create(creator=creator,
+                                     scrum_master=scrum_master,
+                                     ta=ta,
+                                     slug=slug)
+    course.projects.add(project)
+    course.save()
+    return project
+
+def create_user(username, email, password):
+    """
+    Create a User helper
+
+    Args:
+        username: (str) Username of the new user
+        email: (str) Email of the new user
+        password: (str) Password of the new user
+    """    
+    return User.objects.create_user(username, email, password)
+
+def create_course(name, slug, creator):
+    """
+    Create Course helper
+
+    Args:
+        name: (str) Course Name
+        slug: (str) Course Slug
+        creator: (User) Creator of the course
+    """
+    return Course.objects.create(name=name, slug=slug, creator=creator)
+
+def create_course_enrollment(user, course, role):
+    """
+    Create Course Enrollment helper
+
+    Args:
+        user: (User) User which is being enrolled in the course
+        course: (Course) Course which the user is being enrolled in
+        role: (str) Expects 'professor' or 'student' or 'ta'
+    """
+    return Enrollment.objects.create(user=user, course=course, role=role)
+
+def create_project_membership(user, project, invite_reason):
+    """
+    Create Project Membership helper
+
+    Args:
+        user: (User) User which is being enrolled in the project
+        project: (Project) Project which the user is becoming a member of
+        invite_reason: (str) invite reason ???
+    """
+    return Membership.objects.create(user=user, project=project, invite_reason=invite_reason)

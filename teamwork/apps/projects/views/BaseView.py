@@ -180,12 +180,12 @@ def email_project(request, slug):
 def get_user_role(user, course):
     """returns the role of the user in the course."""
     if not user.profile.isGT:
-        userEnrollment = Enrollment.objects.filter(user=user, course=course).first()
-        if userEnrollment is None:
+        user_enrollment = Enrollment.objects.filter(user=user, course=course).first()
+        if user_enrollment is None:
             # then the current user is not enrolled in the course this project belongs to
             user_role = 'not enrolled'
         else:
-            user_role = userEnrollment.role
+            user_role = user_enrollment.role
     else: #maybe don't need a GT user_role. profile.isGT is probably better -kp
         user_role = 'GT'
 

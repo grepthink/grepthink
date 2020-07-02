@@ -19,28 +19,35 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+
 # import of project models
 from teamwork.apps.projects.models import Project, Tsr
 
-
-# Generates add code
 def rand_code(size):
-    # Usees a random choice from lowercase, uppercase, and digits
+    """ Generate an add code. Uses a random choice from lowercase, uppercase, and digits """
     return ''.join([
         random.choice(string.ascii_letters + string.digits) for i in range(size)
     ])
 
 def get_all_courses(self):
+    """ Gets all Courses ordered by lowercase name """
     return Course.objects.all().extra(\
     select={'lower_name':'lower(name)'}).order_by('lower_name')
 
 class Assignment(models.Model):
+    """
+    Assignment Model
+
+    Required Fields:
+        ass_date (DateTime)
+        due_date (DateTime)
+    """
     due_date = models.DateField()
     ass_date = models.DateField()
     ass_type = models.CharField(max_length=255)
     ass_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default="")
-    ass_number = models.IntegerField( default=1)
+    ass_number = models.IntegerField(default=1)
     closed = models.BooleanField(default=False)
     subs = models.ManyToManyField(
         Tsr,
@@ -58,7 +65,7 @@ class Assignment(models.Model):
 
     def __str__(self):
         """Human readeable representation of the Assignment object."""
-        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date,self.ass_date,self.ass_type,self.ass_name, self.description, self.ass_number, self.slug))
+        return ("%s, %s, %s, %s, %s, %d, %s"%(self.due_date, self.ass_date, self.ass_type, self.ass_name, self.description, self.ass_number, self.slug))
 
     @property
     def is_past_due(self):
@@ -202,7 +209,7 @@ class Course(models.Model):
         related_name='course')
 
     # assignments in course, manytomany
-    assignments=models.ManyToManyField(
+    assignments = models.ManyToManyField(
         # to Assignment model
         Assignment,
         related_name='course')
@@ -324,12 +331,12 @@ class Course(models.Model):
         return created_courses
 
     def get_updates(self):
-        """Gets list of updates for course."""
+        """ Gets list of updates for course. """
         return CourseUpdate.objects.filter(course=self)
 
     def get_updates_by_date(self):
-        """Gets list of dicts, where each dict has keys 'date' and 'updates' Updates is a list of
-        updates for the specific day Useful for timeline HTML view."""
+        """ Gets list of dicts, where each dict has keys 'date' and 'updates' Updates is a list of
+        updates for the specific day Useful for timeline HTML view. """
         updates = self.get_updates()
         unique_dates = sorted(
             set(update.date_post.date() for update in updates), reverse=True)
@@ -342,27 +349,24 @@ class Course(models.Model):
             })
         return updates_by_date
 
-    """
-    Gets all students in a course excluding professors and returns a list
-    """
+
     def get_students(self):
-        students = list(Enrollment.objects.filter(course=self,role="student"))
+        """ Gets all students in a course excluding professors and returns a list """
+        students = list(Enrollment.objects.filter(course=self, role="student"))
 
         return students
 
-    """
-    Gets the tas for a course
-    """
+
     def get_tas(self):
-        teacher_assistants = list(Enrollment.objects.filter(course=self,role="ta"))
+        """ Gets the tas for a course """
+        teacher_assistants = list(Enrollment.objects.filter(course=self, role="ta"))
         assistants = [assistant.user for assistant in teacher_assistants]
 
         return assistants
 
-    """
-    Gets ALL of the teaching staff
-    """
+
     def get_staff(self):
+        """ Gets ALL of the teaching staff """
         staff=[]
         staff = self.get_tas()
         staff.append(self.creator)
@@ -370,11 +374,17 @@ class Course(models.Model):
         return staff
 
     def get_info_as_markdown(self):
+        """ Returns Course.info as Markdown """
         return markdown.markdown(self.info, safe_mode='escape')
 
 
-# Enrollment class that manytomanys between User and Course
+
 class Enrollment(models.Model):
+    """
+    Enrollment class that manytomanys between User and Course
+
+    Expected Role values: 'professor', 'student', 'ta'
+    """
     #User, which is a foriegn key to
     user = models.ForeignKey(
         # the User model
@@ -405,7 +415,7 @@ class Enrollment(models.Model):
         Might need to update when we add more attributes. Maybe something like,  return u'%s %s' %
         (self.course, self.title)
         """
-        return ("%s"%(self.user.username))
+        return "%s-%s"%(self.user.username, self.course.name)
 
 class CourseUpdate(models.Model):
     """
@@ -438,9 +448,9 @@ class CourseUpdate(models.Model):
         """Overrides default save."""
 
         if self.date_post is None:
-            self.date_post = datetime.datetime.now()
+            self.date_post = datetime.datetime.now(tz=timezone.utc)
             self.date_edit = self.date_post
         else:
-            self.date_edit = datetime.datetime.now()
+            self.date_edit = datetime.datetime.now(tz=timezone.utc)
 
         super(CourseUpdate, self).save(*args, **kwargs)

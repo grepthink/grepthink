@@ -27,7 +27,7 @@ def _courses(request, courses):
 
     return render(request,
             'courses/view_courses.html',
-            {'courses': courses,'page_name' : page_name, 'page_description': page_description, 'title': title}
+            {'courses': courses, 'page_name' : page_name, 'page_description': page_description, 'title': title}
             )
 
 @login_required
@@ -49,13 +49,13 @@ def create_course(request):
         pass
     elif not request.user.profile.isProf:
         #redirect them to the /course directory
-        messages.info(request,'Only Professor can create course!')
+        messages.info(request, 'Only Professor can create course!')
         return HttpResponseRedirect('/course')
 
     #If request is POST
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = CreateCourseForm(request.user.id,request.POST, request.FILES)
+        form = CreateCourseForm(request.user.id, request.POST, request.FILES)
         if form.is_valid():
             # create an object for the input
             course = Course()
@@ -73,7 +73,7 @@ def create_course(request):
 
             # creator is current user
             course.creator = request.user
-            students = data.get('students')
+
             # save this object
             course.save()
 
@@ -82,8 +82,12 @@ def create_course(request):
                 Enrollment.objects.create(user=request.user, course=course, role="professor")
 
             return redirect(upload_csv, course.slug)
+
+        # Print any Form Errors to Console
+        print("CreateCourseForm Errors:", form.errors)
     else:
         form = CreateCourseForm(request.user.id)
+
     return render(request, 'courses/create_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
@@ -102,15 +106,16 @@ def join_course(request):
 
     if request.method == 'POST':
         # send the current user.id to filter out
-        form = JoinCourseForm(request.user.id,request.POST)
+        form = JoinCourseForm(request.user.id, request.POST)
         #if form is accepted
         if form.is_valid():
             #the courseID will be gotten from the form
             data = form.cleaned_data
             course_code = data.get('code')
             all_courses = Course.objects.all()
-            #loops through the courses to find the course with corresponding course_code
-            # O(n) time
+
+            # loops through the courses to find the course with corresponding course_code
+            # O(n) time TODO: FIX THIS SHIT
             for i in all_courses:
                 if course_code == i.addCode:
                     #checks to see if an enrollment already exists
@@ -121,23 +126,29 @@ def join_course(request):
                                 sender=request.user,
                                 to=i.creator,
                                 msg=request.user.username + " used the addcode to enroll in " + i.name,
-                                url=reverse('profile',args=[request.user.username]),
+                                url=reverse('profile', args=[request.user.username]),
                                 )
                     return redirect(view_one_course, i.slug)
 
             #returns to view courses
             return redirect(view_courses)
+        print("JoinCourseForm Errors:", form.errors)
     else:
         form = JoinCourseForm(request.user.id)
     return render(request, 'courses/join_course.html', {'form': form, 'page_name' : page_name, 'page_description': page_description, 'title': title})
 
 @login_required
 def upload_csv(request, slug):
+    """
+    Upload CSV View
+
+    Args:
+        slug: (str) Course slug
+    """
     page_name = "Upload CSV File"
     page_description = "CSV Upload"
     title = "Upload CSV"
     course = get_object_or_404(Course, slug=slug)
-
     recipients = []
 
     form = UploadCSVForm()
@@ -156,12 +167,10 @@ def upload_csv(request, slug):
             request.session['recipients'] = recipients
 
             return redirect(email_csv, slug)
-        else:
-            print("form is invalid")
 
     return render(request, 'core/upload_csv.html', {
         'slug':slug, 'form':form, 'course':course,
-        'page_name':page_name, 'page_description':page_description,'title':title
+        'page_name':page_name, 'page_description':page_description, 'title':title
     })
 
 @login_required
@@ -200,7 +209,7 @@ def export_xls(request, slug):
         print("members:", members)
         ws.write(row_num, 0, proj.title, font_style)
         row_num += 1
-        ws.write(row_num, 1, "TA:", font_style)        
+        ws.write(row_num, 1, "TA:", font_style)
 
         if proj.ta is not None:
             ws.write(row_num, 2, proj.ta.email, font_style)
@@ -243,8 +252,8 @@ def export_xls(request, slug):
     return response
 
 def projects_in_course(slug):
-    """Public method that takes a coursename, retreives the course object, returns a list of project
-    objects."""
+    """Public method that takes a coursename, retrieves the course object, returns a list of project
+    objects. TODO move to Course/models.py """
     # Gets current course
     cur_course = Course.objects.get(slug=slug)
 
