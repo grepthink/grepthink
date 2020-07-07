@@ -15,12 +15,13 @@ def signup(request):
 
     page_name = "Signup"
     page_description = "Sign up for Grepthink!"
-    title = "Signup"    
+    title = "Signup"
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
 
         if not form.is_valid():
+            print(form.errors)
             return render(request, 'profiles/signup.html',
                           {'form': form})
 
@@ -28,7 +29,7 @@ def signup(request):
             email = form.cleaned_data.get('email')
             split = email.split("@")
             username = find_available_username(split[0])
-            password = form.cleaned_data.get('password')            
+            password = form.cleaned_data.get('password')
 
             user1 = User.objects.create_user(
                 username=username,
@@ -59,7 +60,7 @@ def profSignup(request):
 
     page_name = "Signup"
     page_description = "Sign up for Grepthink!"
-    title = "Professor Signup"    
+    title = "Professor Signup"
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -73,7 +74,7 @@ def profSignup(request):
             split = email.split("@")
             username = find_available_username(split[0])
             password = form.cleaned_data.get('password')
-            
+
             user1 = User.objects.create_user(
                 username=username,
                 password=password,
@@ -83,7 +84,7 @@ def profSignup(request):
             login(request, user)
 
             # saves current user, which creates a link from user to profile
-            user1.save()            
+            user1.save()
 
             # edits profile to add professor
             user1.profile.isProf = True
@@ -122,7 +123,7 @@ def find_available_username(username):
         if value is None:
             value = 0
 
-        # add 1 to the found value and append it to the username        
+        # add 1 to the found value and append it to the username
         return "{}{}".format(username, value + 1)
 
     return username
