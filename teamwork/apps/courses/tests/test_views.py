@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
 from teamwork.apps.courses.models import Course, Enrollment, Assignment, CourseUpdate
-from teamwork.apps.projects.models import Project
+from teamwork.apps.projects.models import Project, Interest
 from teamwork.apps.profiles.models import Alert
 
 from teamwork.apps.courses.views.CourseView import get_available_projects
@@ -557,6 +557,110 @@ class ClaimProjectsTest(TestCase):
         self.assertEqual(len(available_projects), 3)
         self.assertEqual(len(self.professor.profile.claimed_projects.all()), 0)
         self.assertEqual(response.status_code, 302)
+
+class EmailCourseViewTests(TestCase):
+    """ Tests Email Course View """
+    def setUp(self):
+        """ Set Up Function """
+        self.client = Client()
+
+        # create prof
+        self.professor = create_user("prof", "prof@testing.com", "password")
+
+        # create course
+        self.course = create_course("test course", "abcd", self.professor)
+
+        # Authenticate Professor
+        self.client.login(username='prof', password='password')
+
+    def tearDown(self):
+        """ Tear Down Function """
+        del self.client
+        del self.course
+        del self.professor
+
+    def test_email_course_get(self):
+        """ Tests GET to email_roster """
+        response = self.client.get(reverse('email_roster', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/email_roster.html')
+
+    def test_email_course_post(self):
+        """ Tests POST to email_roster """
+        data = {'subject': 'Test Email Subject', 'content': 'Email From test_email_course_post'}
+        response = self.client.post(reverse('email_roster', kwargs={'slug': self.course.slug}), data)
+        self.assertEqual(response.status_code, 302)
+
+    def test_email_csv_get(self):
+        """ Tests GET to email_csv """
+        response = self.client.get(reverse('email_csv', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/email_roster_with_csv.html')
+
+    def test_email_csv_post(self):
+        """ Tests POST to email_csv """
+        self.client.session['recipients'] = ['test1@grepthink.com', 'test2@grepthink.com']
+        data = {'subject':'Email CSV Roster Test', 'content':'Content of Email CSV Roster test. test_email_csv_post'}
+        response = self.client.post(reverse('email_csv', kwargs={'slug': self.course.slug}), data)
+        self.assertEqual(response.status_code, 302)
+
+class InterestViewTests(TestCase):
+    """ Interest View Tests """
+    def setUp(self):
+        """ Set Up Function """
+        self.client = Client()
+
+        # create users
+        self.professor = create_user("prof", "prof@testing.com", "password")
+        self.professor.profile.isProf = True
+        self.user = create_user("user", "user@testing.com", "password")
+
+        # create course
+        self.course = create_course("test course", "abcd", self.professor)
+
+        # enroll professor in course
+        create_course_enrollment(self.professor, self.course, "professor")
+        create_course_enrollment(self.user, self.course, "student")
+
+        # create projects
+        self.project1 = Project.objects.create(title='project one', creator=self.professor)
+        self.course.projects.add(self.project1)
+        self.project2 = Project.objects.create(title='project two', creator=self.professor)
+        self.course.projects.add(self.project2)
+        self.project3 = Project.objects.create(title='project three', creator=self.professor)
+        self.course.projects.add(self.project3)
+
+        # Authenticate Professor
+        self.client.login(username='user', password='password')
+
+    def tearDown(self):
+        """ Tear Down Function """
+        del self.client
+        del self.course
+        del self.professor
+
+    def test_show_interest_get(self):
+        """ Tests GET to show_interest """
+        response = self.client.get(reverse('show_interest', kwargs={'slug': self.course.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'courses/show_interest.html')
+
+    def test_show_interest_post(self):
+        """ Tests POST to show_interest """
+        data =  {
+            'projects': str(self.project1.pk),
+            'projects2': str(self.project2.pk),
+            'projects3': str(self.project3.pk),
+            'p1r':'project 1 reason',
+            'p2r':'project 2 reason',
+            'p3r':'project 3 reason'
+                }
+        response = self.client.post(reverse('show_interest', kwargs={'slug': self.course.slug}), data)
+        self.assertEqual(response.status_code, 302)
+
+        # assert that projects have interests added to them
+        interests = Interest.objects.filter(user=self.user)
+        self.assertEqual(len(interests), 3)
 
 # Helper Functions
 def create_user(username, email, password):

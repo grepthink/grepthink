@@ -399,11 +399,10 @@ class ShowInterestForm(forms.ModelForm):
 
         return data
 
-"""
-Form used to simulate sending an email
-
-"""
 class EmailRosterForm(forms.Form):
+    """
+    Form used to simulate sending an email
+    """
     def __init__(self, *args, **kwargs):
         super(EmailRosterForm, self).__init__(*args, **kwargs)
 
